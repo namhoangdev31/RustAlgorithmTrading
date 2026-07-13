@@ -28,10 +28,12 @@ export type AggregateBundlePrivacyDeclarations = {
 
 export type BundlePrivacyDeclarationsAvgAggregateOutputType = {
   dataRetentionDays: number | null
+  revision: number | null
 }
 
 export type BundlePrivacyDeclarationsSumAggregateOutputType = {
   dataRetentionDays: number | null
+  revision: number | null
 }
 
 export type BundlePrivacyDeclarationsMinAggregateOutputType = {
@@ -44,6 +46,9 @@ export type BundlePrivacyDeclarationsMinAggregateOutputType = {
   thirdParties: string | null
   dataRetentionDays: number | null
   privacyContactEmail: string | null
+  declarationStatus: string | null
+  revision: number | null
+  reviewedAt: Date | null
   updatedAt: Date | null
   createdAt: Date | null
 }
@@ -58,6 +63,9 @@ export type BundlePrivacyDeclarationsMaxAggregateOutputType = {
   thirdParties: string | null
   dataRetentionDays: number | null
   privacyContactEmail: string | null
+  declarationStatus: string | null
+  revision: number | null
+  reviewedAt: Date | null
   updatedAt: Date | null
   createdAt: Date | null
 }
@@ -72,6 +80,9 @@ export type BundlePrivacyDeclarationsCountAggregateOutputType = {
   thirdParties: number
   dataRetentionDays: number
   privacyContactEmail: number
+  declarationStatus: number
+  revision: number
+  reviewedAt: number
   updatedAt: number
   createdAt: number
   _all: number
@@ -80,10 +91,12 @@ export type BundlePrivacyDeclarationsCountAggregateOutputType = {
 
 export type BundlePrivacyDeclarationsAvgAggregateInputType = {
   dataRetentionDays?: true
+  revision?: true
 }
 
 export type BundlePrivacyDeclarationsSumAggregateInputType = {
   dataRetentionDays?: true
+  revision?: true
 }
 
 export type BundlePrivacyDeclarationsMinAggregateInputType = {
@@ -96,6 +109,9 @@ export type BundlePrivacyDeclarationsMinAggregateInputType = {
   thirdParties?: true
   dataRetentionDays?: true
   privacyContactEmail?: true
+  declarationStatus?: true
+  revision?: true
+  reviewedAt?: true
   updatedAt?: true
   createdAt?: true
 }
@@ -110,6 +126,9 @@ export type BundlePrivacyDeclarationsMaxAggregateInputType = {
   thirdParties?: true
   dataRetentionDays?: true
   privacyContactEmail?: true
+  declarationStatus?: true
+  revision?: true
+  reviewedAt?: true
   updatedAt?: true
   createdAt?: true
 }
@@ -124,6 +143,9 @@ export type BundlePrivacyDeclarationsCountAggregateInputType = {
   thirdParties?: true
   dataRetentionDays?: true
   privacyContactEmail?: true
+  declarationStatus?: true
+  revision?: true
+  reviewedAt?: true
   updatedAt?: true
   createdAt?: true
   _all?: true
@@ -225,6 +247,9 @@ export type BundlePrivacyDeclarationsGroupByOutputType = {
   thirdParties: string | null
   dataRetentionDays: number | null
   privacyContactEmail: string | null
+  declarationStatus: string
+  revision: number
+  reviewedAt: Date | null
   updatedAt: Date
   createdAt: Date
   _count: BundlePrivacyDeclarationsCountAggregateOutputType | null
@@ -262,6 +287,9 @@ export type BundlePrivacyDeclarationsWhereInput = {
   thirdParties?: Prisma.StringNullableFilter<"BundlePrivacyDeclarations"> | string | null
   dataRetentionDays?: Prisma.IntNullableFilter<"BundlePrivacyDeclarations"> | number | null
   privacyContactEmail?: Prisma.StringNullableFilter<"BundlePrivacyDeclarations"> | string | null
+  declarationStatus?: Prisma.StringFilter<"BundlePrivacyDeclarations"> | string
+  revision?: Prisma.IntFilter<"BundlePrivacyDeclarations"> | number
+  reviewedAt?: Prisma.DateTimeNullableFilter<"BundlePrivacyDeclarations"> | Date | string | null
   updatedAt?: Prisma.DateTimeFilter<"BundlePrivacyDeclarations"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"BundlePrivacyDeclarations"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
@@ -277,6 +305,9 @@ export type BundlePrivacyDeclarationsOrderByWithRelationInput = {
   thirdParties?: Prisma.SortOrderInput | Prisma.SortOrder
   dataRetentionDays?: Prisma.SortOrderInput | Prisma.SortOrder
   privacyContactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  declarationStatus?: Prisma.SortOrder
+  revision?: Prisma.SortOrder
+  reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   bundle?: Prisma.BundlesOrderByWithRelationInput
@@ -295,6 +326,9 @@ export type BundlePrivacyDeclarationsWhereUniqueInput = Prisma.AtLeast<{
   thirdParties?: Prisma.StringNullableFilter<"BundlePrivacyDeclarations"> | string | null
   dataRetentionDays?: Prisma.IntNullableFilter<"BundlePrivacyDeclarations"> | number | null
   privacyContactEmail?: Prisma.StringNullableFilter<"BundlePrivacyDeclarations"> | string | null
+  declarationStatus?: Prisma.StringFilter<"BundlePrivacyDeclarations"> | string
+  revision?: Prisma.IntFilter<"BundlePrivacyDeclarations"> | number
+  reviewedAt?: Prisma.DateTimeNullableFilter<"BundlePrivacyDeclarations"> | Date | string | null
   updatedAt?: Prisma.DateTimeFilter<"BundlePrivacyDeclarations"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"BundlePrivacyDeclarations"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
@@ -310,6 +344,9 @@ export type BundlePrivacyDeclarationsOrderByWithAggregationInput = {
   thirdParties?: Prisma.SortOrderInput | Prisma.SortOrder
   dataRetentionDays?: Prisma.SortOrderInput | Prisma.SortOrder
   privacyContactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  declarationStatus?: Prisma.SortOrder
+  revision?: Prisma.SortOrder
+  reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.BundlePrivacyDeclarationsCountOrderByAggregateInput
@@ -332,6 +369,9 @@ export type BundlePrivacyDeclarationsScalarWhereWithAggregatesInput = {
   thirdParties?: Prisma.StringNullableWithAggregatesFilter<"BundlePrivacyDeclarations"> | string | null
   dataRetentionDays?: Prisma.IntNullableWithAggregatesFilter<"BundlePrivacyDeclarations"> | number | null
   privacyContactEmail?: Prisma.StringNullableWithAggregatesFilter<"BundlePrivacyDeclarations"> | string | null
+  declarationStatus?: Prisma.StringWithAggregatesFilter<"BundlePrivacyDeclarations"> | string
+  revision?: Prisma.IntWithAggregatesFilter<"BundlePrivacyDeclarations"> | number
+  reviewedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundlePrivacyDeclarations"> | Date | string | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BundlePrivacyDeclarations"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundlePrivacyDeclarations"> | Date | string
 }
@@ -345,6 +385,9 @@ export type BundlePrivacyDeclarationsCreateInput = {
   thirdParties?: string | null
   dataRetentionDays?: number | null
   privacyContactEmail?: string | null
+  declarationStatus?: string
+  revision?: number
+  reviewedAt?: Date | string | null
   updatedAt: Date | string
   createdAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutPrivacyDeclarationsInput
@@ -360,6 +403,9 @@ export type BundlePrivacyDeclarationsUncheckedCreateInput = {
   thirdParties?: string | null
   dataRetentionDays?: number | null
   privacyContactEmail?: string | null
+  declarationStatus?: string
+  revision?: number
+  reviewedAt?: Date | string | null
   updatedAt: Date | string
   createdAt: Date | string
 }
@@ -373,6 +419,9 @@ export type BundlePrivacyDeclarationsUpdateInput = {
   thirdParties?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataRetentionDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   privacyContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  declarationStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutPrivacyDeclarationsNestedInput
@@ -388,6 +437,9 @@ export type BundlePrivacyDeclarationsUncheckedUpdateInput = {
   thirdParties?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataRetentionDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   privacyContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  declarationStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -402,6 +454,9 @@ export type BundlePrivacyDeclarationsCreateManyInput = {
   thirdParties?: string | null
   dataRetentionDays?: number | null
   privacyContactEmail?: string | null
+  declarationStatus?: string
+  revision?: number
+  reviewedAt?: Date | string | null
   updatedAt: Date | string
   createdAt: Date | string
 }
@@ -415,6 +470,9 @@ export type BundlePrivacyDeclarationsUpdateManyMutationInput = {
   thirdParties?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataRetentionDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   privacyContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  declarationStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -429,6 +487,9 @@ export type BundlePrivacyDeclarationsUncheckedUpdateManyInput = {
   thirdParties?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataRetentionDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   privacyContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  declarationStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -448,12 +509,16 @@ export type BundlePrivacyDeclarationsCountOrderByAggregateInput = {
   thirdParties?: Prisma.SortOrder
   dataRetentionDays?: Prisma.SortOrder
   privacyContactEmail?: Prisma.SortOrder
+  declarationStatus?: Prisma.SortOrder
+  revision?: Prisma.SortOrder
+  reviewedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type BundlePrivacyDeclarationsAvgOrderByAggregateInput = {
   dataRetentionDays?: Prisma.SortOrder
+  revision?: Prisma.SortOrder
 }
 
 export type BundlePrivacyDeclarationsMaxOrderByAggregateInput = {
@@ -466,6 +531,9 @@ export type BundlePrivacyDeclarationsMaxOrderByAggregateInput = {
   thirdParties?: Prisma.SortOrder
   dataRetentionDays?: Prisma.SortOrder
   privacyContactEmail?: Prisma.SortOrder
+  declarationStatus?: Prisma.SortOrder
+  revision?: Prisma.SortOrder
+  reviewedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -480,12 +548,16 @@ export type BundlePrivacyDeclarationsMinOrderByAggregateInput = {
   thirdParties?: Prisma.SortOrder
   dataRetentionDays?: Prisma.SortOrder
   privacyContactEmail?: Prisma.SortOrder
+  declarationStatus?: Prisma.SortOrder
+  revision?: Prisma.SortOrder
+  reviewedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type BundlePrivacyDeclarationsSumOrderByAggregateInput = {
   dataRetentionDays?: Prisma.SortOrder
+  revision?: Prisma.SortOrder
 }
 
 export type BundlePrivacyDeclarationsCreateNestedOneWithoutBundleInput = {
@@ -520,14 +592,6 @@ export type BundlePrivacyDeclarationsUncheckedUpdateOneWithoutBundleNestedInput 
   update?: Prisma.XOR<Prisma.XOR<Prisma.BundlePrivacyDeclarationsUpdateToOneWithWhereWithoutBundleInput, Prisma.BundlePrivacyDeclarationsUpdateWithoutBundleInput>, Prisma.BundlePrivacyDeclarationsUncheckedUpdateWithoutBundleInput>
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type BundlePrivacyDeclarationsCreateWithoutBundleInput = {
   id: string
   collectsPersonalData?: boolean
@@ -537,6 +601,9 @@ export type BundlePrivacyDeclarationsCreateWithoutBundleInput = {
   thirdParties?: string | null
   dataRetentionDays?: number | null
   privacyContactEmail?: string | null
+  declarationStatus?: string
+  revision?: number
+  reviewedAt?: Date | string | null
   updatedAt: Date | string
   createdAt: Date | string
 }
@@ -550,6 +617,9 @@ export type BundlePrivacyDeclarationsUncheckedCreateWithoutBundleInput = {
   thirdParties?: string | null
   dataRetentionDays?: number | null
   privacyContactEmail?: string | null
+  declarationStatus?: string
+  revision?: number
+  reviewedAt?: Date | string | null
   updatedAt: Date | string
   createdAt: Date | string
 }
@@ -579,6 +649,9 @@ export type BundlePrivacyDeclarationsUpdateWithoutBundleInput = {
   thirdParties?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataRetentionDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   privacyContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  declarationStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -592,6 +665,9 @@ export type BundlePrivacyDeclarationsUncheckedUpdateWithoutBundleInput = {
   thirdParties?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataRetentionDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   privacyContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  declarationStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -608,6 +684,9 @@ export type BundlePrivacyDeclarationsSelect<ExtArgs extends runtime.Types.Extens
   thirdParties?: boolean
   dataRetentionDays?: boolean
   privacyContactEmail?: boolean
+  declarationStatus?: boolean
+  revision?: boolean
+  reviewedAt?: boolean
   updatedAt?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -623,6 +702,9 @@ export type BundlePrivacyDeclarationsSelectCreateManyAndReturn<ExtArgs extends r
   thirdParties?: boolean
   dataRetentionDays?: boolean
   privacyContactEmail?: boolean
+  declarationStatus?: boolean
+  revision?: boolean
+  reviewedAt?: boolean
   updatedAt?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -638,6 +720,9 @@ export type BundlePrivacyDeclarationsSelectUpdateManyAndReturn<ExtArgs extends r
   thirdParties?: boolean
   dataRetentionDays?: boolean
   privacyContactEmail?: boolean
+  declarationStatus?: boolean
+  revision?: boolean
+  reviewedAt?: boolean
   updatedAt?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -653,11 +738,14 @@ export type BundlePrivacyDeclarationsSelectScalar = {
   thirdParties?: boolean
   dataRetentionDays?: boolean
   privacyContactEmail?: boolean
+  declarationStatus?: boolean
+  revision?: boolean
+  reviewedAt?: boolean
   updatedAt?: boolean
   createdAt?: boolean
 }
 
-export type BundlePrivacyDeclarationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "collectsPersonalData" | "dataTypes" | "purposeOfCollection" | "thirdPartySharing" | "thirdParties" | "dataRetentionDays" | "privacyContactEmail" | "updatedAt" | "createdAt", ExtArgs["result"]["bundlePrivacyDeclarations"]>
+export type BundlePrivacyDeclarationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "collectsPersonalData" | "dataTypes" | "purposeOfCollection" | "thirdPartySharing" | "thirdParties" | "dataRetentionDays" | "privacyContactEmail" | "declarationStatus" | "revision" | "reviewedAt" | "updatedAt" | "createdAt", ExtArgs["result"]["bundlePrivacyDeclarations"]>
 export type BundlePrivacyDeclarationsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
 }
@@ -683,6 +771,9 @@ export type $BundlePrivacyDeclarationsPayload<ExtArgs extends runtime.Types.Exte
     thirdParties: string | null
     dataRetentionDays: number | null
     privacyContactEmail: string | null
+    declarationStatus: string
+    revision: number
+    reviewedAt: Date | null
     updatedAt: Date
     createdAt: Date
   }, ExtArgs["result"]["bundlePrivacyDeclarations"]>
@@ -1118,6 +1209,9 @@ export interface BundlePrivacyDeclarationsFieldRefs {
   readonly thirdParties: Prisma.FieldRef<"BundlePrivacyDeclarations", 'String'>
   readonly dataRetentionDays: Prisma.FieldRef<"BundlePrivacyDeclarations", 'Int'>
   readonly privacyContactEmail: Prisma.FieldRef<"BundlePrivacyDeclarations", 'String'>
+  readonly declarationStatus: Prisma.FieldRef<"BundlePrivacyDeclarations", 'String'>
+  readonly revision: Prisma.FieldRef<"BundlePrivacyDeclarations", 'Int'>
+  readonly reviewedAt: Prisma.FieldRef<"BundlePrivacyDeclarations", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"BundlePrivacyDeclarations", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"BundlePrivacyDeclarations", 'DateTime'>
 }

@@ -13,10 +13,20 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test:portal": "tsx --test --test-concurrency=1 tests/portal/**/*.test.ts"
+    "test:portal": "tsx --test --test-concurrency=1 tests/portal/**/*.test.ts",
+    "test:ab": "tsx --test --test-concurrency=1 tests/ab-testing/**/*.test.ts",
+    "test:lepoship": "tsx --test --test-concurrency=1 tests/lepoship/**/*.test.ts",
+    "lepoship:search:index": "tsx scripts/setup-lepoship-search.ts",
+    "lepoship:reset": "tsx scripts/reset-lepoship-data.ts --confirm-reset-lepoship",
+    "lepoship:seed": "tsx scripts/seed-lepoship.ts",
+    "lepoship:schema:invariants": "tsx scripts/apply-lepoship-invariants.ts",
+    "lepoship:schema:verify": "tsx scripts/verify-lepoship-schema.ts",
+    "lepoship:worker": "tsx workers/lepoship/worker.ts"
   },
   "dependencies": {
     "@apollo/client": "4.1.6",
+    "@aws-sdk/client-s3": "^3.1085.0",
+    "@aws-sdk/lib-storage": "^3.1085.0",
     "@base-ui/react": "^1.5.0",
     "@devnomic/marquee": "^1.0.2",
     "@flaticon/flaticon-uicons": "^3.3.1",

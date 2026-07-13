@@ -5,6 +5,9 @@ import { runAutomatedQaTests } from "@/lib/server/automated-qa";
 import { promises as fs } from "fs";
 import path from "path";
 import crypto from "crypto";
+import { createReleaseCandidate } from "@/lib/server/lepoship/release-service";
+import { enqueueBuild } from "@/lib/server/build-queue";
+import { readBoundedText } from "@/lib/server/bounded-json";
 
 // AWS Signature V4 headers generator for Cloud storage operations
 function getSignatureV4Headers(
@@ -165,7 +168,7 @@ export async function POST(request: NextRequest) {
   let rawBody = "";
 
   try {
-    rawBody = await request.text();
+    rawBody = await readBoundedText(request, 2_097_152);
     payload = JSON.parse(rawBody);
   } catch (err) {
     return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
@@ -474,16 +477,7 @@ export async function POST(request: NextRequest) {
     const newVersion = cleanTag;
     const newBuildNumber = bundle.buildNumber + 1;
 
-    // Check if the release track for this version already exists to avoid duplication
-    const existingTrack = await prisma.bundleReleaseTracks.findUnique({
-      where: {
-        bundleId_track_version: {
-          bundleId: bundle.id,
-          track: "production",
-          version: newVersion,
-        },
-      },
-    });
+    const existingTrack = await prisma.bundleReleases.findFirst({ where: { bundleId: bundle.id, version: newVersion } });
 
     if (existingTrack) {
       const msg = `Version ${newVersion} already exists in track production. Skipping build.`;
@@ -496,88 +490,35 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: msg });
     }
 
-    // Fetch zipball from GitHub
-    const downloadUrl = `https://api.github.com/repos/${repoFullName}/zipball/${tag}`;
-    const response = await fetch(downloadUrl, {
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${decryptedToken}`,
-        "User-Agent": "Lepos-BDS",
+    const release = await createReleaseCandidate({
+      bundleId: bundle.id, channel: "production", version: newVersion,
+      source: "github", sourceCommit: tag, releaseNotes: `GitHub release tag ${tag}`,
+    });
+    const buildJob = await prisma.bundleBuildJobs.create({
+      data: {
+        id: crypto.randomUUID(), bundleId: bundle.id, releaseId: release.id, projectId,
+        status: "queued", attempt: 0, maxAttempts: 3, createdAt: new Date(), updatedAt: new Date(),
       },
     });
-
-    if (!response.ok) {
-      throw new Error(`GitHub download failed with status ${response.status}: ${response.statusText}`);
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const fileSize = BigInt(buffer.length);
-
-    // Compute checksum (SHA-256)
-    const hash = crypto.createHash("sha256");
-    hash.update(buffer);
-    const checksum = hash.digest("hex");
-
-    // Define saving path under public/bundles/[projectId]
-    const safeTagName = tag.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const timestamp = Date.now();
-    const fileName = `github-${safeTagName}-${timestamp}.zip`;
-    const uploadDir = path.join(process.cwd(), "public", "bundles", projectId);
-
-    // Ensure upload directory exists
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    const filePath = path.join(uploadDir, fileName);
-    await fs.writeFile(filePath, buffer);
-
-    const relativeStoragePath = `/bundles/${projectId}/${fileName}`;
-    const now = new Date();
-
-    // Update DB
-    await prisma.$transaction(async (tx) => {
-      // Update Bundles record
-      await tx.bundles.update({
-        where: { id: bundle.id },
-        data: {
-          version: newVersion,
-          buildNumber: newBuildNumber,
-          storagePath: relativeStoragePath,
-          fileSize: fileSize,
-          checksum: checksum,
-          status: "published",
-          updatedAt: now,
-        },
-      });
-
-      // Insert Release Track entry
-      await tx.bundleReleaseTracks.create({
-        data: {
-          id: crypto.randomUUID(),
-          bundleId: bundle.id,
-          track: "production",
-          version: newVersion,
-          buildNumber: newBuildNumber,
-          storagePath: relativeStoragePath,
-          releaseNotes: `GitHub auto-release from tag ${tag}`,
-          status: "active",
-          createdAt: now,
-        },
-      });
+    await enqueueBuild({
+      projectId, bundleId: bundle.id, buildNumber: release.buildNumber, version: newVersion,
+      config: { platform: configObj.platform || "expo", gitRepoUrl: `https://github.com/${repoFullName}.git`, gitBranch: tag },
+      trackId: release.id, releaseId: release.id, buildJobId: buildJob.id,
     });
 
     await appendIntegrationLog(integration.id, integration.config, {
       event,
       status: "success",
       statusCode: 200,
-      message: `Successfully packaged tag ${tag} as version ${newVersion} (build ${newBuildNumber})`,
+      message: `Queued tag ${tag} as release ${release.id} for isolated build and scan`,
     });
 
     return NextResponse.json({
       success: true,
       version: newVersion,
-      buildNumber: newBuildNumber,
-      storagePath: relativeStoragePath,
+      buildNumber: release.buildNumber,
+      releaseId: release.id,
+      buildJobId: buildJob.id,
     });
   } catch (error: any) {
     const errorMsg = error?.message || "Internal server error";

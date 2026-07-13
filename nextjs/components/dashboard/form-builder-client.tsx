@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { createFormAction, deleteFormAction, updateFormSettingsAction } from "@/app/actions/forms";
+import { runControlPlaneCronJobAction } from "@/app/actions/control-plane";
 import { toast } from "sonner";
 import { RefreshCw } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -150,10 +151,9 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
   const handleRunRetryJob = async () => {
     setIsRetryingWebhooks(true);
     try {
-      const res = await fetch("/api/cron/webhook-retry", { method: "POST" });
-      const data = await res.json();
+      const data = await runControlPlaneCronJobAction("webhook-retry");
       if (data.success) {
-        toast.success(`Retry job completed. Processed: ${data.processed}, Succeeded: ${data.succeeded}`);
+        toast.success(`Retry job completed. Processed: ${data.processed ?? 0}`);
         router.refresh();
       } else {
         toast.error(`Error running retry job: ${data.error}`);

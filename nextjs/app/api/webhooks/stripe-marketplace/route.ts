@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/server/prisma";
 import { constructMarketplaceWebhookEvent, isStripeAvailable } from "@/lib/server/stripe-connect";
 import { queueWebhookEvent } from "@/lib/server/webhook-dispatcher";
+import { postLedgerTransaction } from "@/lib/server/lepoship/ledger";
+import { claimStripeWebhook, completeStripeWebhook, failStripeWebhook } from "@/lib/server/lepoship/stripe-webhook-idempotency";
+import { readBoundedText } from "@/lib/server/bounded-json";
 
 function fromStripeAmount(amountInMinor: number, currency: string): number {
   const zeroDecimal = ["bif", "djf", "gnf", "jpy", "kmf", "lrd", "mga", "pyg", "rwf", "ugx", "vnd", "vuv", "xaf", "xof", "xpf"];
@@ -12,14 +15,16 @@ function fromStripeAmount(amountInMinor: number, currency: string): number {
 }
 
 export async function POST(req: NextRequest) {
+  let stripeEventRecordId: string | null = null;
   try {
-    const rawBody = await req.text();
+    const rawBody = await readBoundedText(req, 1_048_576);
     const signature = req.headers.get("stripe-signature") || "";
     const webhookSecret = process.env.STRIPE_MARKETPLACE_WEBHOOK_SECRET || "";
 
     if (!isStripeAvailable()) {
       return NextResponse.json({ error: "Stripe is not configured" }, { status: 503 });
     }
+
     if (!signature || !webhookSecret) {
       return NextResponse.json({ error: "Missing signature or webhook secret" }, { status: 400 });
     }
@@ -31,6 +36,9 @@ export async function POST(req: NextRequest) {
       console.error(`[Stripe Marketplace Webhook] Verification failed: ${err.message}`);
       return NextResponse.json({ error: `Verification failed: ${err.message}` }, { status: 400 });
     }
+    const claimedEvent = await claimStripeWebhook(event.id, event.type, rawBody);
+    if (!claimedEvent) return NextResponse.json({ received: true, duplicate: true });
+    stripeEventRecordId = claimedEvent.id;
 
     console.log(`[Stripe Marketplace Webhook] Received event type: ${event.type}`);
 
@@ -104,6 +112,22 @@ export async function POST(req: NextRequest) {
                 createdAt: now,
                 updatedAt: now,
               },
+            });
+            await Promise.all([
+              tx.bundleFinancialLedgerEntries.create({ data: { id: crypto.randomUUID(), bundleId, orderId, entryType: "gross_revenue", amount: totalAmount, currency, idempotencyKey: `stripe:${sessionId}:gross`, providerRef: sessionId, createdAt: now } }),
+              tx.bundleFinancialLedgerEntries.create({ data: { id: crypto.randomUUID(), bundleId, orderId, entryType: "platform_fee", amount: -platformFee, currency, idempotencyKey: `stripe:${sessionId}:fee`, providerRef: sessionId, createdAt: now } }),
+              tx.bundleFinancialLedgerEntries.create({ data: { id: crypto.randomUUID(), bundleId, orderId, entryType: "developer_payable", amount: partnerPayout, currency, idempotencyKey: `stripe:${sessionId}:payable`, providerRef: sessionId, createdAt: now } }),
+            ]);
+            const grossMinor = BigInt(session.amount_total || 0);
+            const feeMinor = grossMinor * BigInt(Math.round(Math.max(0, Math.min(100, feePercent)) * 100)) / BigInt(10_000);
+            await postLedgerTransaction(tx, {
+              bundleId, orderId, transactionType: "sale", providerRef: sessionId,
+              idempotencyKey: `stripe-sale:${sessionId}`, currency,
+              postings: [
+                { accountCode: "stripe_clearing", accountType: "asset", direction: "debit", amountMinor: grossMinor },
+                { accountCode: "platform_fee_revenue", accountType: "revenue", direction: "credit", amountMinor: feeMinor },
+                { accountCode: "developer_payable", accountType: "liability", direction: "credit", amountMinor: grossMinor - feeMinor },
+              ],
             });
 
             // Create Order Item
@@ -467,8 +491,10 @@ export async function POST(req: NextRequest) {
         console.log(`[Stripe Marketplace Webhook] Unhandled event type: ${event.type}`);
     }
 
+    await completeStripeWebhook(claimedEvent.id);
     return NextResponse.json({ received: true });
   } catch (error: any) {
+    if (stripeEventRecordId) await failStripeWebhook(stripeEventRecordId, error).catch(() => undefined);
     console.error("[Stripe Marketplace Webhook] Exception occurred:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -38,6 +38,7 @@ export type BundleReviewQueueMinAggregateOutputType = {
   id: string | null
   bundleId: string | null
   submittedVersionId: string | null
+  releaseId: string | null
   status: string | null
   reviewerId: string | null
   priority: number | null
@@ -51,6 +52,7 @@ export type BundleReviewQueueMaxAggregateOutputType = {
   id: string | null
   bundleId: string | null
   submittedVersionId: string | null
+  releaseId: string | null
   status: string | null
   reviewerId: string | null
   priority: number | null
@@ -64,6 +66,7 @@ export type BundleReviewQueueCountAggregateOutputType = {
   id: number
   bundleId: number
   submittedVersionId: number
+  releaseId: number
   status: number
   reviewerId: number
   priority: number
@@ -87,6 +90,7 @@ export type BundleReviewQueueMinAggregateInputType = {
   id?: true
   bundleId?: true
   submittedVersionId?: true
+  releaseId?: true
   status?: true
   reviewerId?: true
   priority?: true
@@ -100,6 +104,7 @@ export type BundleReviewQueueMaxAggregateInputType = {
   id?: true
   bundleId?: true
   submittedVersionId?: true
+  releaseId?: true
   status?: true
   reviewerId?: true
   priority?: true
@@ -113,6 +118,7 @@ export type BundleReviewQueueCountAggregateInputType = {
   id?: true
   bundleId?: true
   submittedVersionId?: true
+  releaseId?: true
   status?: true
   reviewerId?: true
   priority?: true
@@ -213,6 +219,7 @@ export type BundleReviewQueueGroupByOutputType = {
   id: string
   bundleId: string
   submittedVersionId: string | null
+  releaseId: string | null
   status: string
   reviewerId: string | null
   priority: number
@@ -249,6 +256,7 @@ export type BundleReviewQueueWhereInput = {
   id?: Prisma.UuidFilter<"BundleReviewQueue"> | string
   bundleId?: Prisma.UuidFilter<"BundleReviewQueue"> | string
   submittedVersionId?: Prisma.UuidNullableFilter<"BundleReviewQueue"> | string | null
+  releaseId?: Prisma.UuidNullableFilter<"BundleReviewQueue"> | string | null
   status?: Prisma.StringFilter<"BundleReviewQueue"> | string
   reviewerId?: Prisma.UuidNullableFilter<"BundleReviewQueue"> | string | null
   priority?: Prisma.IntFilter<"BundleReviewQueue"> | number
@@ -259,12 +267,14 @@ export type BundleReviewQueueWhereInput = {
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
   reviewer?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   submittedVersion?: Prisma.XOR<Prisma.BundleVersionHistoryNullableScalarRelationFilter, Prisma.BundleVersionHistoryWhereInput> | null
+  release?: Prisma.XOR<Prisma.BundleReleasesNullableScalarRelationFilter, Prisma.BundleReleasesWhereInput> | null
 }
 
 export type BundleReviewQueueOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   submittedVersionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  releaseId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   reviewerId?: Prisma.SortOrderInput | Prisma.SortOrder
   priority?: Prisma.SortOrder
@@ -275,10 +285,12 @@ export type BundleReviewQueueOrderByWithRelationInput = {
   bundle?: Prisma.BundlesOrderByWithRelationInput
   reviewer?: Prisma.UserOrderByWithRelationInput
   submittedVersion?: Prisma.BundleVersionHistoryOrderByWithRelationInput
+  release?: Prisma.BundleReleasesOrderByWithRelationInput
 }
 
 export type BundleReviewQueueWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  releaseId?: string
   AND?: Prisma.BundleReviewQueueWhereInput | Prisma.BundleReviewQueueWhereInput[]
   OR?: Prisma.BundleReviewQueueWhereInput[]
   NOT?: Prisma.BundleReviewQueueWhereInput | Prisma.BundleReviewQueueWhereInput[]
@@ -294,12 +306,14 @@ export type BundleReviewQueueWhereUniqueInput = Prisma.AtLeast<{
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
   reviewer?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   submittedVersion?: Prisma.XOR<Prisma.BundleVersionHistoryNullableScalarRelationFilter, Prisma.BundleVersionHistoryWhereInput> | null
-}, "id">
+  release?: Prisma.XOR<Prisma.BundleReleasesNullableScalarRelationFilter, Prisma.BundleReleasesWhereInput> | null
+}, "id" | "releaseId">
 
 export type BundleReviewQueueOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   submittedVersionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  releaseId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   reviewerId?: Prisma.SortOrderInput | Prisma.SortOrder
   priority?: Prisma.SortOrder
@@ -321,6 +335,7 @@ export type BundleReviewQueueScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"BundleReviewQueue"> | string
   bundleId?: Prisma.UuidWithAggregatesFilter<"BundleReviewQueue"> | string
   submittedVersionId?: Prisma.UuidNullableWithAggregatesFilter<"BundleReviewQueue"> | string | null
+  releaseId?: Prisma.UuidNullableWithAggregatesFilter<"BundleReviewQueue"> | string | null
   status?: Prisma.StringWithAggregatesFilter<"BundleReviewQueue"> | string
   reviewerId?: Prisma.UuidNullableWithAggregatesFilter<"BundleReviewQueue"> | string | null
   priority?: Prisma.IntWithAggregatesFilter<"BundleReviewQueue"> | number
@@ -341,12 +356,14 @@ export type BundleReviewQueueCreateInput = {
   bundle: Prisma.BundlesCreateNestedOneWithoutReviewQueueInput
   reviewer?: Prisma.UserCreateNestedOneWithoutReviewQueueReviewedInput
   submittedVersion?: Prisma.BundleVersionHistoryCreateNestedOneWithoutReviewQueueInput
+  release?: Prisma.BundleReleasesCreateNestedOneWithoutReviewQueueInput
 }
 
 export type BundleReviewQueueUncheckedCreateInput = {
   id: string
   bundleId: string
   submittedVersionId?: string | null
+  releaseId?: string | null
   status?: string
   reviewerId?: string | null
   priority?: number
@@ -367,12 +384,14 @@ export type BundleReviewQueueUpdateInput = {
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutReviewQueueNestedInput
   reviewer?: Prisma.UserUpdateOneWithoutReviewQueueReviewedNestedInput
   submittedVersion?: Prisma.BundleVersionHistoryUpdateOneWithoutReviewQueueNestedInput
+  release?: Prisma.BundleReleasesUpdateOneWithoutReviewQueueNestedInput
 }
 
 export type BundleReviewQueueUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   submittedVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
@@ -386,6 +405,7 @@ export type BundleReviewQueueCreateManyInput = {
   id: string
   bundleId: string
   submittedVersionId?: string | null
+  releaseId?: string | null
   status?: string
   reviewerId?: string | null
   priority?: number
@@ -409,6 +429,7 @@ export type BundleReviewQueueUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   submittedVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
@@ -432,6 +453,7 @@ export type BundleReviewQueueCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   submittedVersionId?: Prisma.SortOrder
+  releaseId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   reviewerId?: Prisma.SortOrder
   priority?: Prisma.SortOrder
@@ -449,6 +471,7 @@ export type BundleReviewQueueMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   submittedVersionId?: Prisma.SortOrder
+  releaseId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   reviewerId?: Prisma.SortOrder
   priority?: Prisma.SortOrder
@@ -462,6 +485,7 @@ export type BundleReviewQueueMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   bundleId?: Prisma.SortOrder
   submittedVersionId?: Prisma.SortOrder
+  releaseId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   reviewerId?: Prisma.SortOrder
   priority?: Prisma.SortOrder
@@ -559,6 +583,48 @@ export type BundleReviewQueueUncheckedUpdateManyWithoutBundleNestedInput = {
   deleteMany?: Prisma.BundleReviewQueueScalarWhereInput | Prisma.BundleReviewQueueScalarWhereInput[]
 }
 
+export type BundleReviewQueueCreateNestedManyWithoutReleaseInput = {
+  create?: Prisma.XOR<Prisma.BundleReviewQueueCreateWithoutReleaseInput, Prisma.BundleReviewQueueUncheckedCreateWithoutReleaseInput> | Prisma.BundleReviewQueueCreateWithoutReleaseInput[] | Prisma.BundleReviewQueueUncheckedCreateWithoutReleaseInput[]
+  connectOrCreate?: Prisma.BundleReviewQueueCreateOrConnectWithoutReleaseInput | Prisma.BundleReviewQueueCreateOrConnectWithoutReleaseInput[]
+  createMany?: Prisma.BundleReviewQueueCreateManyReleaseInputEnvelope
+  connect?: Prisma.BundleReviewQueueWhereUniqueInput | Prisma.BundleReviewQueueWhereUniqueInput[]
+}
+
+export type BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput = {
+  create?: Prisma.XOR<Prisma.BundleReviewQueueCreateWithoutReleaseInput, Prisma.BundleReviewQueueUncheckedCreateWithoutReleaseInput> | Prisma.BundleReviewQueueCreateWithoutReleaseInput[] | Prisma.BundleReviewQueueUncheckedCreateWithoutReleaseInput[]
+  connectOrCreate?: Prisma.BundleReviewQueueCreateOrConnectWithoutReleaseInput | Prisma.BundleReviewQueueCreateOrConnectWithoutReleaseInput[]
+  createMany?: Prisma.BundleReviewQueueCreateManyReleaseInputEnvelope
+  connect?: Prisma.BundleReviewQueueWhereUniqueInput | Prisma.BundleReviewQueueWhereUniqueInput[]
+}
+
+export type BundleReviewQueueUpdateManyWithoutReleaseNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReviewQueueCreateWithoutReleaseInput, Prisma.BundleReviewQueueUncheckedCreateWithoutReleaseInput> | Prisma.BundleReviewQueueCreateWithoutReleaseInput[] | Prisma.BundleReviewQueueUncheckedCreateWithoutReleaseInput[]
+  connectOrCreate?: Prisma.BundleReviewQueueCreateOrConnectWithoutReleaseInput | Prisma.BundleReviewQueueCreateOrConnectWithoutReleaseInput[]
+  upsert?: Prisma.BundleReviewQueueUpsertWithWhereUniqueWithoutReleaseInput | Prisma.BundleReviewQueueUpsertWithWhereUniqueWithoutReleaseInput[]
+  createMany?: Prisma.BundleReviewQueueCreateManyReleaseInputEnvelope
+  set?: Prisma.BundleReviewQueueWhereUniqueInput | Prisma.BundleReviewQueueWhereUniqueInput[]
+  disconnect?: Prisma.BundleReviewQueueWhereUniqueInput | Prisma.BundleReviewQueueWhereUniqueInput[]
+  delete?: Prisma.BundleReviewQueueWhereUniqueInput | Prisma.BundleReviewQueueWhereUniqueInput[]
+  connect?: Prisma.BundleReviewQueueWhereUniqueInput | Prisma.BundleReviewQueueWhereUniqueInput[]
+  update?: Prisma.BundleReviewQueueUpdateWithWhereUniqueWithoutReleaseInput | Prisma.BundleReviewQueueUpdateWithWhereUniqueWithoutReleaseInput[]
+  updateMany?: Prisma.BundleReviewQueueUpdateManyWithWhereWithoutReleaseInput | Prisma.BundleReviewQueueUpdateManyWithWhereWithoutReleaseInput[]
+  deleteMany?: Prisma.BundleReviewQueueScalarWhereInput | Prisma.BundleReviewQueueScalarWhereInput[]
+}
+
+export type BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReviewQueueCreateWithoutReleaseInput, Prisma.BundleReviewQueueUncheckedCreateWithoutReleaseInput> | Prisma.BundleReviewQueueCreateWithoutReleaseInput[] | Prisma.BundleReviewQueueUncheckedCreateWithoutReleaseInput[]
+  connectOrCreate?: Prisma.BundleReviewQueueCreateOrConnectWithoutReleaseInput | Prisma.BundleReviewQueueCreateOrConnectWithoutReleaseInput[]
+  upsert?: Prisma.BundleReviewQueueUpsertWithWhereUniqueWithoutReleaseInput | Prisma.BundleReviewQueueUpsertWithWhereUniqueWithoutReleaseInput[]
+  createMany?: Prisma.BundleReviewQueueCreateManyReleaseInputEnvelope
+  set?: Prisma.BundleReviewQueueWhereUniqueInput | Prisma.BundleReviewQueueWhereUniqueInput[]
+  disconnect?: Prisma.BundleReviewQueueWhereUniqueInput | Prisma.BundleReviewQueueWhereUniqueInput[]
+  delete?: Prisma.BundleReviewQueueWhereUniqueInput | Prisma.BundleReviewQueueWhereUniqueInput[]
+  connect?: Prisma.BundleReviewQueueWhereUniqueInput | Prisma.BundleReviewQueueWhereUniqueInput[]
+  update?: Prisma.BundleReviewQueueUpdateWithWhereUniqueWithoutReleaseInput | Prisma.BundleReviewQueueUpdateWithWhereUniqueWithoutReleaseInput[]
+  updateMany?: Prisma.BundleReviewQueueUpdateManyWithWhereWithoutReleaseInput | Prisma.BundleReviewQueueUpdateManyWithWhereWithoutReleaseInput[]
+  deleteMany?: Prisma.BundleReviewQueueScalarWhereInput | Prisma.BundleReviewQueueScalarWhereInput[]
+}
+
 export type BundleReviewQueueCreateNestedManyWithoutSubmittedVersionInput = {
   create?: Prisma.XOR<Prisma.BundleReviewQueueCreateWithoutSubmittedVersionInput, Prisma.BundleReviewQueueUncheckedCreateWithoutSubmittedVersionInput> | Prisma.BundleReviewQueueCreateWithoutSubmittedVersionInput[] | Prisma.BundleReviewQueueUncheckedCreateWithoutSubmittedVersionInput[]
   connectOrCreate?: Prisma.BundleReviewQueueCreateOrConnectWithoutSubmittedVersionInput | Prisma.BundleReviewQueueCreateOrConnectWithoutSubmittedVersionInput[]
@@ -611,12 +677,14 @@ export type BundleReviewQueueCreateWithoutReviewerInput = {
   updatedAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutReviewQueueInput
   submittedVersion?: Prisma.BundleVersionHistoryCreateNestedOneWithoutReviewQueueInput
+  release?: Prisma.BundleReleasesCreateNestedOneWithoutReviewQueueInput
 }
 
 export type BundleReviewQueueUncheckedCreateWithoutReviewerInput = {
   id: string
   bundleId: string
   submittedVersionId?: string | null
+  releaseId?: string | null
   status?: string
   priority?: number
   reviewedAt?: Date | string | null
@@ -658,6 +726,7 @@ export type BundleReviewQueueScalarWhereInput = {
   id?: Prisma.UuidFilter<"BundleReviewQueue"> | string
   bundleId?: Prisma.UuidFilter<"BundleReviewQueue"> | string
   submittedVersionId?: Prisma.UuidNullableFilter<"BundleReviewQueue"> | string | null
+  releaseId?: Prisma.UuidNullableFilter<"BundleReviewQueue"> | string | null
   status?: Prisma.StringFilter<"BundleReviewQueue"> | string
   reviewerId?: Prisma.UuidNullableFilter<"BundleReviewQueue"> | string | null
   priority?: Prisma.IntFilter<"BundleReviewQueue"> | number
@@ -677,11 +746,13 @@ export type BundleReviewQueueCreateWithoutBundleInput = {
   updatedAt: Date | string
   reviewer?: Prisma.UserCreateNestedOneWithoutReviewQueueReviewedInput
   submittedVersion?: Prisma.BundleVersionHistoryCreateNestedOneWithoutReviewQueueInput
+  release?: Prisma.BundleReleasesCreateNestedOneWithoutReviewQueueInput
 }
 
 export type BundleReviewQueueUncheckedCreateWithoutBundleInput = {
   id: string
   submittedVersionId?: string | null
+  releaseId?: string | null
   status?: string
   reviewerId?: string | null
   priority?: number
@@ -717,6 +788,58 @@ export type BundleReviewQueueUpdateManyWithWhereWithoutBundleInput = {
   data: Prisma.XOR<Prisma.BundleReviewQueueUpdateManyMutationInput, Prisma.BundleReviewQueueUncheckedUpdateManyWithoutBundleInput>
 }
 
+export type BundleReviewQueueCreateWithoutReleaseInput = {
+  id: string
+  status?: string
+  priority?: number
+  reviewedAt?: Date | string | null
+  notes?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutReviewQueueInput
+  reviewer?: Prisma.UserCreateNestedOneWithoutReviewQueueReviewedInput
+  submittedVersion?: Prisma.BundleVersionHistoryCreateNestedOneWithoutReviewQueueInput
+}
+
+export type BundleReviewQueueUncheckedCreateWithoutReleaseInput = {
+  id: string
+  bundleId: string
+  submittedVersionId?: string | null
+  status?: string
+  reviewerId?: string | null
+  priority?: number
+  reviewedAt?: Date | string | null
+  notes?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+}
+
+export type BundleReviewQueueCreateOrConnectWithoutReleaseInput = {
+  where: Prisma.BundleReviewQueueWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleReviewQueueCreateWithoutReleaseInput, Prisma.BundleReviewQueueUncheckedCreateWithoutReleaseInput>
+}
+
+export type BundleReviewQueueCreateManyReleaseInputEnvelope = {
+  data: Prisma.BundleReviewQueueCreateManyReleaseInput | Prisma.BundleReviewQueueCreateManyReleaseInput[]
+  skipDuplicates?: boolean
+}
+
+export type BundleReviewQueueUpsertWithWhereUniqueWithoutReleaseInput = {
+  where: Prisma.BundleReviewQueueWhereUniqueInput
+  update: Prisma.XOR<Prisma.BundleReviewQueueUpdateWithoutReleaseInput, Prisma.BundleReviewQueueUncheckedUpdateWithoutReleaseInput>
+  create: Prisma.XOR<Prisma.BundleReviewQueueCreateWithoutReleaseInput, Prisma.BundleReviewQueueUncheckedCreateWithoutReleaseInput>
+}
+
+export type BundleReviewQueueUpdateWithWhereUniqueWithoutReleaseInput = {
+  where: Prisma.BundleReviewQueueWhereUniqueInput
+  data: Prisma.XOR<Prisma.BundleReviewQueueUpdateWithoutReleaseInput, Prisma.BundleReviewQueueUncheckedUpdateWithoutReleaseInput>
+}
+
+export type BundleReviewQueueUpdateManyWithWhereWithoutReleaseInput = {
+  where: Prisma.BundleReviewQueueScalarWhereInput
+  data: Prisma.XOR<Prisma.BundleReviewQueueUpdateManyMutationInput, Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseInput>
+}
+
 export type BundleReviewQueueCreateWithoutSubmittedVersionInput = {
   id: string
   status?: string
@@ -727,11 +850,13 @@ export type BundleReviewQueueCreateWithoutSubmittedVersionInput = {
   updatedAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutReviewQueueInput
   reviewer?: Prisma.UserCreateNestedOneWithoutReviewQueueReviewedInput
+  release?: Prisma.BundleReleasesCreateNestedOneWithoutReviewQueueInput
 }
 
 export type BundleReviewQueueUncheckedCreateWithoutSubmittedVersionInput = {
   id: string
   bundleId: string
+  releaseId?: string | null
   status?: string
   reviewerId?: string | null
   priority?: number
@@ -771,6 +896,7 @@ export type BundleReviewQueueCreateManyReviewerInput = {
   id: string
   bundleId: string
   submittedVersionId?: string | null
+  releaseId?: string | null
   status?: string
   priority?: number
   reviewedAt?: Date | string | null
@@ -789,12 +915,14 @@ export type BundleReviewQueueUpdateWithoutReviewerInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutReviewQueueNestedInput
   submittedVersion?: Prisma.BundleVersionHistoryUpdateOneWithoutReviewQueueNestedInput
+  release?: Prisma.BundleReleasesUpdateOneWithoutReviewQueueNestedInput
 }
 
 export type BundleReviewQueueUncheckedUpdateWithoutReviewerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   submittedVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -807,6 +935,7 @@ export type BundleReviewQueueUncheckedUpdateManyWithoutReviewerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   submittedVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -818,6 +947,7 @@ export type BundleReviewQueueUncheckedUpdateManyWithoutReviewerInput = {
 export type BundleReviewQueueCreateManyBundleInput = {
   id: string
   submittedVersionId?: string | null
+  releaseId?: string | null
   status?: string
   reviewerId?: string | null
   priority?: number
@@ -837,11 +967,13 @@ export type BundleReviewQueueUpdateWithoutBundleInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviewer?: Prisma.UserUpdateOneWithoutReviewQueueReviewedNestedInput
   submittedVersion?: Prisma.BundleVersionHistoryUpdateOneWithoutReviewQueueNestedInput
+  release?: Prisma.BundleReleasesUpdateOneWithoutReviewQueueNestedInput
 }
 
 export type BundleReviewQueueUncheckedUpdateWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   submittedVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
@@ -853,6 +985,59 @@ export type BundleReviewQueueUncheckedUpdateWithoutBundleInput = {
 
 export type BundleReviewQueueUncheckedUpdateManyWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  submittedVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  reviewerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.IntFieldUpdateOperationsInput | number
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleReviewQueueCreateManyReleaseInput = {
+  id: string
+  bundleId: string
+  submittedVersionId?: string | null
+  status?: string
+  reviewerId?: string | null
+  priority?: number
+  reviewedAt?: Date | string | null
+  notes?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+}
+
+export type BundleReviewQueueUpdateWithoutReleaseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.IntFieldUpdateOperationsInput | number
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutReviewQueueNestedInput
+  reviewer?: Prisma.UserUpdateOneWithoutReviewQueueReviewedNestedInput
+  submittedVersion?: Prisma.BundleVersionHistoryUpdateOneWithoutReviewQueueNestedInput
+}
+
+export type BundleReviewQueueUncheckedUpdateWithoutReleaseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  submittedVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  reviewerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.IntFieldUpdateOperationsInput | number
+  reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleReviewQueueUncheckedUpdateManyWithoutReleaseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   submittedVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -866,6 +1051,7 @@ export type BundleReviewQueueUncheckedUpdateManyWithoutBundleInput = {
 export type BundleReviewQueueCreateManySubmittedVersionInput = {
   id: string
   bundleId: string
+  releaseId?: string | null
   status?: string
   reviewerId?: string | null
   priority?: number
@@ -885,11 +1071,13 @@ export type BundleReviewQueueUpdateWithoutSubmittedVersionInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutReviewQueueNestedInput
   reviewer?: Prisma.UserUpdateOneWithoutReviewQueueReviewedNestedInput
+  release?: Prisma.BundleReleasesUpdateOneWithoutReviewQueueNestedInput
 }
 
 export type BundleReviewQueueUncheckedUpdateWithoutSubmittedVersionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
@@ -902,6 +1090,7 @@ export type BundleReviewQueueUncheckedUpdateWithoutSubmittedVersionInput = {
 export type BundleReviewQueueUncheckedUpdateManyWithoutSubmittedVersionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   reviewerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   priority?: Prisma.IntFieldUpdateOperationsInput | number
@@ -917,6 +1106,7 @@ export type BundleReviewQueueSelect<ExtArgs extends runtime.Types.Extensions.Int
   id?: boolean
   bundleId?: boolean
   submittedVersionId?: boolean
+  releaseId?: boolean
   status?: boolean
   reviewerId?: boolean
   priority?: boolean
@@ -927,12 +1117,14 @@ export type BundleReviewQueueSelect<ExtArgs extends runtime.Types.Extensions.Int
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleReviewQueue$reviewerArgs<ExtArgs>
   submittedVersion?: boolean | Prisma.BundleReviewQueue$submittedVersionArgs<ExtArgs>
+  release?: boolean | Prisma.BundleReviewQueue$releaseArgs<ExtArgs>
 }, ExtArgs["result"]["bundleReviewQueue"]>
 
 export type BundleReviewQueueSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   bundleId?: boolean
   submittedVersionId?: boolean
+  releaseId?: boolean
   status?: boolean
   reviewerId?: boolean
   priority?: boolean
@@ -943,12 +1135,14 @@ export type BundleReviewQueueSelectCreateManyAndReturn<ExtArgs extends runtime.T
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleReviewQueue$reviewerArgs<ExtArgs>
   submittedVersion?: boolean | Prisma.BundleReviewQueue$submittedVersionArgs<ExtArgs>
+  release?: boolean | Prisma.BundleReviewQueue$releaseArgs<ExtArgs>
 }, ExtArgs["result"]["bundleReviewQueue"]>
 
 export type BundleReviewQueueSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   bundleId?: boolean
   submittedVersionId?: boolean
+  releaseId?: boolean
   status?: boolean
   reviewerId?: boolean
   priority?: boolean
@@ -959,12 +1153,14 @@ export type BundleReviewQueueSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleReviewQueue$reviewerArgs<ExtArgs>
   submittedVersion?: boolean | Prisma.BundleReviewQueue$submittedVersionArgs<ExtArgs>
+  release?: boolean | Prisma.BundleReviewQueue$releaseArgs<ExtArgs>
 }, ExtArgs["result"]["bundleReviewQueue"]>
 
 export type BundleReviewQueueSelectScalar = {
   id?: boolean
   bundleId?: boolean
   submittedVersionId?: boolean
+  releaseId?: boolean
   status?: boolean
   reviewerId?: boolean
   priority?: boolean
@@ -974,21 +1170,24 @@ export type BundleReviewQueueSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BundleReviewQueueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "submittedVersionId" | "status" | "reviewerId" | "priority" | "reviewedAt" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleReviewQueue"]>
+export type BundleReviewQueueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "submittedVersionId" | "releaseId" | "status" | "reviewerId" | "priority" | "reviewedAt" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleReviewQueue"]>
 export type BundleReviewQueueInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleReviewQueue$reviewerArgs<ExtArgs>
   submittedVersion?: boolean | Prisma.BundleReviewQueue$submittedVersionArgs<ExtArgs>
+  release?: boolean | Prisma.BundleReviewQueue$releaseArgs<ExtArgs>
 }
 export type BundleReviewQueueIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleReviewQueue$reviewerArgs<ExtArgs>
   submittedVersion?: boolean | Prisma.BundleReviewQueue$submittedVersionArgs<ExtArgs>
+  release?: boolean | Prisma.BundleReviewQueue$releaseArgs<ExtArgs>
 }
 export type BundleReviewQueueIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   reviewer?: boolean | Prisma.BundleReviewQueue$reviewerArgs<ExtArgs>
   submittedVersion?: boolean | Prisma.BundleReviewQueue$submittedVersionArgs<ExtArgs>
+  release?: boolean | Prisma.BundleReviewQueue$releaseArgs<ExtArgs>
 }
 
 export type $BundleReviewQueuePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -997,11 +1196,13 @@ export type $BundleReviewQueuePayload<ExtArgs extends runtime.Types.Extensions.I
     bundle: Prisma.$BundlesPayload<ExtArgs>
     reviewer: Prisma.$UserPayload<ExtArgs> | null
     submittedVersion: Prisma.$BundleVersionHistoryPayload<ExtArgs> | null
+    release: Prisma.$BundleReleasesPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     bundleId: string
     submittedVersionId: string | null
+    releaseId: string | null
     status: string
     reviewerId: string | null
     priority: number
@@ -1406,6 +1607,7 @@ export interface Prisma__BundleReviewQueueClient<T, Null = never, ExtArgs extend
   bundle<T extends Prisma.BundlesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundlesDefaultArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   reviewer<T extends Prisma.BundleReviewQueue$reviewerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReviewQueue$reviewerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   submittedVersion<T extends Prisma.BundleReviewQueue$submittedVersionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReviewQueue$submittedVersionArgs<ExtArgs>>): Prisma.Prisma__BundleVersionHistoryClient<runtime.Types.Result.GetResult<Prisma.$BundleVersionHistoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  release<T extends Prisma.BundleReviewQueue$releaseArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReviewQueue$releaseArgs<ExtArgs>>): Prisma.Prisma__BundleReleasesClient<runtime.Types.Result.GetResult<Prisma.$BundleReleasesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1438,6 +1640,7 @@ export interface BundleReviewQueueFieldRefs {
   readonly id: Prisma.FieldRef<"BundleReviewQueue", 'String'>
   readonly bundleId: Prisma.FieldRef<"BundleReviewQueue", 'String'>
   readonly submittedVersionId: Prisma.FieldRef<"BundleReviewQueue", 'String'>
+  readonly releaseId: Prisma.FieldRef<"BundleReviewQueue", 'String'>
   readonly status: Prisma.FieldRef<"BundleReviewQueue", 'String'>
   readonly reviewerId: Prisma.FieldRef<"BundleReviewQueue", 'String'>
   readonly priority: Prisma.FieldRef<"BundleReviewQueue", 'Int'>
@@ -1881,6 +2084,25 @@ export type BundleReviewQueue$submittedVersionArgs<ExtArgs extends runtime.Types
    */
   include?: Prisma.BundleVersionHistoryInclude<ExtArgs> | null
   where?: Prisma.BundleVersionHistoryWhereInput
+}
+
+/**
+ * BundleReviewQueue.release
+ */
+export type BundleReviewQueue$releaseArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleReleases
+   */
+  select?: Prisma.BundleReleasesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleReleases
+   */
+  omit?: Prisma.BundleReleasesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleReleasesInclude<ExtArgs> | null
+  where?: Prisma.BundleReleasesWhereInput
 }
 
 /**

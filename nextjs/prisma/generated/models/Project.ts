@@ -257,6 +257,7 @@ export type ProjectWhereInput = {
   members?: Prisma.ProjectMembershipListRelationFilter
   providerBindings?: Prisma.ProjectProviderBindingListRelationFilter
   leposhipBuilds?: Prisma.LepoShipBuildListRelationFilter
+  canonicalBuildJobs?: Prisma.BundleBuildJobsListRelationFilter
 }
 
 export type ProjectOrderByWithRelationInput = {
@@ -305,6 +306,7 @@ export type ProjectOrderByWithRelationInput = {
   members?: Prisma.ProjectMembershipOrderByRelationAggregateInput
   providerBindings?: Prisma.ProjectProviderBindingOrderByRelationAggregateInput
   leposhipBuilds?: Prisma.LepoShipBuildOrderByRelationAggregateInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsOrderByRelationAggregateInput
 }
 
 export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -356,6 +358,7 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   members?: Prisma.ProjectMembershipListRelationFilter
   providerBindings?: Prisma.ProjectProviderBindingListRelationFilter
   leposhipBuilds?: Prisma.LepoShipBuildListRelationFilter
+  canonicalBuildJobs?: Prisma.BundleBuildJobsListRelationFilter
 }, "id">
 
 export type ProjectOrderByWithAggregationInput = {
@@ -434,6 +437,7 @@ export type ProjectCreateInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateInput = {
@@ -480,6 +484,7 @@ export type ProjectUncheckedCreateInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUpdateInput = {
@@ -526,6 +531,7 @@ export type ProjectUpdateInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateInput = {
@@ -572,6 +578,7 @@ export type ProjectUncheckedUpdateInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyInput = {
@@ -726,6 +733,20 @@ export type ProjectUpdateOneWithoutBundleNestedInput = {
   delete?: Prisma.ProjectWhereInput | boolean
   connect?: Prisma.ProjectWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutBundleInput, Prisma.ProjectUpdateWithoutBundleInput>, Prisma.ProjectUncheckedUpdateWithoutBundleInput>
+}
+
+export type ProjectCreateNestedOneWithoutCanonicalBuildJobsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutCanonicalBuildJobsInput, Prisma.ProjectUncheckedCreateWithoutCanonicalBuildJobsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutCanonicalBuildJobsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutCanonicalBuildJobsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutCanonicalBuildJobsInput, Prisma.ProjectUncheckedCreateWithoutCanonicalBuildJobsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutCanonicalBuildJobsInput
+  upsert?: Prisma.ProjectUpsertWithoutCanonicalBuildJobsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutCanonicalBuildJobsInput, Prisma.ProjectUpdateWithoutCanonicalBuildJobsInput>, Prisma.ProjectUncheckedUpdateWithoutCanonicalBuildJobsInput>
 }
 
 export type ProjectCreateNestedOneWithoutDeployHooksInput = {
@@ -1261,6 +1282,7 @@ export type ProjectCreateWithoutOrganizationInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutOrganizationInput = {
@@ -1306,6 +1328,7 @@ export type ProjectUncheckedCreateWithoutOrganizationInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutOrganizationInput = {
@@ -1393,6 +1416,7 @@ export type ProjectCreateWithoutBundleInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutBundleInput = {
@@ -1438,6 +1462,7 @@ export type ProjectUncheckedCreateWithoutBundleInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutBundleInput = {
@@ -1499,6 +1524,7 @@ export type ProjectUpdateWithoutBundleInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutBundleInput = {
@@ -1512,6 +1538,207 @@ export type ProjectUncheckedUpdateWithoutBundleInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUncheckedUpdateOneWithoutProjectNestedInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUncheckedUpdateManyWithoutProjectNestedInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUncheckedUpdateOneWithoutProjectNestedInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUncheckedUpdateManyWithoutProjectNestedInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUncheckedUpdateManyWithoutProjectNestedInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUncheckedUpdateManyWithoutProjectNestedInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
+  providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutCanonicalBuildJobsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyCreateNestedOneWithoutProjectInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaCreateNestedManyWithoutProjectInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunCreateNestedManyWithoutProjectInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyCreateNestedOneWithoutProjectInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalCreateNestedManyWithoutProjectInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityCreateNestedManyWithoutProjectInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyCreateNestedManyWithoutProjectInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
+  providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutCanonicalBuildJobsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUncheckedCreateNestedOneWithoutProjectInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUncheckedCreateNestedManyWithoutProjectInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUncheckedCreateNestedManyWithoutProjectInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUncheckedCreateNestedOneWithoutProjectInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUncheckedCreateNestedManyWithoutProjectInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUncheckedCreateNestedManyWithoutProjectInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUncheckedCreateNestedManyWithoutProjectInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
+  providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutCanonicalBuildJobsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutCanonicalBuildJobsInput, Prisma.ProjectUncheckedCreateWithoutCanonicalBuildJobsInput>
+}
+
+export type ProjectUpsertWithoutCanonicalBuildJobsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutCanonicalBuildJobsInput, Prisma.ProjectUncheckedUpdateWithoutCanonicalBuildJobsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutCanonicalBuildJobsInput, Prisma.ProjectUncheckedCreateWithoutCanonicalBuildJobsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutCanonicalBuildJobsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutCanonicalBuildJobsInput, Prisma.ProjectUncheckedUpdateWithoutCanonicalBuildJobsInput>
+}
+
+export type ProjectUpdateWithoutCanonicalBuildJobsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUpdateOneWithoutProjectNestedInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUpdateManyWithoutProjectNestedInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUpdateManyWithoutProjectNestedInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUpdateOneWithoutProjectNestedInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUpdateManyWithoutProjectNestedInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUpdateManyWithoutProjectNestedInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUpdateManyWithoutProjectNestedInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
+  providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutCanonicalBuildJobsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
   deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
   firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
   cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
@@ -1589,6 +1816,7 @@ export type ProjectCreateWithoutDeployHooksInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutDeployHooksInput = {
@@ -1634,6 +1862,7 @@ export type ProjectUncheckedCreateWithoutDeployHooksInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutDeployHooksInput = {
@@ -1695,6 +1924,7 @@ export type ProjectUpdateWithoutDeployHooksInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutDeployHooksInput = {
@@ -1740,6 +1970,7 @@ export type ProjectUncheckedUpdateWithoutDeployHooksInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutFirewallRulesInput = {
@@ -1785,6 +2016,7 @@ export type ProjectCreateWithoutFirewallRulesInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutFirewallRulesInput = {
@@ -1830,6 +2062,7 @@ export type ProjectUncheckedCreateWithoutFirewallRulesInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutFirewallRulesInput = {
@@ -1891,6 +2124,7 @@ export type ProjectUpdateWithoutFirewallRulesInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutFirewallRulesInput = {
@@ -1936,6 +2170,7 @@ export type ProjectUncheckedUpdateWithoutFirewallRulesInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeDeploymentsInput = {
@@ -1981,6 +2216,7 @@ export type ProjectCreateWithoutNativeDeploymentsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeDeploymentsInput = {
@@ -2026,6 +2262,7 @@ export type ProjectUncheckedCreateWithoutNativeDeploymentsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeDeploymentsInput = {
@@ -2076,6 +2313,7 @@ export type ProjectCreateWithoutActiveNativeDeploymentInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutActiveNativeDeploymentInput = {
@@ -2121,6 +2359,7 @@ export type ProjectUncheckedCreateWithoutActiveNativeDeploymentInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutActiveNativeDeploymentInput = {
@@ -2187,6 +2426,7 @@ export type ProjectUpdateWithoutNativeDeploymentsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeDeploymentsInput = {
@@ -2232,6 +2472,7 @@ export type ProjectUncheckedUpdateWithoutNativeDeploymentsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUpsertWithWhereUniqueWithoutActiveNativeDeploymentInput = {
@@ -2293,6 +2534,7 @@ export type ProjectCreateWithoutNativeDomainConfigsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeDomainConfigsInput = {
@@ -2338,6 +2580,7 @@ export type ProjectUncheckedCreateWithoutNativeDomainConfigsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeDomainConfigsInput = {
@@ -2399,6 +2642,7 @@ export type ProjectUpdateWithoutNativeDomainConfigsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeDomainConfigsInput = {
@@ -2444,6 +2688,7 @@ export type ProjectUncheckedUpdateWithoutNativeDomainConfigsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeEdgeFunctionsInput = {
@@ -2489,6 +2734,7 @@ export type ProjectCreateWithoutNativeEdgeFunctionsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeEdgeFunctionsInput = {
@@ -2534,6 +2780,7 @@ export type ProjectUncheckedCreateWithoutNativeEdgeFunctionsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeEdgeFunctionsInput = {
@@ -2595,6 +2842,7 @@ export type ProjectUpdateWithoutNativeEdgeFunctionsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeEdgeFunctionsInput = {
@@ -2640,6 +2888,7 @@ export type ProjectUncheckedUpdateWithoutNativeEdgeFunctionsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeCacheEntriesInput = {
@@ -2685,6 +2934,7 @@ export type ProjectCreateWithoutNativeCacheEntriesInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeCacheEntriesInput = {
@@ -2730,6 +2980,7 @@ export type ProjectUncheckedCreateWithoutNativeCacheEntriesInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeCacheEntriesInput = {
@@ -2791,6 +3042,7 @@ export type ProjectUpdateWithoutNativeCacheEntriesInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeCacheEntriesInput = {
@@ -2836,6 +3088,7 @@ export type ProjectUncheckedUpdateWithoutNativeCacheEntriesInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeReplaySessionsInput = {
@@ -2881,6 +3134,7 @@ export type ProjectCreateWithoutNativeReplaySessionsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeReplaySessionsInput = {
@@ -2926,6 +3180,7 @@ export type ProjectUncheckedCreateWithoutNativeReplaySessionsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeReplaySessionsInput = {
@@ -2987,6 +3242,7 @@ export type ProjectUpdateWithoutNativeReplaySessionsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeReplaySessionsInput = {
@@ -3032,6 +3288,7 @@ export type ProjectUncheckedUpdateWithoutNativeReplaySessionsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeCrashReportsInput = {
@@ -3077,6 +3334,7 @@ export type ProjectCreateWithoutNativeCrashReportsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeCrashReportsInput = {
@@ -3122,6 +3380,7 @@ export type ProjectUncheckedCreateWithoutNativeCrashReportsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeCrashReportsInput = {
@@ -3183,6 +3442,7 @@ export type ProjectUpdateWithoutNativeCrashReportsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeCrashReportsInput = {
@@ -3228,6 +3488,7 @@ export type ProjectUncheckedUpdateWithoutNativeCrashReportsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeSourceMapsInput = {
@@ -3273,6 +3534,7 @@ export type ProjectCreateWithoutNativeSourceMapsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeSourceMapsInput = {
@@ -3318,6 +3580,7 @@ export type ProjectUncheckedCreateWithoutNativeSourceMapsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeSourceMapsInput = {
@@ -3379,6 +3642,7 @@ export type ProjectUpdateWithoutNativeSourceMapsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeSourceMapsInput = {
@@ -3424,6 +3688,7 @@ export type ProjectUncheckedUpdateWithoutNativeSourceMapsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativePluginInstallsInput = {
@@ -3469,6 +3734,7 @@ export type ProjectCreateWithoutNativePluginInstallsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativePluginInstallsInput = {
@@ -3514,6 +3780,7 @@ export type ProjectUncheckedCreateWithoutNativePluginInstallsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativePluginInstallsInput = {
@@ -3575,6 +3842,7 @@ export type ProjectUpdateWithoutNativePluginInstallsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativePluginInstallsInput = {
@@ -3620,6 +3888,7 @@ export type ProjectUncheckedUpdateWithoutNativePluginInstallsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeDebugSessionsInput = {
@@ -3665,6 +3934,7 @@ export type ProjectCreateWithoutNativeDebugSessionsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeDebugSessionsInput = {
@@ -3710,6 +3980,7 @@ export type ProjectUncheckedCreateWithoutNativeDebugSessionsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeDebugSessionsInput = {
@@ -3771,6 +4042,7 @@ export type ProjectUpdateWithoutNativeDebugSessionsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeDebugSessionsInput = {
@@ -3816,6 +4088,7 @@ export type ProjectUncheckedUpdateWithoutNativeDebugSessionsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeConnectedDevicesInput = {
@@ -3861,6 +4134,7 @@ export type ProjectCreateWithoutNativeConnectedDevicesInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeConnectedDevicesInput = {
@@ -3906,6 +4180,7 @@ export type ProjectUncheckedCreateWithoutNativeConnectedDevicesInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeConnectedDevicesInput = {
@@ -3967,6 +4242,7 @@ export type ProjectUpdateWithoutNativeConnectedDevicesInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeConnectedDevicesInput = {
@@ -4012,6 +4288,7 @@ export type ProjectUncheckedUpdateWithoutNativeConnectedDevicesInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeCloudTargetsInput = {
@@ -4057,6 +4334,7 @@ export type ProjectCreateWithoutNativeCloudTargetsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeCloudTargetsInput = {
@@ -4102,6 +4380,7 @@ export type ProjectUncheckedCreateWithoutNativeCloudTargetsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeCloudTargetsInput = {
@@ -4163,6 +4442,7 @@ export type ProjectUpdateWithoutNativeCloudTargetsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeCloudTargetsInput = {
@@ -4208,6 +4488,7 @@ export type ProjectUncheckedUpdateWithoutNativeCloudTargetsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeRoutingPolicyInput = {
@@ -4253,6 +4534,7 @@ export type ProjectCreateWithoutNativeRoutingPolicyInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeRoutingPolicyInput = {
@@ -4298,6 +4580,7 @@ export type ProjectUncheckedCreateWithoutNativeRoutingPolicyInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeRoutingPolicyInput = {
@@ -4359,6 +4642,7 @@ export type ProjectUpdateWithoutNativeRoutingPolicyInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeRoutingPolicyInput = {
@@ -4404,6 +4688,7 @@ export type ProjectUncheckedUpdateWithoutNativeRoutingPolicyInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeRegionReplicasInput = {
@@ -4449,6 +4734,7 @@ export type ProjectCreateWithoutNativeRegionReplicasInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeRegionReplicasInput = {
@@ -4494,6 +4780,7 @@ export type ProjectUncheckedCreateWithoutNativeRegionReplicasInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeRegionReplicasInput = {
@@ -4555,6 +4842,7 @@ export type ProjectUpdateWithoutNativeRegionReplicasInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeRegionReplicasInput = {
@@ -4600,6 +4888,7 @@ export type ProjectUncheckedUpdateWithoutNativeRegionReplicasInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeArtifactMirrorsInput = {
@@ -4645,6 +4934,7 @@ export type ProjectCreateWithoutNativeArtifactMirrorsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeArtifactMirrorsInput = {
@@ -4690,6 +4980,7 @@ export type ProjectUncheckedCreateWithoutNativeArtifactMirrorsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeArtifactMirrorsInput = {
@@ -4751,6 +5042,7 @@ export type ProjectUpdateWithoutNativeArtifactMirrorsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeArtifactMirrorsInput = {
@@ -4796,6 +5088,7 @@ export type ProjectUncheckedUpdateWithoutNativeArtifactMirrorsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeWafEventsInput = {
@@ -4841,6 +5134,7 @@ export type ProjectCreateWithoutNativeWafEventsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeWafEventsInput = {
@@ -4886,6 +5180,7 @@ export type ProjectUncheckedCreateWithoutNativeWafEventsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeWafEventsInput = {
@@ -4947,6 +5242,7 @@ export type ProjectUpdateWithoutNativeWafEventsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeWafEventsInput = {
@@ -4992,6 +5288,7 @@ export type ProjectUncheckedUpdateWithoutNativeWafEventsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeWafRulesInput = {
@@ -5037,6 +5334,7 @@ export type ProjectCreateWithoutNativeWafRulesInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeWafRulesInput = {
@@ -5082,6 +5380,7 @@ export type ProjectUncheckedCreateWithoutNativeWafRulesInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeWafRulesInput = {
@@ -5143,6 +5442,7 @@ export type ProjectUpdateWithoutNativeWafRulesInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeWafRulesInput = {
@@ -5188,6 +5488,7 @@ export type ProjectUncheckedUpdateWithoutNativeWafRulesInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeAiDiagnosticsInput = {
@@ -5233,6 +5534,7 @@ export type ProjectCreateWithoutNativeAiDiagnosticsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeAiDiagnosticsInput = {
@@ -5278,6 +5580,7 @@ export type ProjectUncheckedCreateWithoutNativeAiDiagnosticsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeAiDiagnosticsInput = {
@@ -5339,6 +5642,7 @@ export type ProjectUpdateWithoutNativeAiDiagnosticsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeAiDiagnosticsInput = {
@@ -5384,6 +5688,7 @@ export type ProjectUncheckedUpdateWithoutNativeAiDiagnosticsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeRemediationRunsInput = {
@@ -5429,6 +5734,7 @@ export type ProjectCreateWithoutNativeRemediationRunsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeRemediationRunsInput = {
@@ -5474,6 +5780,7 @@ export type ProjectUncheckedCreateWithoutNativeRemediationRunsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeRemediationRunsInput = {
@@ -5535,6 +5842,7 @@ export type ProjectUpdateWithoutNativeRemediationRunsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeRemediationRunsInput = {
@@ -5580,6 +5888,7 @@ export type ProjectUncheckedUpdateWithoutNativeRemediationRunsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeSchedulingPolicyInput = {
@@ -5625,6 +5934,7 @@ export type ProjectCreateWithoutNativeSchedulingPolicyInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeSchedulingPolicyInput = {
@@ -5670,6 +5980,7 @@ export type ProjectUncheckedCreateWithoutNativeSchedulingPolicyInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeSchedulingPolicyInput = {
@@ -5731,6 +6042,7 @@ export type ProjectUpdateWithoutNativeSchedulingPolicyInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeSchedulingPolicyInput = {
@@ -5776,6 +6088,7 @@ export type ProjectUncheckedUpdateWithoutNativeSchedulingPolicyInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeSchedulingSignalsInput = {
@@ -5821,6 +6134,7 @@ export type ProjectCreateWithoutNativeSchedulingSignalsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeSchedulingSignalsInput = {
@@ -5866,6 +6180,7 @@ export type ProjectUncheckedCreateWithoutNativeSchedulingSignalsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeSchedulingSignalsInput = {
@@ -5927,6 +6242,7 @@ export type ProjectUpdateWithoutNativeSchedulingSignalsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeSchedulingSignalsInput = {
@@ -5972,6 +6288,7 @@ export type ProjectUncheckedUpdateWithoutNativeSchedulingSignalsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeServiceIdentitiesInput = {
@@ -6017,6 +6334,7 @@ export type ProjectCreateWithoutNativeServiceIdentitiesInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeServiceIdentitiesInput = {
@@ -6062,6 +6380,7 @@ export type ProjectUncheckedCreateWithoutNativeServiceIdentitiesInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeServiceIdentitiesInput = {
@@ -6123,6 +6442,7 @@ export type ProjectUpdateWithoutNativeServiceIdentitiesInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeServiceIdentitiesInput = {
@@ -6168,6 +6488,7 @@ export type ProjectUncheckedUpdateWithoutNativeServiceIdentitiesInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeServiceTrustPoliciesInput = {
@@ -6213,6 +6534,7 @@ export type ProjectCreateWithoutNativeServiceTrustPoliciesInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeServiceTrustPoliciesInput = {
@@ -6258,6 +6580,7 @@ export type ProjectUncheckedCreateWithoutNativeServiceTrustPoliciesInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeServiceTrustPoliciesInput = {
@@ -6319,6 +6642,7 @@ export type ProjectUpdateWithoutNativeServiceTrustPoliciesInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeServiceTrustPoliciesInput = {
@@ -6364,6 +6688,7 @@ export type ProjectUncheckedUpdateWithoutNativeServiceTrustPoliciesInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeTelemetryEnvelopesInput = {
@@ -6409,6 +6734,7 @@ export type ProjectCreateWithoutNativeTelemetryEnvelopesInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeTelemetryEnvelopesInput = {
@@ -6454,6 +6780,7 @@ export type ProjectUncheckedCreateWithoutNativeTelemetryEnvelopesInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeTelemetryEnvelopesInput = {
@@ -6515,6 +6842,7 @@ export type ProjectUpdateWithoutNativeTelemetryEnvelopesInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeTelemetryEnvelopesInput = {
@@ -6560,6 +6888,7 @@ export type ProjectUncheckedUpdateWithoutNativeTelemetryEnvelopesInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutCronJobsInput = {
@@ -6605,6 +6934,7 @@ export type ProjectCreateWithoutCronJobsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutCronJobsInput = {
@@ -6650,6 +6980,7 @@ export type ProjectUncheckedCreateWithoutCronJobsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutCronJobsInput = {
@@ -6711,6 +7042,7 @@ export type ProjectUpdateWithoutCronJobsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutCronJobsInput = {
@@ -6756,6 +7088,7 @@ export type ProjectUncheckedUpdateWithoutCronJobsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutFormsInput = {
@@ -6801,6 +7134,7 @@ export type ProjectCreateWithoutFormsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutFormsInput = {
@@ -6846,6 +7180,7 @@ export type ProjectUncheckedCreateWithoutFormsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutFormsInput = {
@@ -6907,6 +7242,7 @@ export type ProjectUpdateWithoutFormsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutFormsInput = {
@@ -6952,6 +7288,7 @@ export type ProjectUncheckedUpdateWithoutFormsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutPreviewCommentsInput = {
@@ -6997,6 +7334,7 @@ export type ProjectCreateWithoutPreviewCommentsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutPreviewCommentsInput = {
@@ -7042,6 +7380,7 @@ export type ProjectUncheckedCreateWithoutPreviewCommentsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutPreviewCommentsInput = {
@@ -7103,6 +7442,7 @@ export type ProjectUpdateWithoutPreviewCommentsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutPreviewCommentsInput = {
@@ -7148,6 +7488,7 @@ export type ProjectUncheckedUpdateWithoutPreviewCommentsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutLepoShipLocalConfigInput = {
@@ -7193,6 +7534,7 @@ export type ProjectCreateWithoutLepoShipLocalConfigInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutLepoShipLocalConfigInput = {
@@ -7238,6 +7580,7 @@ export type ProjectUncheckedCreateWithoutLepoShipLocalConfigInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutLepoShipLocalConfigInput = {
@@ -7299,6 +7642,7 @@ export type ProjectUpdateWithoutLepoShipLocalConfigInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutLepoShipLocalConfigInput = {
@@ -7344,6 +7688,7 @@ export type ProjectUncheckedUpdateWithoutLepoShipLocalConfigInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutMembersInput = {
@@ -7389,6 +7734,7 @@ export type ProjectCreateWithoutMembersInput = {
   nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutMembersInput = {
@@ -7434,6 +7780,7 @@ export type ProjectUncheckedCreateWithoutMembersInput = {
   nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutMembersInput = {
@@ -7495,6 +7842,7 @@ export type ProjectUpdateWithoutMembersInput = {
   nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutMembersInput = {
@@ -7540,6 +7888,7 @@ export type ProjectUncheckedUpdateWithoutMembersInput = {
   nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutProviderBindingsInput = {
@@ -7585,6 +7934,7 @@ export type ProjectCreateWithoutProviderBindingsInput = {
   nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeCreateNestedManyWithoutProjectInput
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutProviderBindingsInput = {
@@ -7630,6 +7980,7 @@ export type ProjectUncheckedCreateWithoutProviderBindingsInput = {
   nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedCreateNestedManyWithoutProjectInput
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutProviderBindingsInput = {
@@ -7691,6 +8042,7 @@ export type ProjectUpdateWithoutProviderBindingsInput = {
   nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUpdateManyWithoutProjectNestedInput
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutProviderBindingsInput = {
@@ -7736,6 +8088,7 @@ export type ProjectUncheckedUpdateWithoutProviderBindingsInput = {
   nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedUpdateManyWithoutProjectNestedInput
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutLeposhipBuildsInput = {
@@ -7781,6 +8134,7 @@ export type ProjectCreateWithoutLeposhipBuildsInput = {
   nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeCreateNestedManyWithoutProjectInput
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutLeposhipBuildsInput = {
@@ -7826,6 +8180,7 @@ export type ProjectUncheckedCreateWithoutLeposhipBuildsInput = {
   nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedCreateNestedManyWithoutProjectInput
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutLeposhipBuildsInput = {
@@ -7887,6 +8242,7 @@ export type ProjectUpdateWithoutLeposhipBuildsInput = {
   nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUpdateManyWithoutProjectNestedInput
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutLeposhipBuildsInput = {
@@ -7932,6 +8288,7 @@ export type ProjectUncheckedUpdateWithoutLeposhipBuildsInput = {
   nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedUpdateManyWithoutProjectNestedInput
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyOrganizationInput = {
@@ -7989,6 +8346,7 @@ export type ProjectUpdateWithoutOrganizationInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutOrganizationInput = {
@@ -8034,6 +8392,7 @@ export type ProjectUncheckedUpdateWithoutOrganizationInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutOrganizationInput = {
@@ -8103,6 +8462,7 @@ export type ProjectUpdateWithoutActiveNativeDeploymentInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutActiveNativeDeploymentInput = {
@@ -8148,6 +8508,7 @@ export type ProjectUncheckedUpdateWithoutActiveNativeDeploymentInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutActiveNativeDeploymentInput = {
@@ -8197,6 +8558,7 @@ export type ProjectCountOutputType = {
   members: number
   providerBindings: number
   leposhipBuilds: number
+  canonicalBuildJobs: number
 }
 
 export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -8229,6 +8591,7 @@ export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   members?: boolean | ProjectCountOutputTypeCountMembersArgs
   providerBindings?: boolean | ProjectCountOutputTypeCountProviderBindingsArgs
   leposhipBuilds?: boolean | ProjectCountOutputTypeCountLeposhipBuildsArgs
+  canonicalBuildJobs?: boolean | ProjectCountOutputTypeCountCanonicalBuildJobsArgs
 }
 
 /**
@@ -8444,6 +8807,13 @@ export type ProjectCountOutputTypeCountLeposhipBuildsArgs<ExtArgs extends runtim
   where?: Prisma.LepoShipBuildWhereInput
 }
 
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountCanonicalBuildJobsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleBuildJobsWhereInput
+}
+
 
 export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -8491,6 +8861,7 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   members?: boolean | Prisma.Project$membersArgs<ExtArgs>
   providerBindings?: boolean | Prisma.Project$providerBindingsArgs<ExtArgs>
   leposhipBuilds?: boolean | Prisma.Project$leposhipBuildsArgs<ExtArgs>
+  canonicalBuildJobs?: boolean | Prisma.Project$canonicalBuildJobsArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
@@ -8574,6 +8945,7 @@ export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   members?: boolean | Prisma.Project$membersArgs<ExtArgs>
   providerBindings?: boolean | Prisma.Project$providerBindingsArgs<ExtArgs>
   leposhipBuilds?: boolean | Prisma.Project$leposhipBuildsArgs<ExtArgs>
+  canonicalBuildJobs?: boolean | Prisma.Project$canonicalBuildJobsArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -8623,6 +8995,7 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     members: Prisma.$ProjectMembershipPayload<ExtArgs>[]
     providerBindings: Prisma.$ProjectProviderBindingPayload<ExtArgs>[]
     leposhipBuilds: Prisma.$LepoShipBuildPayload<ExtArgs>[]
+    canonicalBuildJobs: Prisma.$BundleBuildJobsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -9064,6 +9437,7 @@ export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.
   members<T extends Prisma.Project$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   providerBindings<T extends Prisma.Project$providerBindingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$providerBindingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectProviderBindingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   leposhipBuilds<T extends Prisma.Project$leposhipBuildsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$leposhipBuildsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LepoShipBuildPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  canonicalBuildJobs<T extends Prisma.Project$canonicalBuildJobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$canonicalBuildJobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleBuildJobsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10292,6 +10666,30 @@ export type Project$leposhipBuildsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.LepoShipBuildScalarFieldEnum | Prisma.LepoShipBuildScalarFieldEnum[]
+}
+
+/**
+ * Project.canonicalBuildJobs
+ */
+export type Project$canonicalBuildJobsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleBuildJobs
+   */
+  select?: Prisma.BundleBuildJobsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleBuildJobs
+   */
+  omit?: Prisma.BundleBuildJobsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleBuildJobsInclude<ExtArgs> | null
+  where?: Prisma.BundleBuildJobsWhereInput
+  orderBy?: Prisma.BundleBuildJobsOrderByWithRelationInput | Prisma.BundleBuildJobsOrderByWithRelationInput[]
+  cursor?: Prisma.BundleBuildJobsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleBuildJobsScalarFieldEnum | Prisma.BundleBuildJobsScalarFieldEnum[]
 }
 
 /**

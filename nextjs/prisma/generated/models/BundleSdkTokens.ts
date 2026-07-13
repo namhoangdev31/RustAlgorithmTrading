@@ -30,6 +30,8 @@ export type BundleSdkTokensMinAggregateOutputType = {
   tokenPrefix: string | null
   tokenHash: string | null
   label: string | null
+  expiresAt: Date | null
+  rotationGraceUntil: Date | null
   lastUsedAt: Date | null
   isRevoked: boolean | null
   createdAt: Date | null
@@ -41,6 +43,8 @@ export type BundleSdkTokensMaxAggregateOutputType = {
   tokenPrefix: string | null
   tokenHash: string | null
   label: string | null
+  expiresAt: Date | null
+  rotationGraceUntil: Date | null
   lastUsedAt: Date | null
   isRevoked: boolean | null
   createdAt: Date | null
@@ -52,6 +56,9 @@ export type BundleSdkTokensCountAggregateOutputType = {
   tokenPrefix: number
   tokenHash: number
   label: number
+  scopes: number
+  expiresAt: number
+  rotationGraceUntil: number
   lastUsedAt: number
   isRevoked: number
   createdAt: number
@@ -65,6 +72,8 @@ export type BundleSdkTokensMinAggregateInputType = {
   tokenPrefix?: true
   tokenHash?: true
   label?: true
+  expiresAt?: true
+  rotationGraceUntil?: true
   lastUsedAt?: true
   isRevoked?: true
   createdAt?: true
@@ -76,6 +85,8 @@ export type BundleSdkTokensMaxAggregateInputType = {
   tokenPrefix?: true
   tokenHash?: true
   label?: true
+  expiresAt?: true
+  rotationGraceUntil?: true
   lastUsedAt?: true
   isRevoked?: true
   createdAt?: true
@@ -87,6 +98,9 @@ export type BundleSdkTokensCountAggregateInputType = {
   tokenPrefix?: true
   tokenHash?: true
   label?: true
+  scopes?: true
+  expiresAt?: true
+  rotationGraceUntil?: true
   lastUsedAt?: true
   isRevoked?: true
   createdAt?: true
@@ -171,6 +185,9 @@ export type BundleSdkTokensGroupByOutputType = {
   tokenPrefix: string
   tokenHash: string
   label: string | null
+  scopes: string[]
+  expiresAt: Date | null
+  rotationGraceUntil: Date | null
   lastUsedAt: Date | null
   isRevoked: boolean
   createdAt: Date
@@ -203,9 +220,13 @@ export type BundleSdkTokensWhereInput = {
   tokenPrefix?: Prisma.StringFilter<"BundleSdkTokens"> | string
   tokenHash?: Prisma.StringFilter<"BundleSdkTokens"> | string
   label?: Prisma.StringNullableFilter<"BundleSdkTokens"> | string | null
+  scopes?: Prisma.StringNullableListFilter<"BundleSdkTokens">
+  expiresAt?: Prisma.DateTimeNullableFilter<"BundleSdkTokens"> | Date | string | null
+  rotationGraceUntil?: Prisma.DateTimeNullableFilter<"BundleSdkTokens"> | Date | string | null
   lastUsedAt?: Prisma.DateTimeNullableFilter<"BundleSdkTokens"> | Date | string | null
   isRevoked?: Prisma.BoolFilter<"BundleSdkTokens"> | boolean
   createdAt?: Prisma.DateTimeFilter<"BundleSdkTokens"> | Date | string
+  bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
 }
 
 export type BundleSdkTokensOrderByWithRelationInput = {
@@ -214,9 +235,13 @@ export type BundleSdkTokensOrderByWithRelationInput = {
   tokenPrefix?: Prisma.SortOrder
   tokenHash?: Prisma.SortOrder
   label?: Prisma.SortOrderInput | Prisma.SortOrder
+  scopes?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  rotationGraceUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isRevoked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  bundle?: Prisma.BundlesOrderByWithRelationInput
 }
 
 export type BundleSdkTokensWhereUniqueInput = Prisma.AtLeast<{
@@ -229,9 +254,13 @@ export type BundleSdkTokensWhereUniqueInput = Prisma.AtLeast<{
   tokenPrefix?: Prisma.StringFilter<"BundleSdkTokens"> | string
   tokenHash?: Prisma.StringFilter<"BundleSdkTokens"> | string
   label?: Prisma.StringNullableFilter<"BundleSdkTokens"> | string | null
+  scopes?: Prisma.StringNullableListFilter<"BundleSdkTokens">
+  expiresAt?: Prisma.DateTimeNullableFilter<"BundleSdkTokens"> | Date | string | null
+  rotationGraceUntil?: Prisma.DateTimeNullableFilter<"BundleSdkTokens"> | Date | string | null
   lastUsedAt?: Prisma.DateTimeNullableFilter<"BundleSdkTokens"> | Date | string | null
   isRevoked?: Prisma.BoolFilter<"BundleSdkTokens"> | boolean
   createdAt?: Prisma.DateTimeFilter<"BundleSdkTokens"> | Date | string
+  bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
 }, "id" | "bundleId_tokenPrefix">
 
 export type BundleSdkTokensOrderByWithAggregationInput = {
@@ -240,6 +269,9 @@ export type BundleSdkTokensOrderByWithAggregationInput = {
   tokenPrefix?: Prisma.SortOrder
   tokenHash?: Prisma.SortOrder
   label?: Prisma.SortOrderInput | Prisma.SortOrder
+  scopes?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  rotationGraceUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isRevoked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -257,6 +289,9 @@ export type BundleSdkTokensScalarWhereWithAggregatesInput = {
   tokenPrefix?: Prisma.StringWithAggregatesFilter<"BundleSdkTokens"> | string
   tokenHash?: Prisma.StringWithAggregatesFilter<"BundleSdkTokens"> | string
   label?: Prisma.StringNullableWithAggregatesFilter<"BundleSdkTokens"> | string | null
+  scopes?: Prisma.StringNullableListFilter<"BundleSdkTokens">
+  expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleSdkTokens"> | Date | string | null
+  rotationGraceUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleSdkTokens"> | Date | string | null
   lastUsedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleSdkTokens"> | Date | string | null
   isRevoked?: Prisma.BoolWithAggregatesFilter<"BundleSdkTokens"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleSdkTokens"> | Date | string
@@ -264,13 +299,16 @@ export type BundleSdkTokensScalarWhereWithAggregatesInput = {
 
 export type BundleSdkTokensCreateInput = {
   id: string
-  bundleId: string
   tokenPrefix: string
   tokenHash: string
   label?: string | null
+  scopes?: Prisma.BundleSdkTokensCreatescopesInput | string[]
+  expiresAt?: Date | string | null
+  rotationGraceUntil?: Date | string | null
   lastUsedAt?: Date | string | null
   isRevoked?: boolean
   createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutSdkTokensInput
 }
 
 export type BundleSdkTokensUncheckedCreateInput = {
@@ -279,6 +317,9 @@ export type BundleSdkTokensUncheckedCreateInput = {
   tokenPrefix: string
   tokenHash: string
   label?: string | null
+  scopes?: Prisma.BundleSdkTokensCreatescopesInput | string[]
+  expiresAt?: Date | string | null
+  rotationGraceUntil?: Date | string | null
   lastUsedAt?: Date | string | null
   isRevoked?: boolean
   createdAt: Date | string
@@ -286,13 +327,16 @@ export type BundleSdkTokensUncheckedCreateInput = {
 
 export type BundleSdkTokensUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   tokenPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   tokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.BundleSdkTokensUpdatescopesInput | string[]
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rotationGraceUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isRevoked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutSdkTokensNestedInput
 }
 
 export type BundleSdkTokensUncheckedUpdateInput = {
@@ -301,6 +345,9 @@ export type BundleSdkTokensUncheckedUpdateInput = {
   tokenPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   tokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.BundleSdkTokensUpdatescopesInput | string[]
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rotationGraceUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isRevoked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -312,6 +359,9 @@ export type BundleSdkTokensCreateManyInput = {
   tokenPrefix: string
   tokenHash: string
   label?: string | null
+  scopes?: Prisma.BundleSdkTokensCreatescopesInput | string[]
+  expiresAt?: Date | string | null
+  rotationGraceUntil?: Date | string | null
   lastUsedAt?: Date | string | null
   isRevoked?: boolean
   createdAt: Date | string
@@ -319,10 +369,12 @@ export type BundleSdkTokensCreateManyInput = {
 
 export type BundleSdkTokensUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   tokenPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   tokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.BundleSdkTokensUpdatescopesInput | string[]
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rotationGraceUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isRevoked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -334,9 +386,22 @@ export type BundleSdkTokensUncheckedUpdateManyInput = {
   tokenPrefix?: Prisma.StringFieldUpdateOperationsInput | string
   tokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.BundleSdkTokensUpdatescopesInput | string[]
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rotationGraceUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isRevoked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleSdkTokensListRelationFilter = {
+  every?: Prisma.BundleSdkTokensWhereInput
+  some?: Prisma.BundleSdkTokensWhereInput
+  none?: Prisma.BundleSdkTokensWhereInput
+}
+
+export type BundleSdkTokensOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type BundleSdkTokensBundleIdTokenPrefixCompoundUniqueInput = {
@@ -350,6 +415,9 @@ export type BundleSdkTokensCountOrderByAggregateInput = {
   tokenPrefix?: Prisma.SortOrder
   tokenHash?: Prisma.SortOrder
   label?: Prisma.SortOrder
+  scopes?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  rotationGraceUntil?: Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrder
   isRevoked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -361,6 +429,8 @@ export type BundleSdkTokensMaxOrderByAggregateInput = {
   tokenPrefix?: Prisma.SortOrder
   tokenHash?: Prisma.SortOrder
   label?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  rotationGraceUntil?: Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrder
   isRevoked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -372,9 +442,183 @@ export type BundleSdkTokensMinOrderByAggregateInput = {
   tokenPrefix?: Prisma.SortOrder
   tokenHash?: Prisma.SortOrder
   label?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  rotationGraceUntil?: Prisma.SortOrder
   lastUsedAt?: Prisma.SortOrder
   isRevoked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type BundleSdkTokensCreateNestedManyWithoutBundleInput = {
+  create?: Prisma.XOR<Prisma.BundleSdkTokensCreateWithoutBundleInput, Prisma.BundleSdkTokensUncheckedCreateWithoutBundleInput> | Prisma.BundleSdkTokensCreateWithoutBundleInput[] | Prisma.BundleSdkTokensUncheckedCreateWithoutBundleInput[]
+  connectOrCreate?: Prisma.BundleSdkTokensCreateOrConnectWithoutBundleInput | Prisma.BundleSdkTokensCreateOrConnectWithoutBundleInput[]
+  createMany?: Prisma.BundleSdkTokensCreateManyBundleInputEnvelope
+  connect?: Prisma.BundleSdkTokensWhereUniqueInput | Prisma.BundleSdkTokensWhereUniqueInput[]
+}
+
+export type BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput = {
+  create?: Prisma.XOR<Prisma.BundleSdkTokensCreateWithoutBundleInput, Prisma.BundleSdkTokensUncheckedCreateWithoutBundleInput> | Prisma.BundleSdkTokensCreateWithoutBundleInput[] | Prisma.BundleSdkTokensUncheckedCreateWithoutBundleInput[]
+  connectOrCreate?: Prisma.BundleSdkTokensCreateOrConnectWithoutBundleInput | Prisma.BundleSdkTokensCreateOrConnectWithoutBundleInput[]
+  createMany?: Prisma.BundleSdkTokensCreateManyBundleInputEnvelope
+  connect?: Prisma.BundleSdkTokensWhereUniqueInput | Prisma.BundleSdkTokensWhereUniqueInput[]
+}
+
+export type BundleSdkTokensUpdateManyWithoutBundleNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleSdkTokensCreateWithoutBundleInput, Prisma.BundleSdkTokensUncheckedCreateWithoutBundleInput> | Prisma.BundleSdkTokensCreateWithoutBundleInput[] | Prisma.BundleSdkTokensUncheckedCreateWithoutBundleInput[]
+  connectOrCreate?: Prisma.BundleSdkTokensCreateOrConnectWithoutBundleInput | Prisma.BundleSdkTokensCreateOrConnectWithoutBundleInput[]
+  upsert?: Prisma.BundleSdkTokensUpsertWithWhereUniqueWithoutBundleInput | Prisma.BundleSdkTokensUpsertWithWhereUniqueWithoutBundleInput[]
+  createMany?: Prisma.BundleSdkTokensCreateManyBundleInputEnvelope
+  set?: Prisma.BundleSdkTokensWhereUniqueInput | Prisma.BundleSdkTokensWhereUniqueInput[]
+  disconnect?: Prisma.BundleSdkTokensWhereUniqueInput | Prisma.BundleSdkTokensWhereUniqueInput[]
+  delete?: Prisma.BundleSdkTokensWhereUniqueInput | Prisma.BundleSdkTokensWhereUniqueInput[]
+  connect?: Prisma.BundleSdkTokensWhereUniqueInput | Prisma.BundleSdkTokensWhereUniqueInput[]
+  update?: Prisma.BundleSdkTokensUpdateWithWhereUniqueWithoutBundleInput | Prisma.BundleSdkTokensUpdateWithWhereUniqueWithoutBundleInput[]
+  updateMany?: Prisma.BundleSdkTokensUpdateManyWithWhereWithoutBundleInput | Prisma.BundleSdkTokensUpdateManyWithWhereWithoutBundleInput[]
+  deleteMany?: Prisma.BundleSdkTokensScalarWhereInput | Prisma.BundleSdkTokensScalarWhereInput[]
+}
+
+export type BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleSdkTokensCreateWithoutBundleInput, Prisma.BundleSdkTokensUncheckedCreateWithoutBundleInput> | Prisma.BundleSdkTokensCreateWithoutBundleInput[] | Prisma.BundleSdkTokensUncheckedCreateWithoutBundleInput[]
+  connectOrCreate?: Prisma.BundleSdkTokensCreateOrConnectWithoutBundleInput | Prisma.BundleSdkTokensCreateOrConnectWithoutBundleInput[]
+  upsert?: Prisma.BundleSdkTokensUpsertWithWhereUniqueWithoutBundleInput | Prisma.BundleSdkTokensUpsertWithWhereUniqueWithoutBundleInput[]
+  createMany?: Prisma.BundleSdkTokensCreateManyBundleInputEnvelope
+  set?: Prisma.BundleSdkTokensWhereUniqueInput | Prisma.BundleSdkTokensWhereUniqueInput[]
+  disconnect?: Prisma.BundleSdkTokensWhereUniqueInput | Prisma.BundleSdkTokensWhereUniqueInput[]
+  delete?: Prisma.BundleSdkTokensWhereUniqueInput | Prisma.BundleSdkTokensWhereUniqueInput[]
+  connect?: Prisma.BundleSdkTokensWhereUniqueInput | Prisma.BundleSdkTokensWhereUniqueInput[]
+  update?: Prisma.BundleSdkTokensUpdateWithWhereUniqueWithoutBundleInput | Prisma.BundleSdkTokensUpdateWithWhereUniqueWithoutBundleInput[]
+  updateMany?: Prisma.BundleSdkTokensUpdateManyWithWhereWithoutBundleInput | Prisma.BundleSdkTokensUpdateManyWithWhereWithoutBundleInput[]
+  deleteMany?: Prisma.BundleSdkTokensScalarWhereInput | Prisma.BundleSdkTokensScalarWhereInput[]
+}
+
+export type BundleSdkTokensCreatescopesInput = {
+  set: string[]
+}
+
+export type BundleSdkTokensUpdatescopesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type BundleSdkTokensCreateWithoutBundleInput = {
+  id: string
+  tokenPrefix: string
+  tokenHash: string
+  label?: string | null
+  scopes?: Prisma.BundleSdkTokensCreatescopesInput | string[]
+  expiresAt?: Date | string | null
+  rotationGraceUntil?: Date | string | null
+  lastUsedAt?: Date | string | null
+  isRevoked?: boolean
+  createdAt: Date | string
+}
+
+export type BundleSdkTokensUncheckedCreateWithoutBundleInput = {
+  id: string
+  tokenPrefix: string
+  tokenHash: string
+  label?: string | null
+  scopes?: Prisma.BundleSdkTokensCreatescopesInput | string[]
+  expiresAt?: Date | string | null
+  rotationGraceUntil?: Date | string | null
+  lastUsedAt?: Date | string | null
+  isRevoked?: boolean
+  createdAt: Date | string
+}
+
+export type BundleSdkTokensCreateOrConnectWithoutBundleInput = {
+  where: Prisma.BundleSdkTokensWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleSdkTokensCreateWithoutBundleInput, Prisma.BundleSdkTokensUncheckedCreateWithoutBundleInput>
+}
+
+export type BundleSdkTokensCreateManyBundleInputEnvelope = {
+  data: Prisma.BundleSdkTokensCreateManyBundleInput | Prisma.BundleSdkTokensCreateManyBundleInput[]
+  skipDuplicates?: boolean
+}
+
+export type BundleSdkTokensUpsertWithWhereUniqueWithoutBundleInput = {
+  where: Prisma.BundleSdkTokensWhereUniqueInput
+  update: Prisma.XOR<Prisma.BundleSdkTokensUpdateWithoutBundleInput, Prisma.BundleSdkTokensUncheckedUpdateWithoutBundleInput>
+  create: Prisma.XOR<Prisma.BundleSdkTokensCreateWithoutBundleInput, Prisma.BundleSdkTokensUncheckedCreateWithoutBundleInput>
+}
+
+export type BundleSdkTokensUpdateWithWhereUniqueWithoutBundleInput = {
+  where: Prisma.BundleSdkTokensWhereUniqueInput
+  data: Prisma.XOR<Prisma.BundleSdkTokensUpdateWithoutBundleInput, Prisma.BundleSdkTokensUncheckedUpdateWithoutBundleInput>
+}
+
+export type BundleSdkTokensUpdateManyWithWhereWithoutBundleInput = {
+  where: Prisma.BundleSdkTokensScalarWhereInput
+  data: Prisma.XOR<Prisma.BundleSdkTokensUpdateManyMutationInput, Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleInput>
+}
+
+export type BundleSdkTokensScalarWhereInput = {
+  AND?: Prisma.BundleSdkTokensScalarWhereInput | Prisma.BundleSdkTokensScalarWhereInput[]
+  OR?: Prisma.BundleSdkTokensScalarWhereInput[]
+  NOT?: Prisma.BundleSdkTokensScalarWhereInput | Prisma.BundleSdkTokensScalarWhereInput[]
+  id?: Prisma.UuidFilter<"BundleSdkTokens"> | string
+  bundleId?: Prisma.UuidFilter<"BundleSdkTokens"> | string
+  tokenPrefix?: Prisma.StringFilter<"BundleSdkTokens"> | string
+  tokenHash?: Prisma.StringFilter<"BundleSdkTokens"> | string
+  label?: Prisma.StringNullableFilter<"BundleSdkTokens"> | string | null
+  scopes?: Prisma.StringNullableListFilter<"BundleSdkTokens">
+  expiresAt?: Prisma.DateTimeNullableFilter<"BundleSdkTokens"> | Date | string | null
+  rotationGraceUntil?: Prisma.DateTimeNullableFilter<"BundleSdkTokens"> | Date | string | null
+  lastUsedAt?: Prisma.DateTimeNullableFilter<"BundleSdkTokens"> | Date | string | null
+  isRevoked?: Prisma.BoolFilter<"BundleSdkTokens"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"BundleSdkTokens"> | Date | string
+}
+
+export type BundleSdkTokensCreateManyBundleInput = {
+  id: string
+  tokenPrefix: string
+  tokenHash: string
+  label?: string | null
+  scopes?: Prisma.BundleSdkTokensCreatescopesInput | string[]
+  expiresAt?: Date | string | null
+  rotationGraceUntil?: Date | string | null
+  lastUsedAt?: Date | string | null
+  isRevoked?: boolean
+  createdAt: Date | string
+}
+
+export type BundleSdkTokensUpdateWithoutBundleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tokenPrefix?: Prisma.StringFieldUpdateOperationsInput | string
+  tokenHash?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.BundleSdkTokensUpdatescopesInput | string[]
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rotationGraceUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isRevoked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleSdkTokensUncheckedUpdateWithoutBundleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tokenPrefix?: Prisma.StringFieldUpdateOperationsInput | string
+  tokenHash?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.BundleSdkTokensUpdatescopesInput | string[]
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rotationGraceUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isRevoked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleSdkTokensUncheckedUpdateManyWithoutBundleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tokenPrefix?: Prisma.StringFieldUpdateOperationsInput | string
+  tokenHash?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.BundleSdkTokensUpdatescopesInput | string[]
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rotationGraceUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isRevoked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -385,9 +629,13 @@ export type BundleSdkTokensSelect<ExtArgs extends runtime.Types.Extensions.Inter
   tokenPrefix?: boolean
   tokenHash?: boolean
   label?: boolean
+  scopes?: boolean
+  expiresAt?: boolean
+  rotationGraceUntil?: boolean
   lastUsedAt?: boolean
   isRevoked?: boolean
   createdAt?: boolean
+  bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleSdkTokens"]>
 
 export type BundleSdkTokensSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -396,9 +644,13 @@ export type BundleSdkTokensSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   tokenPrefix?: boolean
   tokenHash?: boolean
   label?: boolean
+  scopes?: boolean
+  expiresAt?: boolean
+  rotationGraceUntil?: boolean
   lastUsedAt?: boolean
   isRevoked?: boolean
   createdAt?: boolean
+  bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleSdkTokens"]>
 
 export type BundleSdkTokensSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -407,9 +659,13 @@ export type BundleSdkTokensSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   tokenPrefix?: boolean
   tokenHash?: boolean
   label?: boolean
+  scopes?: boolean
+  expiresAt?: boolean
+  rotationGraceUntil?: boolean
   lastUsedAt?: boolean
   isRevoked?: boolean
   createdAt?: boolean
+  bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleSdkTokens"]>
 
 export type BundleSdkTokensSelectScalar = {
@@ -418,22 +674,39 @@ export type BundleSdkTokensSelectScalar = {
   tokenPrefix?: boolean
   tokenHash?: boolean
   label?: boolean
+  scopes?: boolean
+  expiresAt?: boolean
+  rotationGraceUntil?: boolean
   lastUsedAt?: boolean
   isRevoked?: boolean
   createdAt?: boolean
 }
 
-export type BundleSdkTokensOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "tokenPrefix" | "tokenHash" | "label" | "lastUsedAt" | "isRevoked" | "createdAt", ExtArgs["result"]["bundleSdkTokens"]>
+export type BundleSdkTokensOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "tokenPrefix" | "tokenHash" | "label" | "scopes" | "expiresAt" | "rotationGraceUntil" | "lastUsedAt" | "isRevoked" | "createdAt", ExtArgs["result"]["bundleSdkTokens"]>
+export type BundleSdkTokensInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+}
+export type BundleSdkTokensIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+}
+export type BundleSdkTokensIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+}
 
 export type $BundleSdkTokensPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "BundleSdkTokens"
-  objects: {}
+  objects: {
+    bundle: Prisma.$BundlesPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     bundleId: string
     tokenPrefix: string
     tokenHash: string
     label: string | null
+    scopes: string[]
+    expiresAt: Date | null
+    rotationGraceUntil: Date | null
     lastUsedAt: Date | null
     isRevoked: boolean
     createdAt: Date
@@ -831,6 +1104,7 @@ readonly fields: BundleSdkTokensFieldRefs;
  */
 export interface Prisma__BundleSdkTokensClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  bundle<T extends Prisma.BundlesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundlesDefaultArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -865,6 +1139,9 @@ export interface BundleSdkTokensFieldRefs {
   readonly tokenPrefix: Prisma.FieldRef<"BundleSdkTokens", 'String'>
   readonly tokenHash: Prisma.FieldRef<"BundleSdkTokens", 'String'>
   readonly label: Prisma.FieldRef<"BundleSdkTokens", 'String'>
+  readonly scopes: Prisma.FieldRef<"BundleSdkTokens", 'String[]'>
+  readonly expiresAt: Prisma.FieldRef<"BundleSdkTokens", 'DateTime'>
+  readonly rotationGraceUntil: Prisma.FieldRef<"BundleSdkTokens", 'DateTime'>
   readonly lastUsedAt: Prisma.FieldRef<"BundleSdkTokens", 'DateTime'>
   readonly isRevoked: Prisma.FieldRef<"BundleSdkTokens", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"BundleSdkTokens", 'DateTime'>
@@ -885,6 +1162,10 @@ export type BundleSdkTokensFindUniqueArgs<ExtArgs extends runtime.Types.Extensio
    */
   omit?: Prisma.BundleSdkTokensOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleSdkTokensInclude<ExtArgs> | null
+  /**
    * Filter, which BundleSdkTokens to fetch.
    */
   where: Prisma.BundleSdkTokensWhereUniqueInput
@@ -903,6 +1184,10 @@ export type BundleSdkTokensFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.E
    */
   omit?: Prisma.BundleSdkTokensOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleSdkTokensInclude<ExtArgs> | null
+  /**
    * Filter, which BundleSdkTokens to fetch.
    */
   where: Prisma.BundleSdkTokensWhereUniqueInput
@@ -920,6 +1205,10 @@ export type BundleSdkTokensFindFirstArgs<ExtArgs extends runtime.Types.Extension
    * Omit specific fields from the BundleSdkTokens
    */
   omit?: Prisma.BundleSdkTokensOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleSdkTokensInclude<ExtArgs> | null
   /**
    * Filter, which BundleSdkTokens to fetch.
    */
@@ -969,6 +1258,10 @@ export type BundleSdkTokensFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Ex
    */
   omit?: Prisma.BundleSdkTokensOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleSdkTokensInclude<ExtArgs> | null
+  /**
    * Filter, which BundleSdkTokens to fetch.
    */
   where?: Prisma.BundleSdkTokensWhereInput
@@ -1016,6 +1309,10 @@ export type BundleSdkTokensFindManyArgs<ExtArgs extends runtime.Types.Extensions
    * Omit specific fields from the BundleSdkTokens
    */
   omit?: Prisma.BundleSdkTokensOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleSdkTokensInclude<ExtArgs> | null
   /**
    * Filter, which BundleSdkTokens to fetch.
    */
@@ -1065,6 +1362,10 @@ export type BundleSdkTokensCreateArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.BundleSdkTokensOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleSdkTokensInclude<ExtArgs> | null
+  /**
    * The data needed to create a BundleSdkTokens.
    */
   data: Prisma.XOR<Prisma.BundleSdkTokensCreateInput, Prisma.BundleSdkTokensUncheckedCreateInput>
@@ -1098,6 +1399,10 @@ export type BundleSdkTokensCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    */
   data: Prisma.BundleSdkTokensCreateManyInput | Prisma.BundleSdkTokensCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleSdkTokensIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1112,6 +1417,10 @@ export type BundleSdkTokensUpdateArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the BundleSdkTokens
    */
   omit?: Prisma.BundleSdkTokensOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleSdkTokensInclude<ExtArgs> | null
   /**
    * The data needed to update a BundleSdkTokens.
    */
@@ -1164,6 +1473,10 @@ export type BundleSdkTokensUpdateManyAndReturnArgs<ExtArgs extends runtime.Types
    * Limit how many BundleSdkTokens to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleSdkTokensIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1178,6 +1491,10 @@ export type BundleSdkTokensUpsertArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the BundleSdkTokens
    */
   omit?: Prisma.BundleSdkTokensOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleSdkTokensInclude<ExtArgs> | null
   /**
    * The filter to search for the BundleSdkTokens to update in case it exists.
    */
@@ -1204,6 +1521,10 @@ export type BundleSdkTokensDeleteArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the BundleSdkTokens
    */
   omit?: Prisma.BundleSdkTokensOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleSdkTokensInclude<ExtArgs> | null
   /**
    * Filter which BundleSdkTokens to delete.
    */
@@ -1236,4 +1557,8 @@ export type BundleSdkTokensDefaultArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the BundleSdkTokens
    */
   omit?: Prisma.BundleSdkTokensOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleSdkTokensInclude<ExtArgs> | null
 }

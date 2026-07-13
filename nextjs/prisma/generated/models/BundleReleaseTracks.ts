@@ -44,6 +44,7 @@ export type BundleReleaseTracksMinAggregateOutputType = {
   releaseNotes: string | null
   status: string | null
   createdAt: Date | null
+  artifactManifestId: string | null
 }
 
 export type BundleReleaseTracksMaxAggregateOutputType = {
@@ -56,6 +57,7 @@ export type BundleReleaseTracksMaxAggregateOutputType = {
   releaseNotes: string | null
   status: string | null
   createdAt: Date | null
+  artifactManifestId: string | null
 }
 
 export type BundleReleaseTracksCountAggregateOutputType = {
@@ -68,6 +70,7 @@ export type BundleReleaseTracksCountAggregateOutputType = {
   releaseNotes: number
   status: number
   createdAt: number
+  artifactManifestId: number
   _all: number
 }
 
@@ -90,6 +93,7 @@ export type BundleReleaseTracksMinAggregateInputType = {
   releaseNotes?: true
   status?: true
   createdAt?: true
+  artifactManifestId?: true
 }
 
 export type BundleReleaseTracksMaxAggregateInputType = {
@@ -102,6 +106,7 @@ export type BundleReleaseTracksMaxAggregateInputType = {
   releaseNotes?: true
   status?: true
   createdAt?: true
+  artifactManifestId?: true
 }
 
 export type BundleReleaseTracksCountAggregateInputType = {
@@ -114,6 +119,7 @@ export type BundleReleaseTracksCountAggregateInputType = {
   releaseNotes?: true
   status?: true
   createdAt?: true
+  artifactManifestId?: true
   _all?: true
 }
 
@@ -213,6 +219,7 @@ export type BundleReleaseTracksGroupByOutputType = {
   releaseNotes: string | null
   status: string
   createdAt: Date
+  artifactManifestId: string | null
   _count: BundleReleaseTracksCountAggregateOutputType | null
   _avg: BundleReleaseTracksAvgAggregateOutputType | null
   _sum: BundleReleaseTracksSumAggregateOutputType | null
@@ -248,7 +255,15 @@ export type BundleReleaseTracksWhereInput = {
   releaseNotes?: Prisma.StringNullableFilter<"BundleReleaseTracks"> | string | null
   status?: Prisma.StringFilter<"BundleReleaseTracks"> | string
   createdAt?: Prisma.DateTimeFilter<"BundleReleaseTracks"> | Date | string
+  artifactManifestId?: Prisma.UuidNullableFilter<"BundleReleaseTracks"> | string | null
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
+  primaryForBundle?: Prisma.XOR<Prisma.BundlesNullableScalarRelationFilter, Prisma.BundlesWhereInput> | null
+  controlForTests?: Prisma.BundleAbTestsListRelationFilter
+  treatmentForTests?: Prisma.BundleAbTestsListRelationFilter
+  exposures?: Prisma.BundleAbTestExposuresListRelationFilter
+  crashEvents?: Prisma.BundleCrashEventsListRelationFilter
+  artifactManifest?: Prisma.XOR<Prisma.BundleArtifactManifestsNullableScalarRelationFilter, Prisma.BundleArtifactManifestsWhereInput> | null
+  rolloutExposures?: Prisma.BundleRolloutExposuresListRelationFilter
   rollouts?: Prisma.BundleRolloutsListRelationFilter
 }
 
@@ -262,7 +277,15 @@ export type BundleReleaseTracksOrderByWithRelationInput = {
   releaseNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  artifactManifestId?: Prisma.SortOrderInput | Prisma.SortOrder
   bundle?: Prisma.BundlesOrderByWithRelationInput
+  primaryForBundle?: Prisma.BundlesOrderByWithRelationInput
+  controlForTests?: Prisma.BundleAbTestsOrderByRelationAggregateInput
+  treatmentForTests?: Prisma.BundleAbTestsOrderByRelationAggregateInput
+  exposures?: Prisma.BundleAbTestExposuresOrderByRelationAggregateInput
+  crashEvents?: Prisma.BundleCrashEventsOrderByRelationAggregateInput
+  artifactManifest?: Prisma.BundleArtifactManifestsOrderByWithRelationInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresOrderByRelationAggregateInput
   rollouts?: Prisma.BundleRolloutsOrderByRelationAggregateInput
 }
 
@@ -280,7 +303,15 @@ export type BundleReleaseTracksWhereUniqueInput = Prisma.AtLeast<{
   releaseNotes?: Prisma.StringNullableFilter<"BundleReleaseTracks"> | string | null
   status?: Prisma.StringFilter<"BundleReleaseTracks"> | string
   createdAt?: Prisma.DateTimeFilter<"BundleReleaseTracks"> | Date | string
+  artifactManifestId?: Prisma.UuidNullableFilter<"BundleReleaseTracks"> | string | null
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
+  primaryForBundle?: Prisma.XOR<Prisma.BundlesNullableScalarRelationFilter, Prisma.BundlesWhereInput> | null
+  controlForTests?: Prisma.BundleAbTestsListRelationFilter
+  treatmentForTests?: Prisma.BundleAbTestsListRelationFilter
+  exposures?: Prisma.BundleAbTestExposuresListRelationFilter
+  crashEvents?: Prisma.BundleCrashEventsListRelationFilter
+  artifactManifest?: Prisma.XOR<Prisma.BundleArtifactManifestsNullableScalarRelationFilter, Prisma.BundleArtifactManifestsWhereInput> | null
+  rolloutExposures?: Prisma.BundleRolloutExposuresListRelationFilter
   rollouts?: Prisma.BundleRolloutsListRelationFilter
 }, "id" | "bundleId_track_version">
 
@@ -294,6 +325,7 @@ export type BundleReleaseTracksOrderByWithAggregationInput = {
   releaseNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  artifactManifestId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.BundleReleaseTracksCountOrderByAggregateInput
   _avg?: Prisma.BundleReleaseTracksAvgOrderByAggregateInput
   _max?: Prisma.BundleReleaseTracksMaxOrderByAggregateInput
@@ -314,6 +346,7 @@ export type BundleReleaseTracksScalarWhereWithAggregatesInput = {
   releaseNotes?: Prisma.StringNullableWithAggregatesFilter<"BundleReleaseTracks"> | string | null
   status?: Prisma.StringWithAggregatesFilter<"BundleReleaseTracks"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleReleaseTracks"> | Date | string
+  artifactManifestId?: Prisma.UuidNullableWithAggregatesFilter<"BundleReleaseTracks"> | string | null
 }
 
 export type BundleReleaseTracksCreateInput = {
@@ -326,6 +359,13 @@ export type BundleReleaseTracksCreateInput = {
   status?: string
   createdAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutReleaseTracksInput
+  primaryForBundle?: Prisma.BundlesCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseTrackInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutReleaseTracksInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutTrackInput
   rollouts?: Prisma.BundleRolloutsCreateNestedManyWithoutTrackInput
 }
 
@@ -339,6 +379,13 @@ export type BundleReleaseTracksUncheckedCreateInput = {
   releaseNotes?: string | null
   status?: string
   createdAt: Date | string
+  artifactManifestId?: string | null
+  primaryForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseTrackInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutTrackInput
   rollouts?: Prisma.BundleRolloutsUncheckedCreateNestedManyWithoutTrackInput
 }
 
@@ -352,6 +399,13 @@ export type BundleReleaseTracksUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutReleaseTracksNestedInput
+  primaryForBundle?: Prisma.BundlesUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseTrackNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutReleaseTracksNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutTrackNestedInput
   rollouts?: Prisma.BundleRolloutsUpdateManyWithoutTrackNestedInput
 }
 
@@ -365,6 +419,13 @@ export type BundleReleaseTracksUncheckedUpdateInput = {
   releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  artifactManifestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseTrackNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutTrackNestedInput
   rollouts?: Prisma.BundleRolloutsUncheckedUpdateManyWithoutTrackNestedInput
 }
 
@@ -378,6 +439,7 @@ export type BundleReleaseTracksCreateManyInput = {
   releaseNotes?: string | null
   status?: string
   createdAt: Date | string
+  artifactManifestId?: string | null
 }
 
 export type BundleReleaseTracksUpdateManyMutationInput = {
@@ -401,12 +463,18 @@ export type BundleReleaseTracksUncheckedUpdateManyInput = {
   releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  artifactManifestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type BundleReleaseTracksListRelationFilter = {
   every?: Prisma.BundleReleaseTracksWhereInput
   some?: Prisma.BundleReleaseTracksWhereInput
   none?: Prisma.BundleReleaseTracksWhereInput
+}
+
+export type BundleReleaseTracksNullableScalarRelationFilter = {
+  is?: Prisma.BundleReleaseTracksWhereInput | null
+  isNot?: Prisma.BundleReleaseTracksWhereInput | null
 }
 
 export type BundleReleaseTracksOrderByRelationAggregateInput = {
@@ -429,6 +497,7 @@ export type BundleReleaseTracksCountOrderByAggregateInput = {
   releaseNotes?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  artifactManifestId?: Prisma.SortOrder
 }
 
 export type BundleReleaseTracksAvgOrderByAggregateInput = {
@@ -445,6 +514,7 @@ export type BundleReleaseTracksMaxOrderByAggregateInput = {
   releaseNotes?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  artifactManifestId?: Prisma.SortOrder
 }
 
 export type BundleReleaseTracksMinOrderByAggregateInput = {
@@ -457,6 +527,7 @@ export type BundleReleaseTracksMinOrderByAggregateInput = {
   releaseNotes?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  artifactManifestId?: Prisma.SortOrder
 }
 
 export type BundleReleaseTracksSumOrderByAggregateInput = {
@@ -473,6 +544,12 @@ export type BundleReleaseTracksCreateNestedManyWithoutBundleInput = {
   connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutBundleInput | Prisma.BundleReleaseTracksCreateOrConnectWithoutBundleInput[]
   createMany?: Prisma.BundleReleaseTracksCreateManyBundleInputEnvelope
   connect?: Prisma.BundleReleaseTracksWhereUniqueInput | Prisma.BundleReleaseTracksWhereUniqueInput[]
+}
+
+export type BundleReleaseTracksCreateNestedOneWithoutPrimaryForBundleInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutPrimaryForBundleInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutPrimaryForBundleInput>
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutPrimaryForBundleInput
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput
 }
 
 export type BundleReleaseTracksUncheckedCreateNestedManyWithoutBundleInput = {
@@ -496,6 +573,16 @@ export type BundleReleaseTracksUpdateManyWithoutBundleNestedInput = {
   deleteMany?: Prisma.BundleReleaseTracksScalarWhereInput | Prisma.BundleReleaseTracksScalarWhereInput[]
 }
 
+export type BundleReleaseTracksUpdateOneWithoutPrimaryForBundleNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutPrimaryForBundleInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutPrimaryForBundleInput>
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutPrimaryForBundleInput
+  upsert?: Prisma.BundleReleaseTracksUpsertWithoutPrimaryForBundleInput
+  disconnect?: Prisma.BundleReleaseTracksWhereInput | boolean
+  delete?: Prisma.BundleReleaseTracksWhereInput | boolean
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleReleaseTracksUpdateToOneWithWhereWithoutPrimaryForBundleInput, Prisma.BundleReleaseTracksUpdateWithoutPrimaryForBundleInput>, Prisma.BundleReleaseTracksUncheckedUpdateWithoutPrimaryForBundleInput>
+}
+
 export type BundleReleaseTracksUncheckedUpdateManyWithoutBundleNestedInput = {
   create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutBundleInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutBundleInput> | Prisma.BundleReleaseTracksCreateWithoutBundleInput[] | Prisma.BundleReleaseTracksUncheckedCreateWithoutBundleInput[]
   connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutBundleInput | Prisma.BundleReleaseTracksCreateOrConnectWithoutBundleInput[]
@@ -508,6 +595,54 @@ export type BundleReleaseTracksUncheckedUpdateManyWithoutBundleNestedInput = {
   update?: Prisma.BundleReleaseTracksUpdateWithWhereUniqueWithoutBundleInput | Prisma.BundleReleaseTracksUpdateWithWhereUniqueWithoutBundleInput[]
   updateMany?: Prisma.BundleReleaseTracksUpdateManyWithWhereWithoutBundleInput | Prisma.BundleReleaseTracksUpdateManyWithWhereWithoutBundleInput[]
   deleteMany?: Prisma.BundleReleaseTracksScalarWhereInput | Prisma.BundleReleaseTracksScalarWhereInput[]
+}
+
+export type BundleReleaseTracksCreateNestedOneWithoutControlForTestsInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutControlForTestsInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutControlForTestsInput>
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutControlForTestsInput
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput
+}
+
+export type BundleReleaseTracksCreateNestedOneWithoutTreatmentForTestsInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutTreatmentForTestsInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutTreatmentForTestsInput>
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutTreatmentForTestsInput
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput
+}
+
+export type BundleReleaseTracksUpdateOneWithoutControlForTestsNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutControlForTestsInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutControlForTestsInput>
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutControlForTestsInput
+  upsert?: Prisma.BundleReleaseTracksUpsertWithoutControlForTestsInput
+  disconnect?: Prisma.BundleReleaseTracksWhereInput | boolean
+  delete?: Prisma.BundleReleaseTracksWhereInput | boolean
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleReleaseTracksUpdateToOneWithWhereWithoutControlForTestsInput, Prisma.BundleReleaseTracksUpdateWithoutControlForTestsInput>, Prisma.BundleReleaseTracksUncheckedUpdateWithoutControlForTestsInput>
+}
+
+export type BundleReleaseTracksUpdateOneWithoutTreatmentForTestsNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutTreatmentForTestsInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutTreatmentForTestsInput>
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutTreatmentForTestsInput
+  upsert?: Prisma.BundleReleaseTracksUpsertWithoutTreatmentForTestsInput
+  disconnect?: Prisma.BundleReleaseTracksWhereInput | boolean
+  delete?: Prisma.BundleReleaseTracksWhereInput | boolean
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleReleaseTracksUpdateToOneWithWhereWithoutTreatmentForTestsInput, Prisma.BundleReleaseTracksUpdateWithoutTreatmentForTestsInput>, Prisma.BundleReleaseTracksUncheckedUpdateWithoutTreatmentForTestsInput>
+}
+
+export type BundleReleaseTracksCreateNestedOneWithoutExposuresInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutExposuresInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutExposuresInput>
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutExposuresInput
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput
+}
+
+export type BundleReleaseTracksUpdateOneWithoutExposuresNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutExposuresInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutExposuresInput>
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutExposuresInput
+  upsert?: Prisma.BundleReleaseTracksUpsertWithoutExposuresInput
+  disconnect?: Prisma.BundleReleaseTracksWhereInput | boolean
+  delete?: Prisma.BundleReleaseTracksWhereInput | boolean
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleReleaseTracksUpdateToOneWithWhereWithoutExposuresInput, Prisma.BundleReleaseTracksUpdateWithoutExposuresInput>, Prisma.BundleReleaseTracksUncheckedUpdateWithoutExposuresInput>
 }
 
 export type BundleReleaseTracksCreateNestedOneWithoutRolloutsInput = {
@@ -524,6 +659,78 @@ export type BundleReleaseTracksUpdateOneRequiredWithoutRolloutsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BundleReleaseTracksUpdateToOneWithWhereWithoutRolloutsInput, Prisma.BundleReleaseTracksUpdateWithoutRolloutsInput>, Prisma.BundleReleaseTracksUncheckedUpdateWithoutRolloutsInput>
 }
 
+export type BundleReleaseTracksCreateNestedOneWithoutCrashEventsInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutCrashEventsInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutCrashEventsInput>
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutCrashEventsInput
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput
+}
+
+export type BundleReleaseTracksUpdateOneWithoutCrashEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutCrashEventsInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutCrashEventsInput>
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutCrashEventsInput
+  upsert?: Prisma.BundleReleaseTracksUpsertWithoutCrashEventsInput
+  disconnect?: Prisma.BundleReleaseTracksWhereInput | boolean
+  delete?: Prisma.BundleReleaseTracksWhereInput | boolean
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleReleaseTracksUpdateToOneWithWhereWithoutCrashEventsInput, Prisma.BundleReleaseTracksUpdateWithoutCrashEventsInput>, Prisma.BundleReleaseTracksUncheckedUpdateWithoutCrashEventsInput>
+}
+
+export type BundleReleaseTracksCreateNestedManyWithoutArtifactManifestInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutArtifactManifestInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutArtifactManifestInput> | Prisma.BundleReleaseTracksCreateWithoutArtifactManifestInput[] | Prisma.BundleReleaseTracksUncheckedCreateWithoutArtifactManifestInput[]
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutArtifactManifestInput | Prisma.BundleReleaseTracksCreateOrConnectWithoutArtifactManifestInput[]
+  createMany?: Prisma.BundleReleaseTracksCreateManyArtifactManifestInputEnvelope
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput | Prisma.BundleReleaseTracksWhereUniqueInput[]
+}
+
+export type BundleReleaseTracksUncheckedCreateNestedManyWithoutArtifactManifestInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutArtifactManifestInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutArtifactManifestInput> | Prisma.BundleReleaseTracksCreateWithoutArtifactManifestInput[] | Prisma.BundleReleaseTracksUncheckedCreateWithoutArtifactManifestInput[]
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutArtifactManifestInput | Prisma.BundleReleaseTracksCreateOrConnectWithoutArtifactManifestInput[]
+  createMany?: Prisma.BundleReleaseTracksCreateManyArtifactManifestInputEnvelope
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput | Prisma.BundleReleaseTracksWhereUniqueInput[]
+}
+
+export type BundleReleaseTracksUpdateManyWithoutArtifactManifestNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutArtifactManifestInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutArtifactManifestInput> | Prisma.BundleReleaseTracksCreateWithoutArtifactManifestInput[] | Prisma.BundleReleaseTracksUncheckedCreateWithoutArtifactManifestInput[]
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutArtifactManifestInput | Prisma.BundleReleaseTracksCreateOrConnectWithoutArtifactManifestInput[]
+  upsert?: Prisma.BundleReleaseTracksUpsertWithWhereUniqueWithoutArtifactManifestInput | Prisma.BundleReleaseTracksUpsertWithWhereUniqueWithoutArtifactManifestInput[]
+  createMany?: Prisma.BundleReleaseTracksCreateManyArtifactManifestInputEnvelope
+  set?: Prisma.BundleReleaseTracksWhereUniqueInput | Prisma.BundleReleaseTracksWhereUniqueInput[]
+  disconnect?: Prisma.BundleReleaseTracksWhereUniqueInput | Prisma.BundleReleaseTracksWhereUniqueInput[]
+  delete?: Prisma.BundleReleaseTracksWhereUniqueInput | Prisma.BundleReleaseTracksWhereUniqueInput[]
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput | Prisma.BundleReleaseTracksWhereUniqueInput[]
+  update?: Prisma.BundleReleaseTracksUpdateWithWhereUniqueWithoutArtifactManifestInput | Prisma.BundleReleaseTracksUpdateWithWhereUniqueWithoutArtifactManifestInput[]
+  updateMany?: Prisma.BundleReleaseTracksUpdateManyWithWhereWithoutArtifactManifestInput | Prisma.BundleReleaseTracksUpdateManyWithWhereWithoutArtifactManifestInput[]
+  deleteMany?: Prisma.BundleReleaseTracksScalarWhereInput | Prisma.BundleReleaseTracksScalarWhereInput[]
+}
+
+export type BundleReleaseTracksUncheckedUpdateManyWithoutArtifactManifestNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutArtifactManifestInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutArtifactManifestInput> | Prisma.BundleReleaseTracksCreateWithoutArtifactManifestInput[] | Prisma.BundleReleaseTracksUncheckedCreateWithoutArtifactManifestInput[]
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutArtifactManifestInput | Prisma.BundleReleaseTracksCreateOrConnectWithoutArtifactManifestInput[]
+  upsert?: Prisma.BundleReleaseTracksUpsertWithWhereUniqueWithoutArtifactManifestInput | Prisma.BundleReleaseTracksUpsertWithWhereUniqueWithoutArtifactManifestInput[]
+  createMany?: Prisma.BundleReleaseTracksCreateManyArtifactManifestInputEnvelope
+  set?: Prisma.BundleReleaseTracksWhereUniqueInput | Prisma.BundleReleaseTracksWhereUniqueInput[]
+  disconnect?: Prisma.BundleReleaseTracksWhereUniqueInput | Prisma.BundleReleaseTracksWhereUniqueInput[]
+  delete?: Prisma.BundleReleaseTracksWhereUniqueInput | Prisma.BundleReleaseTracksWhereUniqueInput[]
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput | Prisma.BundleReleaseTracksWhereUniqueInput[]
+  update?: Prisma.BundleReleaseTracksUpdateWithWhereUniqueWithoutArtifactManifestInput | Prisma.BundleReleaseTracksUpdateWithWhereUniqueWithoutArtifactManifestInput[]
+  updateMany?: Prisma.BundleReleaseTracksUpdateManyWithWhereWithoutArtifactManifestInput | Prisma.BundleReleaseTracksUpdateManyWithWhereWithoutArtifactManifestInput[]
+  deleteMany?: Prisma.BundleReleaseTracksScalarWhereInput | Prisma.BundleReleaseTracksScalarWhereInput[]
+}
+
+export type BundleReleaseTracksCreateNestedOneWithoutRolloutExposuresInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutRolloutExposuresInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutRolloutExposuresInput>
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutRolloutExposuresInput
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput
+}
+
+export type BundleReleaseTracksUpdateOneRequiredWithoutRolloutExposuresNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutRolloutExposuresInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutRolloutExposuresInput>
+  connectOrCreate?: Prisma.BundleReleaseTracksCreateOrConnectWithoutRolloutExposuresInput
+  upsert?: Prisma.BundleReleaseTracksUpsertWithoutRolloutExposuresInput
+  connect?: Prisma.BundleReleaseTracksWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleReleaseTracksUpdateToOneWithWhereWithoutRolloutExposuresInput, Prisma.BundleReleaseTracksUpdateWithoutRolloutExposuresInput>, Prisma.BundleReleaseTracksUncheckedUpdateWithoutRolloutExposuresInput>
+}
+
 export type BundleReleaseTracksCreateWithoutBundleInput = {
   id: string
   track: string
@@ -533,6 +740,13 @@ export type BundleReleaseTracksCreateWithoutBundleInput = {
   releaseNotes?: string | null
   status?: string
   createdAt: Date | string
+  primaryForBundle?: Prisma.BundlesCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseTrackInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutReleaseTracksInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutTrackInput
   rollouts?: Prisma.BundleRolloutsCreateNestedManyWithoutTrackInput
 }
 
@@ -545,6 +759,13 @@ export type BundleReleaseTracksUncheckedCreateWithoutBundleInput = {
   releaseNotes?: string | null
   status?: string
   createdAt: Date | string
+  artifactManifestId?: string | null
+  primaryForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseTrackInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutTrackInput
   rollouts?: Prisma.BundleRolloutsUncheckedCreateNestedManyWithoutTrackInput
 }
 
@@ -556,6 +777,49 @@ export type BundleReleaseTracksCreateOrConnectWithoutBundleInput = {
 export type BundleReleaseTracksCreateManyBundleInputEnvelope = {
   data: Prisma.BundleReleaseTracksCreateManyBundleInput | Prisma.BundleReleaseTracksCreateManyBundleInput[]
   skipDuplicates?: boolean
+}
+
+export type BundleReleaseTracksCreateWithoutPrimaryForBundleInput = {
+  id: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutReleaseTracksInput
+  controlForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseTrackInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutReleaseTracksInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutTrackInput
+  rollouts?: Prisma.BundleRolloutsCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksUncheckedCreateWithoutPrimaryForBundleInput = {
+  id: string
+  bundleId: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  artifactManifestId?: string | null
+  controlForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseTrackInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutTrackInput
+  rollouts?: Prisma.BundleRolloutsUncheckedCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksCreateOrConnectWithoutPrimaryForBundleInput = {
+  where: Prisma.BundleReleaseTracksWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutPrimaryForBundleInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutPrimaryForBundleInput>
 }
 
 export type BundleReleaseTracksUpsertWithWhereUniqueWithoutBundleInput = {
@@ -587,6 +851,332 @@ export type BundleReleaseTracksScalarWhereInput = {
   releaseNotes?: Prisma.StringNullableFilter<"BundleReleaseTracks"> | string | null
   status?: Prisma.StringFilter<"BundleReleaseTracks"> | string
   createdAt?: Prisma.DateTimeFilter<"BundleReleaseTracks"> | Date | string
+  artifactManifestId?: Prisma.UuidNullableFilter<"BundleReleaseTracks"> | string | null
+}
+
+export type BundleReleaseTracksUpsertWithoutPrimaryForBundleInput = {
+  update: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutPrimaryForBundleInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutPrimaryForBundleInput>
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutPrimaryForBundleInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutPrimaryForBundleInput>
+  where?: Prisma.BundleReleaseTracksWhereInput
+}
+
+export type BundleReleaseTracksUpdateToOneWithWhereWithoutPrimaryForBundleInput = {
+  where?: Prisma.BundleReleaseTracksWhereInput
+  data: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutPrimaryForBundleInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutPrimaryForBundleInput>
+}
+
+export type BundleReleaseTracksUpdateWithoutPrimaryForBundleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutReleaseTracksNestedInput
+  controlForTests?: Prisma.BundleAbTestsUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseTrackNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutReleaseTracksNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksUncheckedUpdateWithoutPrimaryForBundleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  artifactManifestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseTrackNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUncheckedUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksCreateWithoutControlForTestsInput = {
+  id: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutReleaseTracksInput
+  primaryForBundle?: Prisma.BundlesCreateNestedOneWithoutPrimaryReleaseTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseTrackInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutReleaseTracksInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutTrackInput
+  rollouts?: Prisma.BundleRolloutsCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksUncheckedCreateWithoutControlForTestsInput = {
+  id: string
+  bundleId: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  artifactManifestId?: string | null
+  primaryForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutPrimaryReleaseTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseTrackInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutTrackInput
+  rollouts?: Prisma.BundleRolloutsUncheckedCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksCreateOrConnectWithoutControlForTestsInput = {
+  where: Prisma.BundleReleaseTracksWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutControlForTestsInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutControlForTestsInput>
+}
+
+export type BundleReleaseTracksCreateWithoutTreatmentForTestsInput = {
+  id: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutReleaseTracksInput
+  primaryForBundle?: Prisma.BundlesCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutControlTrackInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseTrackInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutReleaseTracksInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutTrackInput
+  rollouts?: Prisma.BundleRolloutsCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksUncheckedCreateWithoutTreatmentForTestsInput = {
+  id: string
+  bundleId: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  artifactManifestId?: string | null
+  primaryForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutControlTrackInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseTrackInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutTrackInput
+  rollouts?: Prisma.BundleRolloutsUncheckedCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksCreateOrConnectWithoutTreatmentForTestsInput = {
+  where: Prisma.BundleReleaseTracksWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutTreatmentForTestsInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutTreatmentForTestsInput>
+}
+
+export type BundleReleaseTracksUpsertWithoutControlForTestsInput = {
+  update: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutControlForTestsInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutControlForTestsInput>
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutControlForTestsInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutControlForTestsInput>
+  where?: Prisma.BundleReleaseTracksWhereInput
+}
+
+export type BundleReleaseTracksUpdateToOneWithWhereWithoutControlForTestsInput = {
+  where?: Prisma.BundleReleaseTracksWhereInput
+  data: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutControlForTestsInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutControlForTestsInput>
+}
+
+export type BundleReleaseTracksUpdateWithoutControlForTestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutReleaseTracksNestedInput
+  primaryForBundle?: Prisma.BundlesUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseTrackNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutReleaseTracksNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksUncheckedUpdateWithoutControlForTestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  artifactManifestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseTrackNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUncheckedUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksUpsertWithoutTreatmentForTestsInput = {
+  update: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutTreatmentForTestsInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutTreatmentForTestsInput>
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutTreatmentForTestsInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutTreatmentForTestsInput>
+  where?: Prisma.BundleReleaseTracksWhereInput
+}
+
+export type BundleReleaseTracksUpdateToOneWithWhereWithoutTreatmentForTestsInput = {
+  where?: Prisma.BundleReleaseTracksWhereInput
+  data: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutTreatmentForTestsInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutTreatmentForTestsInput>
+}
+
+export type BundleReleaseTracksUpdateWithoutTreatmentForTestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutReleaseTracksNestedInput
+  primaryForBundle?: Prisma.BundlesUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUpdateManyWithoutControlTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseTrackNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutReleaseTracksNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksUncheckedUpdateWithoutTreatmentForTestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  artifactManifestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseTrackNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUncheckedUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksCreateWithoutExposuresInput = {
+  id: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutReleaseTracksInput
+  primaryForBundle?: Prisma.BundlesCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentTrackInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseTrackInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutReleaseTracksInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutTrackInput
+  rollouts?: Prisma.BundleRolloutsCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksUncheckedCreateWithoutExposuresInput = {
+  id: string
+  bundleId: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  artifactManifestId?: string | null
+  primaryForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentTrackInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseTrackInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutTrackInput
+  rollouts?: Prisma.BundleRolloutsUncheckedCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksCreateOrConnectWithoutExposuresInput = {
+  where: Prisma.BundleReleaseTracksWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutExposuresInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutExposuresInput>
+}
+
+export type BundleReleaseTracksUpsertWithoutExposuresInput = {
+  update: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutExposuresInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutExposuresInput>
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutExposuresInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutExposuresInput>
+  where?: Prisma.BundleReleaseTracksWhereInput
+}
+
+export type BundleReleaseTracksUpdateToOneWithWhereWithoutExposuresInput = {
+  where?: Prisma.BundleReleaseTracksWhereInput
+  data: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutExposuresInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutExposuresInput>
+}
+
+export type BundleReleaseTracksUpdateWithoutExposuresInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutReleaseTracksNestedInput
+  primaryForBundle?: Prisma.BundlesUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseTrackNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutReleaseTracksNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksUncheckedUpdateWithoutExposuresInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  artifactManifestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseTrackNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUncheckedUpdateManyWithoutTrackNestedInput
 }
 
 export type BundleReleaseTracksCreateWithoutRolloutsInput = {
@@ -599,6 +1189,13 @@ export type BundleReleaseTracksCreateWithoutRolloutsInput = {
   status?: string
   createdAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutReleaseTracksInput
+  primaryForBundle?: Prisma.BundlesCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseTrackInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutReleaseTracksInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutTrackInput
 }
 
 export type BundleReleaseTracksUncheckedCreateWithoutRolloutsInput = {
@@ -611,6 +1208,13 @@ export type BundleReleaseTracksUncheckedCreateWithoutRolloutsInput = {
   releaseNotes?: string | null
   status?: string
   createdAt: Date | string
+  artifactManifestId?: string | null
+  primaryForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseTrackInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutTrackInput
 }
 
 export type BundleReleaseTracksCreateOrConnectWithoutRolloutsInput = {
@@ -639,6 +1243,13 @@ export type BundleReleaseTracksUpdateWithoutRolloutsInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutReleaseTracksNestedInput
+  primaryForBundle?: Prisma.BundlesUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseTrackNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutReleaseTracksNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutTrackNestedInput
 }
 
 export type BundleReleaseTracksUncheckedUpdateWithoutRolloutsInput = {
@@ -651,6 +1262,261 @@ export type BundleReleaseTracksUncheckedUpdateWithoutRolloutsInput = {
   releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  artifactManifestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseTrackNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksCreateWithoutCrashEventsInput = {
+  id: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutReleaseTracksInput
+  primaryForBundle?: Prisma.BundlesCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedTrackInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutReleaseTracksInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutTrackInput
+  rollouts?: Prisma.BundleRolloutsCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksUncheckedCreateWithoutCrashEventsInput = {
+  id: string
+  bundleId: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  artifactManifestId?: string | null
+  primaryForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedTrackInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutTrackInput
+  rollouts?: Prisma.BundleRolloutsUncheckedCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksCreateOrConnectWithoutCrashEventsInput = {
+  where: Prisma.BundleReleaseTracksWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutCrashEventsInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutCrashEventsInput>
+}
+
+export type BundleReleaseTracksUpsertWithoutCrashEventsInput = {
+  update: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutCrashEventsInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutCrashEventsInput>
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutCrashEventsInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutCrashEventsInput>
+  where?: Prisma.BundleReleaseTracksWhereInput
+}
+
+export type BundleReleaseTracksUpdateToOneWithWhereWithoutCrashEventsInput = {
+  where?: Prisma.BundleReleaseTracksWhereInput
+  data: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutCrashEventsInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutCrashEventsInput>
+}
+
+export type BundleReleaseTracksUpdateWithoutCrashEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutReleaseTracksNestedInput
+  primaryForBundle?: Prisma.BundlesUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedTrackNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutReleaseTracksNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksUncheckedUpdateWithoutCrashEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  artifactManifestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedTrackNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUncheckedUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksCreateWithoutArtifactManifestInput = {
+  id: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutReleaseTracksInput
+  primaryForBundle?: Prisma.BundlesCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseTrackInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutTrackInput
+  rollouts?: Prisma.BundleRolloutsCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksUncheckedCreateWithoutArtifactManifestInput = {
+  id: string
+  bundleId: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  primaryForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseTrackInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutTrackInput
+  rollouts?: Prisma.BundleRolloutsUncheckedCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksCreateOrConnectWithoutArtifactManifestInput = {
+  where: Prisma.BundleReleaseTracksWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutArtifactManifestInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutArtifactManifestInput>
+}
+
+export type BundleReleaseTracksCreateManyArtifactManifestInputEnvelope = {
+  data: Prisma.BundleReleaseTracksCreateManyArtifactManifestInput | Prisma.BundleReleaseTracksCreateManyArtifactManifestInput[]
+  skipDuplicates?: boolean
+}
+
+export type BundleReleaseTracksUpsertWithWhereUniqueWithoutArtifactManifestInput = {
+  where: Prisma.BundleReleaseTracksWhereUniqueInput
+  update: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutArtifactManifestInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutArtifactManifestInput>
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutArtifactManifestInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutArtifactManifestInput>
+}
+
+export type BundleReleaseTracksUpdateWithWhereUniqueWithoutArtifactManifestInput = {
+  where: Prisma.BundleReleaseTracksWhereUniqueInput
+  data: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutArtifactManifestInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutArtifactManifestInput>
+}
+
+export type BundleReleaseTracksUpdateManyWithWhereWithoutArtifactManifestInput = {
+  where: Prisma.BundleReleaseTracksScalarWhereInput
+  data: Prisma.XOR<Prisma.BundleReleaseTracksUpdateManyMutationInput, Prisma.BundleReleaseTracksUncheckedUpdateManyWithoutArtifactManifestInput>
+}
+
+export type BundleReleaseTracksCreateWithoutRolloutExposuresInput = {
+  id: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutReleaseTracksInput
+  primaryForBundle?: Prisma.BundlesCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseTrackInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutReleaseTracksInput
+  rollouts?: Prisma.BundleRolloutsCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksUncheckedCreateWithoutRolloutExposuresInput = {
+  id: string
+  bundleId: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+  artifactManifestId?: string | null
+  primaryForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutPrimaryReleaseTrackInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutControlTrackInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentTrackInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedTrackInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseTrackInput
+  rollouts?: Prisma.BundleRolloutsUncheckedCreateNestedManyWithoutTrackInput
+}
+
+export type BundleReleaseTracksCreateOrConnectWithoutRolloutExposuresInput = {
+  where: Prisma.BundleReleaseTracksWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutRolloutExposuresInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutRolloutExposuresInput>
+}
+
+export type BundleReleaseTracksUpsertWithoutRolloutExposuresInput = {
+  update: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutRolloutExposuresInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutRolloutExposuresInput>
+  create: Prisma.XOR<Prisma.BundleReleaseTracksCreateWithoutRolloutExposuresInput, Prisma.BundleReleaseTracksUncheckedCreateWithoutRolloutExposuresInput>
+  where?: Prisma.BundleReleaseTracksWhereInput
+}
+
+export type BundleReleaseTracksUpdateToOneWithWhereWithoutRolloutExposuresInput = {
+  where?: Prisma.BundleReleaseTracksWhereInput
+  data: Prisma.XOR<Prisma.BundleReleaseTracksUpdateWithoutRolloutExposuresInput, Prisma.BundleReleaseTracksUncheckedUpdateWithoutRolloutExposuresInput>
+}
+
+export type BundleReleaseTracksUpdateWithoutRolloutExposuresInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutReleaseTracksNestedInput
+  primaryForBundle?: Prisma.BundlesUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseTrackNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutReleaseTracksNestedInput
+  rollouts?: Prisma.BundleRolloutsUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksUncheckedUpdateWithoutRolloutExposuresInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  artifactManifestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUncheckedUpdateManyWithoutTrackNestedInput
 }
 
 export type BundleReleaseTracksCreateManyBundleInput = {
@@ -662,6 +1528,7 @@ export type BundleReleaseTracksCreateManyBundleInput = {
   releaseNotes?: string | null
   status?: string
   createdAt: Date | string
+  artifactManifestId?: string | null
 }
 
 export type BundleReleaseTracksUpdateWithoutBundleInput = {
@@ -673,6 +1540,13 @@ export type BundleReleaseTracksUpdateWithoutBundleInput = {
   releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  primaryForBundle?: Prisma.BundlesUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseTrackNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutReleaseTracksNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutTrackNestedInput
   rollouts?: Prisma.BundleRolloutsUpdateManyWithoutTrackNestedInput
 }
 
@@ -685,11 +1559,81 @@ export type BundleReleaseTracksUncheckedUpdateWithoutBundleInput = {
   releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  artifactManifestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseTrackNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutTrackNestedInput
   rollouts?: Prisma.BundleRolloutsUncheckedUpdateManyWithoutTrackNestedInput
 }
 
 export type BundleReleaseTracksUncheckedUpdateManyWithoutBundleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  artifactManifestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type BundleReleaseTracksCreateManyArtifactManifestInput = {
+  id: string
+  bundleId: string
+  track: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  releaseNotes?: string | null
+  status?: string
+  createdAt: Date | string
+}
+
+export type BundleReleaseTracksUpdateWithoutArtifactManifestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutReleaseTracksNestedInput
+  primaryForBundle?: Prisma.BundlesUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseTrackNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksUncheckedUpdateWithoutArtifactManifestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  track?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  primaryForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutPrimaryReleaseTrackNestedInput
+  controlForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlTrackNestedInput
+  treatmentForTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentTrackNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedTrackNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseTrackNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutTrackNestedInput
+  rollouts?: Prisma.BundleRolloutsUncheckedUpdateManyWithoutTrackNestedInput
+}
+
+export type BundleReleaseTracksUncheckedUpdateManyWithoutArtifactManifestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   track?: Prisma.StringFieldUpdateOperationsInput | string
   version?: Prisma.StringFieldUpdateOperationsInput | string
   buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
@@ -705,10 +1649,20 @@ export type BundleReleaseTracksUncheckedUpdateManyWithoutBundleInput = {
  */
 
 export type BundleReleaseTracksCountOutputType = {
+  controlForTests: number
+  treatmentForTests: number
+  exposures: number
+  crashEvents: number
+  rolloutExposures: number
   rollouts: number
 }
 
 export type BundleReleaseTracksCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  controlForTests?: boolean | BundleReleaseTracksCountOutputTypeCountControlForTestsArgs
+  treatmentForTests?: boolean | BundleReleaseTracksCountOutputTypeCountTreatmentForTestsArgs
+  exposures?: boolean | BundleReleaseTracksCountOutputTypeCountExposuresArgs
+  crashEvents?: boolean | BundleReleaseTracksCountOutputTypeCountCrashEventsArgs
+  rolloutExposures?: boolean | BundleReleaseTracksCountOutputTypeCountRolloutExposuresArgs
   rollouts?: boolean | BundleReleaseTracksCountOutputTypeCountRolloutsArgs
 }
 
@@ -720,6 +1674,41 @@ export type BundleReleaseTracksCountOutputTypeDefaultArgs<ExtArgs extends runtim
    * Select specific fields to fetch from the BundleReleaseTracksCountOutputType
    */
   select?: Prisma.BundleReleaseTracksCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * BundleReleaseTracksCountOutputType without action
+ */
+export type BundleReleaseTracksCountOutputTypeCountControlForTestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleAbTestsWhereInput
+}
+
+/**
+ * BundleReleaseTracksCountOutputType without action
+ */
+export type BundleReleaseTracksCountOutputTypeCountTreatmentForTestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleAbTestsWhereInput
+}
+
+/**
+ * BundleReleaseTracksCountOutputType without action
+ */
+export type BundleReleaseTracksCountOutputTypeCountExposuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleAbTestExposuresWhereInput
+}
+
+/**
+ * BundleReleaseTracksCountOutputType without action
+ */
+export type BundleReleaseTracksCountOutputTypeCountCrashEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleCrashEventsWhereInput
+}
+
+/**
+ * BundleReleaseTracksCountOutputType without action
+ */
+export type BundleReleaseTracksCountOutputTypeCountRolloutExposuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleRolloutExposuresWhereInput
 }
 
 /**
@@ -740,7 +1729,15 @@ export type BundleReleaseTracksSelect<ExtArgs extends runtime.Types.Extensions.I
   releaseNotes?: boolean
   status?: boolean
   createdAt?: boolean
+  artifactManifestId?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  primaryForBundle?: boolean | Prisma.BundleReleaseTracks$primaryForBundleArgs<ExtArgs>
+  controlForTests?: boolean | Prisma.BundleReleaseTracks$controlForTestsArgs<ExtArgs>
+  treatmentForTests?: boolean | Prisma.BundleReleaseTracks$treatmentForTestsArgs<ExtArgs>
+  exposures?: boolean | Prisma.BundleReleaseTracks$exposuresArgs<ExtArgs>
+  crashEvents?: boolean | Prisma.BundleReleaseTracks$crashEventsArgs<ExtArgs>
+  artifactManifest?: boolean | Prisma.BundleReleaseTracks$artifactManifestArgs<ExtArgs>
+  rolloutExposures?: boolean | Prisma.BundleReleaseTracks$rolloutExposuresArgs<ExtArgs>
   rollouts?: boolean | Prisma.BundleReleaseTracks$rolloutsArgs<ExtArgs>
   _count?: boolean | Prisma.BundleReleaseTracksCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleReleaseTracks"]>
@@ -755,7 +1752,9 @@ export type BundleReleaseTracksSelectCreateManyAndReturn<ExtArgs extends runtime
   releaseNotes?: boolean
   status?: boolean
   createdAt?: boolean
+  artifactManifestId?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  artifactManifest?: boolean | Prisma.BundleReleaseTracks$artifactManifestArgs<ExtArgs>
 }, ExtArgs["result"]["bundleReleaseTracks"]>
 
 export type BundleReleaseTracksSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -768,7 +1767,9 @@ export type BundleReleaseTracksSelectUpdateManyAndReturn<ExtArgs extends runtime
   releaseNotes?: boolean
   status?: boolean
   createdAt?: boolean
+  artifactManifestId?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  artifactManifest?: boolean | Prisma.BundleReleaseTracks$artifactManifestArgs<ExtArgs>
 }, ExtArgs["result"]["bundleReleaseTracks"]>
 
 export type BundleReleaseTracksSelectScalar = {
@@ -781,25 +1782,42 @@ export type BundleReleaseTracksSelectScalar = {
   releaseNotes?: boolean
   status?: boolean
   createdAt?: boolean
+  artifactManifestId?: boolean
 }
 
-export type BundleReleaseTracksOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "track" | "version" | "buildNumber" | "storagePath" | "releaseNotes" | "status" | "createdAt", ExtArgs["result"]["bundleReleaseTracks"]>
+export type BundleReleaseTracksOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "track" | "version" | "buildNumber" | "storagePath" | "releaseNotes" | "status" | "createdAt" | "artifactManifestId", ExtArgs["result"]["bundleReleaseTracks"]>
 export type BundleReleaseTracksInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  primaryForBundle?: boolean | Prisma.BundleReleaseTracks$primaryForBundleArgs<ExtArgs>
+  controlForTests?: boolean | Prisma.BundleReleaseTracks$controlForTestsArgs<ExtArgs>
+  treatmentForTests?: boolean | Prisma.BundleReleaseTracks$treatmentForTestsArgs<ExtArgs>
+  exposures?: boolean | Prisma.BundleReleaseTracks$exposuresArgs<ExtArgs>
+  crashEvents?: boolean | Prisma.BundleReleaseTracks$crashEventsArgs<ExtArgs>
+  artifactManifest?: boolean | Prisma.BundleReleaseTracks$artifactManifestArgs<ExtArgs>
+  rolloutExposures?: boolean | Prisma.BundleReleaseTracks$rolloutExposuresArgs<ExtArgs>
   rollouts?: boolean | Prisma.BundleReleaseTracks$rolloutsArgs<ExtArgs>
   _count?: boolean | Prisma.BundleReleaseTracksCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BundleReleaseTracksIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  artifactManifest?: boolean | Prisma.BundleReleaseTracks$artifactManifestArgs<ExtArgs>
 }
 export type BundleReleaseTracksIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  artifactManifest?: boolean | Prisma.BundleReleaseTracks$artifactManifestArgs<ExtArgs>
 }
 
 export type $BundleReleaseTracksPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "BundleReleaseTracks"
   objects: {
     bundle: Prisma.$BundlesPayload<ExtArgs>
+    primaryForBundle: Prisma.$BundlesPayload<ExtArgs> | null
+    controlForTests: Prisma.$BundleAbTestsPayload<ExtArgs>[]
+    treatmentForTests: Prisma.$BundleAbTestsPayload<ExtArgs>[]
+    exposures: Prisma.$BundleAbTestExposuresPayload<ExtArgs>[]
+    crashEvents: Prisma.$BundleCrashEventsPayload<ExtArgs>[]
+    artifactManifest: Prisma.$BundleArtifactManifestsPayload<ExtArgs> | null
+    rolloutExposures: Prisma.$BundleRolloutExposuresPayload<ExtArgs>[]
     rollouts: Prisma.$BundleRolloutsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -812,6 +1830,7 @@ export type $BundleReleaseTracksPayload<ExtArgs extends runtime.Types.Extensions
     releaseNotes: string | null
     status: string
     createdAt: Date
+    artifactManifestId: string | null
   }, ExtArgs["result"]["bundleReleaseTracks"]>
   composites: {}
 }
@@ -1207,6 +2226,13 @@ readonly fields: BundleReleaseTracksFieldRefs;
 export interface Prisma__BundleReleaseTracksClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   bundle<T extends Prisma.BundlesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundlesDefaultArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  primaryForBundle<T extends Prisma.BundleReleaseTracks$primaryForBundleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleaseTracks$primaryForBundleArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  controlForTests<T extends Prisma.BundleReleaseTracks$controlForTestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleaseTracks$controlForTestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleAbTestsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  treatmentForTests<T extends Prisma.BundleReleaseTracks$treatmentForTestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleaseTracks$treatmentForTestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleAbTestsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  exposures<T extends Prisma.BundleReleaseTracks$exposuresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleaseTracks$exposuresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleAbTestExposuresPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  crashEvents<T extends Prisma.BundleReleaseTracks$crashEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleaseTracks$crashEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleCrashEventsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  artifactManifest<T extends Prisma.BundleReleaseTracks$artifactManifestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleaseTracks$artifactManifestArgs<ExtArgs>>): Prisma.Prisma__BundleArtifactManifestsClient<runtime.Types.Result.GetResult<Prisma.$BundleArtifactManifestsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  rolloutExposures<T extends Prisma.BundleReleaseTracks$rolloutExposuresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleaseTracks$rolloutExposuresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleRolloutExposuresPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   rollouts<T extends Prisma.BundleReleaseTracks$rolloutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleaseTracks$rolloutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleRolloutsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1246,6 +2272,7 @@ export interface BundleReleaseTracksFieldRefs {
   readonly releaseNotes: Prisma.FieldRef<"BundleReleaseTracks", 'String'>
   readonly status: Prisma.FieldRef<"BundleReleaseTracks", 'String'>
   readonly createdAt: Prisma.FieldRef<"BundleReleaseTracks", 'DateTime'>
+  readonly artifactManifestId: Prisma.FieldRef<"BundleReleaseTracks", 'String'>
 }
     
 
@@ -1644,6 +2671,164 @@ export type BundleReleaseTracksDeleteManyArgs<ExtArgs extends runtime.Types.Exte
    * Limit how many BundleReleaseTracks to delete.
    */
   limit?: number
+}
+
+/**
+ * BundleReleaseTracks.primaryForBundle
+ */
+export type BundleReleaseTracks$primaryForBundleArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Bundles
+   */
+  select?: Prisma.BundlesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Bundles
+   */
+  omit?: Prisma.BundlesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundlesInclude<ExtArgs> | null
+  where?: Prisma.BundlesWhereInput
+}
+
+/**
+ * BundleReleaseTracks.controlForTests
+ */
+export type BundleReleaseTracks$controlForTestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleAbTests
+   */
+  select?: Prisma.BundleAbTestsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleAbTests
+   */
+  omit?: Prisma.BundleAbTestsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleAbTestsInclude<ExtArgs> | null
+  where?: Prisma.BundleAbTestsWhereInput
+  orderBy?: Prisma.BundleAbTestsOrderByWithRelationInput | Prisma.BundleAbTestsOrderByWithRelationInput[]
+  cursor?: Prisma.BundleAbTestsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleAbTestsScalarFieldEnum | Prisma.BundleAbTestsScalarFieldEnum[]
+}
+
+/**
+ * BundleReleaseTracks.treatmentForTests
+ */
+export type BundleReleaseTracks$treatmentForTestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleAbTests
+   */
+  select?: Prisma.BundleAbTestsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleAbTests
+   */
+  omit?: Prisma.BundleAbTestsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleAbTestsInclude<ExtArgs> | null
+  where?: Prisma.BundleAbTestsWhereInput
+  orderBy?: Prisma.BundleAbTestsOrderByWithRelationInput | Prisma.BundleAbTestsOrderByWithRelationInput[]
+  cursor?: Prisma.BundleAbTestsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleAbTestsScalarFieldEnum | Prisma.BundleAbTestsScalarFieldEnum[]
+}
+
+/**
+ * BundleReleaseTracks.exposures
+ */
+export type BundleReleaseTracks$exposuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleAbTestExposures
+   */
+  select?: Prisma.BundleAbTestExposuresSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleAbTestExposures
+   */
+  omit?: Prisma.BundleAbTestExposuresOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleAbTestExposuresInclude<ExtArgs> | null
+  where?: Prisma.BundleAbTestExposuresWhereInput
+  orderBy?: Prisma.BundleAbTestExposuresOrderByWithRelationInput | Prisma.BundleAbTestExposuresOrderByWithRelationInput[]
+  cursor?: Prisma.BundleAbTestExposuresWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleAbTestExposuresScalarFieldEnum | Prisma.BundleAbTestExposuresScalarFieldEnum[]
+}
+
+/**
+ * BundleReleaseTracks.crashEvents
+ */
+export type BundleReleaseTracks$crashEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleCrashEvents
+   */
+  select?: Prisma.BundleCrashEventsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleCrashEvents
+   */
+  omit?: Prisma.BundleCrashEventsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleCrashEventsInclude<ExtArgs> | null
+  where?: Prisma.BundleCrashEventsWhereInput
+  orderBy?: Prisma.BundleCrashEventsOrderByWithRelationInput | Prisma.BundleCrashEventsOrderByWithRelationInput[]
+  cursor?: Prisma.BundleCrashEventsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleCrashEventsScalarFieldEnum | Prisma.BundleCrashEventsScalarFieldEnum[]
+}
+
+/**
+ * BundleReleaseTracks.artifactManifest
+ */
+export type BundleReleaseTracks$artifactManifestArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleArtifactManifests
+   */
+  select?: Prisma.BundleArtifactManifestsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleArtifactManifests
+   */
+  omit?: Prisma.BundleArtifactManifestsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleArtifactManifestsInclude<ExtArgs> | null
+  where?: Prisma.BundleArtifactManifestsWhereInput
+}
+
+/**
+ * BundleReleaseTracks.rolloutExposures
+ */
+export type BundleReleaseTracks$rolloutExposuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleRolloutExposures
+   */
+  select?: Prisma.BundleRolloutExposuresSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleRolloutExposures
+   */
+  omit?: Prisma.BundleRolloutExposuresOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleRolloutExposuresInclude<ExtArgs> | null
+  where?: Prisma.BundleRolloutExposuresWhereInput
+  orderBy?: Prisma.BundleRolloutExposuresOrderByWithRelationInput | Prisma.BundleRolloutExposuresOrderByWithRelationInput[]
+  cursor?: Prisma.BundleRolloutExposuresWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleRolloutExposuresScalarFieldEnum | Prisma.BundleRolloutExposuresScalarFieldEnum[]
 }
 
 /**

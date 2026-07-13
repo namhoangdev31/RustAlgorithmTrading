@@ -6,6 +6,7 @@ import { localizedHref, redirect } from "@/i18n/navigation";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { requireProjectRole } from "@/lib/server/permissions";
 import { prisma } from "@/lib/server/prisma";
+import { finalizeRollout, rollbackRelease } from "@/lib/server/lepoship/release-service";
 
 function readFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -38,6 +39,12 @@ async function requireEditableBundle(userId: string, projectId: string) {
   }
 
   return bundle;
+}
+
+async function requireAdminBundle(userId: string, projectId: string) {
+  const access = await requireProjectRole(userId, projectId, "admin");
+  if (!access.project.bundle) throw new Error("LepoShip bundle not found.");
+  return access.project.bundle;
 }
 
 export async function saveLepoShipRuntimeConfigAction(formData: FormData) {
@@ -77,6 +84,26 @@ export async function saveLepoShipRuntimeConfigAction(formData: FormData) {
       updatedAt: new Date(),
     },
   });
+  const configKey = readFormValue(formData, "configKey");
+  const configValue = readFormValue(formData, "configValue");
+  const configTrack = readFormValue(formData, "configTrack") || "global";
+  if (configKey) {
+    if (configTrack !== "global" && !configTrack.startsWith("channel:") && !configTrack.startsWith("release:")) {
+      throw new Error("Runtime config scope must be global, channel:<name>, or release:<id>.");
+    }
+    let value: unknown = configValue;
+    try { value = JSON.parse(configValue); } catch {}
+    const selector = { bundleId: bundle.id, environment: "production", track: configTrack, configKey };
+    const existing = await prisma.bundleRuntimeConfigEntries.findUnique({
+      where: { bundleId_environment_track_configKey: selector },
+      select: { revision: true },
+    });
+    await prisma.bundleRuntimeConfigEntries.upsert({
+      where: { bundleId_environment_track_configKey: selector },
+      create: { id: crypto.randomUUID(), ...selector, value: value as never, revision: 1, createdAt: new Date(), updatedAt: new Date() },
+      update: { value: value as never, revision: (existing?.revision || 0) + 1, updatedAt: new Date() },
+    });
+  }
 
   revalidatePath(`/lepoship/${projectId}`);
   redirect(withQueryParam(returnTo, "lepoship", "runtime_saved"));
@@ -87,6 +114,8 @@ export async function updateLepoShipRolloutAction(formData: FormData) {
   const projectId = readFormValue(formData, "projectId");
   const trackId = readFormValue(formData, "trackId");
   const targetCountry = readFormValue(formData, "targetCountry") || null;
+  const targetLocale = readFormValue(formData, "targetLocale") || null;
+  const targetPlatform = readFormValue(formData, "targetPlatform") || null;
   const returnTo = await readReturnTo(formData, `/lepoship/${projectId}`);
 
   if (!projectId || !trackId) {
@@ -100,47 +129,76 @@ export async function updateLepoShipRolloutAction(formData: FormData) {
     redirect(withQueryParam(returnTo, "lepoship", "access_denied"));
   }
 
-  const track = await prisma.bundleReleaseTracks.findFirst({
-    where: { id: trackId, bundleId: bundle.id },
-    select: { id: true },
+  const track = await prisma.bundleReleases.findFirst({
+    where: { id: trackId, bundleId: bundle.id, status: "approved" },
+    select: { id: true, channelId: true },
   });
 
   if (!track) {
     redirect(withQueryParam(returnTo, "lepoship", "track_not_found"));
   }
 
-  const existing = await prisma.bundleRollouts.findFirst({
+  const existing = await prisma.bundleDeliveryRollouts.findFirst({
     where: {
       bundleId: bundle.id,
-      trackId,
-      targetCountry,
+      candidateReleaseId: trackId,
     },
     select: { id: true },
   });
   const rolloutPercent = readPercent(formData);
   const now = new Date();
 
-  if (existing) {
-    await prisma.bundleRollouts.update({
-      where: { id: existing.id },
-      data: {
-        rolloutPercent,
-        completedAt: rolloutPercent >= 100 ? now : null,
-      },
+  if (rolloutPercent > 0) {
+    const activeExperiment = await prisma.bundles.findUnique({
+      where: { id: bundle.id },
+      select: { activeDeliveryMode: true, activeAbTestId: true, activeRolloutId: true, channels: { where: { id: track.channelId }, select: { currentReleaseId: true }, take: 1 } },
     });
-  } else {
-    await prisma.bundleRollouts.create({
-      data: {
-        id: crypto.randomUUID(),
-        bundleId: bundle.id,
-        trackId,
-        rolloutPercent,
-        targetCountry,
-        startedAt: now,
-        completedAt: rolloutPercent >= 100 ? now : null,
-        createdAt: now,
-      },
+    if (activeExperiment?.activeDeliveryMode === "experiment" || activeExperiment?.activeAbTestId) {
+      redirect(withQueryParam(returnTo, "lepoship", "rollout_conflicts_with_ab_test"));
+    }
+    if (!activeExperiment?.channels[0]?.currentReleaseId) redirect(withQueryParam(returnTo, "lepoship", "primary_unavailable"));
+  }
+
+  const savedRollout = await prisma.$transaction(async (tx) => {
+    const currentBundle = await tx.bundles.findUnique({
+      where: { id: bundle.id },
+      include: { channels: { where: { id: track.channelId }, take: 1 } },
     });
+    if (!currentBundle?.channels[0]?.currentReleaseId) throw new Error("primary_unavailable");
+    if (currentBundle.activeDeliveryMode === "experiment") throw new Error("rollout_conflicts_with_ab_test");
+    const rollout = existing
+      ? await tx.bundleDeliveryRollouts.update({
+          where: { id: existing.id },
+          data: {
+            percentage: rolloutPercent,
+            status: rolloutPercent <= 0 ? "paused" : rolloutPercent >= 100 ? "completed" : "running",
+            pausedAt: rolloutPercent <= 0 ? now : null,
+            completedAt: rolloutPercent >= 100 ? now : null,
+            targeting: { targetCountry, targetLocale, targetPlatform },
+            updatedAt: now,
+          },
+        })
+      : await tx.bundleDeliveryRollouts.create({
+          data: {
+            id: crypto.randomUUID(), bundleId: bundle.id, channelId: track.channelId,
+            baselineReleaseId: currentBundle.channels[0].currentReleaseId!, candidateReleaseId: track.id,
+            percentage: rolloutPercent,
+            status: rolloutPercent <= 0 ? "paused" : rolloutPercent >= 100 ? "completed" : "running",
+            targeting: { targetCountry, targetLocale, targetPlatform }, startedAt: now,
+            pausedAt: rolloutPercent <= 0 ? now : null, completedAt: rolloutPercent >= 100 ? now : null,
+            createdAt: now, updatedAt: now,
+          },
+        });
+    await tx.bundles.update({
+      where: { id: bundle.id },
+      data: rolloutPercent > 0 && rolloutPercent < 100
+        ? { activeRolloutId: rollout.id, activeAbTestId: null, activeDeliveryMode: "rollout" }
+        : { activeRolloutId: null, activeDeliveryMode: "none" },
+    });
+    return rollout;
+  }, { isolationLevel: "Serializable" });
+  if (rolloutPercent >= 100) {
+    await finalizeRollout({ rolloutId: savedRollout.id, actorId: user.id, reason: "Rollout reached 100%." });
   }
 
   revalidatePath(`/lepoship/${projectId}`);
@@ -159,47 +217,14 @@ export async function rollbackLepoShipTrackAction(formData: FormData) {
 
   let bundle: Awaited<ReturnType<typeof requireEditableBundle>>;
   try {
-    bundle = await requireEditableBundle(user.id, projectId);
+    bundle = await requireAdminBundle(user.id, projectId);
   } catch {
     redirect(withQueryParam(returnTo, "lepoship", "access_denied"));
   }
 
-  const fallbackTrack = await prisma.bundleReleaseTracks.findFirst({
-    where: {
-      bundleId: bundle.id,
-      id: { not: trackId },
-      status: "active",
-      storagePath: { not: "" },
-    },
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      version: true,
-      buildNumber: true,
-      storagePath: true,
-    },
-  });
-
-  await prisma.$transaction([
-    prisma.bundleReleaseTracks.updateMany({
-      where: { id: trackId, bundleId: bundle.id },
-      data: { status: "rolled_back" },
-    }),
-    ...(fallbackTrack
-      ? [
-          prisma.bundles.update({
-            where: { id: bundle.id },
-            data: {
-              version: fallbackTrack.version,
-              buildNumber: fallbackTrack.buildNumber,
-              storagePath: fallbackTrack.storagePath,
-              status: "published",
-              updatedAt: new Date(),
-            },
-          }),
-        ]
-      : []),
-  ]);
+  const failedRelease = await prisma.bundleReleases.findFirst({ where: { id: trackId, bundleId: bundle.id, status: "active" } });
+  if (!failedRelease) redirect(withQueryParam(returnTo, "lepoship", "fallback_unavailable"));
+  await rollbackRelease({ bundleId: bundle.id, channel: "production", actorId: user.id, reason: readFormValue(formData, "reason") || "Manual rollback" });
 
   revalidatePath(`/lepoship/${projectId}`);
   redirect(withQueryParam(returnTo, "lepoship", "track_rolled_back"));

@@ -4,7 +4,7 @@ import { getLepoShipProjectDetail } from "@/lib/server/admin-data";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, CheckCircle2, Download } from "lucide-react";
+import { Clock, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type PageProps = {
@@ -22,6 +22,20 @@ export default async function LepoShipBuildsPage({ params }: PageProps) {
 
   const project = data.project;
   const bundle = project.bundle;
+  const builds = bundle ? await prisma.bundleBuildJobs.findMany({
+    where: { bundleId: bundle.id },
+    include: {
+      release: {
+        include: {
+          artifacts: { where: { kind: "full" }, take: 1 },
+          approvals: { select: { kind: true, status: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 100,
+  }) : [];
+  const publicBase = process.env.LEPOS_ARTIFACT_PUBLIC_BASE_URL?.replace(/\/$/, "");
 
   return (
     <Card className="bg-card border border-hairline p-5">
@@ -35,7 +49,7 @@ export default async function LepoShipBuildsPage({ params }: PageProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="px-0 pb-0 pt-2">
-        {!bundle?.releaseTracks || bundle.releaseTracks.length === 0 ? (
+        {builds.length === 0 ? (
           <div className="text-center py-10 border border-dashed border-hairline rounded-md">
             <p className="text-xs text-muted-foreground">No builds created yet. Setup build settings and trigger your first build.</p>
           </div>
@@ -53,27 +67,31 @@ export default async function LepoShipBuildsPage({ params }: PageProps) {
                 </tr>
               </thead>
               <tbody>
-                {bundle.releaseTracks.map((track) => (
-                  <tr key={track.id} className="border-b border-hairline last:border-0 hover:bg-secondary/20">
-                    <td className="p-3 font-mono font-bold text-foreground">#{track.buildNumber}</td>
-                    <td className="p-3 font-mono text-muted-foreground">{track.version}</td>
-                    <td className="p-3 text-foreground max-w-xs truncate">{track.releaseNotes}</td>
-                    <td className="p-3 text-muted-foreground">{new Date(track.createdAt).toLocaleString()}</td>
+                {builds.map((build) => {
+                  const artifact = build.release.artifacts[0];
+                  const artifactUrl = artifact && publicBase ? `${publicBase}/${artifact.storageKey.split("/").map(encodeURIComponent).join("/")}` : null;
+                  return (
+                  <tr key={build.id} className="border-b border-hairline last:border-0 hover:bg-secondary/20">
+                    <td className="p-3 font-mono font-bold text-foreground">#{build.release.buildNumber}</td>
+                    <td className="p-3 font-mono text-muted-foreground">{build.release.version}</td>
+                    <td className="p-3 text-foreground max-w-xs truncate">{build.release.releaseNotes || "—"}</td>
+                    <td className="p-3 text-muted-foreground">{build.createdAt.toLocaleString()}</td>
                     <td className="p-3">
-                      <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold flex items-center gap-1 w-fit">
-                        <CheckCircle2 className="size-3" />
-                        Success
-                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        <Badge variant={build.status === "failed" ? "destructive" : build.status === "succeeded" ? "default" : "secondary"}>{build.status}</Badge>
+                        <Badge variant="outline">release: {build.release.status}</Badge>
+                        {build.release.approvals.map((approval) => <Badge key={approval.kind} variant="outline">{approval.kind}: {approval.status}</Badge>)}
+                      </div>
                     </td>
                     <td className="p-3 text-right">
-                      <Button asChild size="icon" variant="ghost" className="h-7 w-7 rounded cursor-pointer" title="Download Bundle">
-                        <a href={track.storagePath} download>
+                      {artifactUrl ? <Button asChild size="icon" variant="ghost" className="h-7 w-7 rounded cursor-pointer" title="Download Bundle">
+                        <a href={artifactUrl}>
                           <Download className="size-3.5" />
                         </a>
-                      </Button>
+                      </Button> : <span className="text-muted-foreground">—</span>}
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>

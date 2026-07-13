@@ -80,6 +80,12 @@ export function getWorkspaceNav(_locale?: string): NavItem[] {
       icon: DollarSign,
       requiredRole: "admin",
     },
+    {
+      path: "/admin/lepoship-operations",
+      label: "LepoShip Operations (Admin)",
+      icon: Terminal,
+      requiredRole: "admin",
+    },
 
   ];
 }
@@ -111,6 +117,11 @@ export function getLepoShipNav(_locale: string, projectId: string): NavItem[] {
     { path: `${base}/builds`, label: "Builds", icon: Terminal },
     { path: `${base}/ota`, label: "OTA Rollouts", icon: Cpu },
     { path: `${base}/ab-testing`, label: "A/B Tests", icon: Activity },
+    { path: `${base}/crashes`, label: "Crashes", icon: Activity },
+    { path: `${base}/reviews`, label: "Reviews", icon: Eye },
+    { path: `${base}/trust`, label: "Trust & Privacy", icon: FolderLock },
+    { path: `${base}/runtime-config`, label: "Runtime Config", icon: Settings },
+    { path: `${base}/audit`, label: "Audit", icon: ListTodo },
     { path: `${base}/listing`, label: "Store Listing", icon: Store },
     { path: `${base}/settings`, label: "Build Settings", icon: Settings },
   ];

@@ -20,8 +20,18 @@ export type BundleSecurityScanResultsModel = runtime.Types.Result.DefaultSelecti
 
 export type AggregateBundleSecurityScanResults = {
   _count: BundleSecurityScanResultsCountAggregateOutputType | null
+  _avg: BundleSecurityScanResultsAvgAggregateOutputType | null
+  _sum: BundleSecurityScanResultsSumAggregateOutputType | null
   _min: BundleSecurityScanResultsMinAggregateOutputType | null
   _max: BundleSecurityScanResultsMaxAggregateOutputType | null
+}
+
+export type BundleSecurityScanResultsAvgAggregateOutputType = {
+  riskScore: number | null
+}
+
+export type BundleSecurityScanResultsSumAggregateOutputType = {
+  riskScore: number | null
 }
 
 export type BundleSecurityScanResultsMinAggregateOutputType = {
@@ -34,6 +44,8 @@ export type BundleSecurityScanResultsMinAggregateOutputType = {
   findings: string | null
   scannedAt: Date | null
   scannerVersion: string | null
+  policyVersion: string | null
+  riskScore: number | null
 }
 
 export type BundleSecurityScanResultsMaxAggregateOutputType = {
@@ -46,6 +58,8 @@ export type BundleSecurityScanResultsMaxAggregateOutputType = {
   findings: string | null
   scannedAt: Date | null
   scannerVersion: string | null
+  policyVersion: string | null
+  riskScore: number | null
 }
 
 export type BundleSecurityScanResultsCountAggregateOutputType = {
@@ -58,9 +72,20 @@ export type BundleSecurityScanResultsCountAggregateOutputType = {
   findings: number
   scannedAt: number
   scannerVersion: number
+  policyVersion: number
+  sbom: number
+  riskScore: number
   _all: number
 }
 
+
+export type BundleSecurityScanResultsAvgAggregateInputType = {
+  riskScore?: true
+}
+
+export type BundleSecurityScanResultsSumAggregateInputType = {
+  riskScore?: true
+}
 
 export type BundleSecurityScanResultsMinAggregateInputType = {
   id?: true
@@ -72,6 +97,8 @@ export type BundleSecurityScanResultsMinAggregateInputType = {
   findings?: true
   scannedAt?: true
   scannerVersion?: true
+  policyVersion?: true
+  riskScore?: true
 }
 
 export type BundleSecurityScanResultsMaxAggregateInputType = {
@@ -84,6 +111,8 @@ export type BundleSecurityScanResultsMaxAggregateInputType = {
   findings?: true
   scannedAt?: true
   scannerVersion?: true
+  policyVersion?: true
+  riskScore?: true
 }
 
 export type BundleSecurityScanResultsCountAggregateInputType = {
@@ -96,6 +125,9 @@ export type BundleSecurityScanResultsCountAggregateInputType = {
   findings?: true
   scannedAt?: true
   scannerVersion?: true
+  policyVersion?: true
+  sbom?: true
+  riskScore?: true
   _all?: true
 }
 
@@ -137,6 +169,18 @@ export type BundleSecurityScanResultsAggregateArgs<ExtArgs extends runtime.Types
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: BundleSecurityScanResultsAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: BundleSecurityScanResultsSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: BundleSecurityScanResultsMinAggregateInputType
@@ -167,6 +211,8 @@ export type BundleSecurityScanResultsGroupByArgs<ExtArgs extends runtime.Types.E
   take?: number
   skip?: number
   _count?: BundleSecurityScanResultsCountAggregateInputType | true
+  _avg?: BundleSecurityScanResultsAvgAggregateInputType
+  _sum?: BundleSecurityScanResultsSumAggregateInputType
   _min?: BundleSecurityScanResultsMinAggregateInputType
   _max?: BundleSecurityScanResultsMaxAggregateInputType
 }
@@ -181,7 +227,12 @@ export type BundleSecurityScanResultsGroupByOutputType = {
   findings: string | null
   scannedAt: Date
   scannerVersion: string | null
+  policyVersion: string | null
+  sbom: runtime.JsonValue | null
+  riskScore: number | null
   _count: BundleSecurityScanResultsCountAggregateOutputType | null
+  _avg: BundleSecurityScanResultsAvgAggregateOutputType | null
+  _sum: BundleSecurityScanResultsSumAggregateOutputType | null
   _min: BundleSecurityScanResultsMinAggregateOutputType | null
   _max: BundleSecurityScanResultsMaxAggregateOutputType | null
 }
@@ -214,6 +265,9 @@ export type BundleSecurityScanResultsWhereInput = {
   findings?: Prisma.StringNullableFilter<"BundleSecurityScanResults"> | string | null
   scannedAt?: Prisma.DateTimeFilter<"BundleSecurityScanResults"> | Date | string
   scannerVersion?: Prisma.StringNullableFilter<"BundleSecurityScanResults"> | string | null
+  policyVersion?: Prisma.StringNullableFilter<"BundleSecurityScanResults"> | string | null
+  sbom?: Prisma.JsonNullableFilter<"BundleSecurityScanResults">
+  riskScore?: Prisma.FloatNullableFilter<"BundleSecurityScanResults"> | number | null
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
   version?: Prisma.XOR<Prisma.BundleVersionHistoryNullableScalarRelationFilter, Prisma.BundleVersionHistoryWhereInput> | null
 }
@@ -228,6 +282,9 @@ export type BundleSecurityScanResultsOrderByWithRelationInput = {
   findings?: Prisma.SortOrderInput | Prisma.SortOrder
   scannedAt?: Prisma.SortOrder
   scannerVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  policyVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  sbom?: Prisma.SortOrderInput | Prisma.SortOrder
+  riskScore?: Prisma.SortOrderInput | Prisma.SortOrder
   bundle?: Prisma.BundlesOrderByWithRelationInput
   version?: Prisma.BundleVersionHistoryOrderByWithRelationInput
 }
@@ -245,6 +302,9 @@ export type BundleSecurityScanResultsWhereUniqueInput = Prisma.AtLeast<{
   findings?: Prisma.StringNullableFilter<"BundleSecurityScanResults"> | string | null
   scannedAt?: Prisma.DateTimeFilter<"BundleSecurityScanResults"> | Date | string
   scannerVersion?: Prisma.StringNullableFilter<"BundleSecurityScanResults"> | string | null
+  policyVersion?: Prisma.StringNullableFilter<"BundleSecurityScanResults"> | string | null
+  sbom?: Prisma.JsonNullableFilter<"BundleSecurityScanResults">
+  riskScore?: Prisma.FloatNullableFilter<"BundleSecurityScanResults"> | number | null
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
   version?: Prisma.XOR<Prisma.BundleVersionHistoryNullableScalarRelationFilter, Prisma.BundleVersionHistoryWhereInput> | null
 }, "id">
@@ -259,9 +319,14 @@ export type BundleSecurityScanResultsOrderByWithAggregationInput = {
   findings?: Prisma.SortOrderInput | Prisma.SortOrder
   scannedAt?: Prisma.SortOrder
   scannerVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  policyVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  sbom?: Prisma.SortOrderInput | Prisma.SortOrder
+  riskScore?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.BundleSecurityScanResultsCountOrderByAggregateInput
+  _avg?: Prisma.BundleSecurityScanResultsAvgOrderByAggregateInput
   _max?: Prisma.BundleSecurityScanResultsMaxOrderByAggregateInput
   _min?: Prisma.BundleSecurityScanResultsMinOrderByAggregateInput
+  _sum?: Prisma.BundleSecurityScanResultsSumOrderByAggregateInput
 }
 
 export type BundleSecurityScanResultsScalarWhereWithAggregatesInput = {
@@ -277,6 +342,9 @@ export type BundleSecurityScanResultsScalarWhereWithAggregatesInput = {
   findings?: Prisma.StringNullableWithAggregatesFilter<"BundleSecurityScanResults"> | string | null
   scannedAt?: Prisma.DateTimeWithAggregatesFilter<"BundleSecurityScanResults"> | Date | string
   scannerVersion?: Prisma.StringNullableWithAggregatesFilter<"BundleSecurityScanResults"> | string | null
+  policyVersion?: Prisma.StringNullableWithAggregatesFilter<"BundleSecurityScanResults"> | string | null
+  sbom?: Prisma.JsonNullableWithAggregatesFilter<"BundleSecurityScanResults">
+  riskScore?: Prisma.FloatNullableWithAggregatesFilter<"BundleSecurityScanResults"> | number | null
 }
 
 export type BundleSecurityScanResultsCreateInput = {
@@ -287,6 +355,9 @@ export type BundleSecurityScanResultsCreateInput = {
   findings?: string | null
   scannedAt: Date | string
   scannerVersion?: string | null
+  policyVersion?: string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: number | null
   bundle: Prisma.BundlesCreateNestedOneWithoutSecurityScanResultsInput
   version?: Prisma.BundleVersionHistoryCreateNestedOneWithoutSecurityScanResultsInput
 }
@@ -301,6 +372,9 @@ export type BundleSecurityScanResultsUncheckedCreateInput = {
   findings?: string | null
   scannedAt: Date | string
   scannerVersion?: string | null
+  policyVersion?: string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: number | null
 }
 
 export type BundleSecurityScanResultsUpdateInput = {
@@ -311,6 +385,9 @@ export type BundleSecurityScanResultsUpdateInput = {
   findings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scannedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   scannerVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutSecurityScanResultsNestedInput
   version?: Prisma.BundleVersionHistoryUpdateOneWithoutSecurityScanResultsNestedInput
 }
@@ -325,6 +402,9 @@ export type BundleSecurityScanResultsUncheckedUpdateInput = {
   findings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scannedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   scannerVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type BundleSecurityScanResultsCreateManyInput = {
@@ -337,6 +417,9 @@ export type BundleSecurityScanResultsCreateManyInput = {
   findings?: string | null
   scannedAt: Date | string
   scannerVersion?: string | null
+  policyVersion?: string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: number | null
 }
 
 export type BundleSecurityScanResultsUpdateManyMutationInput = {
@@ -347,6 +430,9 @@ export type BundleSecurityScanResultsUpdateManyMutationInput = {
   findings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scannedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   scannerVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type BundleSecurityScanResultsUncheckedUpdateManyInput = {
@@ -359,6 +445,9 @@ export type BundleSecurityScanResultsUncheckedUpdateManyInput = {
   findings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scannedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   scannerVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type BundleSecurityScanResultsListRelationFilter = {
@@ -381,6 +470,13 @@ export type BundleSecurityScanResultsCountOrderByAggregateInput = {
   findings?: Prisma.SortOrder
   scannedAt?: Prisma.SortOrder
   scannerVersion?: Prisma.SortOrder
+  policyVersion?: Prisma.SortOrder
+  sbom?: Prisma.SortOrder
+  riskScore?: Prisma.SortOrder
+}
+
+export type BundleSecurityScanResultsAvgOrderByAggregateInput = {
+  riskScore?: Prisma.SortOrder
 }
 
 export type BundleSecurityScanResultsMaxOrderByAggregateInput = {
@@ -393,6 +489,8 @@ export type BundleSecurityScanResultsMaxOrderByAggregateInput = {
   findings?: Prisma.SortOrder
   scannedAt?: Prisma.SortOrder
   scannerVersion?: Prisma.SortOrder
+  policyVersion?: Prisma.SortOrder
+  riskScore?: Prisma.SortOrder
 }
 
 export type BundleSecurityScanResultsMinOrderByAggregateInput = {
@@ -405,6 +503,12 @@ export type BundleSecurityScanResultsMinOrderByAggregateInput = {
   findings?: Prisma.SortOrder
   scannedAt?: Prisma.SortOrder
   scannerVersion?: Prisma.SortOrder
+  policyVersion?: Prisma.SortOrder
+  riskScore?: Prisma.SortOrder
+}
+
+export type BundleSecurityScanResultsSumOrderByAggregateInput = {
+  riskScore?: Prisma.SortOrder
 }
 
 export type BundleSecurityScanResultsCreateNestedManyWithoutBundleInput = {
@@ -499,6 +603,9 @@ export type BundleSecurityScanResultsCreateWithoutBundleInput = {
   findings?: string | null
   scannedAt: Date | string
   scannerVersion?: string | null
+  policyVersion?: string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: number | null
   version?: Prisma.BundleVersionHistoryCreateNestedOneWithoutSecurityScanResultsInput
 }
 
@@ -511,6 +618,9 @@ export type BundleSecurityScanResultsUncheckedCreateWithoutBundleInput = {
   findings?: string | null
   scannedAt: Date | string
   scannerVersion?: string | null
+  policyVersion?: string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: number | null
 }
 
 export type BundleSecurityScanResultsCreateOrConnectWithoutBundleInput = {
@@ -552,6 +662,9 @@ export type BundleSecurityScanResultsScalarWhereInput = {
   findings?: Prisma.StringNullableFilter<"BundleSecurityScanResults"> | string | null
   scannedAt?: Prisma.DateTimeFilter<"BundleSecurityScanResults"> | Date | string
   scannerVersion?: Prisma.StringNullableFilter<"BundleSecurityScanResults"> | string | null
+  policyVersion?: Prisma.StringNullableFilter<"BundleSecurityScanResults"> | string | null
+  sbom?: Prisma.JsonNullableFilter<"BundleSecurityScanResults">
+  riskScore?: Prisma.FloatNullableFilter<"BundleSecurityScanResults"> | number | null
 }
 
 export type BundleSecurityScanResultsCreateWithoutVersionInput = {
@@ -562,6 +675,9 @@ export type BundleSecurityScanResultsCreateWithoutVersionInput = {
   findings?: string | null
   scannedAt: Date | string
   scannerVersion?: string | null
+  policyVersion?: string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: number | null
   bundle: Prisma.BundlesCreateNestedOneWithoutSecurityScanResultsInput
 }
 
@@ -574,6 +690,9 @@ export type BundleSecurityScanResultsUncheckedCreateWithoutVersionInput = {
   findings?: string | null
   scannedAt: Date | string
   scannerVersion?: string | null
+  policyVersion?: string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: number | null
 }
 
 export type BundleSecurityScanResultsCreateOrConnectWithoutVersionInput = {
@@ -611,6 +730,9 @@ export type BundleSecurityScanResultsCreateManyBundleInput = {
   findings?: string | null
   scannedAt: Date | string
   scannerVersion?: string | null
+  policyVersion?: string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: number | null
 }
 
 export type BundleSecurityScanResultsUpdateWithoutBundleInput = {
@@ -621,6 +743,9 @@ export type BundleSecurityScanResultsUpdateWithoutBundleInput = {
   findings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scannedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   scannerVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   version?: Prisma.BundleVersionHistoryUpdateOneWithoutSecurityScanResultsNestedInput
 }
 
@@ -633,6 +758,9 @@ export type BundleSecurityScanResultsUncheckedUpdateWithoutBundleInput = {
   findings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scannedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   scannerVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type BundleSecurityScanResultsUncheckedUpdateManyWithoutBundleInput = {
@@ -644,6 +772,9 @@ export type BundleSecurityScanResultsUncheckedUpdateManyWithoutBundleInput = {
   findings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scannedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   scannerVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type BundleSecurityScanResultsCreateManyVersionInput = {
@@ -655,6 +786,9 @@ export type BundleSecurityScanResultsCreateManyVersionInput = {
   findings?: string | null
   scannedAt: Date | string
   scannerVersion?: string | null
+  policyVersion?: string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: number | null
 }
 
 export type BundleSecurityScanResultsUpdateWithoutVersionInput = {
@@ -665,6 +799,9 @@ export type BundleSecurityScanResultsUpdateWithoutVersionInput = {
   findings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scannedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   scannerVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutSecurityScanResultsNestedInput
 }
 
@@ -677,6 +814,9 @@ export type BundleSecurityScanResultsUncheckedUpdateWithoutVersionInput = {
   findings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scannedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   scannerVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type BundleSecurityScanResultsUncheckedUpdateManyWithoutVersionInput = {
@@ -688,6 +828,9 @@ export type BundleSecurityScanResultsUncheckedUpdateManyWithoutVersionInput = {
   findings?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scannedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   scannerVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sbom?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  riskScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 
@@ -702,6 +845,9 @@ export type BundleSecurityScanResultsSelect<ExtArgs extends runtime.Types.Extens
   findings?: boolean
   scannedAt?: boolean
   scannerVersion?: boolean
+  policyVersion?: boolean
+  sbom?: boolean
+  riskScore?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   version?: boolean | Prisma.BundleSecurityScanResults$versionArgs<ExtArgs>
 }, ExtArgs["result"]["bundleSecurityScanResults"]>
@@ -716,6 +862,9 @@ export type BundleSecurityScanResultsSelectCreateManyAndReturn<ExtArgs extends r
   findings?: boolean
   scannedAt?: boolean
   scannerVersion?: boolean
+  policyVersion?: boolean
+  sbom?: boolean
+  riskScore?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   version?: boolean | Prisma.BundleSecurityScanResults$versionArgs<ExtArgs>
 }, ExtArgs["result"]["bundleSecurityScanResults"]>
@@ -730,6 +879,9 @@ export type BundleSecurityScanResultsSelectUpdateManyAndReturn<ExtArgs extends r
   findings?: boolean
   scannedAt?: boolean
   scannerVersion?: boolean
+  policyVersion?: boolean
+  sbom?: boolean
+  riskScore?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   version?: boolean | Prisma.BundleSecurityScanResults$versionArgs<ExtArgs>
 }, ExtArgs["result"]["bundleSecurityScanResults"]>
@@ -744,9 +896,12 @@ export type BundleSecurityScanResultsSelectScalar = {
   findings?: boolean
   scannedAt?: boolean
   scannerVersion?: boolean
+  policyVersion?: boolean
+  sbom?: boolean
+  riskScore?: boolean
 }
 
-export type BundleSecurityScanResultsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "versionId" | "scanType" | "result" | "severity" | "findings" | "scannedAt" | "scannerVersion", ExtArgs["result"]["bundleSecurityScanResults"]>
+export type BundleSecurityScanResultsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "versionId" | "scanType" | "result" | "severity" | "findings" | "scannedAt" | "scannerVersion" | "policyVersion" | "sbom" | "riskScore", ExtArgs["result"]["bundleSecurityScanResults"]>
 export type BundleSecurityScanResultsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   version?: boolean | Prisma.BundleSecurityScanResults$versionArgs<ExtArgs>
@@ -776,6 +931,9 @@ export type $BundleSecurityScanResultsPayload<ExtArgs extends runtime.Types.Exte
     findings: string | null
     scannedAt: Date
     scannerVersion: string | null
+    policyVersion: string | null
+    sbom: runtime.JsonValue | null
+    riskScore: number | null
   }, ExtArgs["result"]["bundleSecurityScanResults"]>
   composites: {}
 }
@@ -1210,6 +1368,9 @@ export interface BundleSecurityScanResultsFieldRefs {
   readonly findings: Prisma.FieldRef<"BundleSecurityScanResults", 'String'>
   readonly scannedAt: Prisma.FieldRef<"BundleSecurityScanResults", 'DateTime'>
   readonly scannerVersion: Prisma.FieldRef<"BundleSecurityScanResults", 'String'>
+  readonly policyVersion: Prisma.FieldRef<"BundleSecurityScanResults", 'String'>
+  readonly sbom: Prisma.FieldRef<"BundleSecurityScanResults", 'Json'>
+  readonly riskScore: Prisma.FieldRef<"BundleSecurityScanResults", 'Float'>
 }
     
 

@@ -19,26 +19,30 @@ import (
 	"trading/control-gateway/internal/domain/repositories"
 	"trading/control-gateway/internal/health"
 	"trading/control-gateway/internal/middleware"
+	postgresRepo "trading/control-gateway/internal/repository/postgres"
 	"trading/control-gateway/internal/storage"
+	leposhipUsecase "trading/control-gateway/internal/usecase/lepoship"
 	"trading/control-gateway/internal/worker"
 	"trading/control-gateway/internal/ws"
 )
 
 type Server struct {
-	cfg              *config.Config
-	store            *storage.Store
-	wsManager        *ws.Manager
-	metricsWorker    *worker.MetricsCollector
-	healthAggregator *health.Aggregator
-	incidentManager  *alerts.Manager
-	alpacaClient     repositories.AlpacaRepository
-	alertHandler     *handlers.AlertHandler
-	alpacaHandler    *handlers.AlpacaHandler
-	metricHandler    *handlers.MetricHandler
-	tradeHandler     *handlers.TradeHandler
-	systemHandler    *handlers.SystemHandler
+	cfg               *config.Config
+	store             *storage.Store
+	wsManager         *ws.Manager
+	metricsWorker     *worker.MetricsCollector
+	healthAggregator  *health.Aggregator
+	incidentManager   *alerts.Manager
+	alpacaClient      repositories.AlpacaRepository
+	alertHandler      *handlers.AlertHandler
+	alpacaHandler     *handlers.AlpacaHandler
+	metricHandler     *handlers.MetricHandler
+	tradeHandler      *handlers.TradeHandler
+	systemHandler     *handlers.SystemHandler
 	riskLimitsHandler *handlers.RiskLimitsHandler
-	httpServer       *http.Server
+	lepoShipHandler   *handlers.LepoShipHandler
+	lepoShipScheduler *worker.LepoShipScheduler
+	httpServer        *http.Server
 }
 
 func NewServer(
@@ -56,6 +60,19 @@ func NewServer(
 	systemHandler *handlers.SystemHandler,
 	riskLimitsHandler *handlers.RiskLimitsHandler,
 ) *Server {
+	redisClient := ProvideRedisClient(cfg)
+	var lepoShipHandler *handlers.LepoShipHandler
+	var lepoShipScheduler *worker.LepoShipScheduler
+	if repo, err := postgresRepo.NewLepoShipRepository(store); err == nil {
+		service := leposhipUsecase.NewService(repo)
+		lepoShipHandler = handlers.NewLepoShipHandler(service, redisClient)
+		lepoShipScheduler = worker.NewLepoShipScheduler(service, redisClient)
+		if err := lepoShipScheduler.RegisterDefaults(); err != nil {
+			slog.Warn("lepoship_scheduler_register_failed", "error", err)
+		}
+	} else {
+		slog.Warn("lepoship_runtime_disabled", "error", err)
+	}
 	return &Server{
 		cfg:               cfg,
 		store:             store,
@@ -70,6 +87,8 @@ func NewServer(
 		tradeHandler:      tradeHandler,
 		systemHandler:     systemHandler,
 		riskLimitsHandler: riskLimitsHandler,
+		lepoShipHandler:   lepoShipHandler,
+		lepoShipScheduler: lepoShipScheduler,
 	}
 }
 
@@ -79,6 +98,10 @@ func (s *Server) Run() error {
 
 	// Start Metrics Worker
 	go s.metricsWorker.Start()
+
+	if s.lepoShipScheduler != nil {
+		s.lepoShipScheduler.Start()
+	}
 
 	// Setup Gin & Wire Clean Architecture Layers
 	r := s.setupRouter()
@@ -109,6 +132,9 @@ func (s *Server) Run() error {
 
 	s.metricsWorker.Stop()
 	s.wsManager.Stop()
+	if s.lepoShipScheduler != nil {
+		s.lepoShipScheduler.Stop()
+	}
 
 	if err := s.store.Close(); err != nil {
 		slog.Warn("store_close_error", "error", err)
@@ -136,15 +162,16 @@ func (s *Server) setupRouter() *gin.Engine {
 
 	// Map Routes using pre-injected handlers
 	deliveryHttp.MapRoutes(deliveryHttp.RouterConfig{
-		Engine:           r,
-		HealthAggregator: s.healthAggregator,
-		WSManager:        s.wsManager,
-		AlertHandler:     s.alertHandler,
-		AlpacaHandler:    s.alpacaHandler,
+		Engine:            r,
+		HealthAggregator:  s.healthAggregator,
+		WSManager:         s.wsManager,
+		AlertHandler:      s.alertHandler,
+		AlpacaHandler:     s.alpacaHandler,
 		MetricHandler:     s.metricHandler,
 		TradeHandler:      s.tradeHandler,
 		SystemHandler:     s.systemHandler,
 		RiskLimitsHandler: s.riskLimitsHandler,
+		LepoShipHandler:   s.lepoShipHandler,
 	})
 
 	return r

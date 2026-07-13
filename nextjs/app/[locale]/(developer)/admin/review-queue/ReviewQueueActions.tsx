@@ -12,8 +12,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { approveReviewQueueAction, rejectReviewQueueAction } from "@/app/actions/lepoship-review";
-import { Check, X } from "lucide-react";
+import { approveReviewQueueAction, createEmergencyReleaseOverrideAction, rejectReviewQueueAction } from "@/app/actions/lepoship-review";
+import { AlertTriangle, Check, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface Props {
@@ -24,6 +24,7 @@ interface Props {
 export function ReviewQueueActions({ queueItemId, bundleName }: Props) {
   const t = useTranslations("LepoShip.moderation");
   const [rejectOpen, setRejectOpen] = React.useState(false);
+  const [overrideOpen, setOverrideOpen] = React.useState(false);
   const [reason, setReason] = React.useState("");
   const [pending, setPending] = React.useState(false);
 
@@ -103,6 +104,21 @@ export function ReviewQueueActions({ queueItemId, bundleName }: Props) {
               {t("reject")}
               </Button>
             </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={overrideOpen} onOpenChange={setOverrideOpen}>
+        <DialogTrigger asChild>
+          <Button type="button" size="sm" variant="outline" disabled={pending} className="h-7 text-xs gap-1 border-amber-500/30 text-amber-500">
+            <AlertTriangle className="size-3" /> Emergency override
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader><DialogTitle>Emergency release override</DialogTitle><DialogDescription>Bypasses release gates for one hour. The action is permanently audited.</DialogDescription></DialogHeader>
+          <form action={createEmergencyReleaseOverrideAction} onSubmit={() => setPending(true)}>
+            <input type="hidden" name="queueItemId" value={queueItemId} />
+            <Textarea name="overrideReason" minLength={10} required placeholder="Operational reason and incident reference…" />
+            <DialogFooter className="mt-4"><Button type="submit" variant="destructive" disabled={pending}>Create one-hour override</Button></DialogFooter>
           </form>
         </DialogContent>
       </Dialog>

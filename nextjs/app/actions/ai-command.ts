@@ -5,6 +5,7 @@ import { createFirewallRuleAction } from "@/app/actions/firewall";
 import { getAuthorizedVercelClient, syncCentralEdgeConfig } from "@/lib/server/vercel";
 import { getProjectProvidersAction } from "@/app/actions/vercel";
 import { enqueueBuild } from "@/lib/server/build-queue";
+import { createReleaseCandidate } from "@/lib/server/lepoship/release-service";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { getWorkspaceContext } from "@/lib/server/workspace";
 import crypto from "crypto";
@@ -325,44 +326,34 @@ User query: "${query}"
         } catch (_) {}
       }
       
-      const trackId = crypto.randomUUID();
-      const now = new Date();
-      
-      await prisma.$transaction(async (tx) => {
-        await tx.bundles.update({
-          where: { id: currentBundle.id },
-          data: {
-            buildNumber: newBuildNumber,
-            updatedAt: now,
-          },
-        });
-        await tx.bundleReleaseTracks.create({
-          data: {
-            id: trackId,
-            bundleId: currentBundle.id,
-            track: "production",
-            version: newVersion,
-            buildNumber: newBuildNumber,
-            storagePath: "",
-            releaseNotes: `Automated build #${newBuildNumber} triggered via AI Command Palette by ${user.fullName || user.email}`,
-            status: "building",
-            createdAt: now,
-          },
-        });
+      const release = await createReleaseCandidate({
+        bundleId: currentBundle.id, channel: "production", version: newVersion,
+        source: "builder", actorId: user.id,
+        sourceCommit: configData.gitBranch || "main",
+        releaseNotes: `Automated build #${newBuildNumber} triggered via AI Command Palette by ${user.fullName || user.email}`,
+      });
+      const buildJob = await prisma.bundleBuildJobs.create({
+        data: {
+          id: crypto.randomUUID(), bundleId: currentBundle.id, releaseId: release.id,
+          projectId: project.id, triggeredById: user.id, status: "queued", attempt: 0,
+          maxAttempts: 3, createdAt: new Date(), updatedAt: new Date(),
+        },
       });
       
       await enqueueBuild({
         projectId: project.id,
         bundleId: currentBundle.id,
-        buildNumber: newBuildNumber,
+        buildNumber: release.buildNumber,
         version: newVersion,
         config: configData,
-        trackId
+        trackId: release.id,
+        releaseId: release.id,
+        buildJobId: buildJob.id,
       });
       
       return {
         type: "trigger_build",
-        message: `Đã kích hoạt bản build #${newBuildNumber} (phiên bản ${newVersion}) thành công cho dự án "${project.name}".`
+        message: `Đã kích hoạt bản build #${release.buildNumber} (phiên bản ${newVersion}) thành công cho dự án "${project.name}".`
       };
     }
     

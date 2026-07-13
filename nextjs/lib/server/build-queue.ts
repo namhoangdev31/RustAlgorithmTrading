@@ -1,9 +1,6 @@
-import { Queue, Worker } from "bullmq";
+import { Queue } from "bullmq";
 import { getNativeRedis } from "./native-platform/redis";
 import { getSchedulingRecommendation } from "./native-platform/finops";
-import { runLepoShipBuild } from "./lepoship-builder";
-import { promises as fs } from "fs";
-import path from "path";
 
 import { prisma } from "./prisma";
 
@@ -14,10 +11,11 @@ export interface BuildJob {
   version: string;
   config: any;
   trackId: string;
+  releaseId?: string;
+  buildJobId?: string;
 }
 
 let buildQueue: Queue | null = null;
-let buildWorker: Worker | null = null;
 
 export function getBuildQueue() {
   if (buildQueue) return buildQueue;
@@ -39,45 +37,6 @@ export function getBuildQueue() {
   return buildQueue;
 }
 
-export function startBuildWorker() {
-  if (buildWorker) return buildWorker;
-
-  const redis = getNativeRedis();
-  if (!redis) return null;
-
-  const redisOptions = {
-    host: redis.options.host || "127.0.0.1",
-    port: redis.options.port || 6379,
-    password: redis.options.password,
-    username: redis.options.username,
-  };
-
-  buildWorker = new Worker(
-    "lepos-build-queue",
-    async (job) => {
-      const data = job.data as BuildJob;
-      await runLepoShipBuild(
-        data.projectId,
-        data.bundleId,
-        data.buildNumber,
-        data.version,
-        data.config,
-        data.trackId
-      );
-    },
-    {
-      connection: redisOptions,
-      concurrency: 2,
-    }
-  );
-
-  buildWorker.on("failed", (job, err) => {
-    console.error(`Build job ${job?.id} failed:`, err);
-  });
-
-  return buildWorker;
-}
-
 async function checkBuildRateLimit(
   projectId: string,
   limit: number,
@@ -85,7 +44,7 @@ async function checkBuildRateLimit(
 ): Promise<{ allowed: boolean; remaining: number }> {
   const redis = getNativeRedis();
   if (!redis) {
-    return { allowed: true, remaining: 999 };
+    throw new Error("REDIS_REQUIRED: build rate limiting is unavailable");
   }
 
   try {
@@ -103,7 +62,7 @@ async function checkBuildRateLimit(
     return { allowed: true, remaining: limit - current };
   } catch (error) {
     console.error("[RateLimiter ERROR] Failed to check rate limit in Redis:", error);
-    return { allowed: true, remaining: 999 };
+    throw new Error("REDIS_REQUIRED: build rate limiting failed");
   }
 }
 
@@ -180,13 +139,6 @@ export async function enqueueBuild(job: BuildJob) {
     if (!rateLimitCheck.allowed) {
       const errMsg = `Build rejected: Free tier rate limit exceeded (${limitMaxBuilds} builds per hour). Upgrade to Pro or Enterprise for unlimited builds.`;
       
-      // Write error directly to build log so it shows on UI console
-      const bundleDir = path.join(process.cwd(), "public", "bundles", job.projectId);
-      await fs.mkdir(bundleDir, { recursive: true });
-      const logFile = path.join(bundleDir, `${job.buildNumber}.log`);
-      const timestamp = new Date().toLocaleTimeString();
-      await fs.writeFile(logFile, `[${timestamp}] [RATE LIMIT ERROR] ${errMsg}\n`);
-      
       // Update release track status to failed in database
       await prisma.bundleReleaseTracks.update({
         where: { id: job.trackId },
@@ -202,21 +154,16 @@ export async function enqueueBuild(job: BuildJob) {
 
   const queue = getBuildQueue();
   if (!queue) {
-    await runLepoShipBuild(
-      job.projectId,
-      job.bundleId,
-      job.buildNumber,
-      job.version,
-      job.config,
-      job.trackId
-    );
-    return;
+    throw new Error("REDIS_REQUIRED: LepoShip build queue is unavailable");
   }
 
-  startBuildWorker();
-
   await queue.add(`build-${job.projectId}-${job.buildNumber}`, job, {
+    jobId: job.buildJobId ?? `${job.projectId}:${job.buildNumber}`,
     priority,
     delay: schedulingDelayMs,
+    attempts: 3,
+    backoff: { type: "exponential", delay: 5_000 },
+    removeOnComplete: 1_000,
+    removeOnFail: 5_000,
   });
 }

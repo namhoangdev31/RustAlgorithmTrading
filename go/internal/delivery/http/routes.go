@@ -25,6 +25,7 @@ type RouterConfig struct {
 	TradeHandler      *handlers.TradeHandler
 	SystemHandler     *handlers.SystemHandler
 	RiskLimitsHandler *handlers.RiskLimitsHandler
+	LepoShipHandler   *handlers.LepoShipHandler
 }
 
 // MapRoutes configures all public, metrics, websocket, docs and API endpoints on the Gin engine.
@@ -55,6 +56,11 @@ func MapRoutes(cfg RouterConfig) {
 		c.Redirect(http.StatusMovedPermanently, "/docs/index.html")
 	})
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	if cfg.LepoShipHandler != nil {
+		cfg.LepoShipHandler.MapPublicRoutes(r)
+		cfg.LepoShipHandler.MapInternalRoutes(r)
+	}
 
 	// Grouping api routes
 	api := r.Group("/api")

@@ -218,6 +218,13 @@ services:
       RISK_METRICS_URL: http://trading-core:9090/metrics
       LEPOS_STORAGE_ROOT: /var/lib/lepos/artifacts
       LEPOS_CONTROL_PLANE_URL: http://nextjs-frontend:3000
+      GO_CONTROL_PLANE_PUBLIC_URL: ${GO_CONTROL_PLANE_PUBLIC_URL:-http://localhost:8081}
+      LEPOS_SCHEDULER_ENABLED: ${LEPOS_SCHEDULER_ENABLED:-false}
+      TELEMETRY_DEVICE_PEPPER: ${TELEMETRY_DEVICE_PEPPER:-telemetry-device-pepper}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-encryptionkeyencryptionkeyencryptionkey}
+      LEPOS_ARTIFACT_PROVIDER: ${LEPOS_ARTIFACT_PROVIDER:-s3}
+      LEPOS_ARTIFACT_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-lepoship-artifacts}
+      LEPOS_ARTIFACT_PUBLIC_URL: ${LEPOS_ARTIFACT_PUBLIC_URL:-}
       LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:-internalapikey}
       LEPOS_SERVICE_ID: ${LEPOS_SERVICE_ID:-edge-gateway}
       LEPOS_SERVICE_SECRET: ${LEPOS_SERVICE_SECRET:-servicesecret}
@@ -275,6 +282,10 @@ services:
       DATABASE_URL: postgresql://noah_admin:noah_master@103.82.36.67:8048/noah_db
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       GO_CONTROL_PLANE_URL: http://gateway:8081
+      GO_CONTROL_PLANE_PUBLIC_URL: ${GO_CONTROL_PLANE_PUBLIC_URL:-http://localhost:8081}
+      NEXT_PUBLIC_GO_CONTROL_PLANE_URL: ${GO_CONTROL_PLANE_PUBLIC_URL:-http://localhost:8081}
+      LEPOS_SERVICE_ID: ${LEPOS_NEXT_SERVICE_ID:-nextjs-frontend}
+      LEPOS_SERVICE_SECRET: ${LEPOS_SERVICE_SECRET:-servicesecret}
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
       AUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
       AUTH_SECRET: ${AUTH_SECRET:-supersecretsecretsecretsecretsecretsecretsecret}
@@ -299,8 +310,19 @@ services:
       LEPOS_CACHE_BUCKET: ${LEPOS_CACHE_BUCKET:-}
       LEPOS_CACHE_ENDPOINT: ${LEPOS_CACHE_ENDPOINT:-}
       LEPOS_CACHE_REGION: ${LEPOS_CACHE_REGION:-us-east-1}
-    ports:
-      - "${FRONTEND_PORT:-3000}:3000"
+      CRON_SECRET: ${CRON_SECRET:-}
+      TELEMETRY_DEVICE_PEPPER: ${TELEMETRY_DEVICE_PEPPER:-}
+      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-}
+      LEPOS_ARTIFACT_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-}
+      LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-}
+      LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-}
+      LEPOS_ARTIFACT_PUBLIC_BASE_URL: ${LEPOS_ARTIFACT_PUBLIC_BASE_URL:-}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+    expose:
+      - "3000"
     depends_on:
       redis:
         condition: service_healthy
@@ -321,6 +343,44 @@ services:
     labels:
       com.rustalgorithmtrading.role: public-saas-portal
       com.rustalgorithmtrading.audience: developer,trader,regular
+
+  lepoship-worker:
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/lepoship-worker:${IMAGE_TAG:-development}
+    build:
+      context: ..
+      dockerfile: ops/deployment/nextjs.Dockerfile
+      target: worker
+    restart: unless-stopped
+    init: true
+    networks:
+      - private
+    environment:
+      <<: *saas-env
+      SERVICE_NAME: lepoship-worker
+      NODE_ENV: production
+      DATABASE_URL: postgresql://noah_admin:noah_master@103.82.36.67:8048/noah_db
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-}
+      LEPOS_ARTIFACT_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-}
+      LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-}
+      LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-}
+      LEPOS_ARTIFACT_PUBLIC_BASE_URL: ${LEPOS_ARTIFACT_PUBLIC_BASE_URL:-}
+      TELEMETRY_DEVICE_PEPPER: ${TELEMETRY_DEVICE_PEPPER:-}
+      LEPOSHIP_WORKER_CONCURRENCY: ${LEPOSHIP_WORKER_CONCURRENCY:-2}
+    depends_on:
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 1024M
+    labels:
+      com.rustalgorithmtrading.role: private-worker
+      com.rustalgorithmtrading.audience: internal
 
 networks:
   public:

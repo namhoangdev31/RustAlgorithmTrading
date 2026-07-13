@@ -266,6 +266,7 @@ export type BundleVersionHistoryWhereInput = {
   reviewQueue?: Prisma.BundleReviewQueueListRelationFilter
   securityScanResults?: Prisma.BundleSecurityScanResultsListRelationFilter
   updatePhases?: Prisma.BundleUpdatePhasesListRelationFilter
+  artifactManifest?: Prisma.XOR<Prisma.BundleArtifactManifestsNullableScalarRelationFilter, Prisma.BundleArtifactManifestsWhereInput> | null
 }
 
 export type BundleVersionHistoryOrderByWithRelationInput = {
@@ -285,6 +286,7 @@ export type BundleVersionHistoryOrderByWithRelationInput = {
   reviewQueue?: Prisma.BundleReviewQueueOrderByRelationAggregateInput
   securityScanResults?: Prisma.BundleSecurityScanResultsOrderByRelationAggregateInput
   updatePhases?: Prisma.BundleUpdatePhasesOrderByRelationAggregateInput
+  artifactManifest?: Prisma.BundleArtifactManifestsOrderByWithRelationInput
 }
 
 export type BundleVersionHistoryWhereUniqueInput = Prisma.AtLeast<{
@@ -308,6 +310,7 @@ export type BundleVersionHistoryWhereUniqueInput = Prisma.AtLeast<{
   reviewQueue?: Prisma.BundleReviewQueueListRelationFilter
   securityScanResults?: Prisma.BundleSecurityScanResultsListRelationFilter
   updatePhases?: Prisma.BundleUpdatePhasesListRelationFilter
+  artifactManifest?: Prisma.XOR<Prisma.BundleArtifactManifestsNullableScalarRelationFilter, Prisma.BundleArtifactManifestsWhereInput> | null
 }, "id" | "bundleId_version_buildNumber">
 
 export type BundleVersionHistoryOrderByWithAggregationInput = {
@@ -360,6 +363,7 @@ export type BundleVersionHistoryCreateInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutSubmittedVersionInput
   securityScanResults?: Prisma.BundleSecurityScanResultsCreateNestedManyWithoutVersionInput
   updatePhases?: Prisma.BundleUpdatePhasesCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryUncheckedCreateInput = {
@@ -378,6 +382,7 @@ export type BundleVersionHistoryUncheckedCreateInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutSubmittedVersionInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedCreateNestedManyWithoutVersionInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryUpdateInput = {
@@ -396,6 +401,7 @@ export type BundleVersionHistoryUpdateInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutSubmittedVersionNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUpdateManyWithoutVersionNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryUncheckedUpdateInput = {
@@ -414,6 +420,7 @@ export type BundleVersionHistoryUncheckedUpdateInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutSubmittedVersionNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedUpdateManyWithoutVersionNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryCreateManyInput = {
@@ -635,6 +642,22 @@ export type BundleVersionHistoryUpdateOneWithoutSecurityScanResultsNestedInput =
   update?: Prisma.XOR<Prisma.XOR<Prisma.BundleVersionHistoryUpdateToOneWithWhereWithoutSecurityScanResultsInput, Prisma.BundleVersionHistoryUpdateWithoutSecurityScanResultsInput>, Prisma.BundleVersionHistoryUncheckedUpdateWithoutSecurityScanResultsInput>
 }
 
+export type BundleVersionHistoryCreateNestedOneWithoutArtifactManifestInput = {
+  create?: Prisma.XOR<Prisma.BundleVersionHistoryCreateWithoutArtifactManifestInput, Prisma.BundleVersionHistoryUncheckedCreateWithoutArtifactManifestInput>
+  connectOrCreate?: Prisma.BundleVersionHistoryCreateOrConnectWithoutArtifactManifestInput
+  connect?: Prisma.BundleVersionHistoryWhereUniqueInput
+}
+
+export type BundleVersionHistoryUpdateOneWithoutArtifactManifestNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleVersionHistoryCreateWithoutArtifactManifestInput, Prisma.BundleVersionHistoryUncheckedCreateWithoutArtifactManifestInput>
+  connectOrCreate?: Prisma.BundleVersionHistoryCreateOrConnectWithoutArtifactManifestInput
+  upsert?: Prisma.BundleVersionHistoryUpsertWithoutArtifactManifestInput
+  disconnect?: Prisma.BundleVersionHistoryWhereInput | boolean
+  delete?: Prisma.BundleVersionHistoryWhereInput | boolean
+  connect?: Prisma.BundleVersionHistoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleVersionHistoryUpdateToOneWithWhereWithoutArtifactManifestInput, Prisma.BundleVersionHistoryUpdateWithoutArtifactManifestInput>, Prisma.BundleVersionHistoryUncheckedUpdateWithoutArtifactManifestInput>
+}
+
 export type BundleVersionHistoryCreateNestedOneWithoutUpdatePhasesInput = {
   create?: Prisma.XOR<Prisma.BundleVersionHistoryCreateWithoutUpdatePhasesInput, Prisma.BundleVersionHistoryUncheckedCreateWithoutUpdatePhasesInput>
   connectOrCreate?: Prisma.BundleVersionHistoryCreateOrConnectWithoutUpdatePhasesInput
@@ -664,6 +687,7 @@ export type BundleVersionHistoryCreateWithoutBundleInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutSubmittedVersionInput
   securityScanResults?: Prisma.BundleSecurityScanResultsCreateNestedManyWithoutVersionInput
   updatePhases?: Prisma.BundleUpdatePhasesCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryUncheckedCreateWithoutBundleInput = {
@@ -681,6 +705,7 @@ export type BundleVersionHistoryUncheckedCreateWithoutBundleInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutSubmittedVersionInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedCreateNestedManyWithoutVersionInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryCreateOrConnectWithoutBundleInput = {
@@ -740,6 +765,7 @@ export type BundleVersionHistoryCreateWithoutCrashReportsInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutSubmittedVersionInput
   securityScanResults?: Prisma.BundleSecurityScanResultsCreateNestedManyWithoutVersionInput
   updatePhases?: Prisma.BundleUpdatePhasesCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryUncheckedCreateWithoutCrashReportsInput = {
@@ -757,6 +783,7 @@ export type BundleVersionHistoryUncheckedCreateWithoutCrashReportsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutSubmittedVersionInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedCreateNestedManyWithoutVersionInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryCreateOrConnectWithoutCrashReportsInput = {
@@ -790,6 +817,7 @@ export type BundleVersionHistoryUpdateWithoutCrashReportsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutSubmittedVersionNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUpdateManyWithoutVersionNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryUncheckedUpdateWithoutCrashReportsInput = {
@@ -807,6 +835,7 @@ export type BundleVersionHistoryUncheckedUpdateWithoutCrashReportsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutSubmittedVersionNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedUpdateManyWithoutVersionNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryCreateWithoutReviewHistoryInput = {
@@ -824,6 +853,7 @@ export type BundleVersionHistoryCreateWithoutReviewHistoryInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutSubmittedVersionInput
   securityScanResults?: Prisma.BundleSecurityScanResultsCreateNestedManyWithoutVersionInput
   updatePhases?: Prisma.BundleUpdatePhasesCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryUncheckedCreateWithoutReviewHistoryInput = {
@@ -841,6 +871,7 @@ export type BundleVersionHistoryUncheckedCreateWithoutReviewHistoryInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutSubmittedVersionInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedCreateNestedManyWithoutVersionInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryCreateOrConnectWithoutReviewHistoryInput = {
@@ -874,6 +905,7 @@ export type BundleVersionHistoryUpdateWithoutReviewHistoryInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutSubmittedVersionNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUpdateManyWithoutVersionNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryUncheckedUpdateWithoutReviewHistoryInput = {
@@ -891,6 +923,7 @@ export type BundleVersionHistoryUncheckedUpdateWithoutReviewHistoryInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutSubmittedVersionNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedUpdateManyWithoutVersionNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryCreateWithoutReviewQueueInput = {
@@ -908,6 +941,7 @@ export type BundleVersionHistoryCreateWithoutReviewQueueInput = {
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutVersionInput
   securityScanResults?: Prisma.BundleSecurityScanResultsCreateNestedManyWithoutVersionInput
   updatePhases?: Prisma.BundleUpdatePhasesCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryUncheckedCreateWithoutReviewQueueInput = {
@@ -925,6 +959,7 @@ export type BundleVersionHistoryUncheckedCreateWithoutReviewQueueInput = {
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutVersionInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedCreateNestedManyWithoutVersionInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryCreateOrConnectWithoutReviewQueueInput = {
@@ -958,6 +993,7 @@ export type BundleVersionHistoryUpdateWithoutReviewQueueInput = {
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutVersionNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUpdateManyWithoutVersionNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryUncheckedUpdateWithoutReviewQueueInput = {
@@ -975,6 +1011,7 @@ export type BundleVersionHistoryUncheckedUpdateWithoutReviewQueueInput = {
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutVersionNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedUpdateManyWithoutVersionNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryCreateWithoutSecurityScanResultsInput = {
@@ -992,6 +1029,7 @@ export type BundleVersionHistoryCreateWithoutSecurityScanResultsInput = {
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutVersionInput
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutSubmittedVersionInput
   updatePhases?: Prisma.BundleUpdatePhasesCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryUncheckedCreateWithoutSecurityScanResultsInput = {
@@ -1009,6 +1047,7 @@ export type BundleVersionHistoryUncheckedCreateWithoutSecurityScanResultsInput =
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutVersionInput
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutSubmittedVersionInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryCreateOrConnectWithoutSecurityScanResultsInput = {
@@ -1042,6 +1081,7 @@ export type BundleVersionHistoryUpdateWithoutSecurityScanResultsInput = {
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutVersionNestedInput
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutSubmittedVersionNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryUncheckedUpdateWithoutSecurityScanResultsInput = {
@@ -1058,6 +1098,95 @@ export type BundleVersionHistoryUncheckedUpdateWithoutSecurityScanResultsInput =
   crashReports?: Prisma.BundleCrashReportsUncheckedUpdateManyWithoutVersionNestedInput
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutVersionNestedInput
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutSubmittedVersionNestedInput
+  updatePhases?: Prisma.BundleUpdatePhasesUncheckedUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedUpdateOneWithoutVersionNestedInput
+}
+
+export type BundleVersionHistoryCreateWithoutArtifactManifestInput = {
+  id: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  fileSize?: bigint | number | null
+  changelog?: string | null
+  status?: string
+  publishedAt?: Date | string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutVersionHistoriesInput
+  crashReports?: Prisma.BundleCrashReportsCreateNestedManyWithoutVersionInput
+  reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutVersionInput
+  reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutSubmittedVersionInput
+  securityScanResults?: Prisma.BundleSecurityScanResultsCreateNestedManyWithoutVersionInput
+  updatePhases?: Prisma.BundleUpdatePhasesCreateNestedManyWithoutVersionInput
+}
+
+export type BundleVersionHistoryUncheckedCreateWithoutArtifactManifestInput = {
+  id: string
+  bundleId: string
+  version: string
+  buildNumber: number
+  storagePath: string
+  fileSize?: bigint | number | null
+  changelog?: string | null
+  status?: string
+  publishedAt?: Date | string | null
+  createdAt: Date | string
+  crashReports?: Prisma.BundleCrashReportsUncheckedCreateNestedManyWithoutVersionInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutVersionInput
+  reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutSubmittedVersionInput
+  securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedCreateNestedManyWithoutVersionInput
+  updatePhases?: Prisma.BundleUpdatePhasesUncheckedCreateNestedManyWithoutVersionInput
+}
+
+export type BundleVersionHistoryCreateOrConnectWithoutArtifactManifestInput = {
+  where: Prisma.BundleVersionHistoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleVersionHistoryCreateWithoutArtifactManifestInput, Prisma.BundleVersionHistoryUncheckedCreateWithoutArtifactManifestInput>
+}
+
+export type BundleVersionHistoryUpsertWithoutArtifactManifestInput = {
+  update: Prisma.XOR<Prisma.BundleVersionHistoryUpdateWithoutArtifactManifestInput, Prisma.BundleVersionHistoryUncheckedUpdateWithoutArtifactManifestInput>
+  create: Prisma.XOR<Prisma.BundleVersionHistoryCreateWithoutArtifactManifestInput, Prisma.BundleVersionHistoryUncheckedCreateWithoutArtifactManifestInput>
+  where?: Prisma.BundleVersionHistoryWhereInput
+}
+
+export type BundleVersionHistoryUpdateToOneWithWhereWithoutArtifactManifestInput = {
+  where?: Prisma.BundleVersionHistoryWhereInput
+  data: Prisma.XOR<Prisma.BundleVersionHistoryUpdateWithoutArtifactManifestInput, Prisma.BundleVersionHistoryUncheckedUpdateWithoutArtifactManifestInput>
+}
+
+export type BundleVersionHistoryUpdateWithoutArtifactManifestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutVersionHistoriesNestedInput
+  crashReports?: Prisma.BundleCrashReportsUpdateManyWithoutVersionNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutVersionNestedInput
+  reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutSubmittedVersionNestedInput
+  securityScanResults?: Prisma.BundleSecurityScanResultsUpdateManyWithoutVersionNestedInput
+  updatePhases?: Prisma.BundleUpdatePhasesUpdateManyWithoutVersionNestedInput
+}
+
+export type BundleVersionHistoryUncheckedUpdateWithoutArtifactManifestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crashReports?: Prisma.BundleCrashReportsUncheckedUpdateManyWithoutVersionNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutVersionNestedInput
+  reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutSubmittedVersionNestedInput
+  securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedUpdateManyWithoutVersionNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedUpdateManyWithoutVersionNestedInput
 }
 
@@ -1076,6 +1205,7 @@ export type BundleVersionHistoryCreateWithoutUpdatePhasesInput = {
   reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutVersionInput
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutSubmittedVersionInput
   securityScanResults?: Prisma.BundleSecurityScanResultsCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryUncheckedCreateWithoutUpdatePhasesInput = {
@@ -1093,6 +1223,7 @@ export type BundleVersionHistoryUncheckedCreateWithoutUpdatePhasesInput = {
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutVersionInput
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutSubmittedVersionInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedCreateNestedManyWithoutVersionInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedCreateNestedOneWithoutVersionInput
 }
 
 export type BundleVersionHistoryCreateOrConnectWithoutUpdatePhasesInput = {
@@ -1126,6 +1257,7 @@ export type BundleVersionHistoryUpdateWithoutUpdatePhasesInput = {
   reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutVersionNestedInput
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutSubmittedVersionNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryUncheckedUpdateWithoutUpdatePhasesInput = {
@@ -1143,6 +1275,7 @@ export type BundleVersionHistoryUncheckedUpdateWithoutUpdatePhasesInput = {
   reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutVersionNestedInput
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutSubmittedVersionNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryCreateManyBundleInput = {
@@ -1172,6 +1305,7 @@ export type BundleVersionHistoryUpdateWithoutBundleInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutSubmittedVersionNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUpdateManyWithoutVersionNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryUncheckedUpdateWithoutBundleInput = {
@@ -1189,6 +1323,7 @@ export type BundleVersionHistoryUncheckedUpdateWithoutBundleInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutSubmittedVersionNestedInput
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedUpdateManyWithoutVersionNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedUpdateManyWithoutVersionNestedInput
+  artifactManifest?: Prisma.BundleArtifactManifestsUncheckedUpdateOneWithoutVersionNestedInput
 }
 
 export type BundleVersionHistoryUncheckedUpdateManyWithoutBundleInput = {
@@ -1287,6 +1422,7 @@ export type BundleVersionHistorySelect<ExtArgs extends runtime.Types.Extensions.
   reviewQueue?: boolean | Prisma.BundleVersionHistory$reviewQueueArgs<ExtArgs>
   securityScanResults?: boolean | Prisma.BundleVersionHistory$securityScanResultsArgs<ExtArgs>
   updatePhases?: boolean | Prisma.BundleVersionHistory$updatePhasesArgs<ExtArgs>
+  artifactManifest?: boolean | Prisma.BundleVersionHistory$artifactManifestArgs<ExtArgs>
   _count?: boolean | Prisma.BundleVersionHistoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleVersionHistory"]>
 
@@ -1339,6 +1475,7 @@ export type BundleVersionHistoryInclude<ExtArgs extends runtime.Types.Extensions
   reviewQueue?: boolean | Prisma.BundleVersionHistory$reviewQueueArgs<ExtArgs>
   securityScanResults?: boolean | Prisma.BundleVersionHistory$securityScanResultsArgs<ExtArgs>
   updatePhases?: boolean | Prisma.BundleVersionHistory$updatePhasesArgs<ExtArgs>
+  artifactManifest?: boolean | Prisma.BundleVersionHistory$artifactManifestArgs<ExtArgs>
   _count?: boolean | Prisma.BundleVersionHistoryCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BundleVersionHistoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1357,6 +1494,7 @@ export type $BundleVersionHistoryPayload<ExtArgs extends runtime.Types.Extension
     reviewQueue: Prisma.$BundleReviewQueuePayload<ExtArgs>[]
     securityScanResults: Prisma.$BundleSecurityScanResultsPayload<ExtArgs>[]
     updatePhases: Prisma.$BundleUpdatePhasesPayload<ExtArgs>[]
+    artifactManifest: Prisma.$BundleArtifactManifestsPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1769,6 +1907,7 @@ export interface Prisma__BundleVersionHistoryClient<T, Null = never, ExtArgs ext
   reviewQueue<T extends Prisma.BundleVersionHistory$reviewQueueArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleVersionHistory$reviewQueueArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleReviewQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   securityScanResults<T extends Prisma.BundleVersionHistory$securityScanResultsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleVersionHistory$securityScanResultsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleSecurityScanResultsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   updatePhases<T extends Prisma.BundleVersionHistory$updatePhasesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleVersionHistory$updatePhasesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleUpdatePhasesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  artifactManifest<T extends Prisma.BundleVersionHistory$artifactManifestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleVersionHistory$artifactManifestArgs<ExtArgs>>): Prisma.Prisma__BundleArtifactManifestsClient<runtime.Types.Result.GetResult<Prisma.$BundleArtifactManifestsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2326,6 +2465,25 @@ export type BundleVersionHistory$updatePhasesArgs<ExtArgs extends runtime.Types.
   take?: number
   skip?: number
   distinct?: Prisma.BundleUpdatePhasesScalarFieldEnum | Prisma.BundleUpdatePhasesScalarFieldEnum[]
+}
+
+/**
+ * BundleVersionHistory.artifactManifest
+ */
+export type BundleVersionHistory$artifactManifestArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleArtifactManifests
+   */
+  select?: Prisma.BundleArtifactManifestsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleArtifactManifests
+   */
+  omit?: Prisma.BundleArtifactManifestsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleArtifactManifestsInclude<ExtArgs> | null
+  where?: Prisma.BundleArtifactManifestsWhereInput
 }
 
 /**

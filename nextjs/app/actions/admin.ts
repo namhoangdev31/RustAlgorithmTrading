@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect, localizedHref } from "@/i18n/navigation";
-import { OrganizationType } from "@/prisma/generated/enums";
+import { BundleCatalogStatus, OrganizationType } from "@/prisma/generated/enums";
 
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { prisma } from "@/lib/server/prisma";
@@ -21,6 +21,7 @@ import { hasVercelApiKey, getVercelClient } from "@/lib/server/vercel";
 import { buildIntegrationConfig } from "@/lib/server/platform-guardrails";
 import { Octokit } from "octokit";
 import { enqueueBuild } from "@/lib/server/build-queue";
+import { createReleaseCandidate } from "@/lib/server/lepoship/release-service";
 import { checkBundlePermission } from "./lepoship-permissions";
 
 
@@ -28,6 +29,13 @@ import { checkBundlePermission } from "./lepoship-permissions";
 function readFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";
+}
+
+function readBundleCatalogStatus(formData: FormData) {
+  const value = readFormValue(formData, "status");
+  return Object.values(BundleCatalogStatus).includes(value as BundleCatalogStatus)
+    ? value as BundleCatalogStatus
+    : BundleCatalogStatus.draft;
 }
 
 async function readReturnTo(formData: FormData, fallback: string) {
@@ -343,7 +351,7 @@ export async function createProjectWithBundleAction(formData: FormData) {
         slug: bundleDefaults.slug,
         shortDescription: readFormValue(formData, "shortDescription") || null,
         category: readFormValue(formData, "category") || null,
-        status: readFormValue(formData, "status") || "draft",
+        status: readBundleCatalogStatus(formData),
         storagePath: bundleDefaults.storagePath,
         bucket: bundleDefaults.bucket,
         projectId: project.id,
@@ -593,7 +601,7 @@ export async function updateProjectBundleAction(formData: FormData) {
           name: bundleDefaults.name,
           shortDescription: readFormValue(formData, "shortDescription") || null,
           category: readFormValue(formData, "category") || null,
-          status: readFormValue(formData, "status") || "draft",
+          status: readBundleCatalogStatus(formData),
           updatedAt: now,
         },
       });
@@ -605,7 +613,7 @@ export async function updateProjectBundleAction(formData: FormData) {
           slug: bundleDefaults.slug,
           shortDescription: readFormValue(formData, "shortDescription") || null,
           category: readFormValue(formData, "category") || null,
-          status: readFormValue(formData, "status") || "draft",
+          status: readBundleCatalogStatus(formData),
           storagePath: bundleDefaults.storagePath,
           bucket: bundleDefaults.bucket,
           projectId: project.id,
@@ -1717,58 +1725,33 @@ export async function triggerMobileBuildAction(formData: FormData) {
     } catch (_) {}
   }
 
-  const trackId = crypto.randomUUID();
-  const now = new Date();
-
-  // Update bundle details & Create release track
-  await prisma.$transaction(async (tx) => {
-    // Increment buildNumber immediately to reserve it
-    await tx.bundles.update({
-      where: { id: currentBundle.id },
-      data: {
-        buildNumber: newBuildNumber,
-        updatedAt: now,
-      },
-    });
-
-    // Create a release track entry in "building" state
-    await tx.bundleReleaseTracks.create({
-      data: {
-        id: trackId,
-        bundleId: currentBundle.id,
-        track: "production",
-        version: newVersion,
-        buildNumber: newBuildNumber,
-        storagePath: "", // Will be filled upon completion
-        releaseNotes: `Automated build #${newBuildNumber} triggered by ${user.fullName || user.email}`,
-        status: "building",
-        createdAt: now,
-      },
-    });
-
-    // Create LepoShipBuild entry
-    await tx.lepoShipBuild.create({
-      data: {
-        id: trackId,
-        projectId,
-        status: "queued",
-        sourceCommit: configData.gitBranch || "main",
-        platform: configData.platform || "expo",
-        triggeredById: user.id,
-        logs: `--- LepoShip Build #${newBuildNumber} Started ---\n`,
-        createdAt: now,
-      },
-    });
+  const release = await createReleaseCandidate({
+    bundleId: currentBundle.id,
+    channel: "production",
+    version: newVersion,
+    source: "builder",
+    sourceCommit: configData.gitBranch || "main",
+    releaseNotes: `Automated build #${newBuildNumber} triggered by ${user.fullName || user.email}`,
+    actorId: user.id,
+  });
+  const buildJob = await prisma.bundleBuildJobs.create({
+    data: {
+      id: crypto.randomUUID(), bundleId: currentBundle.id, releaseId: release.id, projectId,
+      triggeredById: user.id, status: "queued", attempt: 0, maxAttempts: 3,
+      createdAt: new Date(), updatedAt: new Date(),
+    },
   });
 
   // Trigger background build compilation process
   await enqueueBuild({
     projectId,
     bundleId: currentBundle.id,
-    buildNumber: newBuildNumber,
+    buildNumber: release.buildNumber,
     version: newVersion,
     config: configData,
-    trackId
+    trackId: release.id,
+    releaseId: release.id,
+    buildJobId: buildJob.id,
   });
 
   revalidatePath(`/lepoship/${projectId}`);

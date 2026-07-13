@@ -5,6 +5,7 @@ import { requireCurrentUser } from "@/lib/server/current-user";
 import { requireProjectRole } from "@/lib/server/permissions";
 import { prisma } from "@/lib/server/prisma";
 import { randomBytes } from "crypto";
+import { assertSafeWebhookUrl } from "@/lib/server/lepoship/safe-webhook-url";
 
 async function requireBundleOwner(userId: string, projectId: string) {
   // Requires editor to configure webhooks
@@ -31,6 +32,7 @@ export async function createWebhookAction(projectId: string, data: {
   const user = await requireCurrentUser();
   const bundle = await requireBundleOwner(user.id, projectId);
   const now = new Date();
+  const webhookUrl = await assertSafeWebhookUrl(data.url);
   
   // Generate random HMAC secret
   const secret = `whsec_${randomBytes(24).toString("hex")}`;
@@ -39,7 +41,7 @@ export async function createWebhookAction(projectId: string, data: {
     data: {
       id: crypto.randomUUID(),
       bundleId: bundle.id,
-      url: data.url,
+      url: webhookUrl,
       secret,
       events: JSON.stringify(data.events),
       isActive: true,
@@ -62,11 +64,12 @@ export async function updateWebhookAction(projectId: string, webhookId: string, 
   const user = await requireCurrentUser();
   const bundle = await requireBundleOwner(user.id, projectId);
   const now = new Date();
+  const webhookUrl = await assertSafeWebhookUrl(data.url);
 
   const webhook = await prisma.bundleWebhooks.update({
     where: { id: webhookId, bundleId: bundle.id },
     data: {
-      url: data.url,
+      url: webhookUrl,
       events: JSON.stringify(data.events),
       isActive: data.isActive,
       // If reactivating, reset failure counts

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/server/prisma";
 import { createHmac } from "crypto";
+import { assertSafeWebhookUrl } from "@/lib/server/lepoship/safe-webhook-url";
 
 export interface WebhookEventPayload {
   eventId: string;
@@ -70,8 +71,8 @@ export async function queueWebhookEvent(
       continue;
     }
 
-    // Trigger immediate async delivery (non-blocking)
-    dispatchDelivery(webhook.id, eventKey).catch(() => {});
+    // Delivery is performed by the authenticated retry cron. Never start
+    // unawaited network work inside a request/serverless invocation.
   }
 }
 
@@ -107,7 +108,8 @@ export async function dispatchDelivery(webhookId: string, eventKey: string): Pro
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
 
-    const res = await fetch(webhook.url, {
+    const safeUrl = await assertSafeWebhookUrl(webhook.url);
+    const res = await fetch(safeUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -117,6 +119,7 @@ export async function dispatchDelivery(webhookId: string, eventKey: string): Pro
       },
       body: payloadStr,
       signal: controller.signal,
+      redirect: "error",
     });
 
     clearTimeout(timeout);
@@ -280,4 +283,3 @@ export async function pollBuilderWebhookEvents() {
     );
   }
 }
-

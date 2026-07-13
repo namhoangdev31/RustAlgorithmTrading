@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/server/prisma";
 import { authenticateSdkRequest } from "@/lib/server/sdk-auth";
 import { hashDeviceId } from "@/lib/server/device-hash";
+import { readBoundedJson } from "@/lib/server/bounded-json";
+import { hasSdkScope } from "@/lib/server/sdk-auth";
+import { assertLepoShipEnvironment } from "@/lib/server/lepoship/environment";
+import { enforceLepoShipRateLimit } from "@/lib/server/lepoship/rate-limit";
 
 const VALID_REASONS = [
   "spam",
@@ -18,23 +22,25 @@ const VALID_REASONS = [
  * POST /api/bundles/report
  * Accepts authenticated reports with client idempotency key.
  */
-export async function POST(request: NextRequest) {
+export async function ingestReportRequest(request: NextRequest) {
   try {
+    assertLepoShipEnvironment();
     const authHeader = request.headers.get("authorization");
     const projectIdHeader = request.headers.get("x-project-id");
     const deviceIdHeader = request.headers.get("x-device-id");
 
     const auth = await authenticateSdkRequest(authHeader, projectIdHeader);
-
-    // Content-Length check
-    const contentLength = parseInt(request.headers.get("content-length") || "0", 10);
-    if (contentLength > 32768) {
-      return NextResponse.json({ error: "Request body too large" }, { status: 413 });
+    if (!hasSdkScope(auth, "reports:write")) {
+      return NextResponse.json({ error: "SDK token with reports:write scope is required" }, { status: 401 });
     }
-
-    const body = await request.json();
+    if (!request.headers.get("x-request-id")) {
+      return NextResponse.json({ error: "x-request-id is required" }, { status: 400 });
+    }
+    if (!await enforceLepoShipRateLimit({ request, scope: "reports", identityId: auth.identityId, deviceId: deviceIdHeader, limit: 20, windowSeconds: 60 })) {
+      return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+    }
+    const body = await readBoundedJson<any>(request, 32_768);
     const {
-      bundleId: clientBundleId,
       reason,
       description,
       evidenceUrls,
@@ -42,11 +48,7 @@ export async function POST(request: NextRequest) {
       deviceId: clientDeviceId,
     } = body;
 
-    // Resolve bundleId: auth overrides client-supplied
-    const bundleId = auth?.bundleId || clientBundleId;
-    if (!bundleId) {
-      return NextResponse.json({ error: "bundleId is required" }, { status: 400 });
-    }
+    const bundleId = auth.bundleId;
 
     // Validate reason
     if (!reason || !VALID_REASONS.includes(reason)) {
@@ -129,6 +131,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ id: report.id, status: "created" }, { status: 201 });
   } catch (error: any) {
     console.error("[Report API] Error:", error.message);
+    if (error.message === "PAYLOAD_TOO_LARGE") return NextResponse.json({ error: error.message }, { status: 413 });
     return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
+}
+
+export async function POST() {
+  return NextResponse.json(
+    { error: "Gone", canonicalEndpoint: "/api/v1/reports" },
+    { status: 410 },
+  );
 }

@@ -60,7 +60,7 @@ export async function issueStrikeAction(data: {
       const developerBundles = await tx.bundles.findMany({
         where: {
           developerId: data.developerId,
-          status: { in: ["published", "under_review"] },
+          status: "published",
         },
         select: { id: true, status: true },
       });

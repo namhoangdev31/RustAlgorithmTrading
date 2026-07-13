@@ -43,6 +43,10 @@ export type BundleRolloutsMinAggregateOutputType = {
   startedAt: Date | null
   completedAt: Date | null
   createdAt: Date | null
+  status: string | null
+  targetLocale: string | null
+  targetPlatform: string | null
+  pausedAt: Date | null
 }
 
 export type BundleRolloutsMaxAggregateOutputType = {
@@ -54,6 +58,10 @@ export type BundleRolloutsMaxAggregateOutputType = {
   startedAt: Date | null
   completedAt: Date | null
   createdAt: Date | null
+  status: string | null
+  targetLocale: string | null
+  targetPlatform: string | null
+  pausedAt: Date | null
 }
 
 export type BundleRolloutsCountAggregateOutputType = {
@@ -65,6 +73,10 @@ export type BundleRolloutsCountAggregateOutputType = {
   startedAt: number
   completedAt: number
   createdAt: number
+  status: number
+  targetLocale: number
+  targetPlatform: number
+  pausedAt: number
   _all: number
 }
 
@@ -86,6 +98,10 @@ export type BundleRolloutsMinAggregateInputType = {
   startedAt?: true
   completedAt?: true
   createdAt?: true
+  status?: true
+  targetLocale?: true
+  targetPlatform?: true
+  pausedAt?: true
 }
 
 export type BundleRolloutsMaxAggregateInputType = {
@@ -97,6 +113,10 @@ export type BundleRolloutsMaxAggregateInputType = {
   startedAt?: true
   completedAt?: true
   createdAt?: true
+  status?: true
+  targetLocale?: true
+  targetPlatform?: true
+  pausedAt?: true
 }
 
 export type BundleRolloutsCountAggregateInputType = {
@@ -108,6 +128,10 @@ export type BundleRolloutsCountAggregateInputType = {
   startedAt?: true
   completedAt?: true
   createdAt?: true
+  status?: true
+  targetLocale?: true
+  targetPlatform?: true
+  pausedAt?: true
   _all?: true
 }
 
@@ -206,6 +230,10 @@ export type BundleRolloutsGroupByOutputType = {
   startedAt: Date
   completedAt: Date | null
   createdAt: Date
+  status: string
+  targetLocale: string | null
+  targetPlatform: string | null
+  pausedAt: Date | null
   _count: BundleRolloutsCountAggregateOutputType | null
   _avg: BundleRolloutsAvgAggregateOutputType | null
   _sum: BundleRolloutsSumAggregateOutputType | null
@@ -240,8 +268,13 @@ export type BundleRolloutsWhereInput = {
   startedAt?: Prisma.DateTimeFilter<"BundleRollouts"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"BundleRollouts"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleRollouts"> | Date | string
+  status?: Prisma.StringFilter<"BundleRollouts"> | string
+  targetLocale?: Prisma.StringNullableFilter<"BundleRollouts"> | string | null
+  targetPlatform?: Prisma.StringNullableFilter<"BundleRollouts"> | string | null
+  pausedAt?: Prisma.DateTimeNullableFilter<"BundleRollouts"> | Date | string | null
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
   track?: Prisma.XOR<Prisma.BundleReleaseTracksScalarRelationFilter, Prisma.BundleReleaseTracksWhereInput>
+  exposures?: Prisma.BundleRolloutExposuresListRelationFilter
 }
 
 export type BundleRolloutsOrderByWithRelationInput = {
@@ -253,8 +286,13 @@ export type BundleRolloutsOrderByWithRelationInput = {
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  targetLocale?: Prisma.SortOrderInput | Prisma.SortOrder
+  targetPlatform?: Prisma.SortOrderInput | Prisma.SortOrder
+  pausedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   bundle?: Prisma.BundlesOrderByWithRelationInput
   track?: Prisma.BundleReleaseTracksOrderByWithRelationInput
+  exposures?: Prisma.BundleRolloutExposuresOrderByRelationAggregateInput
 }
 
 export type BundleRolloutsWhereUniqueInput = Prisma.AtLeast<{
@@ -269,8 +307,13 @@ export type BundleRolloutsWhereUniqueInput = Prisma.AtLeast<{
   startedAt?: Prisma.DateTimeFilter<"BundleRollouts"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"BundleRollouts"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleRollouts"> | Date | string
+  status?: Prisma.StringFilter<"BundleRollouts"> | string
+  targetLocale?: Prisma.StringNullableFilter<"BundleRollouts"> | string | null
+  targetPlatform?: Prisma.StringNullableFilter<"BundleRollouts"> | string | null
+  pausedAt?: Prisma.DateTimeNullableFilter<"BundleRollouts"> | Date | string | null
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
   track?: Prisma.XOR<Prisma.BundleReleaseTracksScalarRelationFilter, Prisma.BundleReleaseTracksWhereInput>
+  exposures?: Prisma.BundleRolloutExposuresListRelationFilter
 }, "id">
 
 export type BundleRolloutsOrderByWithAggregationInput = {
@@ -282,6 +325,10 @@ export type BundleRolloutsOrderByWithAggregationInput = {
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  targetLocale?: Prisma.SortOrderInput | Prisma.SortOrder
+  targetPlatform?: Prisma.SortOrderInput | Prisma.SortOrder
+  pausedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.BundleRolloutsCountOrderByAggregateInput
   _avg?: Prisma.BundleRolloutsAvgOrderByAggregateInput
   _max?: Prisma.BundleRolloutsMaxOrderByAggregateInput
@@ -301,6 +348,10 @@ export type BundleRolloutsScalarWhereWithAggregatesInput = {
   startedAt?: Prisma.DateTimeWithAggregatesFilter<"BundleRollouts"> | Date | string
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleRollouts"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleRollouts"> | Date | string
+  status?: Prisma.StringWithAggregatesFilter<"BundleRollouts"> | string
+  targetLocale?: Prisma.StringNullableWithAggregatesFilter<"BundleRollouts"> | string | null
+  targetPlatform?: Prisma.StringNullableWithAggregatesFilter<"BundleRollouts"> | string | null
+  pausedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleRollouts"> | Date | string | null
 }
 
 export type BundleRolloutsCreateInput = {
@@ -310,8 +361,13 @@ export type BundleRolloutsCreateInput = {
   startedAt: Date | string
   completedAt?: Date | string | null
   createdAt: Date | string
+  status?: string
+  targetLocale?: string | null
+  targetPlatform?: string | null
+  pausedAt?: Date | string | null
   bundle: Prisma.BundlesCreateNestedOneWithoutRolloutsInput
   track: Prisma.BundleReleaseTracksCreateNestedOneWithoutRolloutsInput
+  exposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutRolloutInput
 }
 
 export type BundleRolloutsUncheckedCreateInput = {
@@ -323,6 +379,11 @@ export type BundleRolloutsUncheckedCreateInput = {
   startedAt: Date | string
   completedAt?: Date | string | null
   createdAt: Date | string
+  status?: string
+  targetLocale?: string | null
+  targetPlatform?: string | null
+  pausedAt?: Date | string | null
+  exposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutRolloutInput
 }
 
 export type BundleRolloutsUpdateInput = {
@@ -332,8 +393,13 @@ export type BundleRolloutsUpdateInput = {
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  targetLocale?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutRolloutsNestedInput
   track?: Prisma.BundleReleaseTracksUpdateOneRequiredWithoutRolloutsNestedInput
+  exposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutRolloutNestedInput
 }
 
 export type BundleRolloutsUncheckedUpdateInput = {
@@ -345,6 +411,11 @@ export type BundleRolloutsUncheckedUpdateInput = {
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  targetLocale?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  exposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutRolloutNestedInput
 }
 
 export type BundleRolloutsCreateManyInput = {
@@ -356,6 +427,10 @@ export type BundleRolloutsCreateManyInput = {
   startedAt: Date | string
   completedAt?: Date | string | null
   createdAt: Date | string
+  status?: string
+  targetLocale?: string | null
+  targetPlatform?: string | null
+  pausedAt?: Date | string | null
 }
 
 export type BundleRolloutsUpdateManyMutationInput = {
@@ -365,6 +440,10 @@ export type BundleRolloutsUpdateManyMutationInput = {
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  targetLocale?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BundleRolloutsUncheckedUpdateManyInput = {
@@ -376,6 +455,10 @@ export type BundleRolloutsUncheckedUpdateManyInput = {
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  targetLocale?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BundleRolloutsListRelationFilter = {
@@ -397,6 +480,10 @@ export type BundleRolloutsCountOrderByAggregateInput = {
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  targetLocale?: Prisma.SortOrder
+  targetPlatform?: Prisma.SortOrder
+  pausedAt?: Prisma.SortOrder
 }
 
 export type BundleRolloutsAvgOrderByAggregateInput = {
@@ -412,6 +499,10 @@ export type BundleRolloutsMaxOrderByAggregateInput = {
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  targetLocale?: Prisma.SortOrder
+  targetPlatform?: Prisma.SortOrder
+  pausedAt?: Prisma.SortOrder
 }
 
 export type BundleRolloutsMinOrderByAggregateInput = {
@@ -423,10 +514,19 @@ export type BundleRolloutsMinOrderByAggregateInput = {
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  targetLocale?: Prisma.SortOrder
+  targetPlatform?: Prisma.SortOrder
+  pausedAt?: Prisma.SortOrder
 }
 
 export type BundleRolloutsSumOrderByAggregateInput = {
   rolloutPercent?: Prisma.SortOrder
+}
+
+export type BundleRolloutsScalarRelationFilter = {
+  is?: Prisma.BundleRolloutsWhereInput
+  isNot?: Prisma.BundleRolloutsWhereInput
 }
 
 export type BundleRolloutsCreateNestedManyWithoutBundleInput = {
@@ -513,6 +613,20 @@ export type BundleRolloutsUncheckedUpdateManyWithoutTrackNestedInput = {
   deleteMany?: Prisma.BundleRolloutsScalarWhereInput | Prisma.BundleRolloutsScalarWhereInput[]
 }
 
+export type BundleRolloutsCreateNestedOneWithoutExposuresInput = {
+  create?: Prisma.XOR<Prisma.BundleRolloutsCreateWithoutExposuresInput, Prisma.BundleRolloutsUncheckedCreateWithoutExposuresInput>
+  connectOrCreate?: Prisma.BundleRolloutsCreateOrConnectWithoutExposuresInput
+  connect?: Prisma.BundleRolloutsWhereUniqueInput
+}
+
+export type BundleRolloutsUpdateOneRequiredWithoutExposuresNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleRolloutsCreateWithoutExposuresInput, Prisma.BundleRolloutsUncheckedCreateWithoutExposuresInput>
+  connectOrCreate?: Prisma.BundleRolloutsCreateOrConnectWithoutExposuresInput
+  upsert?: Prisma.BundleRolloutsUpsertWithoutExposuresInput
+  connect?: Prisma.BundleRolloutsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleRolloutsUpdateToOneWithWhereWithoutExposuresInput, Prisma.BundleRolloutsUpdateWithoutExposuresInput>, Prisma.BundleRolloutsUncheckedUpdateWithoutExposuresInput>
+}
+
 export type BundleRolloutsCreateWithoutBundleInput = {
   id: string
   rolloutPercent?: number
@@ -520,7 +634,12 @@ export type BundleRolloutsCreateWithoutBundleInput = {
   startedAt: Date | string
   completedAt?: Date | string | null
   createdAt: Date | string
+  status?: string
+  targetLocale?: string | null
+  targetPlatform?: string | null
+  pausedAt?: Date | string | null
   track: Prisma.BundleReleaseTracksCreateNestedOneWithoutRolloutsInput
+  exposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutRolloutInput
 }
 
 export type BundleRolloutsUncheckedCreateWithoutBundleInput = {
@@ -531,6 +650,11 @@ export type BundleRolloutsUncheckedCreateWithoutBundleInput = {
   startedAt: Date | string
   completedAt?: Date | string | null
   createdAt: Date | string
+  status?: string
+  targetLocale?: string | null
+  targetPlatform?: string | null
+  pausedAt?: Date | string | null
+  exposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutRolloutInput
 }
 
 export type BundleRolloutsCreateOrConnectWithoutBundleInput = {
@@ -571,6 +695,10 @@ export type BundleRolloutsScalarWhereInput = {
   startedAt?: Prisma.DateTimeFilter<"BundleRollouts"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"BundleRollouts"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleRollouts"> | Date | string
+  status?: Prisma.StringFilter<"BundleRollouts"> | string
+  targetLocale?: Prisma.StringNullableFilter<"BundleRollouts"> | string | null
+  targetPlatform?: Prisma.StringNullableFilter<"BundleRollouts"> | string | null
+  pausedAt?: Prisma.DateTimeNullableFilter<"BundleRollouts"> | Date | string | null
 }
 
 export type BundleRolloutsCreateWithoutTrackInput = {
@@ -580,7 +708,12 @@ export type BundleRolloutsCreateWithoutTrackInput = {
   startedAt: Date | string
   completedAt?: Date | string | null
   createdAt: Date | string
+  status?: string
+  targetLocale?: string | null
+  targetPlatform?: string | null
+  pausedAt?: Date | string | null
   bundle: Prisma.BundlesCreateNestedOneWithoutRolloutsInput
+  exposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutRolloutInput
 }
 
 export type BundleRolloutsUncheckedCreateWithoutTrackInput = {
@@ -591,6 +724,11 @@ export type BundleRolloutsUncheckedCreateWithoutTrackInput = {
   startedAt: Date | string
   completedAt?: Date | string | null
   createdAt: Date | string
+  status?: string
+  targetLocale?: string | null
+  targetPlatform?: string | null
+  pausedAt?: Date | string | null
+  exposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutRolloutInput
 }
 
 export type BundleRolloutsCreateOrConnectWithoutTrackInput = {
@@ -619,6 +757,82 @@ export type BundleRolloutsUpdateManyWithWhereWithoutTrackInput = {
   data: Prisma.XOR<Prisma.BundleRolloutsUpdateManyMutationInput, Prisma.BundleRolloutsUncheckedUpdateManyWithoutTrackInput>
 }
 
+export type BundleRolloutsCreateWithoutExposuresInput = {
+  id: string
+  rolloutPercent?: number
+  targetCountry?: string | null
+  startedAt: Date | string
+  completedAt?: Date | string | null
+  createdAt: Date | string
+  status?: string
+  targetLocale?: string | null
+  targetPlatform?: string | null
+  pausedAt?: Date | string | null
+  bundle: Prisma.BundlesCreateNestedOneWithoutRolloutsInput
+  track: Prisma.BundleReleaseTracksCreateNestedOneWithoutRolloutsInput
+}
+
+export type BundleRolloutsUncheckedCreateWithoutExposuresInput = {
+  id: string
+  bundleId: string
+  trackId: string
+  rolloutPercent?: number
+  targetCountry?: string | null
+  startedAt: Date | string
+  completedAt?: Date | string | null
+  createdAt: Date | string
+  status?: string
+  targetLocale?: string | null
+  targetPlatform?: string | null
+  pausedAt?: Date | string | null
+}
+
+export type BundleRolloutsCreateOrConnectWithoutExposuresInput = {
+  where: Prisma.BundleRolloutsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleRolloutsCreateWithoutExposuresInput, Prisma.BundleRolloutsUncheckedCreateWithoutExposuresInput>
+}
+
+export type BundleRolloutsUpsertWithoutExposuresInput = {
+  update: Prisma.XOR<Prisma.BundleRolloutsUpdateWithoutExposuresInput, Prisma.BundleRolloutsUncheckedUpdateWithoutExposuresInput>
+  create: Prisma.XOR<Prisma.BundleRolloutsCreateWithoutExposuresInput, Prisma.BundleRolloutsUncheckedCreateWithoutExposuresInput>
+  where?: Prisma.BundleRolloutsWhereInput
+}
+
+export type BundleRolloutsUpdateToOneWithWhereWithoutExposuresInput = {
+  where?: Prisma.BundleRolloutsWhereInput
+  data: Prisma.XOR<Prisma.BundleRolloutsUpdateWithoutExposuresInput, Prisma.BundleRolloutsUncheckedUpdateWithoutExposuresInput>
+}
+
+export type BundleRolloutsUpdateWithoutExposuresInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  rolloutPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  targetLocale?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutRolloutsNestedInput
+  track?: Prisma.BundleReleaseTracksUpdateOneRequiredWithoutRolloutsNestedInput
+}
+
+export type BundleRolloutsUncheckedUpdateWithoutExposuresInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  trackId?: Prisma.StringFieldUpdateOperationsInput | string
+  rolloutPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  targetLocale?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
 export type BundleRolloutsCreateManyBundleInput = {
   id: string
   trackId: string
@@ -627,6 +841,10 @@ export type BundleRolloutsCreateManyBundleInput = {
   startedAt: Date | string
   completedAt?: Date | string | null
   createdAt: Date | string
+  status?: string
+  targetLocale?: string | null
+  targetPlatform?: string | null
+  pausedAt?: Date | string | null
 }
 
 export type BundleRolloutsUpdateWithoutBundleInput = {
@@ -636,7 +854,12 @@ export type BundleRolloutsUpdateWithoutBundleInput = {
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  targetLocale?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   track?: Prisma.BundleReleaseTracksUpdateOneRequiredWithoutRolloutsNestedInput
+  exposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutRolloutNestedInput
 }
 
 export type BundleRolloutsUncheckedUpdateWithoutBundleInput = {
@@ -647,6 +870,11 @@ export type BundleRolloutsUncheckedUpdateWithoutBundleInput = {
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  targetLocale?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  exposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutRolloutNestedInput
 }
 
 export type BundleRolloutsUncheckedUpdateManyWithoutBundleInput = {
@@ -657,6 +885,10 @@ export type BundleRolloutsUncheckedUpdateManyWithoutBundleInput = {
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  targetLocale?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BundleRolloutsCreateManyTrackInput = {
@@ -667,6 +899,10 @@ export type BundleRolloutsCreateManyTrackInput = {
   startedAt: Date | string
   completedAt?: Date | string | null
   createdAt: Date | string
+  status?: string
+  targetLocale?: string | null
+  targetPlatform?: string | null
+  pausedAt?: Date | string | null
 }
 
 export type BundleRolloutsUpdateWithoutTrackInput = {
@@ -676,7 +912,12 @@ export type BundleRolloutsUpdateWithoutTrackInput = {
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  targetLocale?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutRolloutsNestedInput
+  exposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutRolloutNestedInput
 }
 
 export type BundleRolloutsUncheckedUpdateWithoutTrackInput = {
@@ -687,6 +928,11 @@ export type BundleRolloutsUncheckedUpdateWithoutTrackInput = {
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  targetLocale?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  exposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutRolloutNestedInput
 }
 
 export type BundleRolloutsUncheckedUpdateManyWithoutTrackInput = {
@@ -697,8 +943,41 @@ export type BundleRolloutsUncheckedUpdateManyWithoutTrackInput = {
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  targetLocale?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  targetPlatform?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
+
+/**
+ * Count Type BundleRolloutsCountOutputType
+ */
+
+export type BundleRolloutsCountOutputType = {
+  exposures: number
+}
+
+export type BundleRolloutsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  exposures?: boolean | BundleRolloutsCountOutputTypeCountExposuresArgs
+}
+
+/**
+ * BundleRolloutsCountOutputType without action
+ */
+export type BundleRolloutsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleRolloutsCountOutputType
+   */
+  select?: Prisma.BundleRolloutsCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * BundleRolloutsCountOutputType without action
+ */
+export type BundleRolloutsCountOutputTypeCountExposuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleRolloutExposuresWhereInput
+}
 
 
 export type BundleRolloutsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -710,8 +989,14 @@ export type BundleRolloutsSelect<ExtArgs extends runtime.Types.Extensions.Intern
   startedAt?: boolean
   completedAt?: boolean
   createdAt?: boolean
+  status?: boolean
+  targetLocale?: boolean
+  targetPlatform?: boolean
+  pausedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   track?: boolean | Prisma.BundleReleaseTracksDefaultArgs<ExtArgs>
+  exposures?: boolean | Prisma.BundleRollouts$exposuresArgs<ExtArgs>
+  _count?: boolean | Prisma.BundleRolloutsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleRollouts"]>
 
 export type BundleRolloutsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -723,6 +1008,10 @@ export type BundleRolloutsSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   startedAt?: boolean
   completedAt?: boolean
   createdAt?: boolean
+  status?: boolean
+  targetLocale?: boolean
+  targetPlatform?: boolean
+  pausedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   track?: boolean | Prisma.BundleReleaseTracksDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleRollouts"]>
@@ -736,6 +1025,10 @@ export type BundleRolloutsSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   startedAt?: boolean
   completedAt?: boolean
   createdAt?: boolean
+  status?: boolean
+  targetLocale?: boolean
+  targetPlatform?: boolean
+  pausedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   track?: boolean | Prisma.BundleReleaseTracksDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleRollouts"]>
@@ -749,12 +1042,18 @@ export type BundleRolloutsSelectScalar = {
   startedAt?: boolean
   completedAt?: boolean
   createdAt?: boolean
+  status?: boolean
+  targetLocale?: boolean
+  targetPlatform?: boolean
+  pausedAt?: boolean
 }
 
-export type BundleRolloutsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "trackId" | "rolloutPercent" | "targetCountry" | "startedAt" | "completedAt" | "createdAt", ExtArgs["result"]["bundleRollouts"]>
+export type BundleRolloutsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "trackId" | "rolloutPercent" | "targetCountry" | "startedAt" | "completedAt" | "createdAt" | "status" | "targetLocale" | "targetPlatform" | "pausedAt", ExtArgs["result"]["bundleRollouts"]>
 export type BundleRolloutsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   track?: boolean | Prisma.BundleReleaseTracksDefaultArgs<ExtArgs>
+  exposures?: boolean | Prisma.BundleRollouts$exposuresArgs<ExtArgs>
+  _count?: boolean | Prisma.BundleRolloutsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BundleRolloutsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -770,6 +1069,7 @@ export type $BundleRolloutsPayload<ExtArgs extends runtime.Types.Extensions.Inte
   objects: {
     bundle: Prisma.$BundlesPayload<ExtArgs>
     track: Prisma.$BundleReleaseTracksPayload<ExtArgs>
+    exposures: Prisma.$BundleRolloutExposuresPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -780,6 +1080,10 @@ export type $BundleRolloutsPayload<ExtArgs extends runtime.Types.Extensions.Inte
     startedAt: Date
     completedAt: Date | null
     createdAt: Date
+    status: string
+    targetLocale: string | null
+    targetPlatform: string | null
+    pausedAt: Date | null
   }, ExtArgs["result"]["bundleRollouts"]>
   composites: {}
 }
@@ -1176,6 +1480,7 @@ export interface Prisma__BundleRolloutsClient<T, Null = never, ExtArgs extends r
   readonly [Symbol.toStringTag]: "PrismaPromise"
   bundle<T extends Prisma.BundlesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundlesDefaultArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   track<T extends Prisma.BundleReleaseTracksDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleaseTracksDefaultArgs<ExtArgs>>): Prisma.Prisma__BundleReleaseTracksClient<runtime.Types.Result.GetResult<Prisma.$BundleReleaseTracksPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  exposures<T extends Prisma.BundleRollouts$exposuresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleRollouts$exposuresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleRolloutExposuresPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1213,6 +1518,10 @@ export interface BundleRolloutsFieldRefs {
   readonly startedAt: Prisma.FieldRef<"BundleRollouts", 'DateTime'>
   readonly completedAt: Prisma.FieldRef<"BundleRollouts", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"BundleRollouts", 'DateTime'>
+  readonly status: Prisma.FieldRef<"BundleRollouts", 'String'>
+  readonly targetLocale: Prisma.FieldRef<"BundleRollouts", 'String'>
+  readonly targetPlatform: Prisma.FieldRef<"BundleRollouts", 'String'>
+  readonly pausedAt: Prisma.FieldRef<"BundleRollouts", 'DateTime'>
 }
     
 
@@ -1611,6 +1920,30 @@ export type BundleRolloutsDeleteManyArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many BundleRollouts to delete.
    */
   limit?: number
+}
+
+/**
+ * BundleRollouts.exposures
+ */
+export type BundleRollouts$exposuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleRolloutExposures
+   */
+  select?: Prisma.BundleRolloutExposuresSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleRolloutExposures
+   */
+  omit?: Prisma.BundleRolloutExposuresOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleRolloutExposuresInclude<ExtArgs> | null
+  where?: Prisma.BundleRolloutExposuresWhereInput
+  orderBy?: Prisma.BundleRolloutExposuresOrderByWithRelationInput | Prisma.BundleRolloutExposuresOrderByWithRelationInput[]
+  cursor?: Prisma.BundleRolloutExposuresWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleRolloutExposuresScalarFieldEnum | Prisma.BundleRolloutExposuresScalarFieldEnum[]
 }
 
 /**

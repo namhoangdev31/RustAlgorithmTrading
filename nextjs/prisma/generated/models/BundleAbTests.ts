@@ -28,10 +28,24 @@ export type AggregateBundleAbTests = {
 
 export type BundleAbTestsAvgAggregateOutputType = {
   trafficSplit: number | null
+  conversionWindowHours: number | null
+  minimumDetectableEffect: number | null
+  confidenceLevel: number | null
+  statisticalPower: number | null
+  baselineConversionRate: number | null
+  minimumSamplePerVariant: number | null
+  maxDurationDays: number | null
 }
 
 export type BundleAbTestsSumAggregateOutputType = {
   trafficSplit: number | null
+  conversionWindowHours: number | null
+  minimumDetectableEffect: number | null
+  confidenceLevel: number | null
+  statisticalPower: number | null
+  baselineConversionRate: number | null
+  minimumSamplePerVariant: number | null
+  maxDurationDays: number | null
 }
 
 export type BundleAbTestsMinAggregateOutputType = {
@@ -45,6 +59,27 @@ export type BundleAbTestsMinAggregateOutputType = {
   trafficSplit: number | null
   status: string | null
   winnerVariant: string | null
+  controlTrackId: string | null
+  treatmentTrackId: string | null
+  controlReleaseId: string | null
+  treatmentReleaseId: string | null
+  analysisStatus: string | null
+  metricType: string | null
+  metricEventName: string | null
+  conversionWindowHours: number | null
+  minimumDetectableEffect: number | null
+  confidenceLevel: number | null
+  statisticalPower: number | null
+  baselineConversionRate: number | null
+  minimumSamplePerVariant: number | null
+  maxDurationDays: number | null
+  recommendedWinner: string | null
+  pausedAt: Date | null
+  pauseReason: string | null
+  pausedById: string | null
+  endedById: string | null
+  endReason: string | null
+  lastAnalyzedAt: Date | null
   startedAt: Date | null
   endedAt: Date | null
   createdAt: Date | null
@@ -61,6 +96,27 @@ export type BundleAbTestsMaxAggregateOutputType = {
   trafficSplit: number | null
   status: string | null
   winnerVariant: string | null
+  controlTrackId: string | null
+  treatmentTrackId: string | null
+  controlReleaseId: string | null
+  treatmentReleaseId: string | null
+  analysisStatus: string | null
+  metricType: string | null
+  metricEventName: string | null
+  conversionWindowHours: number | null
+  minimumDetectableEffect: number | null
+  confidenceLevel: number | null
+  statisticalPower: number | null
+  baselineConversionRate: number | null
+  minimumSamplePerVariant: number | null
+  maxDurationDays: number | null
+  recommendedWinner: string | null
+  pausedAt: Date | null
+  pauseReason: string | null
+  pausedById: string | null
+  endedById: string | null
+  endReason: string | null
+  lastAnalyzedAt: Date | null
   startedAt: Date | null
   endedAt: Date | null
   createdAt: Date | null
@@ -77,6 +133,31 @@ export type BundleAbTestsCountAggregateOutputType = {
   trafficSplit: number
   status: number
   winnerVariant: number
+  controlTrackId: number
+  treatmentTrackId: number
+  controlReleaseId: number
+  treatmentReleaseId: number
+  analysisStatus: number
+  metricType: number
+  metricEventName: number
+  conversionWindowHours: number
+  targetCountries: number
+  targetLocales: number
+  targetPlatforms: number
+  targetOsVersions: number
+  minimumDetectableEffect: number
+  confidenceLevel: number
+  statisticalPower: number
+  baselineConversionRate: number
+  minimumSamplePerVariant: number
+  maxDurationDays: number
+  recommendedWinner: number
+  pausedAt: number
+  pauseReason: number
+  pausedById: number
+  endedById: number
+  endReason: number
+  lastAnalyzedAt: number
   startedAt: number
   endedAt: number
   createdAt: number
@@ -86,10 +167,24 @@ export type BundleAbTestsCountAggregateOutputType = {
 
 export type BundleAbTestsAvgAggregateInputType = {
   trafficSplit?: true
+  conversionWindowHours?: true
+  minimumDetectableEffect?: true
+  confidenceLevel?: true
+  statisticalPower?: true
+  baselineConversionRate?: true
+  minimumSamplePerVariant?: true
+  maxDurationDays?: true
 }
 
 export type BundleAbTestsSumAggregateInputType = {
   trafficSplit?: true
+  conversionWindowHours?: true
+  minimumDetectableEffect?: true
+  confidenceLevel?: true
+  statisticalPower?: true
+  baselineConversionRate?: true
+  minimumSamplePerVariant?: true
+  maxDurationDays?: true
 }
 
 export type BundleAbTestsMinAggregateInputType = {
@@ -103,6 +198,27 @@ export type BundleAbTestsMinAggregateInputType = {
   trafficSplit?: true
   status?: true
   winnerVariant?: true
+  controlTrackId?: true
+  treatmentTrackId?: true
+  controlReleaseId?: true
+  treatmentReleaseId?: true
+  analysisStatus?: true
+  metricType?: true
+  metricEventName?: true
+  conversionWindowHours?: true
+  minimumDetectableEffect?: true
+  confidenceLevel?: true
+  statisticalPower?: true
+  baselineConversionRate?: true
+  minimumSamplePerVariant?: true
+  maxDurationDays?: true
+  recommendedWinner?: true
+  pausedAt?: true
+  pauseReason?: true
+  pausedById?: true
+  endedById?: true
+  endReason?: true
+  lastAnalyzedAt?: true
   startedAt?: true
   endedAt?: true
   createdAt?: true
@@ -119,6 +235,27 @@ export type BundleAbTestsMaxAggregateInputType = {
   trafficSplit?: true
   status?: true
   winnerVariant?: true
+  controlTrackId?: true
+  treatmentTrackId?: true
+  controlReleaseId?: true
+  treatmentReleaseId?: true
+  analysisStatus?: true
+  metricType?: true
+  metricEventName?: true
+  conversionWindowHours?: true
+  minimumDetectableEffect?: true
+  confidenceLevel?: true
+  statisticalPower?: true
+  baselineConversionRate?: true
+  minimumSamplePerVariant?: true
+  maxDurationDays?: true
+  recommendedWinner?: true
+  pausedAt?: true
+  pauseReason?: true
+  pausedById?: true
+  endedById?: true
+  endReason?: true
+  lastAnalyzedAt?: true
   startedAt?: true
   endedAt?: true
   createdAt?: true
@@ -135,6 +272,31 @@ export type BundleAbTestsCountAggregateInputType = {
   trafficSplit?: true
   status?: true
   winnerVariant?: true
+  controlTrackId?: true
+  treatmentTrackId?: true
+  controlReleaseId?: true
+  treatmentReleaseId?: true
+  analysisStatus?: true
+  metricType?: true
+  metricEventName?: true
+  conversionWindowHours?: true
+  targetCountries?: true
+  targetLocales?: true
+  targetPlatforms?: true
+  targetOsVersions?: true
+  minimumDetectableEffect?: true
+  confidenceLevel?: true
+  statisticalPower?: true
+  baselineConversionRate?: true
+  minimumSamplePerVariant?: true
+  maxDurationDays?: true
+  recommendedWinner?: true
+  pausedAt?: true
+  pauseReason?: true
+  pausedById?: true
+  endedById?: true
+  endReason?: true
+  lastAnalyzedAt?: true
   startedAt?: true
   endedAt?: true
   createdAt?: true
@@ -238,6 +400,31 @@ export type BundleAbTestsGroupByOutputType = {
   trafficSplit: number
   status: string
   winnerVariant: string | null
+  controlTrackId: string | null
+  treatmentTrackId: string | null
+  controlReleaseId: string | null
+  treatmentReleaseId: string | null
+  analysisStatus: string
+  metricType: string
+  metricEventName: string | null
+  conversionWindowHours: number
+  targetCountries: string[]
+  targetLocales: string[]
+  targetPlatforms: string[]
+  targetOsVersions: runtime.JsonValue | null
+  minimumDetectableEffect: number
+  confidenceLevel: number
+  statisticalPower: number
+  baselineConversionRate: number | null
+  minimumSamplePerVariant: number | null
+  maxDurationDays: number
+  recommendedWinner: string | null
+  pausedAt: Date | null
+  pauseReason: string | null
+  pausedById: string | null
+  endedById: string | null
+  endReason: string | null
+  lastAnalyzedAt: Date | null
   startedAt: Date | null
   endedAt: Date | null
   createdAt: Date
@@ -277,10 +464,45 @@ export type BundleAbTestsWhereInput = {
   trafficSplit?: Prisma.IntFilter<"BundleAbTests"> | number
   status?: Prisma.StringFilter<"BundleAbTests"> | string
   winnerVariant?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  controlTrackId?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  treatmentTrackId?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  controlReleaseId?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  treatmentReleaseId?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  analysisStatus?: Prisma.StringFilter<"BundleAbTests"> | string
+  metricType?: Prisma.StringFilter<"BundleAbTests"> | string
+  metricEventName?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  conversionWindowHours?: Prisma.IntFilter<"BundleAbTests"> | number
+  targetCountries?: Prisma.StringNullableListFilter<"BundleAbTests">
+  targetLocales?: Prisma.StringNullableListFilter<"BundleAbTests">
+  targetPlatforms?: Prisma.StringNullableListFilter<"BundleAbTests">
+  targetOsVersions?: Prisma.JsonNullableFilter<"BundleAbTests">
+  minimumDetectableEffect?: Prisma.FloatFilter<"BundleAbTests"> | number
+  confidenceLevel?: Prisma.FloatFilter<"BundleAbTests"> | number
+  statisticalPower?: Prisma.FloatFilter<"BundleAbTests"> | number
+  baselineConversionRate?: Prisma.FloatNullableFilter<"BundleAbTests"> | number | null
+  minimumSamplePerVariant?: Prisma.IntNullableFilter<"BundleAbTests"> | number | null
+  maxDurationDays?: Prisma.IntFilter<"BundleAbTests"> | number
+  recommendedWinner?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  pausedAt?: Prisma.DateTimeNullableFilter<"BundleAbTests"> | Date | string | null
+  pauseReason?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  pausedById?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  endedById?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  endReason?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  lastAnalyzedAt?: Prisma.DateTimeNullableFilter<"BundleAbTests"> | Date | string | null
   startedAt?: Prisma.DateTimeNullableFilter<"BundleAbTests"> | Date | string | null
   endedAt?: Prisma.DateTimeNullableFilter<"BundleAbTests"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleAbTests"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
+  activeForBundle?: Prisma.XOR<Prisma.BundlesNullableScalarRelationFilter, Prisma.BundlesWhereInput> | null
+  controlTrack?: Prisma.XOR<Prisma.BundleReleaseTracksNullableScalarRelationFilter, Prisma.BundleReleaseTracksWhereInput> | null
+  treatmentTrack?: Prisma.XOR<Prisma.BundleReleaseTracksNullableScalarRelationFilter, Prisma.BundleReleaseTracksWhereInput> | null
+  controlRelease?: Prisma.XOR<Prisma.BundleReleasesNullableScalarRelationFilter, Prisma.BundleReleasesWhereInput> | null
+  treatmentRelease?: Prisma.XOR<Prisma.BundleReleasesNullableScalarRelationFilter, Prisma.BundleReleasesWhereInput> | null
+  exposures?: Prisma.BundleAbTestExposuresListRelationFilter
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsListRelationFilter
+  analyticsEvents?: Prisma.BundleAnalyticsEventsListRelationFilter
+  installEvents?: Prisma.BundleInstallEventsListRelationFilter
+  crashEvents?: Prisma.BundleCrashEventsListRelationFilter
 }
 
 export type BundleAbTestsOrderByWithRelationInput = {
@@ -294,10 +516,45 @@ export type BundleAbTestsOrderByWithRelationInput = {
   trafficSplit?: Prisma.SortOrder
   status?: Prisma.SortOrder
   winnerVariant?: Prisma.SortOrderInput | Prisma.SortOrder
+  controlTrackId?: Prisma.SortOrderInput | Prisma.SortOrder
+  treatmentTrackId?: Prisma.SortOrderInput | Prisma.SortOrder
+  controlReleaseId?: Prisma.SortOrderInput | Prisma.SortOrder
+  treatmentReleaseId?: Prisma.SortOrderInput | Prisma.SortOrder
+  analysisStatus?: Prisma.SortOrder
+  metricType?: Prisma.SortOrder
+  metricEventName?: Prisma.SortOrderInput | Prisma.SortOrder
+  conversionWindowHours?: Prisma.SortOrder
+  targetCountries?: Prisma.SortOrder
+  targetLocales?: Prisma.SortOrder
+  targetPlatforms?: Prisma.SortOrder
+  targetOsVersions?: Prisma.SortOrderInput | Prisma.SortOrder
+  minimumDetectableEffect?: Prisma.SortOrder
+  confidenceLevel?: Prisma.SortOrder
+  statisticalPower?: Prisma.SortOrder
+  baselineConversionRate?: Prisma.SortOrderInput | Prisma.SortOrder
+  minimumSamplePerVariant?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxDurationDays?: Prisma.SortOrder
+  recommendedWinner?: Prisma.SortOrderInput | Prisma.SortOrder
+  pausedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  pauseReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  pausedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  endedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  endReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastAnalyzedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   startedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   endedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   bundle?: Prisma.BundlesOrderByWithRelationInput
+  activeForBundle?: Prisma.BundlesOrderByWithRelationInput
+  controlTrack?: Prisma.BundleReleaseTracksOrderByWithRelationInput
+  treatmentTrack?: Prisma.BundleReleaseTracksOrderByWithRelationInput
+  controlRelease?: Prisma.BundleReleasesOrderByWithRelationInput
+  treatmentRelease?: Prisma.BundleReleasesOrderByWithRelationInput
+  exposures?: Prisma.BundleAbTestExposuresOrderByRelationAggregateInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsOrderByRelationAggregateInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsOrderByRelationAggregateInput
+  installEvents?: Prisma.BundleInstallEventsOrderByRelationAggregateInput
+  crashEvents?: Prisma.BundleCrashEventsOrderByRelationAggregateInput
 }
 
 export type BundleAbTestsWhereUniqueInput = Prisma.AtLeast<{
@@ -314,10 +571,45 @@ export type BundleAbTestsWhereUniqueInput = Prisma.AtLeast<{
   trafficSplit?: Prisma.IntFilter<"BundleAbTests"> | number
   status?: Prisma.StringFilter<"BundleAbTests"> | string
   winnerVariant?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  controlTrackId?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  treatmentTrackId?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  controlReleaseId?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  treatmentReleaseId?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  analysisStatus?: Prisma.StringFilter<"BundleAbTests"> | string
+  metricType?: Prisma.StringFilter<"BundleAbTests"> | string
+  metricEventName?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  conversionWindowHours?: Prisma.IntFilter<"BundleAbTests"> | number
+  targetCountries?: Prisma.StringNullableListFilter<"BundleAbTests">
+  targetLocales?: Prisma.StringNullableListFilter<"BundleAbTests">
+  targetPlatforms?: Prisma.StringNullableListFilter<"BundleAbTests">
+  targetOsVersions?: Prisma.JsonNullableFilter<"BundleAbTests">
+  minimumDetectableEffect?: Prisma.FloatFilter<"BundleAbTests"> | number
+  confidenceLevel?: Prisma.FloatFilter<"BundleAbTests"> | number
+  statisticalPower?: Prisma.FloatFilter<"BundleAbTests"> | number
+  baselineConversionRate?: Prisma.FloatNullableFilter<"BundleAbTests"> | number | null
+  minimumSamplePerVariant?: Prisma.IntNullableFilter<"BundleAbTests"> | number | null
+  maxDurationDays?: Prisma.IntFilter<"BundleAbTests"> | number
+  recommendedWinner?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  pausedAt?: Prisma.DateTimeNullableFilter<"BundleAbTests"> | Date | string | null
+  pauseReason?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  pausedById?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  endedById?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  endReason?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  lastAnalyzedAt?: Prisma.DateTimeNullableFilter<"BundleAbTests"> | Date | string | null
   startedAt?: Prisma.DateTimeNullableFilter<"BundleAbTests"> | Date | string | null
   endedAt?: Prisma.DateTimeNullableFilter<"BundleAbTests"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleAbTests"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
+  activeForBundle?: Prisma.XOR<Prisma.BundlesNullableScalarRelationFilter, Prisma.BundlesWhereInput> | null
+  controlTrack?: Prisma.XOR<Prisma.BundleReleaseTracksNullableScalarRelationFilter, Prisma.BundleReleaseTracksWhereInput> | null
+  treatmentTrack?: Prisma.XOR<Prisma.BundleReleaseTracksNullableScalarRelationFilter, Prisma.BundleReleaseTracksWhereInput> | null
+  controlRelease?: Prisma.XOR<Prisma.BundleReleasesNullableScalarRelationFilter, Prisma.BundleReleasesWhereInput> | null
+  treatmentRelease?: Prisma.XOR<Prisma.BundleReleasesNullableScalarRelationFilter, Prisma.BundleReleasesWhereInput> | null
+  exposures?: Prisma.BundleAbTestExposuresListRelationFilter
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsListRelationFilter
+  analyticsEvents?: Prisma.BundleAnalyticsEventsListRelationFilter
+  installEvents?: Prisma.BundleInstallEventsListRelationFilter
+  crashEvents?: Prisma.BundleCrashEventsListRelationFilter
 }, "id">
 
 export type BundleAbTestsOrderByWithAggregationInput = {
@@ -331,6 +623,31 @@ export type BundleAbTestsOrderByWithAggregationInput = {
   trafficSplit?: Prisma.SortOrder
   status?: Prisma.SortOrder
   winnerVariant?: Prisma.SortOrderInput | Prisma.SortOrder
+  controlTrackId?: Prisma.SortOrderInput | Prisma.SortOrder
+  treatmentTrackId?: Prisma.SortOrderInput | Prisma.SortOrder
+  controlReleaseId?: Prisma.SortOrderInput | Prisma.SortOrder
+  treatmentReleaseId?: Prisma.SortOrderInput | Prisma.SortOrder
+  analysisStatus?: Prisma.SortOrder
+  metricType?: Prisma.SortOrder
+  metricEventName?: Prisma.SortOrderInput | Prisma.SortOrder
+  conversionWindowHours?: Prisma.SortOrder
+  targetCountries?: Prisma.SortOrder
+  targetLocales?: Prisma.SortOrder
+  targetPlatforms?: Prisma.SortOrder
+  targetOsVersions?: Prisma.SortOrderInput | Prisma.SortOrder
+  minimumDetectableEffect?: Prisma.SortOrder
+  confidenceLevel?: Prisma.SortOrder
+  statisticalPower?: Prisma.SortOrder
+  baselineConversionRate?: Prisma.SortOrderInput | Prisma.SortOrder
+  minimumSamplePerVariant?: Prisma.SortOrderInput | Prisma.SortOrder
+  maxDurationDays?: Prisma.SortOrder
+  recommendedWinner?: Prisma.SortOrderInput | Prisma.SortOrder
+  pausedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  pauseReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  pausedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  endedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  endReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastAnalyzedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   startedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   endedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -355,6 +672,31 @@ export type BundleAbTestsScalarWhereWithAggregatesInput = {
   trafficSplit?: Prisma.IntWithAggregatesFilter<"BundleAbTests"> | number
   status?: Prisma.StringWithAggregatesFilter<"BundleAbTests"> | string
   winnerVariant?: Prisma.StringNullableWithAggregatesFilter<"BundleAbTests"> | string | null
+  controlTrackId?: Prisma.UuidNullableWithAggregatesFilter<"BundleAbTests"> | string | null
+  treatmentTrackId?: Prisma.UuidNullableWithAggregatesFilter<"BundleAbTests"> | string | null
+  controlReleaseId?: Prisma.UuidNullableWithAggregatesFilter<"BundleAbTests"> | string | null
+  treatmentReleaseId?: Prisma.UuidNullableWithAggregatesFilter<"BundleAbTests"> | string | null
+  analysisStatus?: Prisma.StringWithAggregatesFilter<"BundleAbTests"> | string
+  metricType?: Prisma.StringWithAggregatesFilter<"BundleAbTests"> | string
+  metricEventName?: Prisma.StringNullableWithAggregatesFilter<"BundleAbTests"> | string | null
+  conversionWindowHours?: Prisma.IntWithAggregatesFilter<"BundleAbTests"> | number
+  targetCountries?: Prisma.StringNullableListFilter<"BundleAbTests">
+  targetLocales?: Prisma.StringNullableListFilter<"BundleAbTests">
+  targetPlatforms?: Prisma.StringNullableListFilter<"BundleAbTests">
+  targetOsVersions?: Prisma.JsonNullableWithAggregatesFilter<"BundleAbTests">
+  minimumDetectableEffect?: Prisma.FloatWithAggregatesFilter<"BundleAbTests"> | number
+  confidenceLevel?: Prisma.FloatWithAggregatesFilter<"BundleAbTests"> | number
+  statisticalPower?: Prisma.FloatWithAggregatesFilter<"BundleAbTests"> | number
+  baselineConversionRate?: Prisma.FloatNullableWithAggregatesFilter<"BundleAbTests"> | number | null
+  minimumSamplePerVariant?: Prisma.IntNullableWithAggregatesFilter<"BundleAbTests"> | number | null
+  maxDurationDays?: Prisma.IntWithAggregatesFilter<"BundleAbTests"> | number
+  recommendedWinner?: Prisma.StringNullableWithAggregatesFilter<"BundleAbTests"> | string | null
+  pausedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleAbTests"> | Date | string | null
+  pauseReason?: Prisma.StringNullableWithAggregatesFilter<"BundleAbTests"> | string | null
+  pausedById?: Prisma.UuidNullableWithAggregatesFilter<"BundleAbTests"> | string | null
+  endedById?: Prisma.UuidNullableWithAggregatesFilter<"BundleAbTests"> | string | null
+  endReason?: Prisma.StringNullableWithAggregatesFilter<"BundleAbTests"> | string | null
+  lastAnalyzedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleAbTests"> | Date | string | null
   startedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleAbTests"> | Date | string | null
   endedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleAbTests"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleAbTests"> | Date | string
@@ -370,10 +712,41 @@ export type BundleAbTestsCreateInput = {
   trafficSplit?: number
   status?: string
   winnerVariant?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
   startedAt?: Date | string | null
   endedAt?: Date | string | null
   createdAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutAbTestsInput
+  activeForBundle?: Prisma.BundlesCreateNestedOneWithoutActiveAbTestInput
+  controlTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutControlForTestsInput
+  treatmentTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutTreatmentForTestsInput
+  controlRelease?: Prisma.BundleReleasesCreateNestedOneWithoutControlExperimentsInput
+  treatmentRelease?: Prisma.BundleReleasesCreateNestedOneWithoutTreatmentExperimentsInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutAbTestInput
 }
 
 export type BundleAbTestsUncheckedCreateInput = {
@@ -387,9 +760,40 @@ export type BundleAbTestsUncheckedCreateInput = {
   trafficSplit?: number
   status?: string
   winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
   startedAt?: Date | string | null
   endedAt?: Date | string | null
   createdAt: Date | string
+  activeForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutActiveAbTestInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutAbTestInput
 }
 
 export type BundleAbTestsUpdateInput = {
@@ -402,10 +806,41 @@ export type BundleAbTestsUpdateInput = {
   trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutAbTestsNestedInput
+  activeForBundle?: Prisma.BundlesUpdateOneWithoutActiveAbTestNestedInput
+  controlTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutControlForTestsNestedInput
+  treatmentTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutTreatmentForTestsNestedInput
+  controlRelease?: Prisma.BundleReleasesUpdateOneWithoutControlExperimentsNestedInput
+  treatmentRelease?: Prisma.BundleReleasesUpdateOneWithoutTreatmentExperimentsNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutAbTestNestedInput
 }
 
 export type BundleAbTestsUncheckedUpdateInput = {
@@ -419,9 +854,40 @@ export type BundleAbTestsUncheckedUpdateInput = {
   trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutActiveAbTestNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutAbTestNestedInput
 }
 
 export type BundleAbTestsCreateManyInput = {
@@ -435,6 +901,31 @@ export type BundleAbTestsCreateManyInput = {
   trafficSplit?: number
   status?: string
   winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
   startedAt?: Date | string | null
   endedAt?: Date | string | null
   createdAt: Date | string
@@ -450,6 +941,27 @@ export type BundleAbTestsUpdateManyMutationInput = {
   trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -466,6 +978,31 @@ export type BundleAbTestsUncheckedUpdateManyInput = {
   trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -477,8 +1014,21 @@ export type BundleAbTestsListRelationFilter = {
   none?: Prisma.BundleAbTestsWhereInput
 }
 
+export type BundleAbTestsNullableScalarRelationFilter = {
+  is?: Prisma.BundleAbTestsWhereInput | null
+  isNot?: Prisma.BundleAbTestsWhereInput | null
+}
+
 export type BundleAbTestsOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
 export type BundleAbTestsCountOrderByAggregateInput = {
@@ -492,6 +1042,31 @@ export type BundleAbTestsCountOrderByAggregateInput = {
   trafficSplit?: Prisma.SortOrder
   status?: Prisma.SortOrder
   winnerVariant?: Prisma.SortOrder
+  controlTrackId?: Prisma.SortOrder
+  treatmentTrackId?: Prisma.SortOrder
+  controlReleaseId?: Prisma.SortOrder
+  treatmentReleaseId?: Prisma.SortOrder
+  analysisStatus?: Prisma.SortOrder
+  metricType?: Prisma.SortOrder
+  metricEventName?: Prisma.SortOrder
+  conversionWindowHours?: Prisma.SortOrder
+  targetCountries?: Prisma.SortOrder
+  targetLocales?: Prisma.SortOrder
+  targetPlatforms?: Prisma.SortOrder
+  targetOsVersions?: Prisma.SortOrder
+  minimumDetectableEffect?: Prisma.SortOrder
+  confidenceLevel?: Prisma.SortOrder
+  statisticalPower?: Prisma.SortOrder
+  baselineConversionRate?: Prisma.SortOrder
+  minimumSamplePerVariant?: Prisma.SortOrder
+  maxDurationDays?: Prisma.SortOrder
+  recommendedWinner?: Prisma.SortOrder
+  pausedAt?: Prisma.SortOrder
+  pauseReason?: Prisma.SortOrder
+  pausedById?: Prisma.SortOrder
+  endedById?: Prisma.SortOrder
+  endReason?: Prisma.SortOrder
+  lastAnalyzedAt?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   endedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -499,6 +1074,13 @@ export type BundleAbTestsCountOrderByAggregateInput = {
 
 export type BundleAbTestsAvgOrderByAggregateInput = {
   trafficSplit?: Prisma.SortOrder
+  conversionWindowHours?: Prisma.SortOrder
+  minimumDetectableEffect?: Prisma.SortOrder
+  confidenceLevel?: Prisma.SortOrder
+  statisticalPower?: Prisma.SortOrder
+  baselineConversionRate?: Prisma.SortOrder
+  minimumSamplePerVariant?: Prisma.SortOrder
+  maxDurationDays?: Prisma.SortOrder
 }
 
 export type BundleAbTestsMaxOrderByAggregateInput = {
@@ -512,6 +1094,27 @@ export type BundleAbTestsMaxOrderByAggregateInput = {
   trafficSplit?: Prisma.SortOrder
   status?: Prisma.SortOrder
   winnerVariant?: Prisma.SortOrder
+  controlTrackId?: Prisma.SortOrder
+  treatmentTrackId?: Prisma.SortOrder
+  controlReleaseId?: Prisma.SortOrder
+  treatmentReleaseId?: Prisma.SortOrder
+  analysisStatus?: Prisma.SortOrder
+  metricType?: Prisma.SortOrder
+  metricEventName?: Prisma.SortOrder
+  conversionWindowHours?: Prisma.SortOrder
+  minimumDetectableEffect?: Prisma.SortOrder
+  confidenceLevel?: Prisma.SortOrder
+  statisticalPower?: Prisma.SortOrder
+  baselineConversionRate?: Prisma.SortOrder
+  minimumSamplePerVariant?: Prisma.SortOrder
+  maxDurationDays?: Prisma.SortOrder
+  recommendedWinner?: Prisma.SortOrder
+  pausedAt?: Prisma.SortOrder
+  pauseReason?: Prisma.SortOrder
+  pausedById?: Prisma.SortOrder
+  endedById?: Prisma.SortOrder
+  endReason?: Prisma.SortOrder
+  lastAnalyzedAt?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   endedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -528,6 +1131,27 @@ export type BundleAbTestsMinOrderByAggregateInput = {
   trafficSplit?: Prisma.SortOrder
   status?: Prisma.SortOrder
   winnerVariant?: Prisma.SortOrder
+  controlTrackId?: Prisma.SortOrder
+  treatmentTrackId?: Prisma.SortOrder
+  controlReleaseId?: Prisma.SortOrder
+  treatmentReleaseId?: Prisma.SortOrder
+  analysisStatus?: Prisma.SortOrder
+  metricType?: Prisma.SortOrder
+  metricEventName?: Prisma.SortOrder
+  conversionWindowHours?: Prisma.SortOrder
+  minimumDetectableEffect?: Prisma.SortOrder
+  confidenceLevel?: Prisma.SortOrder
+  statisticalPower?: Prisma.SortOrder
+  baselineConversionRate?: Prisma.SortOrder
+  minimumSamplePerVariant?: Prisma.SortOrder
+  maxDurationDays?: Prisma.SortOrder
+  recommendedWinner?: Prisma.SortOrder
+  pausedAt?: Prisma.SortOrder
+  pauseReason?: Prisma.SortOrder
+  pausedById?: Prisma.SortOrder
+  endedById?: Prisma.SortOrder
+  endReason?: Prisma.SortOrder
+  lastAnalyzedAt?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   endedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -535,6 +1159,18 @@ export type BundleAbTestsMinOrderByAggregateInput = {
 
 export type BundleAbTestsSumOrderByAggregateInput = {
   trafficSplit?: Prisma.SortOrder
+  conversionWindowHours?: Prisma.SortOrder
+  minimumDetectableEffect?: Prisma.SortOrder
+  confidenceLevel?: Prisma.SortOrder
+  statisticalPower?: Prisma.SortOrder
+  baselineConversionRate?: Prisma.SortOrder
+  minimumSamplePerVariant?: Prisma.SortOrder
+  maxDurationDays?: Prisma.SortOrder
+}
+
+export type BundleAbTestsScalarRelationFilter = {
+  is?: Prisma.BundleAbTestsWhereInput
+  isNot?: Prisma.BundleAbTestsWhereInput
 }
 
 export type BundleAbTestsCreateNestedManyWithoutBundleInput = {
@@ -542,6 +1178,12 @@ export type BundleAbTestsCreateNestedManyWithoutBundleInput = {
   connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutBundleInput | Prisma.BundleAbTestsCreateOrConnectWithoutBundleInput[]
   createMany?: Prisma.BundleAbTestsCreateManyBundleInputEnvelope
   connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+}
+
+export type BundleAbTestsCreateNestedOneWithoutActiveForBundleInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutActiveForBundleInput, Prisma.BundleAbTestsUncheckedCreateWithoutActiveForBundleInput>
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutActiveForBundleInput
+  connect?: Prisma.BundleAbTestsWhereUniqueInput
 }
 
 export type BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput = {
@@ -565,6 +1207,16 @@ export type BundleAbTestsUpdateManyWithoutBundleNestedInput = {
   deleteMany?: Prisma.BundleAbTestsScalarWhereInput | Prisma.BundleAbTestsScalarWhereInput[]
 }
 
+export type BundleAbTestsUpdateOneWithoutActiveForBundleNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutActiveForBundleInput, Prisma.BundleAbTestsUncheckedCreateWithoutActiveForBundleInput>
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutActiveForBundleInput
+  upsert?: Prisma.BundleAbTestsUpsertWithoutActiveForBundleInput
+  disconnect?: Prisma.BundleAbTestsWhereInput | boolean
+  delete?: Prisma.BundleAbTestsWhereInput | boolean
+  connect?: Prisma.BundleAbTestsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleAbTestsUpdateToOneWithWhereWithoutActiveForBundleInput, Prisma.BundleAbTestsUpdateWithoutActiveForBundleInput>, Prisma.BundleAbTestsUncheckedUpdateWithoutActiveForBundleInput>
+}
+
 export type BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput = {
   create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutBundleInput, Prisma.BundleAbTestsUncheckedCreateWithoutBundleInput> | Prisma.BundleAbTestsCreateWithoutBundleInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutBundleInput[]
   connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutBundleInput | Prisma.BundleAbTestsCreateOrConnectWithoutBundleInput[]
@@ -579,6 +1231,277 @@ export type BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput = {
   deleteMany?: Prisma.BundleAbTestsScalarWhereInput | Prisma.BundleAbTestsScalarWhereInput[]
 }
 
+export type BundleAbTestsCreateNestedManyWithoutControlReleaseInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutControlReleaseInput, Prisma.BundleAbTestsUncheckedCreateWithoutControlReleaseInput> | Prisma.BundleAbTestsCreateWithoutControlReleaseInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutControlReleaseInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutControlReleaseInput | Prisma.BundleAbTestsCreateOrConnectWithoutControlReleaseInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyControlReleaseInputEnvelope
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+}
+
+export type BundleAbTestsCreateNestedManyWithoutTreatmentReleaseInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutTreatmentReleaseInput, Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentReleaseInput> | Prisma.BundleAbTestsCreateWithoutTreatmentReleaseInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentReleaseInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentReleaseInput | Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentReleaseInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyTreatmentReleaseInputEnvelope
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+}
+
+export type BundleAbTestsUncheckedCreateNestedManyWithoutControlReleaseInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutControlReleaseInput, Prisma.BundleAbTestsUncheckedCreateWithoutControlReleaseInput> | Prisma.BundleAbTestsCreateWithoutControlReleaseInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutControlReleaseInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutControlReleaseInput | Prisma.BundleAbTestsCreateOrConnectWithoutControlReleaseInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyControlReleaseInputEnvelope
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+}
+
+export type BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentReleaseInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutTreatmentReleaseInput, Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentReleaseInput> | Prisma.BundleAbTestsCreateWithoutTreatmentReleaseInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentReleaseInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentReleaseInput | Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentReleaseInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyTreatmentReleaseInputEnvelope
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+}
+
+export type BundleAbTestsUpdateManyWithoutControlReleaseNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutControlReleaseInput, Prisma.BundleAbTestsUncheckedCreateWithoutControlReleaseInput> | Prisma.BundleAbTestsCreateWithoutControlReleaseInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutControlReleaseInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutControlReleaseInput | Prisma.BundleAbTestsCreateOrConnectWithoutControlReleaseInput[]
+  upsert?: Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutControlReleaseInput | Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutControlReleaseInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyControlReleaseInputEnvelope
+  set?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  disconnect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  delete?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  update?: Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutControlReleaseInput | Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutControlReleaseInput[]
+  updateMany?: Prisma.BundleAbTestsUpdateManyWithWhereWithoutControlReleaseInput | Prisma.BundleAbTestsUpdateManyWithWhereWithoutControlReleaseInput[]
+  deleteMany?: Prisma.BundleAbTestsScalarWhereInput | Prisma.BundleAbTestsScalarWhereInput[]
+}
+
+export type BundleAbTestsUpdateManyWithoutTreatmentReleaseNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutTreatmentReleaseInput, Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentReleaseInput> | Prisma.BundleAbTestsCreateWithoutTreatmentReleaseInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentReleaseInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentReleaseInput | Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentReleaseInput[]
+  upsert?: Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutTreatmentReleaseInput | Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutTreatmentReleaseInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyTreatmentReleaseInputEnvelope
+  set?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  disconnect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  delete?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  update?: Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutTreatmentReleaseInput | Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutTreatmentReleaseInput[]
+  updateMany?: Prisma.BundleAbTestsUpdateManyWithWhereWithoutTreatmentReleaseInput | Prisma.BundleAbTestsUpdateManyWithWhereWithoutTreatmentReleaseInput[]
+  deleteMany?: Prisma.BundleAbTestsScalarWhereInput | Prisma.BundleAbTestsScalarWhereInput[]
+}
+
+export type BundleAbTestsUncheckedUpdateManyWithoutControlReleaseNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutControlReleaseInput, Prisma.BundleAbTestsUncheckedCreateWithoutControlReleaseInput> | Prisma.BundleAbTestsCreateWithoutControlReleaseInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutControlReleaseInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutControlReleaseInput | Prisma.BundleAbTestsCreateOrConnectWithoutControlReleaseInput[]
+  upsert?: Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutControlReleaseInput | Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutControlReleaseInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyControlReleaseInputEnvelope
+  set?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  disconnect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  delete?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  update?: Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutControlReleaseInput | Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutControlReleaseInput[]
+  updateMany?: Prisma.BundleAbTestsUpdateManyWithWhereWithoutControlReleaseInput | Prisma.BundleAbTestsUpdateManyWithWhereWithoutControlReleaseInput[]
+  deleteMany?: Prisma.BundleAbTestsScalarWhereInput | Prisma.BundleAbTestsScalarWhereInput[]
+}
+
+export type BundleAbTestsUncheckedUpdateManyWithoutTreatmentReleaseNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutTreatmentReleaseInput, Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentReleaseInput> | Prisma.BundleAbTestsCreateWithoutTreatmentReleaseInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentReleaseInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentReleaseInput | Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentReleaseInput[]
+  upsert?: Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutTreatmentReleaseInput | Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutTreatmentReleaseInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyTreatmentReleaseInputEnvelope
+  set?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  disconnect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  delete?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  update?: Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutTreatmentReleaseInput | Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutTreatmentReleaseInput[]
+  updateMany?: Prisma.BundleAbTestsUpdateManyWithWhereWithoutTreatmentReleaseInput | Prisma.BundleAbTestsUpdateManyWithWhereWithoutTreatmentReleaseInput[]
+  deleteMany?: Prisma.BundleAbTestsScalarWhereInput | Prisma.BundleAbTestsScalarWhereInput[]
+}
+
+export type BundleAbTestsCreatetargetCountriesInput = {
+  set: string[]
+}
+
+export type BundleAbTestsCreatetargetLocalesInput = {
+  set: string[]
+}
+
+export type BundleAbTestsCreatetargetPlatformsInput = {
+  set: string[]
+}
+
+export type BundleAbTestsUpdatetargetCountriesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type BundleAbTestsUpdatetargetLocalesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type BundleAbTestsUpdatetargetPlatformsInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type BundleAbTestsCreateNestedOneWithoutExposuresInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutExposuresInput, Prisma.BundleAbTestsUncheckedCreateWithoutExposuresInput>
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutExposuresInput
+  connect?: Prisma.BundleAbTestsWhereUniqueInput
+}
+
+export type BundleAbTestsUpdateOneRequiredWithoutExposuresNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutExposuresInput, Prisma.BundleAbTestsUncheckedCreateWithoutExposuresInput>
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutExposuresInput
+  upsert?: Prisma.BundleAbTestsUpsertWithoutExposuresInput
+  connect?: Prisma.BundleAbTestsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleAbTestsUpdateToOneWithWhereWithoutExposuresInput, Prisma.BundleAbTestsUpdateWithoutExposuresInput>, Prisma.BundleAbTestsUncheckedUpdateWithoutExposuresInput>
+}
+
+export type BundleAbTestsCreateNestedOneWithoutAnalysisSnapshotsInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutAnalysisSnapshotsInput, Prisma.BundleAbTestsUncheckedCreateWithoutAnalysisSnapshotsInput>
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutAnalysisSnapshotsInput
+  connect?: Prisma.BundleAbTestsWhereUniqueInput
+}
+
+export type BundleAbTestsUpdateOneRequiredWithoutAnalysisSnapshotsNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutAnalysisSnapshotsInput, Prisma.BundleAbTestsUncheckedCreateWithoutAnalysisSnapshotsInput>
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutAnalysisSnapshotsInput
+  upsert?: Prisma.BundleAbTestsUpsertWithoutAnalysisSnapshotsInput
+  connect?: Prisma.BundleAbTestsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleAbTestsUpdateToOneWithWhereWithoutAnalysisSnapshotsInput, Prisma.BundleAbTestsUpdateWithoutAnalysisSnapshotsInput>, Prisma.BundleAbTestsUncheckedUpdateWithoutAnalysisSnapshotsInput>
+}
+
+export type BundleAbTestsCreateNestedOneWithoutAnalyticsEventsInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutAnalyticsEventsInput, Prisma.BundleAbTestsUncheckedCreateWithoutAnalyticsEventsInput>
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutAnalyticsEventsInput
+  connect?: Prisma.BundleAbTestsWhereUniqueInput
+}
+
+export type BundleAbTestsUpdateOneWithoutAnalyticsEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutAnalyticsEventsInput, Prisma.BundleAbTestsUncheckedCreateWithoutAnalyticsEventsInput>
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutAnalyticsEventsInput
+  upsert?: Prisma.BundleAbTestsUpsertWithoutAnalyticsEventsInput
+  disconnect?: Prisma.BundleAbTestsWhereInput | boolean
+  delete?: Prisma.BundleAbTestsWhereInput | boolean
+  connect?: Prisma.BundleAbTestsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleAbTestsUpdateToOneWithWhereWithoutAnalyticsEventsInput, Prisma.BundleAbTestsUpdateWithoutAnalyticsEventsInput>, Prisma.BundleAbTestsUncheckedUpdateWithoutAnalyticsEventsInput>
+}
+
+export type BundleAbTestsCreateNestedOneWithoutInstallEventsInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutInstallEventsInput, Prisma.BundleAbTestsUncheckedCreateWithoutInstallEventsInput>
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutInstallEventsInput
+  connect?: Prisma.BundleAbTestsWhereUniqueInput
+}
+
+export type BundleAbTestsUpdateOneWithoutInstallEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutInstallEventsInput, Prisma.BundleAbTestsUncheckedCreateWithoutInstallEventsInput>
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutInstallEventsInput
+  upsert?: Prisma.BundleAbTestsUpsertWithoutInstallEventsInput
+  disconnect?: Prisma.BundleAbTestsWhereInput | boolean
+  delete?: Prisma.BundleAbTestsWhereInput | boolean
+  connect?: Prisma.BundleAbTestsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleAbTestsUpdateToOneWithWhereWithoutInstallEventsInput, Prisma.BundleAbTestsUpdateWithoutInstallEventsInput>, Prisma.BundleAbTestsUncheckedUpdateWithoutInstallEventsInput>
+}
+
+export type BundleAbTestsCreateNestedManyWithoutControlTrackInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutControlTrackInput, Prisma.BundleAbTestsUncheckedCreateWithoutControlTrackInput> | Prisma.BundleAbTestsCreateWithoutControlTrackInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutControlTrackInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutControlTrackInput | Prisma.BundleAbTestsCreateOrConnectWithoutControlTrackInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyControlTrackInputEnvelope
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+}
+
+export type BundleAbTestsCreateNestedManyWithoutTreatmentTrackInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutTreatmentTrackInput, Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentTrackInput> | Prisma.BundleAbTestsCreateWithoutTreatmentTrackInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentTrackInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentTrackInput | Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentTrackInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyTreatmentTrackInputEnvelope
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+}
+
+export type BundleAbTestsUncheckedCreateNestedManyWithoutControlTrackInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutControlTrackInput, Prisma.BundleAbTestsUncheckedCreateWithoutControlTrackInput> | Prisma.BundleAbTestsCreateWithoutControlTrackInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutControlTrackInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutControlTrackInput | Prisma.BundleAbTestsCreateOrConnectWithoutControlTrackInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyControlTrackInputEnvelope
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+}
+
+export type BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentTrackInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutTreatmentTrackInput, Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentTrackInput> | Prisma.BundleAbTestsCreateWithoutTreatmentTrackInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentTrackInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentTrackInput | Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentTrackInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyTreatmentTrackInputEnvelope
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+}
+
+export type BundleAbTestsUpdateManyWithoutControlTrackNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutControlTrackInput, Prisma.BundleAbTestsUncheckedCreateWithoutControlTrackInput> | Prisma.BundleAbTestsCreateWithoutControlTrackInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutControlTrackInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutControlTrackInput | Prisma.BundleAbTestsCreateOrConnectWithoutControlTrackInput[]
+  upsert?: Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutControlTrackInput | Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutControlTrackInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyControlTrackInputEnvelope
+  set?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  disconnect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  delete?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  update?: Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutControlTrackInput | Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutControlTrackInput[]
+  updateMany?: Prisma.BundleAbTestsUpdateManyWithWhereWithoutControlTrackInput | Prisma.BundleAbTestsUpdateManyWithWhereWithoutControlTrackInput[]
+  deleteMany?: Prisma.BundleAbTestsScalarWhereInput | Prisma.BundleAbTestsScalarWhereInput[]
+}
+
+export type BundleAbTestsUpdateManyWithoutTreatmentTrackNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutTreatmentTrackInput, Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentTrackInput> | Prisma.BundleAbTestsCreateWithoutTreatmentTrackInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentTrackInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentTrackInput | Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentTrackInput[]
+  upsert?: Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutTreatmentTrackInput | Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutTreatmentTrackInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyTreatmentTrackInputEnvelope
+  set?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  disconnect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  delete?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  update?: Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutTreatmentTrackInput | Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutTreatmentTrackInput[]
+  updateMany?: Prisma.BundleAbTestsUpdateManyWithWhereWithoutTreatmentTrackInput | Prisma.BundleAbTestsUpdateManyWithWhereWithoutTreatmentTrackInput[]
+  deleteMany?: Prisma.BundleAbTestsScalarWhereInput | Prisma.BundleAbTestsScalarWhereInput[]
+}
+
+export type BundleAbTestsUncheckedUpdateManyWithoutControlTrackNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutControlTrackInput, Prisma.BundleAbTestsUncheckedCreateWithoutControlTrackInput> | Prisma.BundleAbTestsCreateWithoutControlTrackInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutControlTrackInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutControlTrackInput | Prisma.BundleAbTestsCreateOrConnectWithoutControlTrackInput[]
+  upsert?: Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutControlTrackInput | Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutControlTrackInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyControlTrackInputEnvelope
+  set?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  disconnect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  delete?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  update?: Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutControlTrackInput | Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutControlTrackInput[]
+  updateMany?: Prisma.BundleAbTestsUpdateManyWithWhereWithoutControlTrackInput | Prisma.BundleAbTestsUpdateManyWithWhereWithoutControlTrackInput[]
+  deleteMany?: Prisma.BundleAbTestsScalarWhereInput | Prisma.BundleAbTestsScalarWhereInput[]
+}
+
+export type BundleAbTestsUncheckedUpdateManyWithoutTreatmentTrackNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutTreatmentTrackInput, Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentTrackInput> | Prisma.BundleAbTestsCreateWithoutTreatmentTrackInput[] | Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentTrackInput[]
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentTrackInput | Prisma.BundleAbTestsCreateOrConnectWithoutTreatmentTrackInput[]
+  upsert?: Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutTreatmentTrackInput | Prisma.BundleAbTestsUpsertWithWhereUniqueWithoutTreatmentTrackInput[]
+  createMany?: Prisma.BundleAbTestsCreateManyTreatmentTrackInputEnvelope
+  set?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  disconnect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  delete?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  connect?: Prisma.BundleAbTestsWhereUniqueInput | Prisma.BundleAbTestsWhereUniqueInput[]
+  update?: Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutTreatmentTrackInput | Prisma.BundleAbTestsUpdateWithWhereUniqueWithoutTreatmentTrackInput[]
+  updateMany?: Prisma.BundleAbTestsUpdateManyWithWhereWithoutTreatmentTrackInput | Prisma.BundleAbTestsUpdateManyWithWhereWithoutTreatmentTrackInput[]
+  deleteMany?: Prisma.BundleAbTestsScalarWhereInput | Prisma.BundleAbTestsScalarWhereInput[]
+}
+
+export type BundleAbTestsCreateNestedOneWithoutCrashEventsInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutCrashEventsInput, Prisma.BundleAbTestsUncheckedCreateWithoutCrashEventsInput>
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutCrashEventsInput
+  connect?: Prisma.BundleAbTestsWhereUniqueInput
+}
+
+export type BundleAbTestsUpdateOneWithoutCrashEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutCrashEventsInput, Prisma.BundleAbTestsUncheckedCreateWithoutCrashEventsInput>
+  connectOrCreate?: Prisma.BundleAbTestsCreateOrConnectWithoutCrashEventsInput
+  upsert?: Prisma.BundleAbTestsUpsertWithoutCrashEventsInput
+  disconnect?: Prisma.BundleAbTestsWhereInput | boolean
+  delete?: Prisma.BundleAbTestsWhereInput | boolean
+  connect?: Prisma.BundleAbTestsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleAbTestsUpdateToOneWithWhereWithoutCrashEventsInput, Prisma.BundleAbTestsUpdateWithoutCrashEventsInput>, Prisma.BundleAbTestsUncheckedUpdateWithoutCrashEventsInput>
+}
+
 export type BundleAbTestsCreateWithoutBundleInput = {
   id: string
   testName: string
@@ -589,9 +1512,40 @@ export type BundleAbTestsCreateWithoutBundleInput = {
   trafficSplit?: number
   status?: string
   winnerVariant?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
   startedAt?: Date | string | null
   endedAt?: Date | string | null
   createdAt: Date | string
+  activeForBundle?: Prisma.BundlesCreateNestedOneWithoutActiveAbTestInput
+  controlTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutControlForTestsInput
+  treatmentTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutTreatmentForTestsInput
+  controlRelease?: Prisma.BundleReleasesCreateNestedOneWithoutControlExperimentsInput
+  treatmentRelease?: Prisma.BundleReleasesCreateNestedOneWithoutTreatmentExperimentsInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutAbTestInput
 }
 
 export type BundleAbTestsUncheckedCreateWithoutBundleInput = {
@@ -604,9 +1558,40 @@ export type BundleAbTestsUncheckedCreateWithoutBundleInput = {
   trafficSplit?: number
   status?: string
   winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
   startedAt?: Date | string | null
   endedAt?: Date | string | null
   createdAt: Date | string
+  activeForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutActiveAbTestInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutAbTestInput
 }
 
 export type BundleAbTestsCreateOrConnectWithoutBundleInput = {
@@ -617,6 +1602,103 @@ export type BundleAbTestsCreateOrConnectWithoutBundleInput = {
 export type BundleAbTestsCreateManyBundleInputEnvelope = {
   data: Prisma.BundleAbTestsCreateManyBundleInput | Prisma.BundleAbTestsCreateManyBundleInput[]
   skipDuplicates?: boolean
+}
+
+export type BundleAbTestsCreateWithoutActiveForBundleInput = {
+  id: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutAbTestsInput
+  controlTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutControlForTestsInput
+  treatmentTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutTreatmentForTestsInput
+  controlRelease?: Prisma.BundleReleasesCreateNestedOneWithoutControlExperimentsInput
+  treatmentRelease?: Prisma.BundleReleasesCreateNestedOneWithoutTreatmentExperimentsInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsUncheckedCreateWithoutActiveForBundleInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsCreateOrConnectWithoutActiveForBundleInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutActiveForBundleInput, Prisma.BundleAbTestsUncheckedCreateWithoutActiveForBundleInput>
 }
 
 export type BundleAbTestsUpsertWithWhereUniqueWithoutBundleInput = {
@@ -649,9 +1731,1609 @@ export type BundleAbTestsScalarWhereInput = {
   trafficSplit?: Prisma.IntFilter<"BundleAbTests"> | number
   status?: Prisma.StringFilter<"BundleAbTests"> | string
   winnerVariant?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  controlTrackId?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  treatmentTrackId?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  controlReleaseId?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  treatmentReleaseId?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  analysisStatus?: Prisma.StringFilter<"BundleAbTests"> | string
+  metricType?: Prisma.StringFilter<"BundleAbTests"> | string
+  metricEventName?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  conversionWindowHours?: Prisma.IntFilter<"BundleAbTests"> | number
+  targetCountries?: Prisma.StringNullableListFilter<"BundleAbTests">
+  targetLocales?: Prisma.StringNullableListFilter<"BundleAbTests">
+  targetPlatforms?: Prisma.StringNullableListFilter<"BundleAbTests">
+  targetOsVersions?: Prisma.JsonNullableFilter<"BundleAbTests">
+  minimumDetectableEffect?: Prisma.FloatFilter<"BundleAbTests"> | number
+  confidenceLevel?: Prisma.FloatFilter<"BundleAbTests"> | number
+  statisticalPower?: Prisma.FloatFilter<"BundleAbTests"> | number
+  baselineConversionRate?: Prisma.FloatNullableFilter<"BundleAbTests"> | number | null
+  minimumSamplePerVariant?: Prisma.IntNullableFilter<"BundleAbTests"> | number | null
+  maxDurationDays?: Prisma.IntFilter<"BundleAbTests"> | number
+  recommendedWinner?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  pausedAt?: Prisma.DateTimeNullableFilter<"BundleAbTests"> | Date | string | null
+  pauseReason?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  pausedById?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  endedById?: Prisma.UuidNullableFilter<"BundleAbTests"> | string | null
+  endReason?: Prisma.StringNullableFilter<"BundleAbTests"> | string | null
+  lastAnalyzedAt?: Prisma.DateTimeNullableFilter<"BundleAbTests"> | Date | string | null
   startedAt?: Prisma.DateTimeNullableFilter<"BundleAbTests"> | Date | string | null
   endedAt?: Prisma.DateTimeNullableFilter<"BundleAbTests"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleAbTests"> | Date | string
+}
+
+export type BundleAbTestsUpsertWithoutActiveForBundleInput = {
+  update: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutActiveForBundleInput, Prisma.BundleAbTestsUncheckedUpdateWithoutActiveForBundleInput>
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutActiveForBundleInput, Prisma.BundleAbTestsUncheckedCreateWithoutActiveForBundleInput>
+  where?: Prisma.BundleAbTestsWhereInput
+}
+
+export type BundleAbTestsUpdateToOneWithWhereWithoutActiveForBundleInput = {
+  where?: Prisma.BundleAbTestsWhereInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutActiveForBundleInput, Prisma.BundleAbTestsUncheckedUpdateWithoutActiveForBundleInput>
+}
+
+export type BundleAbTestsUpdateWithoutActiveForBundleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutAbTestsNestedInput
+  controlTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutControlForTestsNestedInput
+  treatmentTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutTreatmentForTestsNestedInput
+  controlRelease?: Prisma.BundleReleasesUpdateOneWithoutControlExperimentsNestedInput
+  treatmentRelease?: Prisma.BundleReleasesUpdateOneWithoutTreatmentExperimentsNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateWithoutActiveForBundleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsCreateWithoutControlReleaseInput = {
+  id: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutAbTestsInput
+  activeForBundle?: Prisma.BundlesCreateNestedOneWithoutActiveAbTestInput
+  controlTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutControlForTestsInput
+  treatmentTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutTreatmentForTestsInput
+  treatmentRelease?: Prisma.BundleReleasesCreateNestedOneWithoutTreatmentExperimentsInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsUncheckedCreateWithoutControlReleaseInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  activeForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutActiveAbTestInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsCreateOrConnectWithoutControlReleaseInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutControlReleaseInput, Prisma.BundleAbTestsUncheckedCreateWithoutControlReleaseInput>
+}
+
+export type BundleAbTestsCreateManyControlReleaseInputEnvelope = {
+  data: Prisma.BundleAbTestsCreateManyControlReleaseInput | Prisma.BundleAbTestsCreateManyControlReleaseInput[]
+  skipDuplicates?: boolean
+}
+
+export type BundleAbTestsCreateWithoutTreatmentReleaseInput = {
+  id: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutAbTestsInput
+  activeForBundle?: Prisma.BundlesCreateNestedOneWithoutActiveAbTestInput
+  controlTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutControlForTestsInput
+  treatmentTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutTreatmentForTestsInput
+  controlRelease?: Prisma.BundleReleasesCreateNestedOneWithoutControlExperimentsInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsUncheckedCreateWithoutTreatmentReleaseInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  activeForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutActiveAbTestInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsCreateOrConnectWithoutTreatmentReleaseInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutTreatmentReleaseInput, Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentReleaseInput>
+}
+
+export type BundleAbTestsCreateManyTreatmentReleaseInputEnvelope = {
+  data: Prisma.BundleAbTestsCreateManyTreatmentReleaseInput | Prisma.BundleAbTestsCreateManyTreatmentReleaseInput[]
+  skipDuplicates?: boolean
+}
+
+export type BundleAbTestsUpsertWithWhereUniqueWithoutControlReleaseInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  update: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutControlReleaseInput, Prisma.BundleAbTestsUncheckedUpdateWithoutControlReleaseInput>
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutControlReleaseInput, Prisma.BundleAbTestsUncheckedCreateWithoutControlReleaseInput>
+}
+
+export type BundleAbTestsUpdateWithWhereUniqueWithoutControlReleaseInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutControlReleaseInput, Prisma.BundleAbTestsUncheckedUpdateWithoutControlReleaseInput>
+}
+
+export type BundleAbTestsUpdateManyWithWhereWithoutControlReleaseInput = {
+  where: Prisma.BundleAbTestsScalarWhereInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateManyMutationInput, Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlReleaseInput>
+}
+
+export type BundleAbTestsUpsertWithWhereUniqueWithoutTreatmentReleaseInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  update: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutTreatmentReleaseInput, Prisma.BundleAbTestsUncheckedUpdateWithoutTreatmentReleaseInput>
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutTreatmentReleaseInput, Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentReleaseInput>
+}
+
+export type BundleAbTestsUpdateWithWhereUniqueWithoutTreatmentReleaseInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutTreatmentReleaseInput, Prisma.BundleAbTestsUncheckedUpdateWithoutTreatmentReleaseInput>
+}
+
+export type BundleAbTestsUpdateManyWithWhereWithoutTreatmentReleaseInput = {
+  where: Prisma.BundleAbTestsScalarWhereInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateManyMutationInput, Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentReleaseInput>
+}
+
+export type BundleAbTestsCreateWithoutExposuresInput = {
+  id: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutAbTestsInput
+  activeForBundle?: Prisma.BundlesCreateNestedOneWithoutActiveAbTestInput
+  controlTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutControlForTestsInput
+  treatmentTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutTreatmentForTestsInput
+  controlRelease?: Prisma.BundleReleasesCreateNestedOneWithoutControlExperimentsInput
+  treatmentRelease?: Prisma.BundleReleasesCreateNestedOneWithoutTreatmentExperimentsInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsUncheckedCreateWithoutExposuresInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  activeForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutActiveAbTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsCreateOrConnectWithoutExposuresInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutExposuresInput, Prisma.BundleAbTestsUncheckedCreateWithoutExposuresInput>
+}
+
+export type BundleAbTestsUpsertWithoutExposuresInput = {
+  update: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutExposuresInput, Prisma.BundleAbTestsUncheckedUpdateWithoutExposuresInput>
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutExposuresInput, Prisma.BundleAbTestsUncheckedCreateWithoutExposuresInput>
+  where?: Prisma.BundleAbTestsWhereInput
+}
+
+export type BundleAbTestsUpdateToOneWithWhereWithoutExposuresInput = {
+  where?: Prisma.BundleAbTestsWhereInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutExposuresInput, Prisma.BundleAbTestsUncheckedUpdateWithoutExposuresInput>
+}
+
+export type BundleAbTestsUpdateWithoutExposuresInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutAbTestsNestedInput
+  activeForBundle?: Prisma.BundlesUpdateOneWithoutActiveAbTestNestedInput
+  controlTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutControlForTestsNestedInput
+  treatmentTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutTreatmentForTestsNestedInput
+  controlRelease?: Prisma.BundleReleasesUpdateOneWithoutControlExperimentsNestedInput
+  treatmentRelease?: Prisma.BundleReleasesUpdateOneWithoutTreatmentExperimentsNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateWithoutExposuresInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutActiveAbTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsCreateWithoutAnalysisSnapshotsInput = {
+  id: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutAbTestsInput
+  activeForBundle?: Prisma.BundlesCreateNestedOneWithoutActiveAbTestInput
+  controlTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutControlForTestsInput
+  treatmentTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutTreatmentForTestsInput
+  controlRelease?: Prisma.BundleReleasesCreateNestedOneWithoutControlExperimentsInput
+  treatmentRelease?: Prisma.BundleReleasesCreateNestedOneWithoutTreatmentExperimentsInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsUncheckedCreateWithoutAnalysisSnapshotsInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  activeForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutActiveAbTestInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsCreateOrConnectWithoutAnalysisSnapshotsInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutAnalysisSnapshotsInput, Prisma.BundleAbTestsUncheckedCreateWithoutAnalysisSnapshotsInput>
+}
+
+export type BundleAbTestsUpsertWithoutAnalysisSnapshotsInput = {
+  update: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutAnalysisSnapshotsInput, Prisma.BundleAbTestsUncheckedUpdateWithoutAnalysisSnapshotsInput>
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutAnalysisSnapshotsInput, Prisma.BundleAbTestsUncheckedCreateWithoutAnalysisSnapshotsInput>
+  where?: Prisma.BundleAbTestsWhereInput
+}
+
+export type BundleAbTestsUpdateToOneWithWhereWithoutAnalysisSnapshotsInput = {
+  where?: Prisma.BundleAbTestsWhereInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutAnalysisSnapshotsInput, Prisma.BundleAbTestsUncheckedUpdateWithoutAnalysisSnapshotsInput>
+}
+
+export type BundleAbTestsUpdateWithoutAnalysisSnapshotsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutAbTestsNestedInput
+  activeForBundle?: Prisma.BundlesUpdateOneWithoutActiveAbTestNestedInput
+  controlTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutControlForTestsNestedInput
+  treatmentTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutTreatmentForTestsNestedInput
+  controlRelease?: Prisma.BundleReleasesUpdateOneWithoutControlExperimentsNestedInput
+  treatmentRelease?: Prisma.BundleReleasesUpdateOneWithoutTreatmentExperimentsNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateWithoutAnalysisSnapshotsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutActiveAbTestNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsCreateWithoutAnalyticsEventsInput = {
+  id: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutAbTestsInput
+  activeForBundle?: Prisma.BundlesCreateNestedOneWithoutActiveAbTestInput
+  controlTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutControlForTestsInput
+  treatmentTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutTreatmentForTestsInput
+  controlRelease?: Prisma.BundleReleasesCreateNestedOneWithoutControlExperimentsInput
+  treatmentRelease?: Prisma.BundleReleasesCreateNestedOneWithoutTreatmentExperimentsInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsCreateNestedManyWithoutTestInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsUncheckedCreateWithoutAnalyticsEventsInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  activeForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutActiveAbTestInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedCreateNestedManyWithoutTestInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsCreateOrConnectWithoutAnalyticsEventsInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutAnalyticsEventsInput, Prisma.BundleAbTestsUncheckedCreateWithoutAnalyticsEventsInput>
+}
+
+export type BundleAbTestsUpsertWithoutAnalyticsEventsInput = {
+  update: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutAnalyticsEventsInput, Prisma.BundleAbTestsUncheckedUpdateWithoutAnalyticsEventsInput>
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutAnalyticsEventsInput, Prisma.BundleAbTestsUncheckedCreateWithoutAnalyticsEventsInput>
+  where?: Prisma.BundleAbTestsWhereInput
+}
+
+export type BundleAbTestsUpdateToOneWithWhereWithoutAnalyticsEventsInput = {
+  where?: Prisma.BundleAbTestsWhereInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutAnalyticsEventsInput, Prisma.BundleAbTestsUncheckedUpdateWithoutAnalyticsEventsInput>
+}
+
+export type BundleAbTestsUpdateWithoutAnalyticsEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutAbTestsNestedInput
+  activeForBundle?: Prisma.BundlesUpdateOneWithoutActiveAbTestNestedInput
+  controlTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutControlForTestsNestedInput
+  treatmentTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutTreatmentForTestsNestedInput
+  controlRelease?: Prisma.BundleReleasesUpdateOneWithoutControlExperimentsNestedInput
+  treatmentRelease?: Prisma.BundleReleasesUpdateOneWithoutTreatmentExperimentsNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyWithoutTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateWithoutAnalyticsEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutActiveAbTestNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedUpdateManyWithoutTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsCreateWithoutInstallEventsInput = {
+  id: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutAbTestsInput
+  activeForBundle?: Prisma.BundlesCreateNestedOneWithoutActiveAbTestInput
+  controlTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutControlForTestsInput
+  treatmentTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutTreatmentForTestsInput
+  controlRelease?: Prisma.BundleReleasesCreateNestedOneWithoutControlExperimentsInput
+  treatmentRelease?: Prisma.BundleReleasesCreateNestedOneWithoutTreatmentExperimentsInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsUncheckedCreateWithoutInstallEventsInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  activeForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutActiveAbTestInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsCreateOrConnectWithoutInstallEventsInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutInstallEventsInput, Prisma.BundleAbTestsUncheckedCreateWithoutInstallEventsInput>
+}
+
+export type BundleAbTestsUpsertWithoutInstallEventsInput = {
+  update: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutInstallEventsInput, Prisma.BundleAbTestsUncheckedUpdateWithoutInstallEventsInput>
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutInstallEventsInput, Prisma.BundleAbTestsUncheckedCreateWithoutInstallEventsInput>
+  where?: Prisma.BundleAbTestsWhereInput
+}
+
+export type BundleAbTestsUpdateToOneWithWhereWithoutInstallEventsInput = {
+  where?: Prisma.BundleAbTestsWhereInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutInstallEventsInput, Prisma.BundleAbTestsUncheckedUpdateWithoutInstallEventsInput>
+}
+
+export type BundleAbTestsUpdateWithoutInstallEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutAbTestsNestedInput
+  activeForBundle?: Prisma.BundlesUpdateOneWithoutActiveAbTestNestedInput
+  controlTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutControlForTestsNestedInput
+  treatmentTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutTreatmentForTestsNestedInput
+  controlRelease?: Prisma.BundleReleasesUpdateOneWithoutControlExperimentsNestedInput
+  treatmentRelease?: Prisma.BundleReleasesUpdateOneWithoutTreatmentExperimentsNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateWithoutInstallEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutActiveAbTestNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsCreateWithoutControlTrackInput = {
+  id: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutAbTestsInput
+  activeForBundle?: Prisma.BundlesCreateNestedOneWithoutActiveAbTestInput
+  treatmentTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutTreatmentForTestsInput
+  controlRelease?: Prisma.BundleReleasesCreateNestedOneWithoutControlExperimentsInput
+  treatmentRelease?: Prisma.BundleReleasesCreateNestedOneWithoutTreatmentExperimentsInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsUncheckedCreateWithoutControlTrackInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  activeForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutActiveAbTestInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsCreateOrConnectWithoutControlTrackInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutControlTrackInput, Prisma.BundleAbTestsUncheckedCreateWithoutControlTrackInput>
+}
+
+export type BundleAbTestsCreateManyControlTrackInputEnvelope = {
+  data: Prisma.BundleAbTestsCreateManyControlTrackInput | Prisma.BundleAbTestsCreateManyControlTrackInput[]
+  skipDuplicates?: boolean
+}
+
+export type BundleAbTestsCreateWithoutTreatmentTrackInput = {
+  id: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutAbTestsInput
+  activeForBundle?: Prisma.BundlesCreateNestedOneWithoutActiveAbTestInput
+  controlTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutControlForTestsInput
+  controlRelease?: Prisma.BundleReleasesCreateNestedOneWithoutControlExperimentsInput
+  treatmentRelease?: Prisma.BundleReleasesCreateNestedOneWithoutTreatmentExperimentsInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsUncheckedCreateWithoutTreatmentTrackInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  controlTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  activeForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutActiveAbTestInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutAbTestInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsCreateOrConnectWithoutTreatmentTrackInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutTreatmentTrackInput, Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentTrackInput>
+}
+
+export type BundleAbTestsCreateManyTreatmentTrackInputEnvelope = {
+  data: Prisma.BundleAbTestsCreateManyTreatmentTrackInput | Prisma.BundleAbTestsCreateManyTreatmentTrackInput[]
+  skipDuplicates?: boolean
+}
+
+export type BundleAbTestsUpsertWithWhereUniqueWithoutControlTrackInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  update: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutControlTrackInput, Prisma.BundleAbTestsUncheckedUpdateWithoutControlTrackInput>
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutControlTrackInput, Prisma.BundleAbTestsUncheckedCreateWithoutControlTrackInput>
+}
+
+export type BundleAbTestsUpdateWithWhereUniqueWithoutControlTrackInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutControlTrackInput, Prisma.BundleAbTestsUncheckedUpdateWithoutControlTrackInput>
+}
+
+export type BundleAbTestsUpdateManyWithWhereWithoutControlTrackInput = {
+  where: Prisma.BundleAbTestsScalarWhereInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateManyMutationInput, Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlTrackInput>
+}
+
+export type BundleAbTestsUpsertWithWhereUniqueWithoutTreatmentTrackInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  update: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutTreatmentTrackInput, Prisma.BundleAbTestsUncheckedUpdateWithoutTreatmentTrackInput>
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutTreatmentTrackInput, Prisma.BundleAbTestsUncheckedCreateWithoutTreatmentTrackInput>
+}
+
+export type BundleAbTestsUpdateWithWhereUniqueWithoutTreatmentTrackInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutTreatmentTrackInput, Prisma.BundleAbTestsUncheckedUpdateWithoutTreatmentTrackInput>
+}
+
+export type BundleAbTestsUpdateManyWithWhereWithoutTreatmentTrackInput = {
+  where: Prisma.BundleAbTestsScalarWhereInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateManyMutationInput, Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentTrackInput>
+}
+
+export type BundleAbTestsCreateWithoutCrashEventsInput = {
+  id: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutAbTestsInput
+  activeForBundle?: Prisma.BundlesCreateNestedOneWithoutActiveAbTestInput
+  controlTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutControlForTestsInput
+  treatmentTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutTreatmentForTestsInput
+  controlRelease?: Prisma.BundleReleasesCreateNestedOneWithoutControlExperimentsInput
+  treatmentRelease?: Prisma.BundleReleasesCreateNestedOneWithoutTreatmentExperimentsInput
+  exposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsUncheckedCreateWithoutCrashEventsInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+  activeForBundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutActiveAbTestInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutTestInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedCreateNestedManyWithoutTestInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbTestInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutAbTestInput
+}
+
+export type BundleAbTestsCreateOrConnectWithoutCrashEventsInput = {
+  where: Prisma.BundleAbTestsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutCrashEventsInput, Prisma.BundleAbTestsUncheckedCreateWithoutCrashEventsInput>
+}
+
+export type BundleAbTestsUpsertWithoutCrashEventsInput = {
+  update: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutCrashEventsInput, Prisma.BundleAbTestsUncheckedUpdateWithoutCrashEventsInput>
+  create: Prisma.XOR<Prisma.BundleAbTestsCreateWithoutCrashEventsInput, Prisma.BundleAbTestsUncheckedCreateWithoutCrashEventsInput>
+  where?: Prisma.BundleAbTestsWhereInput
+}
+
+export type BundleAbTestsUpdateToOneWithWhereWithoutCrashEventsInput = {
+  where?: Prisma.BundleAbTestsWhereInput
+  data: Prisma.XOR<Prisma.BundleAbTestsUpdateWithoutCrashEventsInput, Prisma.BundleAbTestsUncheckedUpdateWithoutCrashEventsInput>
+}
+
+export type BundleAbTestsUpdateWithoutCrashEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutAbTestsNestedInput
+  activeForBundle?: Prisma.BundlesUpdateOneWithoutActiveAbTestNestedInput
+  controlTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutControlForTestsNestedInput
+  treatmentTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutTreatmentForTestsNestedInput
+  controlRelease?: Prisma.BundleReleasesUpdateOneWithoutControlExperimentsNestedInput
+  treatmentRelease?: Prisma.BundleReleasesUpdateOneWithoutTreatmentExperimentsNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateWithoutCrashEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutActiveAbTestNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutAbTestNestedInput
 }
 
 export type BundleAbTestsCreateManyBundleInput = {
@@ -664,6 +3346,31 @@ export type BundleAbTestsCreateManyBundleInput = {
   trafficSplit?: number
   status?: string
   winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
   startedAt?: Date | string | null
   endedAt?: Date | string | null
   createdAt: Date | string
@@ -679,9 +3386,40 @@ export type BundleAbTestsUpdateWithoutBundleInput = {
   trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeForBundle?: Prisma.BundlesUpdateOneWithoutActiveAbTestNestedInput
+  controlTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutControlForTestsNestedInput
+  treatmentTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutTreatmentForTestsNestedInput
+  controlRelease?: Prisma.BundleReleasesUpdateOneWithoutControlExperimentsNestedInput
+  treatmentRelease?: Prisma.BundleReleasesUpdateOneWithoutTreatmentExperimentsNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutAbTestNestedInput
 }
 
 export type BundleAbTestsUncheckedUpdateWithoutBundleInput = {
@@ -694,9 +3432,40 @@ export type BundleAbTestsUncheckedUpdateWithoutBundleInput = {
   trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutActiveAbTestNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutAbTestNestedInput
 }
 
 export type BundleAbTestsUncheckedUpdateManyWithoutBundleInput = {
@@ -709,11 +3478,789 @@ export type BundleAbTestsUncheckedUpdateManyWithoutBundleInput = {
   trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type BundleAbTestsCreateManyControlReleaseInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+}
+
+export type BundleAbTestsCreateManyTreatmentReleaseInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  controlTrackId?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+}
+
+export type BundleAbTestsUpdateWithoutControlReleaseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutAbTestsNestedInput
+  activeForBundle?: Prisma.BundlesUpdateOneWithoutActiveAbTestNestedInput
+  controlTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutControlForTestsNestedInput
+  treatmentTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutTreatmentForTestsNestedInput
+  treatmentRelease?: Prisma.BundleReleasesUpdateOneWithoutTreatmentExperimentsNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateWithoutControlReleaseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutActiveAbTestNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateManyWithoutControlReleaseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleAbTestsUpdateWithoutTreatmentReleaseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutAbTestsNestedInput
+  activeForBundle?: Prisma.BundlesUpdateOneWithoutActiveAbTestNestedInput
+  controlTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutControlForTestsNestedInput
+  treatmentTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutTreatmentForTestsNestedInput
+  controlRelease?: Prisma.BundleReleasesUpdateOneWithoutControlExperimentsNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateWithoutTreatmentReleaseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutActiveAbTestNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateManyWithoutTreatmentReleaseInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleAbTestsCreateManyControlTrackInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  treatmentTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+}
+
+export type BundleAbTestsCreateManyTreatmentTrackInput = {
+  id: string
+  bundleId: string
+  testName: string
+  hypothesis?: string | null
+  variantAConfig: string
+  variantBConfig: string
+  metric: string
+  trafficSplit?: number
+  status?: string
+  winnerVariant?: string | null
+  controlTrackId?: string | null
+  controlReleaseId?: string | null
+  treatmentReleaseId?: string | null
+  analysisStatus?: string
+  metricType?: string
+  metricEventName?: string | null
+  conversionWindowHours?: number
+  targetCountries?: Prisma.BundleAbTestsCreatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsCreatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsCreatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: number
+  confidenceLevel?: number
+  statisticalPower?: number
+  baselineConversionRate?: number | null
+  minimumSamplePerVariant?: number | null
+  maxDurationDays?: number
+  recommendedWinner?: string | null
+  pausedAt?: Date | string | null
+  pauseReason?: string | null
+  pausedById?: string | null
+  endedById?: string | null
+  endReason?: string | null
+  lastAnalyzedAt?: Date | string | null
+  startedAt?: Date | string | null
+  endedAt?: Date | string | null
+  createdAt: Date | string
+}
+
+export type BundleAbTestsUpdateWithoutControlTrackInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutAbTestsNestedInput
+  activeForBundle?: Prisma.BundlesUpdateOneWithoutActiveAbTestNestedInput
+  treatmentTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutTreatmentForTestsNestedInput
+  controlRelease?: Prisma.BundleReleasesUpdateOneWithoutControlExperimentsNestedInput
+  treatmentRelease?: Prisma.BundleReleasesUpdateOneWithoutTreatmentExperimentsNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateWithoutControlTrackInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutActiveAbTestNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateManyWithoutControlTrackInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleAbTestsUpdateWithoutTreatmentTrackInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutAbTestsNestedInput
+  activeForBundle?: Prisma.BundlesUpdateOneWithoutActiveAbTestNestedInput
+  controlTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutControlForTestsNestedInput
+  controlRelease?: Prisma.BundleReleasesUpdateOneWithoutControlExperimentsNestedInput
+  treatmentRelease?: Prisma.BundleReleasesUpdateOneWithoutTreatmentExperimentsNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateWithoutTreatmentTrackInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeForBundle?: Prisma.BundlesUncheckedUpdateOneWithoutActiveAbTestNestedInput
+  exposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutTestNestedInput
+  analysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsUncheckedUpdateManyWithoutTestNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutAbTestNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutAbTestNestedInput
+}
+
+export type BundleAbTestsUncheckedUpdateManyWithoutTreatmentTrackInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  testName?: Prisma.StringFieldUpdateOperationsInput | string
+  hypothesis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  variantAConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  variantBConfig?: Prisma.StringFieldUpdateOperationsInput | string
+  metric?: Prisma.StringFieldUpdateOperationsInput | string
+  trafficSplit?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  winnerVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  treatmentReleaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analysisStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricEventName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conversionWindowHours?: Prisma.IntFieldUpdateOperationsInput | number
+  targetCountries?: Prisma.BundleAbTestsUpdatetargetCountriesInput | string[]
+  targetLocales?: Prisma.BundleAbTestsUpdatetargetLocalesInput | string[]
+  targetPlatforms?: Prisma.BundleAbTestsUpdatetargetPlatformsInput | string[]
+  targetOsVersions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  minimumDetectableEffect?: Prisma.FloatFieldUpdateOperationsInput | number
+  confidenceLevel?: Prisma.FloatFieldUpdateOperationsInput | number
+  statisticalPower?: Prisma.FloatFieldUpdateOperationsInput | number
+  baselineConversionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  minimumSamplePerVariant?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  maxDurationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  recommendedWinner?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pauseReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pausedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAnalyzedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  endedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type BundleAbTestsCountOutputType
+ */
+
+export type BundleAbTestsCountOutputType = {
+  exposures: number
+  analysisSnapshots: number
+  analyticsEvents: number
+  installEvents: number
+  crashEvents: number
+}
+
+export type BundleAbTestsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  exposures?: boolean | BundleAbTestsCountOutputTypeCountExposuresArgs
+  analysisSnapshots?: boolean | BundleAbTestsCountOutputTypeCountAnalysisSnapshotsArgs
+  analyticsEvents?: boolean | BundleAbTestsCountOutputTypeCountAnalyticsEventsArgs
+  installEvents?: boolean | BundleAbTestsCountOutputTypeCountInstallEventsArgs
+  crashEvents?: boolean | BundleAbTestsCountOutputTypeCountCrashEventsArgs
+}
+
+/**
+ * BundleAbTestsCountOutputType without action
+ */
+export type BundleAbTestsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleAbTestsCountOutputType
+   */
+  select?: Prisma.BundleAbTestsCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * BundleAbTestsCountOutputType without action
+ */
+export type BundleAbTestsCountOutputTypeCountExposuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleAbTestExposuresWhereInput
+}
+
+/**
+ * BundleAbTestsCountOutputType without action
+ */
+export type BundleAbTestsCountOutputTypeCountAnalysisSnapshotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleAbTestAnalysisSnapshotsWhereInput
+}
+
+/**
+ * BundleAbTestsCountOutputType without action
+ */
+export type BundleAbTestsCountOutputTypeCountAnalyticsEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleAnalyticsEventsWhereInput
+}
+
+/**
+ * BundleAbTestsCountOutputType without action
+ */
+export type BundleAbTestsCountOutputTypeCountInstallEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleInstallEventsWhereInput
+}
+
+/**
+ * BundleAbTestsCountOutputType without action
+ */
+export type BundleAbTestsCountOutputTypeCountCrashEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleCrashEventsWhereInput
+}
 
 
 export type BundleAbTestsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -727,10 +4274,46 @@ export type BundleAbTestsSelect<ExtArgs extends runtime.Types.Extensions.Interna
   trafficSplit?: boolean
   status?: boolean
   winnerVariant?: boolean
+  controlTrackId?: boolean
+  treatmentTrackId?: boolean
+  controlReleaseId?: boolean
+  treatmentReleaseId?: boolean
+  analysisStatus?: boolean
+  metricType?: boolean
+  metricEventName?: boolean
+  conversionWindowHours?: boolean
+  targetCountries?: boolean
+  targetLocales?: boolean
+  targetPlatforms?: boolean
+  targetOsVersions?: boolean
+  minimumDetectableEffect?: boolean
+  confidenceLevel?: boolean
+  statisticalPower?: boolean
+  baselineConversionRate?: boolean
+  minimumSamplePerVariant?: boolean
+  maxDurationDays?: boolean
+  recommendedWinner?: boolean
+  pausedAt?: boolean
+  pauseReason?: boolean
+  pausedById?: boolean
+  endedById?: boolean
+  endReason?: boolean
+  lastAnalyzedAt?: boolean
   startedAt?: boolean
   endedAt?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  activeForBundle?: boolean | Prisma.BundleAbTests$activeForBundleArgs<ExtArgs>
+  controlTrack?: boolean | Prisma.BundleAbTests$controlTrackArgs<ExtArgs>
+  treatmentTrack?: boolean | Prisma.BundleAbTests$treatmentTrackArgs<ExtArgs>
+  controlRelease?: boolean | Prisma.BundleAbTests$controlReleaseArgs<ExtArgs>
+  treatmentRelease?: boolean | Prisma.BundleAbTests$treatmentReleaseArgs<ExtArgs>
+  exposures?: boolean | Prisma.BundleAbTests$exposuresArgs<ExtArgs>
+  analysisSnapshots?: boolean | Prisma.BundleAbTests$analysisSnapshotsArgs<ExtArgs>
+  analyticsEvents?: boolean | Prisma.BundleAbTests$analyticsEventsArgs<ExtArgs>
+  installEvents?: boolean | Prisma.BundleAbTests$installEventsArgs<ExtArgs>
+  crashEvents?: boolean | Prisma.BundleAbTests$crashEventsArgs<ExtArgs>
+  _count?: boolean | Prisma.BundleAbTestsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleAbTests"]>
 
 export type BundleAbTestsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -744,10 +4327,39 @@ export type BundleAbTestsSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   trafficSplit?: boolean
   status?: boolean
   winnerVariant?: boolean
+  controlTrackId?: boolean
+  treatmentTrackId?: boolean
+  controlReleaseId?: boolean
+  treatmentReleaseId?: boolean
+  analysisStatus?: boolean
+  metricType?: boolean
+  metricEventName?: boolean
+  conversionWindowHours?: boolean
+  targetCountries?: boolean
+  targetLocales?: boolean
+  targetPlatforms?: boolean
+  targetOsVersions?: boolean
+  minimumDetectableEffect?: boolean
+  confidenceLevel?: boolean
+  statisticalPower?: boolean
+  baselineConversionRate?: boolean
+  minimumSamplePerVariant?: boolean
+  maxDurationDays?: boolean
+  recommendedWinner?: boolean
+  pausedAt?: boolean
+  pauseReason?: boolean
+  pausedById?: boolean
+  endedById?: boolean
+  endReason?: boolean
+  lastAnalyzedAt?: boolean
   startedAt?: boolean
   endedAt?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  controlTrack?: boolean | Prisma.BundleAbTests$controlTrackArgs<ExtArgs>
+  treatmentTrack?: boolean | Prisma.BundleAbTests$treatmentTrackArgs<ExtArgs>
+  controlRelease?: boolean | Prisma.BundleAbTests$controlReleaseArgs<ExtArgs>
+  treatmentRelease?: boolean | Prisma.BundleAbTests$treatmentReleaseArgs<ExtArgs>
 }, ExtArgs["result"]["bundleAbTests"]>
 
 export type BundleAbTestsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -761,10 +4373,39 @@ export type BundleAbTestsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   trafficSplit?: boolean
   status?: boolean
   winnerVariant?: boolean
+  controlTrackId?: boolean
+  treatmentTrackId?: boolean
+  controlReleaseId?: boolean
+  treatmentReleaseId?: boolean
+  analysisStatus?: boolean
+  metricType?: boolean
+  metricEventName?: boolean
+  conversionWindowHours?: boolean
+  targetCountries?: boolean
+  targetLocales?: boolean
+  targetPlatforms?: boolean
+  targetOsVersions?: boolean
+  minimumDetectableEffect?: boolean
+  confidenceLevel?: boolean
+  statisticalPower?: boolean
+  baselineConversionRate?: boolean
+  minimumSamplePerVariant?: boolean
+  maxDurationDays?: boolean
+  recommendedWinner?: boolean
+  pausedAt?: boolean
+  pauseReason?: boolean
+  pausedById?: boolean
+  endedById?: boolean
+  endReason?: boolean
+  lastAnalyzedAt?: boolean
   startedAt?: boolean
   endedAt?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  controlTrack?: boolean | Prisma.BundleAbTests$controlTrackArgs<ExtArgs>
+  treatmentTrack?: boolean | Prisma.BundleAbTests$treatmentTrackArgs<ExtArgs>
+  controlRelease?: boolean | Prisma.BundleAbTests$controlReleaseArgs<ExtArgs>
+  treatmentRelease?: boolean | Prisma.BundleAbTests$treatmentReleaseArgs<ExtArgs>
 }, ExtArgs["result"]["bundleAbTests"]>
 
 export type BundleAbTestsSelectScalar = {
@@ -778,26 +4419,80 @@ export type BundleAbTestsSelectScalar = {
   trafficSplit?: boolean
   status?: boolean
   winnerVariant?: boolean
+  controlTrackId?: boolean
+  treatmentTrackId?: boolean
+  controlReleaseId?: boolean
+  treatmentReleaseId?: boolean
+  analysisStatus?: boolean
+  metricType?: boolean
+  metricEventName?: boolean
+  conversionWindowHours?: boolean
+  targetCountries?: boolean
+  targetLocales?: boolean
+  targetPlatforms?: boolean
+  targetOsVersions?: boolean
+  minimumDetectableEffect?: boolean
+  confidenceLevel?: boolean
+  statisticalPower?: boolean
+  baselineConversionRate?: boolean
+  minimumSamplePerVariant?: boolean
+  maxDurationDays?: boolean
+  recommendedWinner?: boolean
+  pausedAt?: boolean
+  pauseReason?: boolean
+  pausedById?: boolean
+  endedById?: boolean
+  endReason?: boolean
+  lastAnalyzedAt?: boolean
   startedAt?: boolean
   endedAt?: boolean
   createdAt?: boolean
 }
 
-export type BundleAbTestsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "testName" | "hypothesis" | "variantAConfig" | "variantBConfig" | "metric" | "trafficSplit" | "status" | "winnerVariant" | "startedAt" | "endedAt" | "createdAt", ExtArgs["result"]["bundleAbTests"]>
+export type BundleAbTestsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "testName" | "hypothesis" | "variantAConfig" | "variantBConfig" | "metric" | "trafficSplit" | "status" | "winnerVariant" | "controlTrackId" | "treatmentTrackId" | "controlReleaseId" | "treatmentReleaseId" | "analysisStatus" | "metricType" | "metricEventName" | "conversionWindowHours" | "targetCountries" | "targetLocales" | "targetPlatforms" | "targetOsVersions" | "minimumDetectableEffect" | "confidenceLevel" | "statisticalPower" | "baselineConversionRate" | "minimumSamplePerVariant" | "maxDurationDays" | "recommendedWinner" | "pausedAt" | "pauseReason" | "pausedById" | "endedById" | "endReason" | "lastAnalyzedAt" | "startedAt" | "endedAt" | "createdAt", ExtArgs["result"]["bundleAbTests"]>
 export type BundleAbTestsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  activeForBundle?: boolean | Prisma.BundleAbTests$activeForBundleArgs<ExtArgs>
+  controlTrack?: boolean | Prisma.BundleAbTests$controlTrackArgs<ExtArgs>
+  treatmentTrack?: boolean | Prisma.BundleAbTests$treatmentTrackArgs<ExtArgs>
+  controlRelease?: boolean | Prisma.BundleAbTests$controlReleaseArgs<ExtArgs>
+  treatmentRelease?: boolean | Prisma.BundleAbTests$treatmentReleaseArgs<ExtArgs>
+  exposures?: boolean | Prisma.BundleAbTests$exposuresArgs<ExtArgs>
+  analysisSnapshots?: boolean | Prisma.BundleAbTests$analysisSnapshotsArgs<ExtArgs>
+  analyticsEvents?: boolean | Prisma.BundleAbTests$analyticsEventsArgs<ExtArgs>
+  installEvents?: boolean | Prisma.BundleAbTests$installEventsArgs<ExtArgs>
+  crashEvents?: boolean | Prisma.BundleAbTests$crashEventsArgs<ExtArgs>
+  _count?: boolean | Prisma.BundleAbTestsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BundleAbTestsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  controlTrack?: boolean | Prisma.BundleAbTests$controlTrackArgs<ExtArgs>
+  treatmentTrack?: boolean | Prisma.BundleAbTests$treatmentTrackArgs<ExtArgs>
+  controlRelease?: boolean | Prisma.BundleAbTests$controlReleaseArgs<ExtArgs>
+  treatmentRelease?: boolean | Prisma.BundleAbTests$treatmentReleaseArgs<ExtArgs>
 }
 export type BundleAbTestsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
+  controlTrack?: boolean | Prisma.BundleAbTests$controlTrackArgs<ExtArgs>
+  treatmentTrack?: boolean | Prisma.BundleAbTests$treatmentTrackArgs<ExtArgs>
+  controlRelease?: boolean | Prisma.BundleAbTests$controlReleaseArgs<ExtArgs>
+  treatmentRelease?: boolean | Prisma.BundleAbTests$treatmentReleaseArgs<ExtArgs>
 }
 
 export type $BundleAbTestsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "BundleAbTests"
   objects: {
     bundle: Prisma.$BundlesPayload<ExtArgs>
+    activeForBundle: Prisma.$BundlesPayload<ExtArgs> | null
+    controlTrack: Prisma.$BundleReleaseTracksPayload<ExtArgs> | null
+    treatmentTrack: Prisma.$BundleReleaseTracksPayload<ExtArgs> | null
+    controlRelease: Prisma.$BundleReleasesPayload<ExtArgs> | null
+    treatmentRelease: Prisma.$BundleReleasesPayload<ExtArgs> | null
+    exposures: Prisma.$BundleAbTestExposuresPayload<ExtArgs>[]
+    analysisSnapshots: Prisma.$BundleAbTestAnalysisSnapshotsPayload<ExtArgs>[]
+    analyticsEvents: Prisma.$BundleAnalyticsEventsPayload<ExtArgs>[]
+    installEvents: Prisma.$BundleInstallEventsPayload<ExtArgs>[]
+    crashEvents: Prisma.$BundleCrashEventsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -810,6 +4505,31 @@ export type $BundleAbTestsPayload<ExtArgs extends runtime.Types.Extensions.Inter
     trafficSplit: number
     status: string
     winnerVariant: string | null
+    controlTrackId: string | null
+    treatmentTrackId: string | null
+    controlReleaseId: string | null
+    treatmentReleaseId: string | null
+    analysisStatus: string
+    metricType: string
+    metricEventName: string | null
+    conversionWindowHours: number
+    targetCountries: string[]
+    targetLocales: string[]
+    targetPlatforms: string[]
+    targetOsVersions: runtime.JsonValue | null
+    minimumDetectableEffect: number
+    confidenceLevel: number
+    statisticalPower: number
+    baselineConversionRate: number | null
+    minimumSamplePerVariant: number | null
+    maxDurationDays: number
+    recommendedWinner: string | null
+    pausedAt: Date | null
+    pauseReason: string | null
+    pausedById: string | null
+    endedById: string | null
+    endReason: string | null
+    lastAnalyzedAt: Date | null
     startedAt: Date | null
     endedAt: Date | null
     createdAt: Date
@@ -1208,6 +4928,16 @@ readonly fields: BundleAbTestsFieldRefs;
 export interface Prisma__BundleAbTestsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   bundle<T extends Prisma.BundlesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundlesDefaultArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  activeForBundle<T extends Prisma.BundleAbTests$activeForBundleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAbTests$activeForBundleArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  controlTrack<T extends Prisma.BundleAbTests$controlTrackArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAbTests$controlTrackArgs<ExtArgs>>): Prisma.Prisma__BundleReleaseTracksClient<runtime.Types.Result.GetResult<Prisma.$BundleReleaseTracksPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  treatmentTrack<T extends Prisma.BundleAbTests$treatmentTrackArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAbTests$treatmentTrackArgs<ExtArgs>>): Prisma.Prisma__BundleReleaseTracksClient<runtime.Types.Result.GetResult<Prisma.$BundleReleaseTracksPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  controlRelease<T extends Prisma.BundleAbTests$controlReleaseArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAbTests$controlReleaseArgs<ExtArgs>>): Prisma.Prisma__BundleReleasesClient<runtime.Types.Result.GetResult<Prisma.$BundleReleasesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  treatmentRelease<T extends Prisma.BundleAbTests$treatmentReleaseArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAbTests$treatmentReleaseArgs<ExtArgs>>): Prisma.Prisma__BundleReleasesClient<runtime.Types.Result.GetResult<Prisma.$BundleReleasesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  exposures<T extends Prisma.BundleAbTests$exposuresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAbTests$exposuresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleAbTestExposuresPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  analysisSnapshots<T extends Prisma.BundleAbTests$analysisSnapshotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAbTests$analysisSnapshotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleAbTestAnalysisSnapshotsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  analyticsEvents<T extends Prisma.BundleAbTests$analyticsEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAbTests$analyticsEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleAnalyticsEventsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  installEvents<T extends Prisma.BundleAbTests$installEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAbTests$installEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleInstallEventsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  crashEvents<T extends Prisma.BundleAbTests$crashEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAbTests$crashEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleCrashEventsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1247,6 +4977,31 @@ export interface BundleAbTestsFieldRefs {
   readonly trafficSplit: Prisma.FieldRef<"BundleAbTests", 'Int'>
   readonly status: Prisma.FieldRef<"BundleAbTests", 'String'>
   readonly winnerVariant: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly controlTrackId: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly treatmentTrackId: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly controlReleaseId: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly treatmentReleaseId: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly analysisStatus: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly metricType: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly metricEventName: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly conversionWindowHours: Prisma.FieldRef<"BundleAbTests", 'Int'>
+  readonly targetCountries: Prisma.FieldRef<"BundleAbTests", 'String[]'>
+  readonly targetLocales: Prisma.FieldRef<"BundleAbTests", 'String[]'>
+  readonly targetPlatforms: Prisma.FieldRef<"BundleAbTests", 'String[]'>
+  readonly targetOsVersions: Prisma.FieldRef<"BundleAbTests", 'Json'>
+  readonly minimumDetectableEffect: Prisma.FieldRef<"BundleAbTests", 'Float'>
+  readonly confidenceLevel: Prisma.FieldRef<"BundleAbTests", 'Float'>
+  readonly statisticalPower: Prisma.FieldRef<"BundleAbTests", 'Float'>
+  readonly baselineConversionRate: Prisma.FieldRef<"BundleAbTests", 'Float'>
+  readonly minimumSamplePerVariant: Prisma.FieldRef<"BundleAbTests", 'Int'>
+  readonly maxDurationDays: Prisma.FieldRef<"BundleAbTests", 'Int'>
+  readonly recommendedWinner: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly pausedAt: Prisma.FieldRef<"BundleAbTests", 'DateTime'>
+  readonly pauseReason: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly pausedById: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly endedById: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly endReason: Prisma.FieldRef<"BundleAbTests", 'String'>
+  readonly lastAnalyzedAt: Prisma.FieldRef<"BundleAbTests", 'DateTime'>
   readonly startedAt: Prisma.FieldRef<"BundleAbTests", 'DateTime'>
   readonly endedAt: Prisma.FieldRef<"BundleAbTests", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"BundleAbTests", 'DateTime'>
@@ -1648,6 +5403,221 @@ export type BundleAbTestsDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many BundleAbTests to delete.
    */
   limit?: number
+}
+
+/**
+ * BundleAbTests.activeForBundle
+ */
+export type BundleAbTests$activeForBundleArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Bundles
+   */
+  select?: Prisma.BundlesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Bundles
+   */
+  omit?: Prisma.BundlesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundlesInclude<ExtArgs> | null
+  where?: Prisma.BundlesWhereInput
+}
+
+/**
+ * BundleAbTests.controlTrack
+ */
+export type BundleAbTests$controlTrackArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleReleaseTracks
+   */
+  select?: Prisma.BundleReleaseTracksSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleReleaseTracks
+   */
+  omit?: Prisma.BundleReleaseTracksOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleReleaseTracksInclude<ExtArgs> | null
+  where?: Prisma.BundleReleaseTracksWhereInput
+}
+
+/**
+ * BundleAbTests.treatmentTrack
+ */
+export type BundleAbTests$treatmentTrackArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleReleaseTracks
+   */
+  select?: Prisma.BundleReleaseTracksSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleReleaseTracks
+   */
+  omit?: Prisma.BundleReleaseTracksOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleReleaseTracksInclude<ExtArgs> | null
+  where?: Prisma.BundleReleaseTracksWhereInput
+}
+
+/**
+ * BundleAbTests.controlRelease
+ */
+export type BundleAbTests$controlReleaseArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleReleases
+   */
+  select?: Prisma.BundleReleasesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleReleases
+   */
+  omit?: Prisma.BundleReleasesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleReleasesInclude<ExtArgs> | null
+  where?: Prisma.BundleReleasesWhereInput
+}
+
+/**
+ * BundleAbTests.treatmentRelease
+ */
+export type BundleAbTests$treatmentReleaseArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleReleases
+   */
+  select?: Prisma.BundleReleasesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleReleases
+   */
+  omit?: Prisma.BundleReleasesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleReleasesInclude<ExtArgs> | null
+  where?: Prisma.BundleReleasesWhereInput
+}
+
+/**
+ * BundleAbTests.exposures
+ */
+export type BundleAbTests$exposuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleAbTestExposures
+   */
+  select?: Prisma.BundleAbTestExposuresSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleAbTestExposures
+   */
+  omit?: Prisma.BundleAbTestExposuresOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleAbTestExposuresInclude<ExtArgs> | null
+  where?: Prisma.BundleAbTestExposuresWhereInput
+  orderBy?: Prisma.BundleAbTestExposuresOrderByWithRelationInput | Prisma.BundleAbTestExposuresOrderByWithRelationInput[]
+  cursor?: Prisma.BundleAbTestExposuresWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleAbTestExposuresScalarFieldEnum | Prisma.BundleAbTestExposuresScalarFieldEnum[]
+}
+
+/**
+ * BundleAbTests.analysisSnapshots
+ */
+export type BundleAbTests$analysisSnapshotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleAbTestAnalysisSnapshots
+   */
+  select?: Prisma.BundleAbTestAnalysisSnapshotsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleAbTestAnalysisSnapshots
+   */
+  omit?: Prisma.BundleAbTestAnalysisSnapshotsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleAbTestAnalysisSnapshotsInclude<ExtArgs> | null
+  where?: Prisma.BundleAbTestAnalysisSnapshotsWhereInput
+  orderBy?: Prisma.BundleAbTestAnalysisSnapshotsOrderByWithRelationInput | Prisma.BundleAbTestAnalysisSnapshotsOrderByWithRelationInput[]
+  cursor?: Prisma.BundleAbTestAnalysisSnapshotsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleAbTestAnalysisSnapshotsScalarFieldEnum | Prisma.BundleAbTestAnalysisSnapshotsScalarFieldEnum[]
+}
+
+/**
+ * BundleAbTests.analyticsEvents
+ */
+export type BundleAbTests$analyticsEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleAnalyticsEvents
+   */
+  select?: Prisma.BundleAnalyticsEventsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleAnalyticsEvents
+   */
+  omit?: Prisma.BundleAnalyticsEventsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleAnalyticsEventsInclude<ExtArgs> | null
+  where?: Prisma.BundleAnalyticsEventsWhereInput
+  orderBy?: Prisma.BundleAnalyticsEventsOrderByWithRelationInput | Prisma.BundleAnalyticsEventsOrderByWithRelationInput[]
+  cursor?: Prisma.BundleAnalyticsEventsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleAnalyticsEventsScalarFieldEnum | Prisma.BundleAnalyticsEventsScalarFieldEnum[]
+}
+
+/**
+ * BundleAbTests.installEvents
+ */
+export type BundleAbTests$installEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleInstallEvents
+   */
+  select?: Prisma.BundleInstallEventsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleInstallEvents
+   */
+  omit?: Prisma.BundleInstallEventsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleInstallEventsInclude<ExtArgs> | null
+  where?: Prisma.BundleInstallEventsWhereInput
+  orderBy?: Prisma.BundleInstallEventsOrderByWithRelationInput | Prisma.BundleInstallEventsOrderByWithRelationInput[]
+  cursor?: Prisma.BundleInstallEventsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleInstallEventsScalarFieldEnum | Prisma.BundleInstallEventsScalarFieldEnum[]
+}
+
+/**
+ * BundleAbTests.crashEvents
+ */
+export type BundleAbTests$crashEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleCrashEvents
+   */
+  select?: Prisma.BundleCrashEventsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleCrashEvents
+   */
+  omit?: Prisma.BundleCrashEventsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleCrashEventsInclude<ExtArgs> | null
+  where?: Prisma.BundleCrashEventsWhereInput
+  orderBy?: Prisma.BundleCrashEventsOrderByWithRelationInput | Prisma.BundleCrashEventsOrderByWithRelationInput[]
+  cursor?: Prisma.BundleCrashEventsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleCrashEventsScalarFieldEnum | Prisma.BundleCrashEventsScalarFieldEnum[]
 }
 
 /**

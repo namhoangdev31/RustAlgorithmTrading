@@ -33,6 +33,8 @@ type ReleaseTrack = {
   rollouts: Array<{
     rolloutPercent: number;
     targetCountry: string | null;
+    targetLocale?: string | null;
+    targetPlatform?: string | null;
   }>;
 };
 
@@ -141,6 +143,15 @@ export function LepoShipOtaControls({
               Runtime metadata is stored in Prisma and served through SSR/OTA routes.
             </FieldDescription>
           </Field>
+          <Field>
+            <FieldLabel htmlFor="configKey">Runtime config key</FieldLabel>
+            <Input id="configKey" name="configKey" placeholder="feature.checkout_v2" />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="configValue">JSON value</FieldLabel>
+            <Input id="configValue" name="configValue" placeholder='{"enabled":true}' />
+            <input type="hidden" name="configTrack" value="global" />
+          </Field>
           <Field className="md:col-span-2">
             <Button type="submit">
               <SlidersHorizontal data-icon="inline-start" />
@@ -180,6 +191,18 @@ export function LepoShipOtaControls({
                   placeholder="VN"
                   defaultValue={latestTrack.rollouts[0]?.targetCountry ?? ""}
                 />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="targetLocale">Target locale</FieldLabel>
+                <Input id="targetLocale" name="targetLocale" maxLength={20} placeholder="vi-VN" defaultValue={latestTrack.rollouts[0]?.targetLocale ?? ""} />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="targetPlatform">Target platform</FieldLabel>
+                <NativeSelect id="targetPlatform" name="targetPlatform" defaultValue={latestTrack.rollouts[0]?.targetPlatform ?? ""}>
+                  <NativeSelectOption value="">All platforms</NativeSelectOption>
+                  <NativeSelectOption value="ios">iOS</NativeSelectOption>
+                  <NativeSelectOption value="android">Android</NativeSelectOption>
+                </NativeSelect>
               </Field>
               <Button type="submit">
                 <UploadCloud data-icon="inline-start" />

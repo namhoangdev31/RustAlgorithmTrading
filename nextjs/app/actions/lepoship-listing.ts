@@ -359,6 +359,7 @@ export async function upsertPrivacyDeclarationAction(formData: FormData) {
       thirdParties,
       dataRetentionDays,
       privacyContactEmail,
+      declarationStatus: "submitted",
       createdAt: now,
       updatedAt: now,
     },
@@ -370,6 +371,9 @@ export async function upsertPrivacyDeclarationAction(formData: FormData) {
       thirdParties,
       dataRetentionDays,
       privacyContactEmail,
+      declarationStatus: "submitted",
+      revision: { increment: 1 },
+      reviewedAt: null,
       updatedAt: now,
     },
   });

@@ -5,6 +5,8 @@ export interface SdkAuthResult {
   bundleId: string;
   projectId: string | null;
   method: "sdk_token" | "pat" | "service_identity";
+  scopes: string[];
+  identityId: string;
 }
 
 /**
@@ -53,6 +55,7 @@ async function authenticateSdkToken(fullToken: string): Promise<SdkAuthResult | 
       tokenPrefix: prefix,
       tokenHash,
       isRevoked: false,
+      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }, { rotationGraceUntil: { gt: new Date() } }],
     },
   });
 
@@ -76,6 +79,8 @@ async function authenticateSdkToken(fullToken: string): Promise<SdkAuthResult | 
     bundleId: sdkToken.bundleId,
     projectId: bundle?.projectId || null,
     method: "sdk_token",
+    scopes: sdkToken.scopes,
+    identityId: sdkToken.id,
   };
 }
 
@@ -122,6 +127,8 @@ async function authenticatePat(
     bundleId: project.bundle.id,
     projectId: project.id,
     method: "pat",
+    scopes: pat.scopes,
+    identityId: pat.userId,
   };
 }
 
@@ -141,6 +148,11 @@ async function authenticateServiceIdentity(
     bundleId: project.bundle.id,
     projectId: project.id,
     method: "service_identity",
+    scopes: [],
+    identityId: projectId,
   };
 }
 
+export function hasSdkScope(auth: SdkAuthResult | null, scope: string): auth is SdkAuthResult {
+  return Boolean(auth?.method === "sdk_token" && (auth.scopes.includes(scope) || auth.scopes.includes("*")));
+}

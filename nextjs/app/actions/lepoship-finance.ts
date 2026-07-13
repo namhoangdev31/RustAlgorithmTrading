@@ -42,7 +42,7 @@ export async function initiatePayoutAction(payoutId: string) {
     currency: payout.currency.toLowerCase(),
     destination: partnerAccount.stripeAccountId,
     description: `Payout reference ${payout.id} reconciled by admin ${admin.fullName || admin.email}`,
-  });
+  }, { idempotencyKey: `lepoship-payout-${payout.id}` });
 
   const updated = await prisma.bundlePayouts.update({
     where: { id: payoutId },
@@ -92,7 +92,7 @@ export async function approveRefundAction(refundRequestId: string, reviewNote: s
     payment_intent: paymentIntentId,
     reverse_transfer: true,
     refund_application_fee: true,
-  });
+  }, { idempotencyKey: `lepoship-refund-${refundRequest.id}` });
 
   const now = new Date();
 
@@ -140,8 +140,14 @@ export async function approveRefundAction(refundRequestId: string, reviewNote: s
       },
       data: {
         isActive: false,
+        revokedAt: now,
         updatedAt: now,
       },
+    }),
+    prisma.bundleFinancialLedgerEntries.upsert({
+      where: { idempotencyKey: `stripe-refund:${refundRequest.id}` },
+      create: { id: crypto.randomUUID(), bundleId: order.bundleId, orderId: order.id, entryType: "refund", amount: -refundRequest.amount, currency: order.currency, idempotencyKey: `stripe-refund:${refundRequest.id}`, providerRef: refund.id, metadata: { reviewedBy: admin.id }, createdAt: now },
+      update: {},
     }),
   ]);
 

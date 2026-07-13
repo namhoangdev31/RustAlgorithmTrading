@@ -392,10 +392,22 @@ export const ModelName = {
   Project: 'Project',
   BundlePayouts: 'BundlePayouts',
   Bundles: 'Bundles',
+  BundleChannels: 'BundleChannels',
+  BundleReleases: 'BundleReleases',
+  BundleArtifacts: 'BundleArtifacts',
+  BundleBuildJobs: 'BundleBuildJobs',
+  BundleBuildLogChunks: 'BundleBuildLogChunks',
+  BundleReleaseApprovals: 'BundleReleaseApprovals',
+  BundleReleaseOverridesV2: 'BundleReleaseOverridesV2',
+  BundleReleaseOverrideApprovals: 'BundleReleaseOverrideApprovals',
+  BundleDeliveryRollouts: 'BundleDeliveryRollouts',
+  BundleDeliveryRolloutExposures: 'BundleDeliveryRolloutExposures',
   Notifications: 'Notifications',
   Session: 'Session',
   UserDeviceToken: 'UserDeviceToken',
   BundleAbTests: 'BundleAbTests',
+  BundleAbTestExposures: 'BundleAbTestExposures',
+  BundleAbTestAnalysisSnapshots: 'BundleAbTestAnalysisSnapshots',
   BundleAbuseSignals: 'BundleAbuseSignals',
   BundleAdConfigurations: 'BundleAdConfigurations',
   BundleAnalyticsEvents: 'BundleAnalyticsEvents',
@@ -425,6 +437,7 @@ export const ModelName = {
   BundleRetentionStats: 'BundleRetentionStats',
   BundleReviews: 'BundleReviews',
   BundleRuntimeConfig: 'BundleRuntimeConfig',
+  BundleRuntimeConfigEntries: 'BundleRuntimeConfigEntries',
   BundleScreenshots: 'BundleScreenshots',
   BundleSearchKeywords: 'BundleSearchKeywords',
   BundleStateTransitions: 'BundleStateTransitions',
@@ -441,13 +454,25 @@ export const ModelName = {
   BundlePaymentLogs: 'BundlePaymentLogs',
   BundleRefundRequests: 'BundleRefundRequests',
   BundleUserEntitlements: 'BundleUserEntitlements',
+  BundleEntitlementLicenses: 'BundleEntitlementLicenses',
+  BundleLedgerAccounts: 'BundleLedgerAccounts',
+  BundleLedgerTransactions: 'BundleLedgerTransactions',
+  BundleLedgerEntries: 'BundleLedgerEntries',
+  BundleStripeWebhookEvents: 'BundleStripeWebhookEvents',
   BundleRollouts: 'BundleRollouts',
   BundleReviewReports: 'BundleReviewReports',
   BundleSubscriptionHistory: 'BundleSubscriptionHistory',
   BundleCrashReports: 'BundleCrashReports',
+  BundleCrashEvents: 'BundleCrashEvents',
   BundleReviewHistory: 'BundleReviewHistory',
   BundleReviewQueue: 'BundleReviewQueue',
   BundleSecurityScanResults: 'BundleSecurityScanResults',
+  BundleArtifactManifests: 'BundleArtifactManifests',
+  BundleRolloutExposures: 'BundleRolloutExposures',
+  BundleOutboxEvents: 'BundleOutboxEvents',
+  LepoShipIdempotencyKeys: 'LepoShipIdempotencyKeys',
+  BundleReleaseOverrides: 'BundleReleaseOverrides',
+  BundleFinancialLedgerEntries: 'BundleFinancialLedgerEntries',
   BundleUpdatePhases: 'BundleUpdatePhases',
   UserSecrets: 'UserSecrets',
   PersonalAccessToken: 'PersonalAccessToken',
@@ -513,7 +538,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "order" | "riskEvent" | "file" | "user" | "organization" | "project" | "bundlePayouts" | "bundles" | "notifications" | "session" | "userDeviceToken" | "bundleAbTests" | "bundleAbuseSignals" | "bundleAdConfigurations" | "bundleAnalyticsEvents" | "bundleApiUsageStats" | "bundleAuditLog" | "bundleBetaTesters" | "bundleChangeLogs" | "bundleCollaborators" | "bundleContentRatings" | "bundleCountries" | "bundleDependencies" | "bundleDeveloperStrikes" | "bundleDeviceSupport" | "bundleExternalIntegrations" | "bundleFeaturedSlots" | "bundleInAppPurchases" | "bundleInstallEvents" | "bundleLanguages" | "bundleLocalizations" | "bundleMonetizationConfigs" | "bundleOrders" | "bundlePermissions" | "bundlePrivacyDeclarations" | "bundlePromotions" | "bundleRankingScores" | "bundleReleaseTracks" | "bundleRetentionStats" | "bundleReviews" | "bundleRuntimeConfig" | "bundleScreenshots" | "bundleSearchKeywords" | "bundleStateTransitions" | "bundleStats" | "bundleStoreFlags" | "bundleStoreListings" | "bundleSubscriptionPlans" | "bundleTags" | "bundleTrendingSnapshots" | "bundleUserReports" | "bundleVersionHistory" | "bundleWebhooks" | "bundleOrderItems" | "bundlePaymentLogs" | "bundleRefundRequests" | "bundleUserEntitlements" | "bundleRollouts" | "bundleReviewReports" | "bundleSubscriptionHistory" | "bundleCrashReports" | "bundleReviewHistory" | "bundleReviewQueue" | "bundleSecurityScanResults" | "bundleUpdatePhases" | "userSecrets" | "personalAccessToken" | "ssoConfig" | "deployHook" | "firewallRule" | "nativeDeployment" | "nativeDomainConfig" | "nativeEdgeFunction" | "nativeCacheEntry" | "nativeAnalyticsReplay" | "nativeCrashReport" | "nativeSourceMap" | "nativePlugin" | "nativePluginInstallation" | "nativeDebugSession" | "nativeConnectedDevice" | "nativeCloudTarget" | "nativeRoutingPolicy" | "nativeRegionReplica" | "nativeArtifactMirror" | "nativeWafEvent" | "nativeWafRule" | "nativeScimMapping" | "nativeAiDiagnostic" | "nativeRemediationRun" | "nativeSchedulingPolicy" | "nativeSchedulingSignal" | "nativeServiceIdentity" | "nativeServiceTrustPolicy" | "nativeTelemetryEnvelope" | "cronJob" | "form" | "formSubmission" | "formWebhookDelivery" | "previewComment" | "lepoShipLocalConfig" | "marketplacePartnerAccount" | "marketplaceTransaction" | "marketplaceInstallEvent" | "riskLimits" | "organizationMembership" | "projectMembership" | "workspaceProviderConnection" | "projectProviderBinding" | "workspaceAuditEvent" | "lepoShipBuild" | "marketplaceCompatibilityRun" | "bundleSdkTokens" | "bundleWebhookDeliveries"
+    modelProps: "order" | "riskEvent" | "file" | "user" | "organization" | "project" | "bundlePayouts" | "bundles" | "bundleChannels" | "bundleReleases" | "bundleArtifacts" | "bundleBuildJobs" | "bundleBuildLogChunks" | "bundleReleaseApprovals" | "bundleReleaseOverridesV2" | "bundleReleaseOverrideApprovals" | "bundleDeliveryRollouts" | "bundleDeliveryRolloutExposures" | "notifications" | "session" | "userDeviceToken" | "bundleAbTests" | "bundleAbTestExposures" | "bundleAbTestAnalysisSnapshots" | "bundleAbuseSignals" | "bundleAdConfigurations" | "bundleAnalyticsEvents" | "bundleApiUsageStats" | "bundleAuditLog" | "bundleBetaTesters" | "bundleChangeLogs" | "bundleCollaborators" | "bundleContentRatings" | "bundleCountries" | "bundleDependencies" | "bundleDeveloperStrikes" | "bundleDeviceSupport" | "bundleExternalIntegrations" | "bundleFeaturedSlots" | "bundleInAppPurchases" | "bundleInstallEvents" | "bundleLanguages" | "bundleLocalizations" | "bundleMonetizationConfigs" | "bundleOrders" | "bundlePermissions" | "bundlePrivacyDeclarations" | "bundlePromotions" | "bundleRankingScores" | "bundleReleaseTracks" | "bundleRetentionStats" | "bundleReviews" | "bundleRuntimeConfig" | "bundleRuntimeConfigEntries" | "bundleScreenshots" | "bundleSearchKeywords" | "bundleStateTransitions" | "bundleStats" | "bundleStoreFlags" | "bundleStoreListings" | "bundleSubscriptionPlans" | "bundleTags" | "bundleTrendingSnapshots" | "bundleUserReports" | "bundleVersionHistory" | "bundleWebhooks" | "bundleOrderItems" | "bundlePaymentLogs" | "bundleRefundRequests" | "bundleUserEntitlements" | "bundleEntitlementLicenses" | "bundleLedgerAccounts" | "bundleLedgerTransactions" | "bundleLedgerEntries" | "bundleStripeWebhookEvents" | "bundleRollouts" | "bundleReviewReports" | "bundleSubscriptionHistory" | "bundleCrashReports" | "bundleCrashEvents" | "bundleReviewHistory" | "bundleReviewQueue" | "bundleSecurityScanResults" | "bundleArtifactManifests" | "bundleRolloutExposures" | "bundleOutboxEvents" | "lepoShipIdempotencyKeys" | "bundleReleaseOverrides" | "bundleFinancialLedgerEntries" | "bundleUpdatePhases" | "userSecrets" | "personalAccessToken" | "ssoConfig" | "deployHook" | "firewallRule" | "nativeDeployment" | "nativeDomainConfig" | "nativeEdgeFunction" | "nativeCacheEntry" | "nativeAnalyticsReplay" | "nativeCrashReport" | "nativeSourceMap" | "nativePlugin" | "nativePluginInstallation" | "nativeDebugSession" | "nativeConnectedDevice" | "nativeCloudTarget" | "nativeRoutingPolicy" | "nativeRegionReplica" | "nativeArtifactMirror" | "nativeWafEvent" | "nativeWafRule" | "nativeScimMapping" | "nativeAiDiagnostic" | "nativeRemediationRun" | "nativeSchedulingPolicy" | "nativeSchedulingSignal" | "nativeServiceIdentity" | "nativeServiceTrustPolicy" | "nativeTelemetryEnvelope" | "cronJob" | "form" | "formSubmission" | "formWebhookDelivery" | "previewComment" | "lepoShipLocalConfig" | "marketplacePartnerAccount" | "marketplaceTransaction" | "marketplaceInstallEvent" | "riskLimits" | "organizationMembership" | "projectMembership" | "workspaceProviderConnection" | "projectProviderBinding" | "workspaceAuditEvent" | "lepoShipBuild" | "marketplaceCompatibilityRun" | "bundleSdkTokens" | "bundleWebhookDeliveries"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1109,6 +1134,746 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    BundleChannels: {
+      payload: Prisma.$BundleChannelsPayload<ExtArgs>
+      fields: Prisma.BundleChannelsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleChannelsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleChannelsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleChannelsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleChannelsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleChannelsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleChannelsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleChannelsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleChannelsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleChannelsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleChannelsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleChannelsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleChannelsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleChannelsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleChannelsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleChannelsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleChannelsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleChannelsPayload>
+        }
+        update: {
+          args: Prisma.BundleChannelsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleChannelsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleChannelsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleChannelsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleChannelsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleChannelsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleChannelsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleChannelsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleChannelsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleChannels>
+        }
+        groupBy: {
+          args: Prisma.BundleChannelsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleChannelsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleChannelsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleChannelsCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleReleases: {
+      payload: Prisma.$BundleReleasesPayload<ExtArgs>
+      fields: Prisma.BundleReleasesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleReleasesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleasesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleReleasesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleasesPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleReleasesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleasesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleReleasesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleasesPayload>
+        }
+        findMany: {
+          args: Prisma.BundleReleasesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleasesPayload>[]
+        }
+        create: {
+          args: Prisma.BundleReleasesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleasesPayload>
+        }
+        createMany: {
+          args: Prisma.BundleReleasesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleReleasesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleasesPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleReleasesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleasesPayload>
+        }
+        update: {
+          args: Prisma.BundleReleasesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleasesPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleReleasesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleReleasesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleReleasesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleasesPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleReleasesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleasesPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleReleasesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleReleases>
+        }
+        groupBy: {
+          args: Prisma.BundleReleasesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleReleasesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleReleasesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleReleasesCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleArtifacts: {
+      payload: Prisma.$BundleArtifactsPayload<ExtArgs>
+      fields: Prisma.BundleArtifactsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleArtifactsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleArtifactsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleArtifactsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleArtifactsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleArtifactsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleArtifactsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleArtifactsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleArtifactsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleArtifactsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactsPayload>
+        }
+        update: {
+          args: Prisma.BundleArtifactsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleArtifactsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleArtifactsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleArtifactsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleArtifactsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleArtifactsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleArtifacts>
+        }
+        groupBy: {
+          args: Prisma.BundleArtifactsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleArtifactsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleArtifactsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleArtifactsCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleBuildJobs: {
+      payload: Prisma.$BundleBuildJobsPayload<ExtArgs>
+      fields: Prisma.BundleBuildJobsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleBuildJobsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildJobsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleBuildJobsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildJobsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleBuildJobsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildJobsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleBuildJobsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildJobsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleBuildJobsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildJobsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleBuildJobsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildJobsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleBuildJobsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleBuildJobsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildJobsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleBuildJobsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildJobsPayload>
+        }
+        update: {
+          args: Prisma.BundleBuildJobsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildJobsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleBuildJobsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleBuildJobsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleBuildJobsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildJobsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleBuildJobsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildJobsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleBuildJobsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleBuildJobs>
+        }
+        groupBy: {
+          args: Prisma.BundleBuildJobsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleBuildJobsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleBuildJobsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleBuildJobsCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleBuildLogChunks: {
+      payload: Prisma.$BundleBuildLogChunksPayload<ExtArgs>
+      fields: Prisma.BundleBuildLogChunksFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleBuildLogChunksFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildLogChunksPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleBuildLogChunksFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildLogChunksPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleBuildLogChunksFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildLogChunksPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleBuildLogChunksFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildLogChunksPayload>
+        }
+        findMany: {
+          args: Prisma.BundleBuildLogChunksFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildLogChunksPayload>[]
+        }
+        create: {
+          args: Prisma.BundleBuildLogChunksCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildLogChunksPayload>
+        }
+        createMany: {
+          args: Prisma.BundleBuildLogChunksCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleBuildLogChunksCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildLogChunksPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleBuildLogChunksDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildLogChunksPayload>
+        }
+        update: {
+          args: Prisma.BundleBuildLogChunksUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildLogChunksPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleBuildLogChunksDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleBuildLogChunksUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleBuildLogChunksUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildLogChunksPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleBuildLogChunksUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleBuildLogChunksPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleBuildLogChunksAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleBuildLogChunks>
+        }
+        groupBy: {
+          args: Prisma.BundleBuildLogChunksGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleBuildLogChunksGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleBuildLogChunksCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleBuildLogChunksCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleReleaseApprovals: {
+      payload: Prisma.$BundleReleaseApprovalsPayload<ExtArgs>
+      fields: Prisma.BundleReleaseApprovalsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleReleaseApprovalsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseApprovalsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleReleaseApprovalsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseApprovalsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleReleaseApprovalsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseApprovalsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleReleaseApprovalsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseApprovalsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleReleaseApprovalsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseApprovalsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleReleaseApprovalsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseApprovalsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleReleaseApprovalsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleReleaseApprovalsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseApprovalsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleReleaseApprovalsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseApprovalsPayload>
+        }
+        update: {
+          args: Prisma.BundleReleaseApprovalsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseApprovalsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleReleaseApprovalsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleReleaseApprovalsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleReleaseApprovalsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseApprovalsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleReleaseApprovalsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseApprovalsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleReleaseApprovalsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleReleaseApprovals>
+        }
+        groupBy: {
+          args: Prisma.BundleReleaseApprovalsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleReleaseApprovalsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleReleaseApprovalsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleReleaseApprovalsCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleReleaseOverridesV2: {
+      payload: Prisma.$BundleReleaseOverridesV2Payload<ExtArgs>
+      fields: Prisma.BundleReleaseOverridesV2FieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleReleaseOverridesV2FindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesV2Payload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleReleaseOverridesV2FindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesV2Payload>
+        }
+        findFirst: {
+          args: Prisma.BundleReleaseOverridesV2FindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesV2Payload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleReleaseOverridesV2FindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesV2Payload>
+        }
+        findMany: {
+          args: Prisma.BundleReleaseOverridesV2FindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesV2Payload>[]
+        }
+        create: {
+          args: Prisma.BundleReleaseOverridesV2CreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesV2Payload>
+        }
+        createMany: {
+          args: Prisma.BundleReleaseOverridesV2CreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleReleaseOverridesV2CreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesV2Payload>[]
+        }
+        delete: {
+          args: Prisma.BundleReleaseOverridesV2DeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesV2Payload>
+        }
+        update: {
+          args: Prisma.BundleReleaseOverridesV2UpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesV2Payload>
+        }
+        deleteMany: {
+          args: Prisma.BundleReleaseOverridesV2DeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleReleaseOverridesV2UpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleReleaseOverridesV2UpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesV2Payload>[]
+        }
+        upsert: {
+          args: Prisma.BundleReleaseOverridesV2UpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesV2Payload>
+        }
+        aggregate: {
+          args: Prisma.BundleReleaseOverridesV2AggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleReleaseOverridesV2>
+        }
+        groupBy: {
+          args: Prisma.BundleReleaseOverridesV2GroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleReleaseOverridesV2GroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleReleaseOverridesV2CountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleReleaseOverridesV2CountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleReleaseOverrideApprovals: {
+      payload: Prisma.$BundleReleaseOverrideApprovalsPayload<ExtArgs>
+      fields: Prisma.BundleReleaseOverrideApprovalsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleReleaseOverrideApprovalsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverrideApprovalsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleReleaseOverrideApprovalsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverrideApprovalsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleReleaseOverrideApprovalsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverrideApprovalsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleReleaseOverrideApprovalsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverrideApprovalsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleReleaseOverrideApprovalsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverrideApprovalsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleReleaseOverrideApprovalsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverrideApprovalsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleReleaseOverrideApprovalsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleReleaseOverrideApprovalsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverrideApprovalsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleReleaseOverrideApprovalsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverrideApprovalsPayload>
+        }
+        update: {
+          args: Prisma.BundleReleaseOverrideApprovalsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverrideApprovalsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleReleaseOverrideApprovalsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleReleaseOverrideApprovalsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleReleaseOverrideApprovalsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverrideApprovalsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleReleaseOverrideApprovalsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverrideApprovalsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleReleaseOverrideApprovalsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleReleaseOverrideApprovals>
+        }
+        groupBy: {
+          args: Prisma.BundleReleaseOverrideApprovalsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleReleaseOverrideApprovalsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleReleaseOverrideApprovalsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleReleaseOverrideApprovalsCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleDeliveryRollouts: {
+      payload: Prisma.$BundleDeliveryRolloutsPayload<ExtArgs>
+      fields: Prisma.BundleDeliveryRolloutsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleDeliveryRolloutsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleDeliveryRolloutsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleDeliveryRolloutsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleDeliveryRolloutsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleDeliveryRolloutsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleDeliveryRolloutsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleDeliveryRolloutsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleDeliveryRolloutsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleDeliveryRolloutsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutsPayload>
+        }
+        update: {
+          args: Prisma.BundleDeliveryRolloutsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleDeliveryRolloutsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleDeliveryRolloutsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleDeliveryRolloutsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleDeliveryRolloutsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleDeliveryRolloutsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleDeliveryRollouts>
+        }
+        groupBy: {
+          args: Prisma.BundleDeliveryRolloutsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleDeliveryRolloutsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleDeliveryRolloutsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleDeliveryRolloutsCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleDeliveryRolloutExposures: {
+      payload: Prisma.$BundleDeliveryRolloutExposuresPayload<ExtArgs>
+      fields: Prisma.BundleDeliveryRolloutExposuresFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleDeliveryRolloutExposuresFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutExposuresPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleDeliveryRolloutExposuresFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutExposuresPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleDeliveryRolloutExposuresFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutExposuresPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleDeliveryRolloutExposuresFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutExposuresPayload>
+        }
+        findMany: {
+          args: Prisma.BundleDeliveryRolloutExposuresFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutExposuresPayload>[]
+        }
+        create: {
+          args: Prisma.BundleDeliveryRolloutExposuresCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutExposuresPayload>
+        }
+        createMany: {
+          args: Prisma.BundleDeliveryRolloutExposuresCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleDeliveryRolloutExposuresCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutExposuresPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleDeliveryRolloutExposuresDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutExposuresPayload>
+        }
+        update: {
+          args: Prisma.BundleDeliveryRolloutExposuresUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutExposuresPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleDeliveryRolloutExposuresDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleDeliveryRolloutExposuresUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleDeliveryRolloutExposuresUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutExposuresPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleDeliveryRolloutExposuresUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleDeliveryRolloutExposuresPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleDeliveryRolloutExposuresAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleDeliveryRolloutExposures>
+        }
+        groupBy: {
+          args: Prisma.BundleDeliveryRolloutExposuresGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleDeliveryRolloutExposuresGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleDeliveryRolloutExposuresCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleDeliveryRolloutExposuresCountAggregateOutputType> | number
+        }
+      }
+    }
     Notifications: {
       payload: Prisma.$NotificationsPayload<ExtArgs>
       fields: Prisma.NotificationsFieldRefs
@@ -1402,6 +2167,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.BundleAbTestsCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.BundleAbTestsCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleAbTestExposures: {
+      payload: Prisma.$BundleAbTestExposuresPayload<ExtArgs>
+      fields: Prisma.BundleAbTestExposuresFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleAbTestExposuresFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestExposuresPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleAbTestExposuresFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestExposuresPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleAbTestExposuresFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestExposuresPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleAbTestExposuresFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestExposuresPayload>
+        }
+        findMany: {
+          args: Prisma.BundleAbTestExposuresFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestExposuresPayload>[]
+        }
+        create: {
+          args: Prisma.BundleAbTestExposuresCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestExposuresPayload>
+        }
+        createMany: {
+          args: Prisma.BundleAbTestExposuresCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleAbTestExposuresCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestExposuresPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleAbTestExposuresDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestExposuresPayload>
+        }
+        update: {
+          args: Prisma.BundleAbTestExposuresUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestExposuresPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleAbTestExposuresDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleAbTestExposuresUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleAbTestExposuresUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestExposuresPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleAbTestExposuresUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestExposuresPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleAbTestExposuresAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleAbTestExposures>
+        }
+        groupBy: {
+          args: Prisma.BundleAbTestExposuresGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleAbTestExposuresGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleAbTestExposuresCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleAbTestExposuresCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleAbTestAnalysisSnapshots: {
+      payload: Prisma.$BundleAbTestAnalysisSnapshotsPayload<ExtArgs>
+      fields: Prisma.BundleAbTestAnalysisSnapshotsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestAnalysisSnapshotsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestAnalysisSnapshotsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestAnalysisSnapshotsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestAnalysisSnapshotsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestAnalysisSnapshotsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestAnalysisSnapshotsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestAnalysisSnapshotsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestAnalysisSnapshotsPayload>
+        }
+        update: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestAnalysisSnapshotsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestAnalysisSnapshotsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleAbTestAnalysisSnapshotsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleAbTestAnalysisSnapshots>
+        }
+        groupBy: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleAbTestAnalysisSnapshotsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleAbTestAnalysisSnapshotsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleAbTestAnalysisSnapshotsCountAggregateOutputType> | number
         }
       }
     }
@@ -3551,6 +4464,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    BundleRuntimeConfigEntries: {
+      payload: Prisma.$BundleRuntimeConfigEntriesPayload<ExtArgs>
+      fields: Prisma.BundleRuntimeConfigEntriesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleRuntimeConfigEntriesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRuntimeConfigEntriesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleRuntimeConfigEntriesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRuntimeConfigEntriesPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleRuntimeConfigEntriesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRuntimeConfigEntriesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleRuntimeConfigEntriesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRuntimeConfigEntriesPayload>
+        }
+        findMany: {
+          args: Prisma.BundleRuntimeConfigEntriesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRuntimeConfigEntriesPayload>[]
+        }
+        create: {
+          args: Prisma.BundleRuntimeConfigEntriesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRuntimeConfigEntriesPayload>
+        }
+        createMany: {
+          args: Prisma.BundleRuntimeConfigEntriesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleRuntimeConfigEntriesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRuntimeConfigEntriesPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleRuntimeConfigEntriesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRuntimeConfigEntriesPayload>
+        }
+        update: {
+          args: Prisma.BundleRuntimeConfigEntriesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRuntimeConfigEntriesPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleRuntimeConfigEntriesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleRuntimeConfigEntriesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleRuntimeConfigEntriesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRuntimeConfigEntriesPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleRuntimeConfigEntriesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRuntimeConfigEntriesPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleRuntimeConfigEntriesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleRuntimeConfigEntries>
+        }
+        groupBy: {
+          args: Prisma.BundleRuntimeConfigEntriesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleRuntimeConfigEntriesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleRuntimeConfigEntriesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleRuntimeConfigEntriesCountAggregateOutputType> | number
+        }
+      }
+    }
     BundleScreenshots: {
       payload: Prisma.$BundleScreenshotsPayload<ExtArgs>
       fields: Prisma.BundleScreenshotsFieldRefs
@@ -4735,6 +5722,376 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    BundleEntitlementLicenses: {
+      payload: Prisma.$BundleEntitlementLicensesPayload<ExtArgs>
+      fields: Prisma.BundleEntitlementLicensesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleEntitlementLicensesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleEntitlementLicensesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleEntitlementLicensesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleEntitlementLicensesPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleEntitlementLicensesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleEntitlementLicensesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleEntitlementLicensesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleEntitlementLicensesPayload>
+        }
+        findMany: {
+          args: Prisma.BundleEntitlementLicensesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleEntitlementLicensesPayload>[]
+        }
+        create: {
+          args: Prisma.BundleEntitlementLicensesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleEntitlementLicensesPayload>
+        }
+        createMany: {
+          args: Prisma.BundleEntitlementLicensesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleEntitlementLicensesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleEntitlementLicensesPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleEntitlementLicensesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleEntitlementLicensesPayload>
+        }
+        update: {
+          args: Prisma.BundleEntitlementLicensesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleEntitlementLicensesPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleEntitlementLicensesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleEntitlementLicensesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleEntitlementLicensesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleEntitlementLicensesPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleEntitlementLicensesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleEntitlementLicensesPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleEntitlementLicensesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleEntitlementLicenses>
+        }
+        groupBy: {
+          args: Prisma.BundleEntitlementLicensesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleEntitlementLicensesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleEntitlementLicensesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleEntitlementLicensesCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleLedgerAccounts: {
+      payload: Prisma.$BundleLedgerAccountsPayload<ExtArgs>
+      fields: Prisma.BundleLedgerAccountsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleLedgerAccountsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerAccountsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleLedgerAccountsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerAccountsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleLedgerAccountsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerAccountsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleLedgerAccountsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerAccountsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleLedgerAccountsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerAccountsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleLedgerAccountsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerAccountsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleLedgerAccountsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleLedgerAccountsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerAccountsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleLedgerAccountsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerAccountsPayload>
+        }
+        update: {
+          args: Prisma.BundleLedgerAccountsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerAccountsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleLedgerAccountsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleLedgerAccountsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleLedgerAccountsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerAccountsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleLedgerAccountsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerAccountsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleLedgerAccountsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleLedgerAccounts>
+        }
+        groupBy: {
+          args: Prisma.BundleLedgerAccountsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleLedgerAccountsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleLedgerAccountsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleLedgerAccountsCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleLedgerTransactions: {
+      payload: Prisma.$BundleLedgerTransactionsPayload<ExtArgs>
+      fields: Prisma.BundleLedgerTransactionsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleLedgerTransactionsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerTransactionsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleLedgerTransactionsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerTransactionsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleLedgerTransactionsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerTransactionsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleLedgerTransactionsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerTransactionsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleLedgerTransactionsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerTransactionsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleLedgerTransactionsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerTransactionsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleLedgerTransactionsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleLedgerTransactionsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerTransactionsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleLedgerTransactionsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerTransactionsPayload>
+        }
+        update: {
+          args: Prisma.BundleLedgerTransactionsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerTransactionsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleLedgerTransactionsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleLedgerTransactionsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleLedgerTransactionsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerTransactionsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleLedgerTransactionsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerTransactionsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleLedgerTransactionsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleLedgerTransactions>
+        }
+        groupBy: {
+          args: Prisma.BundleLedgerTransactionsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleLedgerTransactionsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleLedgerTransactionsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleLedgerTransactionsCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleLedgerEntries: {
+      payload: Prisma.$BundleLedgerEntriesPayload<ExtArgs>
+      fields: Prisma.BundleLedgerEntriesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleLedgerEntriesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerEntriesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleLedgerEntriesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerEntriesPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleLedgerEntriesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerEntriesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleLedgerEntriesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerEntriesPayload>
+        }
+        findMany: {
+          args: Prisma.BundleLedgerEntriesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerEntriesPayload>[]
+        }
+        create: {
+          args: Prisma.BundleLedgerEntriesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerEntriesPayload>
+        }
+        createMany: {
+          args: Prisma.BundleLedgerEntriesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleLedgerEntriesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerEntriesPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleLedgerEntriesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerEntriesPayload>
+        }
+        update: {
+          args: Prisma.BundleLedgerEntriesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerEntriesPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleLedgerEntriesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleLedgerEntriesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleLedgerEntriesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerEntriesPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleLedgerEntriesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleLedgerEntriesPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleLedgerEntriesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleLedgerEntries>
+        }
+        groupBy: {
+          args: Prisma.BundleLedgerEntriesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleLedgerEntriesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleLedgerEntriesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleLedgerEntriesCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleStripeWebhookEvents: {
+      payload: Prisma.$BundleStripeWebhookEventsPayload<ExtArgs>
+      fields: Prisma.BundleStripeWebhookEventsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleStripeWebhookEventsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleStripeWebhookEventsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleStripeWebhookEventsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleStripeWebhookEventsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleStripeWebhookEventsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleStripeWebhookEventsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleStripeWebhookEventsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleStripeWebhookEventsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleStripeWebhookEventsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleStripeWebhookEventsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleStripeWebhookEventsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleStripeWebhookEventsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleStripeWebhookEventsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleStripeWebhookEventsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleStripeWebhookEventsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleStripeWebhookEventsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleStripeWebhookEventsPayload>
+        }
+        update: {
+          args: Prisma.BundleStripeWebhookEventsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleStripeWebhookEventsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleStripeWebhookEventsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleStripeWebhookEventsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleStripeWebhookEventsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleStripeWebhookEventsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleStripeWebhookEventsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleStripeWebhookEventsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleStripeWebhookEventsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleStripeWebhookEvents>
+        }
+        groupBy: {
+          args: Prisma.BundleStripeWebhookEventsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleStripeWebhookEventsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleStripeWebhookEventsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleStripeWebhookEventsCountAggregateOutputType> | number
+        }
+      }
+    }
     BundleRollouts: {
       payload: Prisma.$BundleRolloutsPayload<ExtArgs>
       fields: Prisma.BundleRolloutsFieldRefs
@@ -5031,6 +6388,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    BundleCrashEvents: {
+      payload: Prisma.$BundleCrashEventsPayload<ExtArgs>
+      fields: Prisma.BundleCrashEventsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleCrashEventsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleCrashEventsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleCrashEventsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleCrashEventsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleCrashEventsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleCrashEventsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleCrashEventsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleCrashEventsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleCrashEventsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleCrashEventsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleCrashEventsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleCrashEventsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleCrashEventsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleCrashEventsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleCrashEventsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleCrashEventsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleCrashEventsPayload>
+        }
+        update: {
+          args: Prisma.BundleCrashEventsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleCrashEventsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleCrashEventsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleCrashEventsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleCrashEventsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleCrashEventsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleCrashEventsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleCrashEventsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleCrashEventsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleCrashEvents>
+        }
+        groupBy: {
+          args: Prisma.BundleCrashEventsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleCrashEventsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleCrashEventsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleCrashEventsCountAggregateOutputType> | number
+        }
+      }
+    }
     BundleReviewHistory: {
       payload: Prisma.$BundleReviewHistoryPayload<ExtArgs>
       fields: Prisma.BundleReviewHistoryFieldRefs
@@ -5250,6 +6681,450 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.BundleSecurityScanResultsCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.BundleSecurityScanResultsCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleArtifactManifests: {
+      payload: Prisma.$BundleArtifactManifestsPayload<ExtArgs>
+      fields: Prisma.BundleArtifactManifestsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleArtifactManifestsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactManifestsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleArtifactManifestsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactManifestsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleArtifactManifestsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactManifestsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleArtifactManifestsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactManifestsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleArtifactManifestsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactManifestsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleArtifactManifestsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactManifestsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleArtifactManifestsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleArtifactManifestsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactManifestsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleArtifactManifestsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactManifestsPayload>
+        }
+        update: {
+          args: Prisma.BundleArtifactManifestsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactManifestsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleArtifactManifestsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleArtifactManifestsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleArtifactManifestsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactManifestsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleArtifactManifestsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleArtifactManifestsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleArtifactManifestsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleArtifactManifests>
+        }
+        groupBy: {
+          args: Prisma.BundleArtifactManifestsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleArtifactManifestsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleArtifactManifestsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleArtifactManifestsCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleRolloutExposures: {
+      payload: Prisma.$BundleRolloutExposuresPayload<ExtArgs>
+      fields: Prisma.BundleRolloutExposuresFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleRolloutExposuresFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRolloutExposuresPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleRolloutExposuresFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRolloutExposuresPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleRolloutExposuresFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRolloutExposuresPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleRolloutExposuresFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRolloutExposuresPayload>
+        }
+        findMany: {
+          args: Prisma.BundleRolloutExposuresFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRolloutExposuresPayload>[]
+        }
+        create: {
+          args: Prisma.BundleRolloutExposuresCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRolloutExposuresPayload>
+        }
+        createMany: {
+          args: Prisma.BundleRolloutExposuresCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleRolloutExposuresCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRolloutExposuresPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleRolloutExposuresDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRolloutExposuresPayload>
+        }
+        update: {
+          args: Prisma.BundleRolloutExposuresUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRolloutExposuresPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleRolloutExposuresDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleRolloutExposuresUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleRolloutExposuresUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRolloutExposuresPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleRolloutExposuresUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleRolloutExposuresPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleRolloutExposuresAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleRolloutExposures>
+        }
+        groupBy: {
+          args: Prisma.BundleRolloutExposuresGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleRolloutExposuresGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleRolloutExposuresCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleRolloutExposuresCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleOutboxEvents: {
+      payload: Prisma.$BundleOutboxEventsPayload<ExtArgs>
+      fields: Prisma.BundleOutboxEventsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleOutboxEventsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleOutboxEventsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleOutboxEventsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleOutboxEventsPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleOutboxEventsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleOutboxEventsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleOutboxEventsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleOutboxEventsPayload>
+        }
+        findMany: {
+          args: Prisma.BundleOutboxEventsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleOutboxEventsPayload>[]
+        }
+        create: {
+          args: Prisma.BundleOutboxEventsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleOutboxEventsPayload>
+        }
+        createMany: {
+          args: Prisma.BundleOutboxEventsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleOutboxEventsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleOutboxEventsPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleOutboxEventsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleOutboxEventsPayload>
+        }
+        update: {
+          args: Prisma.BundleOutboxEventsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleOutboxEventsPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleOutboxEventsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleOutboxEventsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleOutboxEventsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleOutboxEventsPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleOutboxEventsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleOutboxEventsPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleOutboxEventsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleOutboxEvents>
+        }
+        groupBy: {
+          args: Prisma.BundleOutboxEventsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleOutboxEventsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleOutboxEventsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleOutboxEventsCountAggregateOutputType> | number
+        }
+      }
+    }
+    LepoShipIdempotencyKeys: {
+      payload: Prisma.$LepoShipIdempotencyKeysPayload<ExtArgs>
+      fields: Prisma.LepoShipIdempotencyKeysFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LepoShipIdempotencyKeysFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipIdempotencyKeysPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LepoShipIdempotencyKeysFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipIdempotencyKeysPayload>
+        }
+        findFirst: {
+          args: Prisma.LepoShipIdempotencyKeysFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipIdempotencyKeysPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LepoShipIdempotencyKeysFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipIdempotencyKeysPayload>
+        }
+        findMany: {
+          args: Prisma.LepoShipIdempotencyKeysFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipIdempotencyKeysPayload>[]
+        }
+        create: {
+          args: Prisma.LepoShipIdempotencyKeysCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipIdempotencyKeysPayload>
+        }
+        createMany: {
+          args: Prisma.LepoShipIdempotencyKeysCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LepoShipIdempotencyKeysCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipIdempotencyKeysPayload>[]
+        }
+        delete: {
+          args: Prisma.LepoShipIdempotencyKeysDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipIdempotencyKeysPayload>
+        }
+        update: {
+          args: Prisma.LepoShipIdempotencyKeysUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipIdempotencyKeysPayload>
+        }
+        deleteMany: {
+          args: Prisma.LepoShipIdempotencyKeysDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LepoShipIdempotencyKeysUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LepoShipIdempotencyKeysUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipIdempotencyKeysPayload>[]
+        }
+        upsert: {
+          args: Prisma.LepoShipIdempotencyKeysUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LepoShipIdempotencyKeysPayload>
+        }
+        aggregate: {
+          args: Prisma.LepoShipIdempotencyKeysAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLepoShipIdempotencyKeys>
+        }
+        groupBy: {
+          args: Prisma.LepoShipIdempotencyKeysGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LepoShipIdempotencyKeysGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LepoShipIdempotencyKeysCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LepoShipIdempotencyKeysCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleReleaseOverrides: {
+      payload: Prisma.$BundleReleaseOverridesPayload<ExtArgs>
+      fields: Prisma.BundleReleaseOverridesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleReleaseOverridesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleReleaseOverridesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleReleaseOverridesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleReleaseOverridesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesPayload>
+        }
+        findMany: {
+          args: Prisma.BundleReleaseOverridesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesPayload>[]
+        }
+        create: {
+          args: Prisma.BundleReleaseOverridesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesPayload>
+        }
+        createMany: {
+          args: Prisma.BundleReleaseOverridesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleReleaseOverridesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleReleaseOverridesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesPayload>
+        }
+        update: {
+          args: Prisma.BundleReleaseOverridesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleReleaseOverridesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleReleaseOverridesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleReleaseOverridesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleReleaseOverridesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleReleaseOverridesPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleReleaseOverridesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleReleaseOverrides>
+        }
+        groupBy: {
+          args: Prisma.BundleReleaseOverridesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleReleaseOverridesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleReleaseOverridesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleReleaseOverridesCountAggregateOutputType> | number
+        }
+      }
+    }
+    BundleFinancialLedgerEntries: {
+      payload: Prisma.$BundleFinancialLedgerEntriesPayload<ExtArgs>
+      fields: Prisma.BundleFinancialLedgerEntriesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BundleFinancialLedgerEntriesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleFinancialLedgerEntriesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BundleFinancialLedgerEntriesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleFinancialLedgerEntriesPayload>
+        }
+        findFirst: {
+          args: Prisma.BundleFinancialLedgerEntriesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleFinancialLedgerEntriesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BundleFinancialLedgerEntriesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleFinancialLedgerEntriesPayload>
+        }
+        findMany: {
+          args: Prisma.BundleFinancialLedgerEntriesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleFinancialLedgerEntriesPayload>[]
+        }
+        create: {
+          args: Prisma.BundleFinancialLedgerEntriesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleFinancialLedgerEntriesPayload>
+        }
+        createMany: {
+          args: Prisma.BundleFinancialLedgerEntriesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BundleFinancialLedgerEntriesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleFinancialLedgerEntriesPayload>[]
+        }
+        delete: {
+          args: Prisma.BundleFinancialLedgerEntriesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleFinancialLedgerEntriesPayload>
+        }
+        update: {
+          args: Prisma.BundleFinancialLedgerEntriesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleFinancialLedgerEntriesPayload>
+        }
+        deleteMany: {
+          args: Prisma.BundleFinancialLedgerEntriesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BundleFinancialLedgerEntriesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BundleFinancialLedgerEntriesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleFinancialLedgerEntriesPayload>[]
+        }
+        upsert: {
+          args: Prisma.BundleFinancialLedgerEntriesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BundleFinancialLedgerEntriesPayload>
+        }
+        aggregate: {
+          args: Prisma.BundleFinancialLedgerEntriesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBundleFinancialLedgerEntries>
+        }
+        groupBy: {
+          args: Prisma.BundleFinancialLedgerEntriesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleFinancialLedgerEntriesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BundleFinancialLedgerEntriesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BundleFinancialLedgerEntriesCountAggregateOutputType> | number
         }
       }
     }
@@ -9146,10 +11021,171 @@ export const BundlesScalarFieldEnum = {
   deletedAt: 'deletedAt',
   projectId: 'projectId',
   vercelDeploymentId: 'vercelDeploymentId',
-  vercelDeploymentUrl: 'vercelDeploymentUrl'
+  vercelDeploymentUrl: 'vercelDeploymentUrl',
+  primaryReleaseTrackId: 'primaryReleaseTrackId',
+  activeAbTestId: 'activeAbTestId',
+  activeRolloutId: 'activeRolloutId',
+  activeDeliveryMode: 'activeDeliveryMode'
 } as const
 
 export type BundlesScalarFieldEnum = (typeof BundlesScalarFieldEnum)[keyof typeof BundlesScalarFieldEnum]
+
+
+export const BundleChannelsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  name: 'name',
+  currentReleaseId: 'currentReleaseId',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BundleChannelsScalarFieldEnum = (typeof BundleChannelsScalarFieldEnum)[keyof typeof BundleChannelsScalarFieldEnum]
+
+
+export const BundleReleasesScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  channelId: 'channelId',
+  version: 'version',
+  buildNumber: 'buildNumber',
+  status: 'status',
+  source: 'source',
+  sourceCommit: 'sourceCommit',
+  releaseNotes: 'releaseNotes',
+  createdById: 'createdById',
+  submittedAt: 'submittedAt',
+  approvedAt: 'approvedAt',
+  activatedAt: 'activatedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BundleReleasesScalarFieldEnum = (typeof BundleReleasesScalarFieldEnum)[keyof typeof BundleReleasesScalarFieldEnum]
+
+
+export const BundleArtifactsScalarFieldEnum = {
+  id: 'id',
+  releaseId: 'releaseId',
+  kind: 'kind',
+  storageProvider: 'storageProvider',
+  storageBucket: 'storageBucket',
+  storageKey: 'storageKey',
+  checksumSha256: 'checksumSha256',
+  fileSize: 'fileSize',
+  contentType: 'contentType',
+  baseBuildNumber: 'baseBuildNumber',
+  targetBuildNumber: 'targetBuildNumber',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleArtifactsScalarFieldEnum = (typeof BundleArtifactsScalarFieldEnum)[keyof typeof BundleArtifactsScalarFieldEnum]
+
+
+export const BundleBuildJobsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  releaseId: 'releaseId',
+  projectId: 'projectId',
+  triggeredById: 'triggeredById',
+  queueJobId: 'queueJobId',
+  status: 'status',
+  attempt: 'attempt',
+  maxAttempts: 'maxAttempts',
+  workerId: 'workerId',
+  heartbeatAt: 'heartbeatAt',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  errorCode: 'errorCode',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BundleBuildJobsScalarFieldEnum = (typeof BundleBuildJobsScalarFieldEnum)[keyof typeof BundleBuildJobsScalarFieldEnum]
+
+
+export const BundleBuildLogChunksScalarFieldEnum = {
+  id: 'id',
+  buildId: 'buildId',
+  sequence: 'sequence',
+  level: 'level',
+  message: 'message',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleBuildLogChunksScalarFieldEnum = (typeof BundleBuildLogChunksScalarFieldEnum)[keyof typeof BundleBuildLogChunksScalarFieldEnum]
+
+
+export const BundleReleaseApprovalsScalarFieldEnum = {
+  id: 'id',
+  releaseId: 'releaseId',
+  kind: 'kind',
+  status: 'status',
+  actorId: 'actorId',
+  evidence: 'evidence',
+  policyVersion: 'policyVersion',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleReleaseApprovalsScalarFieldEnum = (typeof BundleReleaseApprovalsScalarFieldEnum)[keyof typeof BundleReleaseApprovalsScalarFieldEnum]
+
+
+export const BundleReleaseOverridesV2ScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  releaseId: 'releaseId',
+  createdById: 'createdById',
+  reason: 'reason',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleReleaseOverridesV2ScalarFieldEnum = (typeof BundleReleaseOverridesV2ScalarFieldEnum)[keyof typeof BundleReleaseOverridesV2ScalarFieldEnum]
+
+
+export const BundleReleaseOverrideApprovalsScalarFieldEnum = {
+  id: 'id',
+  overrideId: 'overrideId',
+  approverId: 'approverId',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleReleaseOverrideApprovalsScalarFieldEnum = (typeof BundleReleaseOverrideApprovalsScalarFieldEnum)[keyof typeof BundleReleaseOverrideApprovalsScalarFieldEnum]
+
+
+export const BundleDeliveryRolloutsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  channelId: 'channelId',
+  baselineReleaseId: 'baselineReleaseId',
+  candidateReleaseId: 'candidateReleaseId',
+  percentage: 'percentage',
+  status: 'status',
+  targeting: 'targeting',
+  startedAt: 'startedAt',
+  pausedAt: 'pausedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BundleDeliveryRolloutsScalarFieldEnum = (typeof BundleDeliveryRolloutsScalarFieldEnum)[keyof typeof BundleDeliveryRolloutsScalarFieldEnum]
+
+
+export const BundleDeliveryRolloutExposuresScalarFieldEnum = {
+  id: 'id',
+  rolloutId: 'rolloutId',
+  installationId: 'installationId',
+  releaseId: 'releaseId',
+  bucket: 'bucket',
+  exposedAt: 'exposedAt'
+} as const
+
+export type BundleDeliveryRolloutExposuresScalarFieldEnum = (typeof BundleDeliveryRolloutExposuresScalarFieldEnum)[keyof typeof BundleDeliveryRolloutExposuresScalarFieldEnum]
 
 
 export const NotificationsScalarFieldEnum = {
@@ -9210,12 +11246,95 @@ export const BundleAbTestsScalarFieldEnum = {
   trafficSplit: 'trafficSplit',
   status: 'status',
   winnerVariant: 'winnerVariant',
+  controlTrackId: 'controlTrackId',
+  treatmentTrackId: 'treatmentTrackId',
+  controlReleaseId: 'controlReleaseId',
+  treatmentReleaseId: 'treatmentReleaseId',
+  analysisStatus: 'analysisStatus',
+  metricType: 'metricType',
+  metricEventName: 'metricEventName',
+  conversionWindowHours: 'conversionWindowHours',
+  targetCountries: 'targetCountries',
+  targetLocales: 'targetLocales',
+  targetPlatforms: 'targetPlatforms',
+  targetOsVersions: 'targetOsVersions',
+  minimumDetectableEffect: 'minimumDetectableEffect',
+  confidenceLevel: 'confidenceLevel',
+  statisticalPower: 'statisticalPower',
+  baselineConversionRate: 'baselineConversionRate',
+  minimumSamplePerVariant: 'minimumSamplePerVariant',
+  maxDurationDays: 'maxDurationDays',
+  recommendedWinner: 'recommendedWinner',
+  pausedAt: 'pausedAt',
+  pauseReason: 'pauseReason',
+  pausedById: 'pausedById',
+  endedById: 'endedById',
+  endReason: 'endReason',
+  lastAnalyzedAt: 'lastAnalyzedAt',
   startedAt: 'startedAt',
   endedAt: 'endedAt',
   createdAt: 'createdAt'
 } as const
 
 export type BundleAbTestsScalarFieldEnum = (typeof BundleAbTestsScalarFieldEnum)[keyof typeof BundleAbTestsScalarFieldEnum]
+
+
+export const BundleAbTestExposuresScalarFieldEnum = {
+  id: 'id',
+  testId: 'testId',
+  deviceId: 'deviceId',
+  variant: 'variant',
+  assignedTrackId: 'assignedTrackId',
+  assignedReleaseId: 'assignedReleaseId',
+  bucket: 'bucket',
+  countryCode: 'countryCode',
+  locale: 'locale',
+  platform: 'platform',
+  osVersion: 'osVersion',
+  exposedAt: 'exposedAt'
+} as const
+
+export type BundleAbTestExposuresScalarFieldEnum = (typeof BundleAbTestExposuresScalarFieldEnum)[keyof typeof BundleAbTestExposuresScalarFieldEnum]
+
+
+export const BundleAbTestAnalysisSnapshotsScalarFieldEnum = {
+  id: 'id',
+  testId: 'testId',
+  bucketStart: 'bucketStart',
+  analysisStatus: 'analysisStatus',
+  exposedA: 'exposedA',
+  exposedB: 'exposedB',
+  analyzableA: 'analyzableA',
+  analyzableB: 'analyzableB',
+  conversionsA: 'conversionsA',
+  conversionsB: 'conversionsB',
+  conversionRateA: 'conversionRateA',
+  conversionRateB: 'conversionRateB',
+  absoluteDifference: 'absoluteDifference',
+  liftPercent: 'liftPercent',
+  confidenceIntervalLow: 'confidenceIntervalLow',
+  confidenceIntervalHigh: 'confidenceIntervalHigh',
+  pValue: 'pValue',
+  confidence: 'confidence',
+  sequentialEvidence: 'sequentialEvidence',
+  posteriorProbabilityB: 'posteriorProbabilityB',
+  expectedLossA: 'expectedLossA',
+  expectedLossB: 'expectedLossB',
+  srmPValue: 'srmPValue',
+  srmDetected: 'srmDetected',
+  dataDelayMinutes: 'dataDelayMinutes',
+  requiredSamplePerVariant: 'requiredSamplePerVariant',
+  crashAffectedA: 'crashAffectedA',
+  crashAffectedB: 'crashAffectedB',
+  crashRateA: 'crashRateA',
+  crashRateB: 'crashRateB',
+  crashDifference: 'crashDifference',
+  crashPValue: 'crashPValue',
+  guardrailTriggered: 'guardrailTriggered',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleAbTestAnalysisSnapshotsScalarFieldEnum = (typeof BundleAbTestAnalysisSnapshotsScalarFieldEnum)[keyof typeof BundleAbTestAnalysisSnapshotsScalarFieldEnum]
 
 
 export const BundleAbuseSignalsScalarFieldEnum = {
@@ -9246,6 +11365,7 @@ export const BundleAdConfigurationsScalarFieldEnum = {
   nativeId: 'nativeId',
   isTestMode: 'isTestMode',
   isActive: 'isActive',
+  revision: 'revision',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -9265,6 +11385,9 @@ export const BundleAnalyticsEventsScalarFieldEnum = {
   ipAddress: 'ipAddress',
   deviceFingerprint: 'deviceFingerprint',
   clientEventId: 'clientEventId',
+  abTestId: 'abTestId',
+  abExposureId: 'abExposureId',
+  abVariant: 'abVariant',
   createdAt: 'createdAt'
 } as const
 
@@ -9476,6 +11599,9 @@ export const BundleInstallEventsScalarFieldEnum = {
   osVersion: 'osVersion',
   bundleVersion: 'bundleVersion',
   countryCode: 'countryCode',
+  abTestId: 'abTestId',
+  abExposureId: 'abExposureId',
+  abVariant: 'abVariant',
   createdAt: 'createdAt'
 } as const
 
@@ -9564,6 +11690,9 @@ export const BundlePrivacyDeclarationsScalarFieldEnum = {
   thirdParties: 'thirdParties',
   dataRetentionDays: 'dataRetentionDays',
   privacyContactEmail: 'privacyContactEmail',
+  declarationStatus: 'declarationStatus',
+  revision: 'revision',
+  reviewedAt: 'reviewedAt',
   updatedAt: 'updatedAt',
   createdAt: 'createdAt'
 } as const
@@ -9613,7 +11742,8 @@ export const BundleReleaseTracksScalarFieldEnum = {
   storagePath: 'storagePath',
   releaseNotes: 'releaseNotes',
   status: 'status',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  artifactManifestId: 'artifactManifestId'
 } as const
 
 export type BundleReleaseTracksScalarFieldEnum = (typeof BundleReleaseTracksScalarFieldEnum)[keyof typeof BundleReleaseTracksScalarFieldEnum]
@@ -9666,6 +11796,23 @@ export const BundleRuntimeConfigScalarFieldEnum = {
 } as const
 
 export type BundleRuntimeConfigScalarFieldEnum = (typeof BundleRuntimeConfigScalarFieldEnum)[keyof typeof BundleRuntimeConfigScalarFieldEnum]
+
+
+export const BundleRuntimeConfigEntriesScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  environment: 'environment',
+  track: 'track',
+  configKey: 'configKey',
+  value: 'value',
+  valueType: 'valueType',
+  revision: 'revision',
+  isSecret: 'isSecret',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleRuntimeConfigEntriesScalarFieldEnum = (typeof BundleRuntimeConfigEntriesScalarFieldEnum)[keyof typeof BundleRuntimeConfigEntriesScalarFieldEnum]
 
 
 export const BundleScreenshotsScalarFieldEnum = {
@@ -9899,10 +12046,86 @@ export const BundleUserEntitlementsScalarFieldEnum = {
   expiresAt: 'expiresAt',
   isActive: 'isActive',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  licenseKeyHash: 'licenseKeyHash',
+  revokedAt: 'revokedAt',
+  lastVerifiedAt: 'lastVerifiedAt'
 } as const
 
 export type BundleUserEntitlementsScalarFieldEnum = (typeof BundleUserEntitlementsScalarFieldEnum)[keyof typeof BundleUserEntitlementsScalarFieldEnum]
+
+
+export const BundleEntitlementLicensesScalarFieldEnum = {
+  id: 'id',
+  entitlementId: 'entitlementId',
+  tokenPrefix: 'tokenPrefix',
+  tokenHash: 'tokenHash',
+  deviceLimit: 'deviceLimit',
+  deviceIds: 'deviceIds',
+  isRevoked: 'isRevoked',
+  graceUntil: 'graceUntil',
+  lastVerifiedAt: 'lastVerifiedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BundleEntitlementLicensesScalarFieldEnum = (typeof BundleEntitlementLicensesScalarFieldEnum)[keyof typeof BundleEntitlementLicensesScalarFieldEnum]
+
+
+export const BundleLedgerAccountsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  code: 'code',
+  accountType: 'accountType',
+  currency: 'currency',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleLedgerAccountsScalarFieldEnum = (typeof BundleLedgerAccountsScalarFieldEnum)[keyof typeof BundleLedgerAccountsScalarFieldEnum]
+
+
+export const BundleLedgerTransactionsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  orderId: 'orderId',
+  transactionType: 'transactionType',
+  status: 'status',
+  providerRef: 'providerRef',
+  idempotencyKey: 'idempotencyKey',
+  currency: 'currency',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleLedgerTransactionsScalarFieldEnum = (typeof BundleLedgerTransactionsScalarFieldEnum)[keyof typeof BundleLedgerTransactionsScalarFieldEnum]
+
+
+export const BundleLedgerEntriesScalarFieldEnum = {
+  id: 'id',
+  transactionId: 'transactionId',
+  accountId: 'accountId',
+  direction: 'direction',
+  amount: 'amount',
+  currency: 'currency',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleLedgerEntriesScalarFieldEnum = (typeof BundleLedgerEntriesScalarFieldEnum)[keyof typeof BundleLedgerEntriesScalarFieldEnum]
+
+
+export const BundleStripeWebhookEventsScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  eventType: 'eventType',
+  bundleId: 'bundleId',
+  payloadHash: 'payloadHash',
+  status: 'status',
+  processedAt: 'processedAt',
+  error: 'error',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleStripeWebhookEventsScalarFieldEnum = (typeof BundleStripeWebhookEventsScalarFieldEnum)[keyof typeof BundleStripeWebhookEventsScalarFieldEnum]
 
 
 export const BundleRolloutsScalarFieldEnum = {
@@ -9913,7 +12136,11 @@ export const BundleRolloutsScalarFieldEnum = {
   targetCountry: 'targetCountry',
   startedAt: 'startedAt',
   completedAt: 'completedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  status: 'status',
+  targetLocale: 'targetLocale',
+  targetPlatform: 'targetPlatform',
+  pausedAt: 'pausedAt'
 } as const
 
 export type BundleRolloutsScalarFieldEnum = (typeof BundleRolloutsScalarFieldEnum)[keyof typeof BundleRolloutsScalarFieldEnum]
@@ -9975,6 +12202,29 @@ export const BundleCrashReportsScalarFieldEnum = {
 export type BundleCrashReportsScalarFieldEnum = (typeof BundleCrashReportsScalarFieldEnum)[keyof typeof BundleCrashReportsScalarFieldEnum]
 
 
+export const BundleCrashEventsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  clientEventId: 'clientEventId',
+  deviceId: 'deviceId',
+  releaseTrackId: 'releaseTrackId',
+  releaseId: 'releaseId',
+  bundleVersion: 'bundleVersion',
+  buildNumber: 'buildNumber',
+  stackTraceHash: 'stackTraceHash',
+  stackTrace: 'stackTrace',
+  platform: 'platform',
+  osVersion: 'osVersion',
+  abTestId: 'abTestId',
+  abExposureId: 'abExposureId',
+  abVariant: 'abVariant',
+  occurredAt: 'occurredAt',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleCrashEventsScalarFieldEnum = (typeof BundleCrashEventsScalarFieldEnum)[keyof typeof BundleCrashEventsScalarFieldEnum]
+
+
 export const BundleReviewHistoryScalarFieldEnum = {
   id: 'id',
   bundleId: 'bundleId',
@@ -9993,6 +12243,7 @@ export const BundleReviewQueueScalarFieldEnum = {
   id: 'id',
   bundleId: 'bundleId',
   submittedVersionId: 'submittedVersionId',
+  releaseId: 'releaseId',
   status: 'status',
   reviewerId: 'reviewerId',
   priority: 'priority',
@@ -10014,10 +12265,112 @@ export const BundleSecurityScanResultsScalarFieldEnum = {
   severity: 'severity',
   findings: 'findings',
   scannedAt: 'scannedAt',
-  scannerVersion: 'scannerVersion'
+  scannerVersion: 'scannerVersion',
+  policyVersion: 'policyVersion',
+  sbom: 'sbom',
+  riskScore: 'riskScore'
 } as const
 
 export type BundleSecurityScanResultsScalarFieldEnum = (typeof BundleSecurityScanResultsScalarFieldEnum)[keyof typeof BundleSecurityScanResultsScalarFieldEnum]
+
+
+export const BundleArtifactManifestsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  versionId: 'versionId',
+  storageProvider: 'storageProvider',
+  storageBucket: 'storageBucket',
+  storageKey: 'storageKey',
+  checksumSha256: 'checksumSha256',
+  fileSize: 'fileSize',
+  contentType: 'contentType',
+  deltaFromBuild: 'deltaFromBuild',
+  sourceCommit: 'sourceCommit',
+  immutable: 'immutable',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleArtifactManifestsScalarFieldEnum = (typeof BundleArtifactManifestsScalarFieldEnum)[keyof typeof BundleArtifactManifestsScalarFieldEnum]
+
+
+export const BundleRolloutExposuresScalarFieldEnum = {
+  id: 'id',
+  rolloutId: 'rolloutId',
+  bundleId: 'bundleId',
+  trackId: 'trackId',
+  deviceId: 'deviceId',
+  exposedAt: 'exposedAt'
+} as const
+
+export type BundleRolloutExposuresScalarFieldEnum = (typeof BundleRolloutExposuresScalarFieldEnum)[keyof typeof BundleRolloutExposuresScalarFieldEnum]
+
+
+export const BundleOutboxEventsScalarFieldEnum = {
+  id: 'id',
+  eventKey: 'eventKey',
+  aggregateType: 'aggregateType',
+  aggregateId: 'aggregateId',
+  eventType: 'eventType',
+  payload: 'payload',
+  status: 'status',
+  attempts: 'attempts',
+  nextAttemptAt: 'nextAttemptAt',
+  processedAt: 'processedAt',
+  lastError: 'lastError',
+  leaseOwner: 'leaseOwner',
+  leasedUntil: 'leasedUntil',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleOutboxEventsScalarFieldEnum = (typeof BundleOutboxEventsScalarFieldEnum)[keyof typeof BundleOutboxEventsScalarFieldEnum]
+
+
+export const LepoShipIdempotencyKeysScalarFieldEnum = {
+  id: 'id',
+  scope: 'scope',
+  key: 'key',
+  requestHash: 'requestHash',
+  response: 'response',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  completedAt: 'completedAt',
+  leaseOwner: 'leaseOwner',
+  leasedUntil: 'leasedUntil',
+  lastError: 'lastError'
+} as const
+
+export type LepoShipIdempotencyKeysScalarFieldEnum = (typeof LepoShipIdempotencyKeysScalarFieldEnum)[keyof typeof LepoShipIdempotencyKeysScalarFieldEnum]
+
+
+export const BundleReleaseOverridesScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  versionId: 'versionId',
+  createdBy: 'createdBy',
+  reason: 'reason',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleReleaseOverridesScalarFieldEnum = (typeof BundleReleaseOverridesScalarFieldEnum)[keyof typeof BundleReleaseOverridesScalarFieldEnum]
+
+
+export const BundleFinancialLedgerEntriesScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  orderId: 'orderId',
+  entryType: 'entryType',
+  amount: 'amount',
+  currency: 'currency',
+  idempotencyKey: 'idempotencyKey',
+  providerRef: 'providerRef',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleFinancialLedgerEntriesScalarFieldEnum = (typeof BundleFinancialLedgerEntriesScalarFieldEnum)[keyof typeof BundleFinancialLedgerEntriesScalarFieldEnum]
 
 
 export const BundleUpdatePhasesScalarFieldEnum = {
@@ -10846,6 +13199,9 @@ export const BundleSdkTokensScalarFieldEnum = {
   tokenPrefix: 'tokenPrefix',
   tokenHash: 'tokenHash',
   label: 'label',
+  scopes: 'scopes',
+  expiresAt: 'expiresAt',
+  rotationGraceUntil: 'rotationGraceUntil',
   lastUsedAt: 'lastUsedAt',
   isRevoked: 'isRevoked',
   createdAt: 'createdAt'
@@ -11030,6 +13386,118 @@ export type ListEnumOrganizationTypeFieldRefInput<$PrismaModel> = FieldRefInputT
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
+
+/**
+ * Reference to a field of type 'BundleCatalogStatus'
+ */
+export type EnumBundleCatalogStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BundleCatalogStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'BundleCatalogStatus[]'
+ */
+export type ListEnumBundleCatalogStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BundleCatalogStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BundleDeliveryMode'
+ */
+export type EnumBundleDeliveryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BundleDeliveryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'BundleDeliveryMode[]'
+ */
+export type ListEnumBundleDeliveryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BundleDeliveryMode[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BundleReleaseStatus'
+ */
+export type EnumBundleReleaseStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BundleReleaseStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'BundleReleaseStatus[]'
+ */
+export type ListEnumBundleReleaseStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BundleReleaseStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BundleArtifactKind'
+ */
+export type EnumBundleArtifactKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BundleArtifactKind'>
+    
+
+
+/**
+ * Reference to a field of type 'BundleArtifactKind[]'
+ */
+export type ListEnumBundleArtifactKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BundleArtifactKind[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BundleBuildStatus'
+ */
+export type EnumBundleBuildStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BundleBuildStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'BundleBuildStatus[]'
+ */
+export type ListEnumBundleBuildStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BundleBuildStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BundleApprovalKind'
+ */
+export type EnumBundleApprovalKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BundleApprovalKind'>
+    
+
+
+/**
+ * Reference to a field of type 'BundleApprovalKind[]'
+ */
+export type ListEnumBundleApprovalKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BundleApprovalKind[]'>
+    
+
+
+/**
+ * Reference to a field of type 'LedgerEntryDirection'
+ */
+export type EnumLedgerEntryDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LedgerEntryDirection'>
+    
+
+
+/**
+ * Reference to a field of type 'LedgerEntryDirection[]'
+ */
+export type ListEnumLedgerEntryDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LedgerEntryDirection[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal'
+ */
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal[]'
+ */
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -11133,10 +13601,22 @@ export type GlobalOmitConfig = {
   project?: Prisma.ProjectOmit
   bundlePayouts?: Prisma.BundlePayoutsOmit
   bundles?: Prisma.BundlesOmit
+  bundleChannels?: Prisma.BundleChannelsOmit
+  bundleReleases?: Prisma.BundleReleasesOmit
+  bundleArtifacts?: Prisma.BundleArtifactsOmit
+  bundleBuildJobs?: Prisma.BundleBuildJobsOmit
+  bundleBuildLogChunks?: Prisma.BundleBuildLogChunksOmit
+  bundleReleaseApprovals?: Prisma.BundleReleaseApprovalsOmit
+  bundleReleaseOverridesV2?: Prisma.BundleReleaseOverridesV2Omit
+  bundleReleaseOverrideApprovals?: Prisma.BundleReleaseOverrideApprovalsOmit
+  bundleDeliveryRollouts?: Prisma.BundleDeliveryRolloutsOmit
+  bundleDeliveryRolloutExposures?: Prisma.BundleDeliveryRolloutExposuresOmit
   notifications?: Prisma.NotificationsOmit
   session?: Prisma.SessionOmit
   userDeviceToken?: Prisma.UserDeviceTokenOmit
   bundleAbTests?: Prisma.BundleAbTestsOmit
+  bundleAbTestExposures?: Prisma.BundleAbTestExposuresOmit
+  bundleAbTestAnalysisSnapshots?: Prisma.BundleAbTestAnalysisSnapshotsOmit
   bundleAbuseSignals?: Prisma.BundleAbuseSignalsOmit
   bundleAdConfigurations?: Prisma.BundleAdConfigurationsOmit
   bundleAnalyticsEvents?: Prisma.BundleAnalyticsEventsOmit
@@ -11166,6 +13646,7 @@ export type GlobalOmitConfig = {
   bundleRetentionStats?: Prisma.BundleRetentionStatsOmit
   bundleReviews?: Prisma.BundleReviewsOmit
   bundleRuntimeConfig?: Prisma.BundleRuntimeConfigOmit
+  bundleRuntimeConfigEntries?: Prisma.BundleRuntimeConfigEntriesOmit
   bundleScreenshots?: Prisma.BundleScreenshotsOmit
   bundleSearchKeywords?: Prisma.BundleSearchKeywordsOmit
   bundleStateTransitions?: Prisma.BundleStateTransitionsOmit
@@ -11182,13 +13663,25 @@ export type GlobalOmitConfig = {
   bundlePaymentLogs?: Prisma.BundlePaymentLogsOmit
   bundleRefundRequests?: Prisma.BundleRefundRequestsOmit
   bundleUserEntitlements?: Prisma.BundleUserEntitlementsOmit
+  bundleEntitlementLicenses?: Prisma.BundleEntitlementLicensesOmit
+  bundleLedgerAccounts?: Prisma.BundleLedgerAccountsOmit
+  bundleLedgerTransactions?: Prisma.BundleLedgerTransactionsOmit
+  bundleLedgerEntries?: Prisma.BundleLedgerEntriesOmit
+  bundleStripeWebhookEvents?: Prisma.BundleStripeWebhookEventsOmit
   bundleRollouts?: Prisma.BundleRolloutsOmit
   bundleReviewReports?: Prisma.BundleReviewReportsOmit
   bundleSubscriptionHistory?: Prisma.BundleSubscriptionHistoryOmit
   bundleCrashReports?: Prisma.BundleCrashReportsOmit
+  bundleCrashEvents?: Prisma.BundleCrashEventsOmit
   bundleReviewHistory?: Prisma.BundleReviewHistoryOmit
   bundleReviewQueue?: Prisma.BundleReviewQueueOmit
   bundleSecurityScanResults?: Prisma.BundleSecurityScanResultsOmit
+  bundleArtifactManifests?: Prisma.BundleArtifactManifestsOmit
+  bundleRolloutExposures?: Prisma.BundleRolloutExposuresOmit
+  bundleOutboxEvents?: Prisma.BundleOutboxEventsOmit
+  lepoShipIdempotencyKeys?: Prisma.LepoShipIdempotencyKeysOmit
+  bundleReleaseOverrides?: Prisma.BundleReleaseOverridesOmit
+  bundleFinancialLedgerEntries?: Prisma.BundleFinancialLedgerEntriesOmit
   bundleUpdatePhases?: Prisma.BundleUpdatePhasesOmit
   userSecrets?: Prisma.UserSecretsOmit
   personalAccessToken?: Prisma.PersonalAccessTokenOmit

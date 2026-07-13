@@ -1,47 +1,29 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { AlertTriangle, CheckCircle, RefreshCw, Terminal } from "lucide-react";
 
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { prisma } from "@/lib/server/prisma";
 
 interface LepoShipTerminalProps {
   projectId: string;
   buildNumber: number;
 }
 
-function safeSegment(value: string) {
-  return value.replace(/[^a-zA-Z0-9_-]/g, "");
-}
-
 async function readBuildLogs(projectId: string, buildNumber: number) {
-  const safeProjectId = safeSegment(projectId);
-  const logFile = path.join(
-    process.cwd(),
-    "public",
-    "bundles",
-    safeProjectId,
-    `${buildNumber}.log`
-  );
-
-  try {
-    return await fs.readFile(logFile, "utf8");
-  } catch {
-    return "Build log is not available yet. Refresh after the build agent writes its first line.";
-  }
+  return prisma.bundleBuildJobs.findFirst({
+    where: { projectId, release: { buildNumber } },
+    include: { logs: { orderBy: { sequence: "asc" }, take: 2_000 } },
+    orderBy: { createdAt: "desc" },
+  });
 }
 
 export async function LepoShipTerminal({
   projectId,
   buildNumber,
 }: LepoShipTerminalProps) {
-  const logs = await readBuildLogs(projectId, buildNumber);
-  const status = logs.includes(`--- LepoShip Build #${buildNumber} Succeeded ---`)
-    ? "success"
-    : logs.includes(`--- LepoShip Build #${buildNumber} Failed ---`)
-      ? "failed"
-      : "building";
-  const logLines = logs.split("\n").filter((line) => line.trim() !== "");
+  const build = await readBuildLogs(projectId, buildNumber);
+  const status = build?.status === "succeeded" ? "success" : build?.status === "failed" || build?.status === "cancelled" ? "failed" : "building";
+  const logLines = build?.logs.map((log) => log.message) ?? ["Build log is not available yet. Refresh after the worker writes its first chunk."];
 
   return (
     <div className="overflow-hidden rounded-lg border border-hairline bg-black/95 shadow-dark select-text">

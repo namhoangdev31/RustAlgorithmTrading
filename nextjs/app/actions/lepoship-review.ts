@@ -5,6 +5,7 @@ import { localizedHref, redirect } from "@/i18n/navigation";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { prisma } from "@/lib/server/prisma";
 import { z } from "zod";
+import { promoteRelease, rejectRelease } from "@/lib/server/lepoship/release-service";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -43,6 +44,34 @@ export async function approveReviewQueueAction(formData: FormData) {
 
   let failure: string | null = null;
   try {
+    const canonicalItem = await prisma.bundleReviewQueue.findUnique({
+      where: { id: queueItemId },
+      include: { release: { include: { approvals: true } } },
+    });
+    if (canonicalItem?.release) {
+      const release = canonicalItem.release;
+      const privacy = await prisma.bundlePrivacyDeclarations.findUnique({ where: { bundleId: canonicalItem.bundleId } });
+      const security = canonicalItem.release.approvals.find((approval) => approval.kind === "security" && approval.status === "approved");
+      if (!security) throw new Error("A passing canonical security scan is required.");
+      if (!privacy || !["submitted", "approved"].includes(privacy.declarationStatus)) throw new Error("A submitted privacy declaration is required.");
+      await prisma.$transaction(async (tx) => {
+        const claimed = await tx.bundleReviewQueue.updateMany({
+          where: { id: canonicalItem.id, status: "pending" },
+          data: { status: "approved", reviewerId: user.id, reviewedAt: new Date(), updatedAt: new Date() },
+        });
+        if (claimed.count !== 1) throw new Error("Queue item has already been reviewed.");
+        for (const kind of ["moderation", "privacy"] as const) {
+          await tx.bundleReleaseApprovals.upsert({
+            where: { releaseId_kind: { releaseId: canonicalItem.release!.id, kind } },
+            create: { id: crypto.randomUUID(), releaseId: canonicalItem.release!.id, kind, status: "approved", actorId: user.id, policyVersion: "production-gate-v2", createdAt: new Date() },
+            update: { status: "approved", actorId: user.id, policyVersion: "production-gate-v2", createdAt: new Date() },
+          });
+        }
+        await tx.bundleReleases.update({ where: { id: release.id }, data: { status: "approved", approvedAt: new Date(), updatedAt: new Date() } });
+        await tx.bundlePrivacyDeclarations.update({ where: { bundleId: canonicalItem.bundleId }, data: { declarationStatus: "approved", reviewedAt: new Date(), updatedAt: new Date() } });
+      }, { isolationLevel: "Serializable" });
+      await promoteRelease({ releaseId: release.id, actorId: user.id, reason: "Moderation and privacy approval completed." });
+    } else {
     await prisma.$transaction(async (tx) => {
       // 1. Read the queue item and verify it is still pending.
       const item = await tx.bundleReviewQueue.findUnique({
@@ -63,6 +92,14 @@ export async function approveReviewQueueAction(formData: FormData) {
       }
 
       const now = new Date();
+      const [privacy, scan, version, emergencyOverride] = await Promise.all([
+        tx.bundlePrivacyDeclarations.findUnique({ where: { bundleId: item.bundleId }, select: { declarationStatus: true } }),
+        item.submittedVersionId ? tx.bundleSecurityScanResults.findFirst({ where: { bundleId: item.bundleId, versionId: item.submittedVersionId, result: "passed" }, orderBy: { scannedAt: "desc" } }) : null,
+        item.submittedVersionId ? tx.bundleVersionHistory.findUnique({ where: { id: item.submittedVersionId }, select: { version: true, buildNumber: true } }) : null,
+        tx.bundleReleaseOverrides.findFirst({ where: { bundleId: item.bundleId, versionId: item.submittedVersionId, revokedAt: null, expiresAt: { gt: now } }, orderBy: { createdAt: "desc" } }),
+      ]);
+      if (!emergencyOverride && (!privacy || !["submitted", "approved"].includes(privacy.declarationStatus))) throw new Error("A submitted privacy declaration is required before publication.");
+      if (!emergencyOverride && !scan) throw new Error("A passing security scan is required before publication.");
 
       // Conditional updates make a repeated/concurrent decision a no-op.
       const claimed = await tx.bundleReviewQueue.updateMany({
@@ -79,7 +116,7 @@ export async function approveReviewQueueAction(formData: FormData) {
       }
 
       const published = await tx.bundles.updateMany({
-        where: { id: item.bundleId, status: "reviewing" },
+        where: { id: item.bundleId, status: { in: ["draft", "submitted"] } },
         data: {
           status: "published",
           publishedAt: now,
@@ -90,6 +127,9 @@ export async function approveReviewQueueAction(formData: FormData) {
       if (published.count !== 1) {
         throw new Error("Bundle is no longer awaiting review.");
       }
+      if (privacy) await tx.bundlePrivacyDeclarations.update({ where: { bundleId: item.bundleId }, data: { declarationStatus: "approved", reviewedAt: now, updatedAt: now } });
+
+      if (version) await tx.bundleVersionHistory.update({ where: { id: item.submittedVersionId! }, data: { status: "published", publishedAt: now } });
 
       // 4. Append review history
       await tx.bundleReviewHistory.create({
@@ -103,6 +143,7 @@ export async function approveReviewQueueAction(formData: FormData) {
         },
       });
     });
+    }
 
   } catch (error: any) {
     failure = error instanceof Error ? error.message : "approve_failed";
@@ -112,6 +153,50 @@ export async function approveReviewQueueAction(formData: FormData) {
   if (failure) redirect(withQueryParam(target, "review", failure));
   revalidatePath("/admin/reviews");
   redirect(withQueryParam(target, "review", "approved"));
+}
+
+export async function createEmergencyReleaseOverrideAction(formData: FormData) {
+  const user = await requireAdmin();
+  const queueItemId = readFormValue(formData, "queueItemId");
+  const reason = readFormValue(formData, "overrideReason");
+  const returnTo = readFormValue(formData, "returnTo") || "/admin/review-queue";
+  if (!queueItemId || reason.length < 10) throw new Error("A detailed override reason is required.");
+  const item = await prisma.bundleReviewQueue.findUnique({
+    where: { id: queueItemId },
+    include: { release: { include: { approvals: true } } },
+  });
+  if (!item?.release || item.status !== "pending") throw new Error("Pending canonical release review item not found.");
+  const security = item.release.approvals.find((approval) => approval.kind === "security" && approval.status === "approved");
+  if (!security) throw new Error("Emergency override cannot bypass the security gate.");
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + 60 * 60 * 1000);
+  await prisma.$transaction([
+    prisma.bundleReleaseOverridesV2.create({ data: { id: crypto.randomUUID(), bundleId: item.bundleId, releaseId: item.release.id, createdById: user.id, reason, expiresAt, createdAt: now } }),
+    prisma.bundleAuditLog.create({ data: { id: crypto.randomUUID(), bundleId: item.bundleId, userId: user.id, action: "emergency_release_override", fieldName: "release_gates", oldValue: JSON.stringify({ reason, expiresAt }), createdAt: now } }),
+  ]);
+  revalidatePath("/admin/review-queue");
+  const target = await localizedHref(returnTo);
+  redirect(withQueryParam(target, "review", "override_created"));
+}
+
+export async function approveEmergencyReleaseOverrideAction(formData: FormData) {
+  const user = await requireAdmin();
+  const overrideId = readFormValue(formData, "overrideId");
+  if (!overrideId) throw new Error("Override ID is required.");
+  const override = await prisma.bundleReleaseOverridesV2.findUnique({ where: { id: overrideId }, include: { approvals: true } });
+  if (!override || override.revokedAt || override.expiresAt <= new Date()) throw new Error("Active override not found.");
+  if (override.createdById === user.id) throw new Error("Override creator cannot approve their own request.");
+  await prisma.$transaction(async (tx) => {
+    await tx.bundleReleaseOverrideApprovals.upsert({
+      where: { overrideId_approverId: { overrideId, approverId: user.id } },
+      create: { id: crypto.randomUUID(), overrideId, approverId: user.id, createdAt: new Date() },
+      update: {},
+    });
+    await tx.bundleAuditLog.create({
+      data: { id: crypto.randomUUID(), bundleId: override.bundleId, userId: user.id, action: "emergency_override_approved", fieldName: overrideId, createdAt: new Date() },
+    });
+  });
+  revalidatePath("/admin/review-queue");
 }
 
 // ---------------------------------------------------------------------------
@@ -142,6 +227,15 @@ export async function rejectReviewQueueAction(formData: FormData) {
 
   let failure: string | null = null;
   try {
+    const canonicalItem = await prisma.bundleReviewQueue.findUnique({ where: { id: queueItemId }, select: { id: true, releaseId: true, status: true } });
+    if (canonicalItem?.releaseId) {
+      const claimed = await prisma.bundleReviewQueue.updateMany({
+        where: { id: queueItemId, status: "pending" },
+        data: { status: "rejected", reviewerId: user.id, reviewedAt: new Date(), notes: rejectionReason, updatedAt: new Date() },
+      });
+      if (claimed.count !== 1) throw new Error("Queue item has already been reviewed.");
+      await rejectRelease({ releaseId: canonicalItem.releaseId, actorId: user.id, reason: rejectionReason });
+    } else {
     await prisma.$transaction(async (tx) => {
       const item = await tx.bundleReviewQueue.findUnique({
         where: { id: queueItemId },
@@ -174,18 +268,6 @@ export async function rejectReviewQueueAction(formData: FormData) {
         throw new Error("Queue item has already been reviewed.");
       }
 
-      const rejected = await tx.bundles.updateMany({
-        where: { id: item.bundleId, status: "reviewing" },
-        data: {
-          status: "rejected",
-          rejectionReason,
-          updatedAt: now,
-        },
-      });
-      if (rejected.count !== 1) {
-        throw new Error("Bundle is no longer awaiting review.");
-      }
-
       // 3. Append review history
       await tx.bundleReviewHistory.create({
         data: {
@@ -199,6 +281,7 @@ export async function rejectReviewQueueAction(formData: FormData) {
         },
       });
     });
+    }
 
   } catch (error: any) {
     failure = error instanceof Error ? error.message : "reject_failed";

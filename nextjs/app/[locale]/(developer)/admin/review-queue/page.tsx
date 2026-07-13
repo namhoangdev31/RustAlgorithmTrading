@@ -11,7 +11,6 @@ export default async function ReviewQueuePage() {
   const queueItems = await prisma.bundleReviewQueue.findMany({
     where: {
       status: "pending",
-      bundle: { status: "reviewing" },
     },
     orderBy: [{ priority: "desc" }, { createdAt: "asc" }],
     take: 50,
@@ -32,6 +31,9 @@ export default async function ReviewQueuePage() {
           version: true,
           buildNumber: true,
         },
+      },
+      release: {
+        select: { id: true, version: true, buildNumber: true, status: true },
       },
       reviewer: {
         select: { id: true, fullName: true, email: true },
@@ -85,9 +87,9 @@ export default async function ReviewQueuePage() {
                       </CardTitle>
                       <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs text-muted-foreground">
                         <span>
-                          v{item.submittedVersion?.version ?? item.bundle.version}
+                          v{item.release?.version ?? item.submittedVersion?.version ?? item.bundle.version}
                           {" · "}
-                          Build #{item.submittedVersion?.buildNumber ?? item.bundle.buildNumber}
+                          Build #{item.release?.buildNumber ?? item.submittedVersion?.buildNumber ?? item.bundle.buildNumber}
                         </span>
                         {item.bundle.slug && (
                           <Badge variant="outline" className="text-[10px] px-1.5 py-0">

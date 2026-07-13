@@ -36,6 +36,9 @@ export type BundleAnalyticsEventsMinAggregateOutputType = {
   ipAddress: string | null
   deviceFingerprint: string | null
   clientEventId: string | null
+  abTestId: string | null
+  abExposureId: string | null
+  abVariant: string | null
   createdAt: Date | null
 }
 
@@ -51,6 +54,9 @@ export type BundleAnalyticsEventsMaxAggregateOutputType = {
   ipAddress: string | null
   deviceFingerprint: string | null
   clientEventId: string | null
+  abTestId: string | null
+  abExposureId: string | null
+  abVariant: string | null
   createdAt: Date | null
 }
 
@@ -66,6 +72,9 @@ export type BundleAnalyticsEventsCountAggregateOutputType = {
   ipAddress: number
   deviceFingerprint: number
   clientEventId: number
+  abTestId: number
+  abExposureId: number
+  abVariant: number
   createdAt: number
   _all: number
 }
@@ -83,6 +92,9 @@ export type BundleAnalyticsEventsMinAggregateInputType = {
   ipAddress?: true
   deviceFingerprint?: true
   clientEventId?: true
+  abTestId?: true
+  abExposureId?: true
+  abVariant?: true
   createdAt?: true
 }
 
@@ -98,6 +110,9 @@ export type BundleAnalyticsEventsMaxAggregateInputType = {
   ipAddress?: true
   deviceFingerprint?: true
   clientEventId?: true
+  abTestId?: true
+  abExposureId?: true
+  abVariant?: true
   createdAt?: true
 }
 
@@ -113,6 +128,9 @@ export type BundleAnalyticsEventsCountAggregateInputType = {
   ipAddress?: true
   deviceFingerprint?: true
   clientEventId?: true
+  abTestId?: true
+  abExposureId?: true
+  abVariant?: true
   createdAt?: true
   _all?: true
 }
@@ -201,6 +219,9 @@ export type BundleAnalyticsEventsGroupByOutputType = {
   ipAddress: string | null
   deviceFingerprint: string | null
   clientEventId: string | null
+  abTestId: string | null
+  abExposureId: string | null
+  abVariant: string | null
   createdAt: Date
   _count: BundleAnalyticsEventsCountAggregateOutputType | null
   _min: BundleAnalyticsEventsMinAggregateOutputType | null
@@ -237,9 +258,14 @@ export type BundleAnalyticsEventsWhereInput = {
   ipAddress?: Prisma.StringNullableFilter<"BundleAnalyticsEvents"> | string | null
   deviceFingerprint?: Prisma.StringNullableFilter<"BundleAnalyticsEvents"> | string | null
   clientEventId?: Prisma.StringNullableFilter<"BundleAnalyticsEvents"> | string | null
+  abTestId?: Prisma.UuidNullableFilter<"BundleAnalyticsEvents"> | string | null
+  abExposureId?: Prisma.UuidNullableFilter<"BundleAnalyticsEvents"> | string | null
+  abVariant?: Prisma.StringNullableFilter<"BundleAnalyticsEvents"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleAnalyticsEvents"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  abTest?: Prisma.XOR<Prisma.BundleAbTestsNullableScalarRelationFilter, Prisma.BundleAbTestsWhereInput> | null
+  abExposure?: Prisma.XOR<Prisma.BundleAbTestExposuresNullableScalarRelationFilter, Prisma.BundleAbTestExposuresWhereInput> | null
 }
 
 export type BundleAnalyticsEventsOrderByWithRelationInput = {
@@ -254,9 +280,14 @@ export type BundleAnalyticsEventsOrderByWithRelationInput = {
   ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder
   deviceFingerprint?: Prisma.SortOrderInput | Prisma.SortOrder
   clientEventId?: Prisma.SortOrderInput | Prisma.SortOrder
+  abTestId?: Prisma.SortOrderInput | Prisma.SortOrder
+  abExposureId?: Prisma.SortOrderInput | Prisma.SortOrder
+  abVariant?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   bundle?: Prisma.BundlesOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
+  abTest?: Prisma.BundleAbTestsOrderByWithRelationInput
+  abExposure?: Prisma.BundleAbTestExposuresOrderByWithRelationInput
 }
 
 export type BundleAnalyticsEventsWhereUniqueInput = Prisma.AtLeast<{
@@ -274,9 +305,14 @@ export type BundleAnalyticsEventsWhereUniqueInput = Prisma.AtLeast<{
   bundleVersion?: Prisma.StringNullableFilter<"BundleAnalyticsEvents"> | string | null
   ipAddress?: Prisma.StringNullableFilter<"BundleAnalyticsEvents"> | string | null
   deviceFingerprint?: Prisma.StringNullableFilter<"BundleAnalyticsEvents"> | string | null
+  abTestId?: Prisma.UuidNullableFilter<"BundleAnalyticsEvents"> | string | null
+  abExposureId?: Prisma.UuidNullableFilter<"BundleAnalyticsEvents"> | string | null
+  abVariant?: Prisma.StringNullableFilter<"BundleAnalyticsEvents"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleAnalyticsEvents"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  abTest?: Prisma.XOR<Prisma.BundleAbTestsNullableScalarRelationFilter, Prisma.BundleAbTestsWhereInput> | null
+  abExposure?: Prisma.XOR<Prisma.BundleAbTestExposuresNullableScalarRelationFilter, Prisma.BundleAbTestExposuresWhereInput> | null
 }, "id" | "clientEventId">
 
 export type BundleAnalyticsEventsOrderByWithAggregationInput = {
@@ -291,6 +327,9 @@ export type BundleAnalyticsEventsOrderByWithAggregationInput = {
   ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder
   deviceFingerprint?: Prisma.SortOrderInput | Prisma.SortOrder
   clientEventId?: Prisma.SortOrderInput | Prisma.SortOrder
+  abTestId?: Prisma.SortOrderInput | Prisma.SortOrder
+  abExposureId?: Prisma.SortOrderInput | Prisma.SortOrder
+  abVariant?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.BundleAnalyticsEventsCountOrderByAggregateInput
   _max?: Prisma.BundleAnalyticsEventsMaxOrderByAggregateInput
@@ -312,6 +351,9 @@ export type BundleAnalyticsEventsScalarWhereWithAggregatesInput = {
   ipAddress?: Prisma.StringNullableWithAggregatesFilter<"BundleAnalyticsEvents"> | string | null
   deviceFingerprint?: Prisma.StringNullableWithAggregatesFilter<"BundleAnalyticsEvents"> | string | null
   clientEventId?: Prisma.StringNullableWithAggregatesFilter<"BundleAnalyticsEvents"> | string | null
+  abTestId?: Prisma.UuidNullableWithAggregatesFilter<"BundleAnalyticsEvents"> | string | null
+  abExposureId?: Prisma.UuidNullableWithAggregatesFilter<"BundleAnalyticsEvents"> | string | null
+  abVariant?: Prisma.StringNullableWithAggregatesFilter<"BundleAnalyticsEvents"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleAnalyticsEvents"> | Date | string
 }
 
@@ -325,9 +367,12 @@ export type BundleAnalyticsEventsCreateInput = {
   ipAddress?: string | null
   deviceFingerprint?: string | null
   clientEventId?: string | null
+  abVariant?: string | null
   createdAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutAnalyticsEventsInput
   user?: Prisma.UserCreateNestedOneWithoutAnalyticsInput
+  abTest?: Prisma.BundleAbTestsCreateNestedOneWithoutAnalyticsEventsInput
+  abExposure?: Prisma.BundleAbTestExposuresCreateNestedOneWithoutAnalyticsEventsInput
 }
 
 export type BundleAnalyticsEventsUncheckedCreateInput = {
@@ -342,6 +387,9 @@ export type BundleAnalyticsEventsUncheckedCreateInput = {
   ipAddress?: string | null
   deviceFingerprint?: string | null
   clientEventId?: string | null
+  abTestId?: string | null
+  abExposureId?: string | null
+  abVariant?: string | null
   createdAt: Date | string
 }
 
@@ -355,9 +403,12 @@ export type BundleAnalyticsEventsUpdateInput = {
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutAnalyticsEventsNestedInput
   user?: Prisma.UserUpdateOneWithoutAnalyticsNestedInput
+  abTest?: Prisma.BundleAbTestsUpdateOneWithoutAnalyticsEventsNestedInput
+  abExposure?: Prisma.BundleAbTestExposuresUpdateOneWithoutAnalyticsEventsNestedInput
 }
 
 export type BundleAnalyticsEventsUncheckedUpdateInput = {
@@ -372,6 +423,9 @@ export type BundleAnalyticsEventsUncheckedUpdateInput = {
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abTestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abExposureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -387,6 +441,9 @@ export type BundleAnalyticsEventsCreateManyInput = {
   ipAddress?: string | null
   deviceFingerprint?: string | null
   clientEventId?: string | null
+  abTestId?: string | null
+  abExposureId?: string | null
+  abVariant?: string | null
   createdAt: Date | string
 }
 
@@ -400,6 +457,7 @@ export type BundleAnalyticsEventsUpdateManyMutationInput = {
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -415,6 +473,9 @@ export type BundleAnalyticsEventsUncheckedUpdateManyInput = {
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abTestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abExposureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -440,6 +501,9 @@ export type BundleAnalyticsEventsCountOrderByAggregateInput = {
   ipAddress?: Prisma.SortOrder
   deviceFingerprint?: Prisma.SortOrder
   clientEventId?: Prisma.SortOrder
+  abTestId?: Prisma.SortOrder
+  abExposureId?: Prisma.SortOrder
+  abVariant?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -455,6 +519,9 @@ export type BundleAnalyticsEventsMaxOrderByAggregateInput = {
   ipAddress?: Prisma.SortOrder
   deviceFingerprint?: Prisma.SortOrder
   clientEventId?: Prisma.SortOrder
+  abTestId?: Prisma.SortOrder
+  abExposureId?: Prisma.SortOrder
+  abVariant?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -470,6 +537,9 @@ export type BundleAnalyticsEventsMinOrderByAggregateInput = {
   ipAddress?: Prisma.SortOrder
   deviceFingerprint?: Prisma.SortOrder
   clientEventId?: Prisma.SortOrder
+  abTestId?: Prisma.SortOrder
+  abExposureId?: Prisma.SortOrder
+  abVariant?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -557,6 +627,90 @@ export type BundleAnalyticsEventsUncheckedUpdateManyWithoutBundleNestedInput = {
   deleteMany?: Prisma.BundleAnalyticsEventsScalarWhereInput | Prisma.BundleAnalyticsEventsScalarWhereInput[]
 }
 
+export type BundleAnalyticsEventsCreateNestedManyWithoutAbTestInput = {
+  create?: Prisma.XOR<Prisma.BundleAnalyticsEventsCreateWithoutAbTestInput, Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbTestInput> | Prisma.BundleAnalyticsEventsCreateWithoutAbTestInput[] | Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbTestInput[]
+  connectOrCreate?: Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbTestInput | Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbTestInput[]
+  createMany?: Prisma.BundleAnalyticsEventsCreateManyAbTestInputEnvelope
+  connect?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+}
+
+export type BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbTestInput = {
+  create?: Prisma.XOR<Prisma.BundleAnalyticsEventsCreateWithoutAbTestInput, Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbTestInput> | Prisma.BundleAnalyticsEventsCreateWithoutAbTestInput[] | Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbTestInput[]
+  connectOrCreate?: Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbTestInput | Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbTestInput[]
+  createMany?: Prisma.BundleAnalyticsEventsCreateManyAbTestInputEnvelope
+  connect?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+}
+
+export type BundleAnalyticsEventsUpdateManyWithoutAbTestNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAnalyticsEventsCreateWithoutAbTestInput, Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbTestInput> | Prisma.BundleAnalyticsEventsCreateWithoutAbTestInput[] | Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbTestInput[]
+  connectOrCreate?: Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbTestInput | Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbTestInput[]
+  upsert?: Prisma.BundleAnalyticsEventsUpsertWithWhereUniqueWithoutAbTestInput | Prisma.BundleAnalyticsEventsUpsertWithWhereUniqueWithoutAbTestInput[]
+  createMany?: Prisma.BundleAnalyticsEventsCreateManyAbTestInputEnvelope
+  set?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  disconnect?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  delete?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  connect?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  update?: Prisma.BundleAnalyticsEventsUpdateWithWhereUniqueWithoutAbTestInput | Prisma.BundleAnalyticsEventsUpdateWithWhereUniqueWithoutAbTestInput[]
+  updateMany?: Prisma.BundleAnalyticsEventsUpdateManyWithWhereWithoutAbTestInput | Prisma.BundleAnalyticsEventsUpdateManyWithWhereWithoutAbTestInput[]
+  deleteMany?: Prisma.BundleAnalyticsEventsScalarWhereInput | Prisma.BundleAnalyticsEventsScalarWhereInput[]
+}
+
+export type BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAnalyticsEventsCreateWithoutAbTestInput, Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbTestInput> | Prisma.BundleAnalyticsEventsCreateWithoutAbTestInput[] | Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbTestInput[]
+  connectOrCreate?: Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbTestInput | Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbTestInput[]
+  upsert?: Prisma.BundleAnalyticsEventsUpsertWithWhereUniqueWithoutAbTestInput | Prisma.BundleAnalyticsEventsUpsertWithWhereUniqueWithoutAbTestInput[]
+  createMany?: Prisma.BundleAnalyticsEventsCreateManyAbTestInputEnvelope
+  set?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  disconnect?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  delete?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  connect?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  update?: Prisma.BundleAnalyticsEventsUpdateWithWhereUniqueWithoutAbTestInput | Prisma.BundleAnalyticsEventsUpdateWithWhereUniqueWithoutAbTestInput[]
+  updateMany?: Prisma.BundleAnalyticsEventsUpdateManyWithWhereWithoutAbTestInput | Prisma.BundleAnalyticsEventsUpdateManyWithWhereWithoutAbTestInput[]
+  deleteMany?: Prisma.BundleAnalyticsEventsScalarWhereInput | Prisma.BundleAnalyticsEventsScalarWhereInput[]
+}
+
+export type BundleAnalyticsEventsCreateNestedManyWithoutAbExposureInput = {
+  create?: Prisma.XOR<Prisma.BundleAnalyticsEventsCreateWithoutAbExposureInput, Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbExposureInput> | Prisma.BundleAnalyticsEventsCreateWithoutAbExposureInput[] | Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbExposureInput[]
+  connectOrCreate?: Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbExposureInput | Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbExposureInput[]
+  createMany?: Prisma.BundleAnalyticsEventsCreateManyAbExposureInputEnvelope
+  connect?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+}
+
+export type BundleAnalyticsEventsUncheckedCreateNestedManyWithoutAbExposureInput = {
+  create?: Prisma.XOR<Prisma.BundleAnalyticsEventsCreateWithoutAbExposureInput, Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbExposureInput> | Prisma.BundleAnalyticsEventsCreateWithoutAbExposureInput[] | Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbExposureInput[]
+  connectOrCreate?: Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbExposureInput | Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbExposureInput[]
+  createMany?: Prisma.BundleAnalyticsEventsCreateManyAbExposureInputEnvelope
+  connect?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+}
+
+export type BundleAnalyticsEventsUpdateManyWithoutAbExposureNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAnalyticsEventsCreateWithoutAbExposureInput, Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbExposureInput> | Prisma.BundleAnalyticsEventsCreateWithoutAbExposureInput[] | Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbExposureInput[]
+  connectOrCreate?: Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbExposureInput | Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbExposureInput[]
+  upsert?: Prisma.BundleAnalyticsEventsUpsertWithWhereUniqueWithoutAbExposureInput | Prisma.BundleAnalyticsEventsUpsertWithWhereUniqueWithoutAbExposureInput[]
+  createMany?: Prisma.BundleAnalyticsEventsCreateManyAbExposureInputEnvelope
+  set?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  disconnect?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  delete?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  connect?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  update?: Prisma.BundleAnalyticsEventsUpdateWithWhereUniqueWithoutAbExposureInput | Prisma.BundleAnalyticsEventsUpdateWithWhereUniqueWithoutAbExposureInput[]
+  updateMany?: Prisma.BundleAnalyticsEventsUpdateManyWithWhereWithoutAbExposureInput | Prisma.BundleAnalyticsEventsUpdateManyWithWhereWithoutAbExposureInput[]
+  deleteMany?: Prisma.BundleAnalyticsEventsScalarWhereInput | Prisma.BundleAnalyticsEventsScalarWhereInput[]
+}
+
+export type BundleAnalyticsEventsUncheckedUpdateManyWithoutAbExposureNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleAnalyticsEventsCreateWithoutAbExposureInput, Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbExposureInput> | Prisma.BundleAnalyticsEventsCreateWithoutAbExposureInput[] | Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbExposureInput[]
+  connectOrCreate?: Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbExposureInput | Prisma.BundleAnalyticsEventsCreateOrConnectWithoutAbExposureInput[]
+  upsert?: Prisma.BundleAnalyticsEventsUpsertWithWhereUniqueWithoutAbExposureInput | Prisma.BundleAnalyticsEventsUpsertWithWhereUniqueWithoutAbExposureInput[]
+  createMany?: Prisma.BundleAnalyticsEventsCreateManyAbExposureInputEnvelope
+  set?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  disconnect?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  delete?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  connect?: Prisma.BundleAnalyticsEventsWhereUniqueInput | Prisma.BundleAnalyticsEventsWhereUniqueInput[]
+  update?: Prisma.BundleAnalyticsEventsUpdateWithWhereUniqueWithoutAbExposureInput | Prisma.BundleAnalyticsEventsUpdateWithWhereUniqueWithoutAbExposureInput[]
+  updateMany?: Prisma.BundleAnalyticsEventsUpdateManyWithWhereWithoutAbExposureInput | Prisma.BundleAnalyticsEventsUpdateManyWithWhereWithoutAbExposureInput[]
+  deleteMany?: Prisma.BundleAnalyticsEventsScalarWhereInput | Prisma.BundleAnalyticsEventsScalarWhereInput[]
+}
+
 export type BundleAnalyticsEventsCreateWithoutUserInput = {
   id: string
   sessionId?: string | null
@@ -567,8 +721,11 @@ export type BundleAnalyticsEventsCreateWithoutUserInput = {
   ipAddress?: string | null
   deviceFingerprint?: string | null
   clientEventId?: string | null
+  abVariant?: string | null
   createdAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutAnalyticsEventsInput
+  abTest?: Prisma.BundleAbTestsCreateNestedOneWithoutAnalyticsEventsInput
+  abExposure?: Prisma.BundleAbTestExposuresCreateNestedOneWithoutAnalyticsEventsInput
 }
 
 export type BundleAnalyticsEventsUncheckedCreateWithoutUserInput = {
@@ -582,6 +739,9 @@ export type BundleAnalyticsEventsUncheckedCreateWithoutUserInput = {
   ipAddress?: string | null
   deviceFingerprint?: string | null
   clientEventId?: string | null
+  abTestId?: string | null
+  abExposureId?: string | null
+  abVariant?: string | null
   createdAt: Date | string
 }
 
@@ -626,6 +786,9 @@ export type BundleAnalyticsEventsScalarWhereInput = {
   ipAddress?: Prisma.StringNullableFilter<"BundleAnalyticsEvents"> | string | null
   deviceFingerprint?: Prisma.StringNullableFilter<"BundleAnalyticsEvents"> | string | null
   clientEventId?: Prisma.StringNullableFilter<"BundleAnalyticsEvents"> | string | null
+  abTestId?: Prisma.UuidNullableFilter<"BundleAnalyticsEvents"> | string | null
+  abExposureId?: Prisma.UuidNullableFilter<"BundleAnalyticsEvents"> | string | null
+  abVariant?: Prisma.StringNullableFilter<"BundleAnalyticsEvents"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleAnalyticsEvents"> | Date | string
 }
 
@@ -639,8 +802,11 @@ export type BundleAnalyticsEventsCreateWithoutBundleInput = {
   ipAddress?: string | null
   deviceFingerprint?: string | null
   clientEventId?: string | null
+  abVariant?: string | null
   createdAt: Date | string
   user?: Prisma.UserCreateNestedOneWithoutAnalyticsInput
+  abTest?: Prisma.BundleAbTestsCreateNestedOneWithoutAnalyticsEventsInput
+  abExposure?: Prisma.BundleAbTestExposuresCreateNestedOneWithoutAnalyticsEventsInput
 }
 
 export type BundleAnalyticsEventsUncheckedCreateWithoutBundleInput = {
@@ -654,6 +820,9 @@ export type BundleAnalyticsEventsUncheckedCreateWithoutBundleInput = {
   ipAddress?: string | null
   deviceFingerprint?: string | null
   clientEventId?: string | null
+  abTestId?: string | null
+  abExposureId?: string | null
+  abVariant?: string | null
   createdAt: Date | string
 }
 
@@ -683,6 +852,126 @@ export type BundleAnalyticsEventsUpdateManyWithWhereWithoutBundleInput = {
   data: Prisma.XOR<Prisma.BundleAnalyticsEventsUpdateManyMutationInput, Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutBundleInput>
 }
 
+export type BundleAnalyticsEventsCreateWithoutAbTestInput = {
+  id: string
+  sessionId?: string | null
+  eventType: string
+  eventData?: string | null
+  platformVersion?: string | null
+  bundleVersion?: string | null
+  ipAddress?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
+  abVariant?: string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutAnalyticsEventsInput
+  user?: Prisma.UserCreateNestedOneWithoutAnalyticsInput
+  abExposure?: Prisma.BundleAbTestExposuresCreateNestedOneWithoutAnalyticsEventsInput
+}
+
+export type BundleAnalyticsEventsUncheckedCreateWithoutAbTestInput = {
+  id: string
+  bundleId: string
+  userId?: string | null
+  sessionId?: string | null
+  eventType: string
+  eventData?: string | null
+  platformVersion?: string | null
+  bundleVersion?: string | null
+  ipAddress?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
+  abExposureId?: string | null
+  abVariant?: string | null
+  createdAt: Date | string
+}
+
+export type BundleAnalyticsEventsCreateOrConnectWithoutAbTestInput = {
+  where: Prisma.BundleAnalyticsEventsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleAnalyticsEventsCreateWithoutAbTestInput, Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbTestInput>
+}
+
+export type BundleAnalyticsEventsCreateManyAbTestInputEnvelope = {
+  data: Prisma.BundleAnalyticsEventsCreateManyAbTestInput | Prisma.BundleAnalyticsEventsCreateManyAbTestInput[]
+  skipDuplicates?: boolean
+}
+
+export type BundleAnalyticsEventsUpsertWithWhereUniqueWithoutAbTestInput = {
+  where: Prisma.BundleAnalyticsEventsWhereUniqueInput
+  update: Prisma.XOR<Prisma.BundleAnalyticsEventsUpdateWithoutAbTestInput, Prisma.BundleAnalyticsEventsUncheckedUpdateWithoutAbTestInput>
+  create: Prisma.XOR<Prisma.BundleAnalyticsEventsCreateWithoutAbTestInput, Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbTestInput>
+}
+
+export type BundleAnalyticsEventsUpdateWithWhereUniqueWithoutAbTestInput = {
+  where: Prisma.BundleAnalyticsEventsWhereUniqueInput
+  data: Prisma.XOR<Prisma.BundleAnalyticsEventsUpdateWithoutAbTestInput, Prisma.BundleAnalyticsEventsUncheckedUpdateWithoutAbTestInput>
+}
+
+export type BundleAnalyticsEventsUpdateManyWithWhereWithoutAbTestInput = {
+  where: Prisma.BundleAnalyticsEventsScalarWhereInput
+  data: Prisma.XOR<Prisma.BundleAnalyticsEventsUpdateManyMutationInput, Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestInput>
+}
+
+export type BundleAnalyticsEventsCreateWithoutAbExposureInput = {
+  id: string
+  sessionId?: string | null
+  eventType: string
+  eventData?: string | null
+  platformVersion?: string | null
+  bundleVersion?: string | null
+  ipAddress?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
+  abVariant?: string | null
+  createdAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutAnalyticsEventsInput
+  user?: Prisma.UserCreateNestedOneWithoutAnalyticsInput
+  abTest?: Prisma.BundleAbTestsCreateNestedOneWithoutAnalyticsEventsInput
+}
+
+export type BundleAnalyticsEventsUncheckedCreateWithoutAbExposureInput = {
+  id: string
+  bundleId: string
+  userId?: string | null
+  sessionId?: string | null
+  eventType: string
+  eventData?: string | null
+  platformVersion?: string | null
+  bundleVersion?: string | null
+  ipAddress?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
+  abTestId?: string | null
+  abVariant?: string | null
+  createdAt: Date | string
+}
+
+export type BundleAnalyticsEventsCreateOrConnectWithoutAbExposureInput = {
+  where: Prisma.BundleAnalyticsEventsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleAnalyticsEventsCreateWithoutAbExposureInput, Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbExposureInput>
+}
+
+export type BundleAnalyticsEventsCreateManyAbExposureInputEnvelope = {
+  data: Prisma.BundleAnalyticsEventsCreateManyAbExposureInput | Prisma.BundleAnalyticsEventsCreateManyAbExposureInput[]
+  skipDuplicates?: boolean
+}
+
+export type BundleAnalyticsEventsUpsertWithWhereUniqueWithoutAbExposureInput = {
+  where: Prisma.BundleAnalyticsEventsWhereUniqueInput
+  update: Prisma.XOR<Prisma.BundleAnalyticsEventsUpdateWithoutAbExposureInput, Prisma.BundleAnalyticsEventsUncheckedUpdateWithoutAbExposureInput>
+  create: Prisma.XOR<Prisma.BundleAnalyticsEventsCreateWithoutAbExposureInput, Prisma.BundleAnalyticsEventsUncheckedCreateWithoutAbExposureInput>
+}
+
+export type BundleAnalyticsEventsUpdateWithWhereUniqueWithoutAbExposureInput = {
+  where: Prisma.BundleAnalyticsEventsWhereUniqueInput
+  data: Prisma.XOR<Prisma.BundleAnalyticsEventsUpdateWithoutAbExposureInput, Prisma.BundleAnalyticsEventsUncheckedUpdateWithoutAbExposureInput>
+}
+
+export type BundleAnalyticsEventsUpdateManyWithWhereWithoutAbExposureInput = {
+  where: Prisma.BundleAnalyticsEventsScalarWhereInput
+  data: Prisma.XOR<Prisma.BundleAnalyticsEventsUpdateManyMutationInput, Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutAbExposureInput>
+}
+
 export type BundleAnalyticsEventsCreateManyUserInput = {
   id: string
   bundleId: string
@@ -694,6 +983,9 @@ export type BundleAnalyticsEventsCreateManyUserInput = {
   ipAddress?: string | null
   deviceFingerprint?: string | null
   clientEventId?: string | null
+  abTestId?: string | null
+  abExposureId?: string | null
+  abVariant?: string | null
   createdAt: Date | string
 }
 
@@ -707,8 +999,11 @@ export type BundleAnalyticsEventsUpdateWithoutUserInput = {
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutAnalyticsEventsNestedInput
+  abTest?: Prisma.BundleAbTestsUpdateOneWithoutAnalyticsEventsNestedInput
+  abExposure?: Prisma.BundleAbTestExposuresUpdateOneWithoutAnalyticsEventsNestedInput
 }
 
 export type BundleAnalyticsEventsUncheckedUpdateWithoutUserInput = {
@@ -722,6 +1017,9 @@ export type BundleAnalyticsEventsUncheckedUpdateWithoutUserInput = {
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abTestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abExposureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -736,6 +1034,9 @@ export type BundleAnalyticsEventsUncheckedUpdateManyWithoutUserInput = {
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abTestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abExposureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -750,6 +1051,9 @@ export type BundleAnalyticsEventsCreateManyBundleInput = {
   ipAddress?: string | null
   deviceFingerprint?: string | null
   clientEventId?: string | null
+  abTestId?: string | null
+  abExposureId?: string | null
+  abVariant?: string | null
   createdAt: Date | string
 }
 
@@ -763,8 +1067,11 @@ export type BundleAnalyticsEventsUpdateWithoutBundleInput = {
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutAnalyticsNestedInput
+  abTest?: Prisma.BundleAbTestsUpdateOneWithoutAnalyticsEventsNestedInput
+  abExposure?: Prisma.BundleAbTestExposuresUpdateOneWithoutAnalyticsEventsNestedInput
 }
 
 export type BundleAnalyticsEventsUncheckedUpdateWithoutBundleInput = {
@@ -778,6 +1085,9 @@ export type BundleAnalyticsEventsUncheckedUpdateWithoutBundleInput = {
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abTestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abExposureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -792,6 +1102,145 @@ export type BundleAnalyticsEventsUncheckedUpdateManyWithoutBundleInput = {
   ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abTestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abExposureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleAnalyticsEventsCreateManyAbTestInput = {
+  id: string
+  bundleId: string
+  userId?: string | null
+  sessionId?: string | null
+  eventType: string
+  eventData?: string | null
+  platformVersion?: string | null
+  bundleVersion?: string | null
+  ipAddress?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
+  abExposureId?: string | null
+  abVariant?: string | null
+  createdAt: Date | string
+}
+
+export type BundleAnalyticsEventsUpdateWithoutAbTestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  eventData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  platformVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutAnalyticsEventsNestedInput
+  user?: Prisma.UserUpdateOneWithoutAnalyticsNestedInput
+  abExposure?: Prisma.BundleAbTestExposuresUpdateOneWithoutAnalyticsEventsNestedInput
+}
+
+export type BundleAnalyticsEventsUncheckedUpdateWithoutAbTestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  eventData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  platformVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abExposureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleAnalyticsEventsUncheckedUpdateManyWithoutAbTestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  eventData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  platformVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abExposureId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleAnalyticsEventsCreateManyAbExposureInput = {
+  id: string
+  bundleId: string
+  userId?: string | null
+  sessionId?: string | null
+  eventType: string
+  eventData?: string | null
+  platformVersion?: string | null
+  bundleVersion?: string | null
+  ipAddress?: string | null
+  deviceFingerprint?: string | null
+  clientEventId?: string | null
+  abTestId?: string | null
+  abVariant?: string | null
+  createdAt: Date | string
+}
+
+export type BundleAnalyticsEventsUpdateWithoutAbExposureInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  eventData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  platformVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutAnalyticsEventsNestedInput
+  user?: Prisma.UserUpdateOneWithoutAnalyticsNestedInput
+  abTest?: Prisma.BundleAbTestsUpdateOneWithoutAnalyticsEventsNestedInput
+}
+
+export type BundleAnalyticsEventsUncheckedUpdateWithoutAbExposureInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  eventData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  platformVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abTestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BundleAnalyticsEventsUncheckedUpdateManyWithoutAbExposureInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  eventData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  platformVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bundleVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceFingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  clientEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abTestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  abVariant?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -809,9 +1258,14 @@ export type BundleAnalyticsEventsSelect<ExtArgs extends runtime.Types.Extensions
   ipAddress?: boolean
   deviceFingerprint?: boolean
   clientEventId?: boolean
+  abTestId?: boolean
+  abExposureId?: boolean
+  abVariant?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   user?: boolean | Prisma.BundleAnalyticsEvents$userArgs<ExtArgs>
+  abTest?: boolean | Prisma.BundleAnalyticsEvents$abTestArgs<ExtArgs>
+  abExposure?: boolean | Prisma.BundleAnalyticsEvents$abExposureArgs<ExtArgs>
 }, ExtArgs["result"]["bundleAnalyticsEvents"]>
 
 export type BundleAnalyticsEventsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -826,9 +1280,14 @@ export type BundleAnalyticsEventsSelectCreateManyAndReturn<ExtArgs extends runti
   ipAddress?: boolean
   deviceFingerprint?: boolean
   clientEventId?: boolean
+  abTestId?: boolean
+  abExposureId?: boolean
+  abVariant?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   user?: boolean | Prisma.BundleAnalyticsEvents$userArgs<ExtArgs>
+  abTest?: boolean | Prisma.BundleAnalyticsEvents$abTestArgs<ExtArgs>
+  abExposure?: boolean | Prisma.BundleAnalyticsEvents$abExposureArgs<ExtArgs>
 }, ExtArgs["result"]["bundleAnalyticsEvents"]>
 
 export type BundleAnalyticsEventsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -843,9 +1302,14 @@ export type BundleAnalyticsEventsSelectUpdateManyAndReturn<ExtArgs extends runti
   ipAddress?: boolean
   deviceFingerprint?: boolean
   clientEventId?: boolean
+  abTestId?: boolean
+  abExposureId?: boolean
+  abVariant?: boolean
   createdAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   user?: boolean | Prisma.BundleAnalyticsEvents$userArgs<ExtArgs>
+  abTest?: boolean | Prisma.BundleAnalyticsEvents$abTestArgs<ExtArgs>
+  abExposure?: boolean | Prisma.BundleAnalyticsEvents$abExposureArgs<ExtArgs>
 }, ExtArgs["result"]["bundleAnalyticsEvents"]>
 
 export type BundleAnalyticsEventsSelectScalar = {
@@ -860,21 +1324,30 @@ export type BundleAnalyticsEventsSelectScalar = {
   ipAddress?: boolean
   deviceFingerprint?: boolean
   clientEventId?: boolean
+  abTestId?: boolean
+  abExposureId?: boolean
+  abVariant?: boolean
   createdAt?: boolean
 }
 
-export type BundleAnalyticsEventsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "userId" | "sessionId" | "eventType" | "eventData" | "platformVersion" | "bundleVersion" | "ipAddress" | "deviceFingerprint" | "clientEventId" | "createdAt", ExtArgs["result"]["bundleAnalyticsEvents"]>
+export type BundleAnalyticsEventsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "userId" | "sessionId" | "eventType" | "eventData" | "platformVersion" | "bundleVersion" | "ipAddress" | "deviceFingerprint" | "clientEventId" | "abTestId" | "abExposureId" | "abVariant" | "createdAt", ExtArgs["result"]["bundleAnalyticsEvents"]>
 export type BundleAnalyticsEventsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   user?: boolean | Prisma.BundleAnalyticsEvents$userArgs<ExtArgs>
+  abTest?: boolean | Prisma.BundleAnalyticsEvents$abTestArgs<ExtArgs>
+  abExposure?: boolean | Prisma.BundleAnalyticsEvents$abExposureArgs<ExtArgs>
 }
 export type BundleAnalyticsEventsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   user?: boolean | Prisma.BundleAnalyticsEvents$userArgs<ExtArgs>
+  abTest?: boolean | Prisma.BundleAnalyticsEvents$abTestArgs<ExtArgs>
+  abExposure?: boolean | Prisma.BundleAnalyticsEvents$abExposureArgs<ExtArgs>
 }
 export type BundleAnalyticsEventsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   user?: boolean | Prisma.BundleAnalyticsEvents$userArgs<ExtArgs>
+  abTest?: boolean | Prisma.BundleAnalyticsEvents$abTestArgs<ExtArgs>
+  abExposure?: boolean | Prisma.BundleAnalyticsEvents$abExposureArgs<ExtArgs>
 }
 
 export type $BundleAnalyticsEventsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -882,6 +1355,8 @@ export type $BundleAnalyticsEventsPayload<ExtArgs extends runtime.Types.Extensio
   objects: {
     bundle: Prisma.$BundlesPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs> | null
+    abTest: Prisma.$BundleAbTestsPayload<ExtArgs> | null
+    abExposure: Prisma.$BundleAbTestExposuresPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -895,6 +1370,9 @@ export type $BundleAnalyticsEventsPayload<ExtArgs extends runtime.Types.Extensio
     ipAddress: string | null
     deviceFingerprint: string | null
     clientEventId: string | null
+    abTestId: string | null
+    abExposureId: string | null
+    abVariant: string | null
     createdAt: Date
   }, ExtArgs["result"]["bundleAnalyticsEvents"]>
   composites: {}
@@ -1292,6 +1770,8 @@ export interface Prisma__BundleAnalyticsEventsClient<T, Null = never, ExtArgs ex
   readonly [Symbol.toStringTag]: "PrismaPromise"
   bundle<T extends Prisma.BundlesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundlesDefaultArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.BundleAnalyticsEvents$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAnalyticsEvents$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  abTest<T extends Prisma.BundleAnalyticsEvents$abTestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAnalyticsEvents$abTestArgs<ExtArgs>>): Prisma.Prisma__BundleAbTestsClient<runtime.Types.Result.GetResult<Prisma.$BundleAbTestsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  abExposure<T extends Prisma.BundleAnalyticsEvents$abExposureArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleAnalyticsEvents$abExposureArgs<ExtArgs>>): Prisma.Prisma__BundleAbTestExposuresClient<runtime.Types.Result.GetResult<Prisma.$BundleAbTestExposuresPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1332,6 +1812,9 @@ export interface BundleAnalyticsEventsFieldRefs {
   readonly ipAddress: Prisma.FieldRef<"BundleAnalyticsEvents", 'String'>
   readonly deviceFingerprint: Prisma.FieldRef<"BundleAnalyticsEvents", 'String'>
   readonly clientEventId: Prisma.FieldRef<"BundleAnalyticsEvents", 'String'>
+  readonly abTestId: Prisma.FieldRef<"BundleAnalyticsEvents", 'String'>
+  readonly abExposureId: Prisma.FieldRef<"BundleAnalyticsEvents", 'String'>
+  readonly abVariant: Prisma.FieldRef<"BundleAnalyticsEvents", 'String'>
   readonly createdAt: Prisma.FieldRef<"BundleAnalyticsEvents", 'DateTime'>
 }
     
@@ -1750,6 +2233,44 @@ export type BundleAnalyticsEvents$userArgs<ExtArgs extends runtime.Types.Extensi
    */
   include?: Prisma.UserInclude<ExtArgs> | null
   where?: Prisma.UserWhereInput
+}
+
+/**
+ * BundleAnalyticsEvents.abTest
+ */
+export type BundleAnalyticsEvents$abTestArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleAbTests
+   */
+  select?: Prisma.BundleAbTestsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleAbTests
+   */
+  omit?: Prisma.BundleAbTestsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleAbTestsInclude<ExtArgs> | null
+  where?: Prisma.BundleAbTestsWhereInput
+}
+
+/**
+ * BundleAnalyticsEvents.abExposure
+ */
+export type BundleAnalyticsEvents$abExposureArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleAbTestExposures
+   */
+  select?: Prisma.BundleAbTestExposuresSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleAbTestExposures
+   */
+  omit?: Prisma.BundleAbTestExposuresOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleAbTestExposuresInclude<ExtArgs> | null
+  where?: Prisma.BundleAbTestExposuresWhereInput
 }
 
 /**

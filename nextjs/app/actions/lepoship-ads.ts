@@ -26,6 +26,7 @@ export async function upsertAdConfigAction(projectId: string, data: {
   const user = await requireCurrentUser();
   const bundle = await requireBundleOwner(user.id, projectId);
   const now = new Date();
+  const previous = await prisma.bundleAdConfigurations.findUnique({ where: { bundleId: bundle.id } });
 
   const config = await prisma.bundleAdConfigurations.upsert({
     where: { bundleId: bundle.id },
@@ -52,8 +53,12 @@ export async function upsertAdConfigAction(projectId: string, data: {
       nativeId: data.nativeId || null,
       isTestMode: data.isTestMode,
       isActive: data.isActive,
+      revision: { increment: 1 },
       updatedAt: now,
     },
+  });
+  await prisma.bundleAuditLog.create({
+    data: { id: crypto.randomUUID(), bundleId: bundle.id, userId: user.id, action: "ad_config_updated", fieldName: "ad_configuration", oldValue: previous ? JSON.stringify({ provider: previous.provider, revision: previous.revision, isActive: previous.isActive }) : null, createdAt: now },
   });
 
   revalidatePath(`/lepoship/${projectId}/settings/ads`);

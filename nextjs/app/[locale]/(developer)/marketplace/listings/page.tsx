@@ -36,7 +36,7 @@ export default async function MarketplaceListingsPage() {
           ) : listings.map((listing) => (
             <div key={listing.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
               <div><p className="font-medium">{listing.name}</p><p className="text-xs text-muted-foreground">v{listing.version} · {listing.externalIntegrations.length} integrations · Updated {listing.updatedAt.toLocaleDateString()}</p></div>
-              <StatusBadge status={listing.status === "published" ? "active" : listing.status === "rejected" ? "error" : "pending"} label={listing.status} />
+              <StatusBadge status={listing.status === "published" ? "active" : listing.status === "suspended" || listing.status === "removed" ? "error" : "pending"} label={listing.status} />
             </div>
           ))}
         </CardContent>

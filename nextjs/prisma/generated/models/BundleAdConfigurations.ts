@@ -20,8 +20,18 @@ export type BundleAdConfigurationsModel = runtime.Types.Result.DefaultSelection<
 
 export type AggregateBundleAdConfigurations = {
   _count: BundleAdConfigurationsCountAggregateOutputType | null
+  _avg: BundleAdConfigurationsAvgAggregateOutputType | null
+  _sum: BundleAdConfigurationsSumAggregateOutputType | null
   _min: BundleAdConfigurationsMinAggregateOutputType | null
   _max: BundleAdConfigurationsMaxAggregateOutputType | null
+}
+
+export type BundleAdConfigurationsAvgAggregateOutputType = {
+  revision: number | null
+}
+
+export type BundleAdConfigurationsSumAggregateOutputType = {
+  revision: number | null
 }
 
 export type BundleAdConfigurationsMinAggregateOutputType = {
@@ -35,6 +45,7 @@ export type BundleAdConfigurationsMinAggregateOutputType = {
   nativeId: string | null
   isTestMode: boolean | null
   isActive: boolean | null
+  revision: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +61,7 @@ export type BundleAdConfigurationsMaxAggregateOutputType = {
   nativeId: string | null
   isTestMode: boolean | null
   isActive: boolean | null
+  revision: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -65,11 +77,20 @@ export type BundleAdConfigurationsCountAggregateOutputType = {
   nativeId: number
   isTestMode: number
   isActive: number
+  revision: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type BundleAdConfigurationsAvgAggregateInputType = {
+  revision?: true
+}
+
+export type BundleAdConfigurationsSumAggregateInputType = {
+  revision?: true
+}
 
 export type BundleAdConfigurationsMinAggregateInputType = {
   id?: true
@@ -82,6 +103,7 @@ export type BundleAdConfigurationsMinAggregateInputType = {
   nativeId?: true
   isTestMode?: true
   isActive?: true
+  revision?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -97,6 +119,7 @@ export type BundleAdConfigurationsMaxAggregateInputType = {
   nativeId?: true
   isTestMode?: true
   isActive?: true
+  revision?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,6 +135,7 @@ export type BundleAdConfigurationsCountAggregateInputType = {
   nativeId?: true
   isTestMode?: true
   isActive?: true
+  revision?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -155,6 +179,18 @@ export type BundleAdConfigurationsAggregateArgs<ExtArgs extends runtime.Types.Ex
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: BundleAdConfigurationsAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: BundleAdConfigurationsSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: BundleAdConfigurationsMinAggregateInputType
@@ -185,6 +221,8 @@ export type BundleAdConfigurationsGroupByArgs<ExtArgs extends runtime.Types.Exte
   take?: number
   skip?: number
   _count?: BundleAdConfigurationsCountAggregateInputType | true
+  _avg?: BundleAdConfigurationsAvgAggregateInputType
+  _sum?: BundleAdConfigurationsSumAggregateInputType
   _min?: BundleAdConfigurationsMinAggregateInputType
   _max?: BundleAdConfigurationsMaxAggregateInputType
 }
@@ -200,9 +238,12 @@ export type BundleAdConfigurationsGroupByOutputType = {
   nativeId: string | null
   isTestMode: boolean
   isActive: boolean
+  revision: number
   createdAt: Date
   updatedAt: Date
   _count: BundleAdConfigurationsCountAggregateOutputType | null
+  _avg: BundleAdConfigurationsAvgAggregateOutputType | null
+  _sum: BundleAdConfigurationsSumAggregateOutputType | null
   _min: BundleAdConfigurationsMinAggregateOutputType | null
   _max: BundleAdConfigurationsMaxAggregateOutputType | null
 }
@@ -236,6 +277,7 @@ export type BundleAdConfigurationsWhereInput = {
   nativeId?: Prisma.StringNullableFilter<"BundleAdConfigurations"> | string | null
   isTestMode?: Prisma.BoolFilter<"BundleAdConfigurations"> | boolean
   isActive?: Prisma.BoolFilter<"BundleAdConfigurations"> | boolean
+  revision?: Prisma.IntFilter<"BundleAdConfigurations"> | number
   createdAt?: Prisma.DateTimeFilter<"BundleAdConfigurations"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleAdConfigurations"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
@@ -252,6 +294,7 @@ export type BundleAdConfigurationsOrderByWithRelationInput = {
   nativeId?: Prisma.SortOrderInput | Prisma.SortOrder
   isTestMode?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  revision?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   bundle?: Prisma.BundlesOrderByWithRelationInput
@@ -271,6 +314,7 @@ export type BundleAdConfigurationsWhereUniqueInput = Prisma.AtLeast<{
   nativeId?: Prisma.StringNullableFilter<"BundleAdConfigurations"> | string | null
   isTestMode?: Prisma.BoolFilter<"BundleAdConfigurations"> | boolean
   isActive?: Prisma.BoolFilter<"BundleAdConfigurations"> | boolean
+  revision?: Prisma.IntFilter<"BundleAdConfigurations"> | number
   createdAt?: Prisma.DateTimeFilter<"BundleAdConfigurations"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleAdConfigurations"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
@@ -287,11 +331,14 @@ export type BundleAdConfigurationsOrderByWithAggregationInput = {
   nativeId?: Prisma.SortOrderInput | Prisma.SortOrder
   isTestMode?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  revision?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BundleAdConfigurationsCountOrderByAggregateInput
+  _avg?: Prisma.BundleAdConfigurationsAvgOrderByAggregateInput
   _max?: Prisma.BundleAdConfigurationsMaxOrderByAggregateInput
   _min?: Prisma.BundleAdConfigurationsMinOrderByAggregateInput
+  _sum?: Prisma.BundleAdConfigurationsSumOrderByAggregateInput
 }
 
 export type BundleAdConfigurationsScalarWhereWithAggregatesInput = {
@@ -308,6 +355,7 @@ export type BundleAdConfigurationsScalarWhereWithAggregatesInput = {
   nativeId?: Prisma.StringNullableWithAggregatesFilter<"BundleAdConfigurations"> | string | null
   isTestMode?: Prisma.BoolWithAggregatesFilter<"BundleAdConfigurations"> | boolean
   isActive?: Prisma.BoolWithAggregatesFilter<"BundleAdConfigurations"> | boolean
+  revision?: Prisma.IntWithAggregatesFilter<"BundleAdConfigurations"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleAdConfigurations"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BundleAdConfigurations"> | Date | string
 }
@@ -322,6 +370,7 @@ export type BundleAdConfigurationsCreateInput = {
   nativeId?: string | null
   isTestMode?: boolean
   isActive?: boolean
+  revision?: number
   createdAt: Date | string
   updatedAt: Date | string
   bundle: Prisma.BundlesCreateNestedOneWithoutAdConfigurationsInput
@@ -338,6 +387,7 @@ export type BundleAdConfigurationsUncheckedCreateInput = {
   nativeId?: string | null
   isTestMode?: boolean
   isActive?: boolean
+  revision?: number
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -352,6 +402,7 @@ export type BundleAdConfigurationsUpdateInput = {
   nativeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isTestMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutAdConfigurationsNestedInput
@@ -368,6 +419,7 @@ export type BundleAdConfigurationsUncheckedUpdateInput = {
   nativeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isTestMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -383,6 +435,7 @@ export type BundleAdConfigurationsCreateManyInput = {
   nativeId?: string | null
   isTestMode?: boolean
   isActive?: boolean
+  revision?: number
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -397,6 +450,7 @@ export type BundleAdConfigurationsUpdateManyMutationInput = {
   nativeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isTestMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -412,6 +466,7 @@ export type BundleAdConfigurationsUncheckedUpdateManyInput = {
   nativeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isTestMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -432,8 +487,13 @@ export type BundleAdConfigurationsCountOrderByAggregateInput = {
   nativeId?: Prisma.SortOrder
   isTestMode?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  revision?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BundleAdConfigurationsAvgOrderByAggregateInput = {
+  revision?: Prisma.SortOrder
 }
 
 export type BundleAdConfigurationsMaxOrderByAggregateInput = {
@@ -447,6 +507,7 @@ export type BundleAdConfigurationsMaxOrderByAggregateInput = {
   nativeId?: Prisma.SortOrder
   isTestMode?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  revision?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -462,8 +523,13 @@ export type BundleAdConfigurationsMinOrderByAggregateInput = {
   nativeId?: Prisma.SortOrder
   isTestMode?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  revision?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BundleAdConfigurationsSumOrderByAggregateInput = {
+  revision?: Prisma.SortOrder
 }
 
 export type BundleAdConfigurationsCreateNestedOneWithoutBundleInput = {
@@ -508,6 +574,7 @@ export type BundleAdConfigurationsCreateWithoutBundleInput = {
   nativeId?: string | null
   isTestMode?: boolean
   isActive?: boolean
+  revision?: number
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -522,6 +589,7 @@ export type BundleAdConfigurationsUncheckedCreateWithoutBundleInput = {
   nativeId?: string | null
   isTestMode?: boolean
   isActive?: boolean
+  revision?: number
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -552,6 +620,7 @@ export type BundleAdConfigurationsUpdateWithoutBundleInput = {
   nativeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isTestMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -566,6 +635,7 @@ export type BundleAdConfigurationsUncheckedUpdateWithoutBundleInput = {
   nativeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isTestMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -583,6 +653,7 @@ export type BundleAdConfigurationsSelect<ExtArgs extends runtime.Types.Extension
   nativeId?: boolean
   isTestMode?: boolean
   isActive?: boolean
+  revision?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -599,6 +670,7 @@ export type BundleAdConfigurationsSelectCreateManyAndReturn<ExtArgs extends runt
   nativeId?: boolean
   isTestMode?: boolean
   isActive?: boolean
+  revision?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -615,6 +687,7 @@ export type BundleAdConfigurationsSelectUpdateManyAndReturn<ExtArgs extends runt
   nativeId?: boolean
   isTestMode?: boolean
   isActive?: boolean
+  revision?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -631,11 +704,12 @@ export type BundleAdConfigurationsSelectScalar = {
   nativeId?: boolean
   isTestMode?: boolean
   isActive?: boolean
+  revision?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BundleAdConfigurationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "provider" | "appId" | "bannerId" | "interstitialId" | "rewardedId" | "nativeId" | "isTestMode" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleAdConfigurations"]>
+export type BundleAdConfigurationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "provider" | "appId" | "bannerId" | "interstitialId" | "rewardedId" | "nativeId" | "isTestMode" | "isActive" | "revision" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleAdConfigurations"]>
 export type BundleAdConfigurationsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
 }
@@ -662,6 +736,7 @@ export type $BundleAdConfigurationsPayload<ExtArgs extends runtime.Types.Extensi
     nativeId: string | null
     isTestMode: boolean
     isActive: boolean
+    revision: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["bundleAdConfigurations"]>
@@ -1098,6 +1173,7 @@ export interface BundleAdConfigurationsFieldRefs {
   readonly nativeId: Prisma.FieldRef<"BundleAdConfigurations", 'String'>
   readonly isTestMode: Prisma.FieldRef<"BundleAdConfigurations", 'Boolean'>
   readonly isActive: Prisma.FieldRef<"BundleAdConfigurations", 'Boolean'>
+  readonly revision: Prisma.FieldRef<"BundleAdConfigurations", 'Int'>
   readonly createdAt: Prisma.FieldRef<"BundleAdConfigurations", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"BundleAdConfigurations", 'DateTime'>
 }

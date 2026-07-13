@@ -34,6 +34,9 @@ export type BundleUserEntitlementsMinAggregateOutputType = {
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  licenseKeyHash: string | null
+  revokedAt: Date | null
+  lastVerifiedAt: Date | null
 }
 
 export type BundleUserEntitlementsMaxAggregateOutputType = {
@@ -46,6 +49,9 @@ export type BundleUserEntitlementsMaxAggregateOutputType = {
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  licenseKeyHash: string | null
+  revokedAt: Date | null
+  lastVerifiedAt: Date | null
 }
 
 export type BundleUserEntitlementsCountAggregateOutputType = {
@@ -58,6 +64,9 @@ export type BundleUserEntitlementsCountAggregateOutputType = {
   isActive: number
   createdAt: number
   updatedAt: number
+  licenseKeyHash: number
+  revokedAt: number
+  lastVerifiedAt: number
   _all: number
 }
 
@@ -72,6 +81,9 @@ export type BundleUserEntitlementsMinAggregateInputType = {
   isActive?: true
   createdAt?: true
   updatedAt?: true
+  licenseKeyHash?: true
+  revokedAt?: true
+  lastVerifiedAt?: true
 }
 
 export type BundleUserEntitlementsMaxAggregateInputType = {
@@ -84,6 +96,9 @@ export type BundleUserEntitlementsMaxAggregateInputType = {
   isActive?: true
   createdAt?: true
   updatedAt?: true
+  licenseKeyHash?: true
+  revokedAt?: true
+  lastVerifiedAt?: true
 }
 
 export type BundleUserEntitlementsCountAggregateInputType = {
@@ -96,6 +111,9 @@ export type BundleUserEntitlementsCountAggregateInputType = {
   isActive?: true
   createdAt?: true
   updatedAt?: true
+  licenseKeyHash?: true
+  revokedAt?: true
+  lastVerifiedAt?: true
   _all?: true
 }
 
@@ -181,6 +199,9 @@ export type BundleUserEntitlementsGroupByOutputType = {
   isActive: boolean
   createdAt: Date
   updatedAt: Date
+  licenseKeyHash: string | null
+  revokedAt: Date | null
+  lastVerifiedAt: Date | null
   _count: BundleUserEntitlementsCountAggregateOutputType | null
   _min: BundleUserEntitlementsMinAggregateOutputType | null
   _max: BundleUserEntitlementsMaxAggregateOutputType | null
@@ -214,9 +235,13 @@ export type BundleUserEntitlementsWhereInput = {
   isActive?: Prisma.BoolFilter<"BundleUserEntitlements"> | boolean
   createdAt?: Prisma.DateTimeFilter<"BundleUserEntitlements"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleUserEntitlements"> | Date | string
+  licenseKeyHash?: Prisma.StringNullableFilter<"BundleUserEntitlements"> | string | null
+  revokedAt?: Prisma.DateTimeNullableFilter<"BundleUserEntitlements"> | Date | string | null
+  lastVerifiedAt?: Prisma.DateTimeNullableFilter<"BundleUserEntitlements"> | Date | string | null
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
   order?: Prisma.XOR<Prisma.BundleOrdersNullableScalarRelationFilter, Prisma.BundleOrdersWhereInput> | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  licenses?: Prisma.BundleEntitlementLicensesListRelationFilter
 }
 
 export type BundleUserEntitlementsOrderByWithRelationInput = {
@@ -229,13 +254,18 @@ export type BundleUserEntitlementsOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  licenseKeyHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   bundle?: Prisma.BundlesOrderByWithRelationInput
   order?: Prisma.BundleOrdersOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
+  licenses?: Prisma.BundleEntitlementLicensesOrderByRelationAggregateInput
 }
 
 export type BundleUserEntitlementsWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  licenseKeyHash?: string
   userId_bundleId_entitlementType?: Prisma.BundleUserEntitlementsUserIdBundleIdEntitlementTypeCompoundUniqueInput
   AND?: Prisma.BundleUserEntitlementsWhereInput | Prisma.BundleUserEntitlementsWhereInput[]
   OR?: Prisma.BundleUserEntitlementsWhereInput[]
@@ -248,10 +278,13 @@ export type BundleUserEntitlementsWhereUniqueInput = Prisma.AtLeast<{
   isActive?: Prisma.BoolFilter<"BundleUserEntitlements"> | boolean
   createdAt?: Prisma.DateTimeFilter<"BundleUserEntitlements"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleUserEntitlements"> | Date | string
+  revokedAt?: Prisma.DateTimeNullableFilter<"BundleUserEntitlements"> | Date | string | null
+  lastVerifiedAt?: Prisma.DateTimeNullableFilter<"BundleUserEntitlements"> | Date | string | null
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
   order?: Prisma.XOR<Prisma.BundleOrdersNullableScalarRelationFilter, Prisma.BundleOrdersWhereInput> | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id" | "userId_bundleId_entitlementType">
+  licenses?: Prisma.BundleEntitlementLicensesListRelationFilter
+}, "id" | "licenseKeyHash" | "userId_bundleId_entitlementType">
 
 export type BundleUserEntitlementsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -263,6 +296,9 @@ export type BundleUserEntitlementsOrderByWithAggregationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  licenseKeyHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.BundleUserEntitlementsCountOrderByAggregateInput
   _max?: Prisma.BundleUserEntitlementsMaxOrderByAggregateInput
   _min?: Prisma.BundleUserEntitlementsMinOrderByAggregateInput
@@ -281,6 +317,9 @@ export type BundleUserEntitlementsScalarWhereWithAggregatesInput = {
   isActive?: Prisma.BoolWithAggregatesFilter<"BundleUserEntitlements"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleUserEntitlements"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BundleUserEntitlements"> | Date | string
+  licenseKeyHash?: Prisma.StringNullableWithAggregatesFilter<"BundleUserEntitlements"> | string | null
+  revokedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleUserEntitlements"> | Date | string | null
+  lastVerifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleUserEntitlements"> | Date | string | null
 }
 
 export type BundleUserEntitlementsCreateInput = {
@@ -290,9 +329,13 @@ export type BundleUserEntitlementsCreateInput = {
   isActive?: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
   bundle: Prisma.BundlesCreateNestedOneWithoutUserEntitlementsInput
   order?: Prisma.BundleOrdersCreateNestedOneWithoutUserEntitlementsInput
   user: Prisma.UserCreateNestedOneWithoutUserEntitlementsInput
+  licenses?: Prisma.BundleEntitlementLicensesCreateNestedManyWithoutEntitlementInput
 }
 
 export type BundleUserEntitlementsUncheckedCreateInput = {
@@ -305,6 +348,10 @@ export type BundleUserEntitlementsUncheckedCreateInput = {
   isActive?: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
+  licenses?: Prisma.BundleEntitlementLicensesUncheckedCreateNestedManyWithoutEntitlementInput
 }
 
 export type BundleUserEntitlementsUpdateInput = {
@@ -314,9 +361,13 @@ export type BundleUserEntitlementsUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutUserEntitlementsNestedInput
   order?: Prisma.BundleOrdersUpdateOneWithoutUserEntitlementsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutUserEntitlementsNestedInput
+  licenses?: Prisma.BundleEntitlementLicensesUpdateManyWithoutEntitlementNestedInput
 }
 
 export type BundleUserEntitlementsUncheckedUpdateInput = {
@@ -329,6 +380,10 @@ export type BundleUserEntitlementsUncheckedUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  licenses?: Prisma.BundleEntitlementLicensesUncheckedUpdateManyWithoutEntitlementNestedInput
 }
 
 export type BundleUserEntitlementsCreateManyInput = {
@@ -341,6 +396,9 @@ export type BundleUserEntitlementsCreateManyInput = {
   isActive?: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
 }
 
 export type BundleUserEntitlementsUpdateManyMutationInput = {
@@ -350,6 +408,9 @@ export type BundleUserEntitlementsUpdateManyMutationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BundleUserEntitlementsUncheckedUpdateManyInput = {
@@ -362,6 +423,9 @@ export type BundleUserEntitlementsUncheckedUpdateManyInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BundleUserEntitlementsListRelationFilter = {
@@ -390,6 +454,9 @@ export type BundleUserEntitlementsCountOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  licenseKeyHash?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
+  lastVerifiedAt?: Prisma.SortOrder
 }
 
 export type BundleUserEntitlementsMaxOrderByAggregateInput = {
@@ -402,6 +469,9 @@ export type BundleUserEntitlementsMaxOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  licenseKeyHash?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
+  lastVerifiedAt?: Prisma.SortOrder
 }
 
 export type BundleUserEntitlementsMinOrderByAggregateInput = {
@@ -414,6 +484,14 @@ export type BundleUserEntitlementsMinOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  licenseKeyHash?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
+  lastVerifiedAt?: Prisma.SortOrder
+}
+
+export type BundleUserEntitlementsScalarRelationFilter = {
+  is?: Prisma.BundleUserEntitlementsWhereInput
+  isNot?: Prisma.BundleUserEntitlementsWhereInput
 }
 
 export type BundleUserEntitlementsCreateNestedManyWithoutUserInput = {
@@ -542,6 +620,20 @@ export type BundleUserEntitlementsUncheckedUpdateManyWithoutOrderNestedInput = {
   deleteMany?: Prisma.BundleUserEntitlementsScalarWhereInput | Prisma.BundleUserEntitlementsScalarWhereInput[]
 }
 
+export type BundleUserEntitlementsCreateNestedOneWithoutLicensesInput = {
+  create?: Prisma.XOR<Prisma.BundleUserEntitlementsCreateWithoutLicensesInput, Prisma.BundleUserEntitlementsUncheckedCreateWithoutLicensesInput>
+  connectOrCreate?: Prisma.BundleUserEntitlementsCreateOrConnectWithoutLicensesInput
+  connect?: Prisma.BundleUserEntitlementsWhereUniqueInput
+}
+
+export type BundleUserEntitlementsUpdateOneRequiredWithoutLicensesNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleUserEntitlementsCreateWithoutLicensesInput, Prisma.BundleUserEntitlementsUncheckedCreateWithoutLicensesInput>
+  connectOrCreate?: Prisma.BundleUserEntitlementsCreateOrConnectWithoutLicensesInput
+  upsert?: Prisma.BundleUserEntitlementsUpsertWithoutLicensesInput
+  connect?: Prisma.BundleUserEntitlementsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleUserEntitlementsUpdateToOneWithWhereWithoutLicensesInput, Prisma.BundleUserEntitlementsUpdateWithoutLicensesInput>, Prisma.BundleUserEntitlementsUncheckedUpdateWithoutLicensesInput>
+}
+
 export type BundleUserEntitlementsCreateWithoutUserInput = {
   id: string
   entitlementType: string
@@ -549,8 +641,12 @@ export type BundleUserEntitlementsCreateWithoutUserInput = {
   isActive?: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
   bundle: Prisma.BundlesCreateNestedOneWithoutUserEntitlementsInput
   order?: Prisma.BundleOrdersCreateNestedOneWithoutUserEntitlementsInput
+  licenses?: Prisma.BundleEntitlementLicensesCreateNestedManyWithoutEntitlementInput
 }
 
 export type BundleUserEntitlementsUncheckedCreateWithoutUserInput = {
@@ -562,6 +658,10 @@ export type BundleUserEntitlementsUncheckedCreateWithoutUserInput = {
   isActive?: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
+  licenses?: Prisma.BundleEntitlementLicensesUncheckedCreateNestedManyWithoutEntitlementInput
 }
 
 export type BundleUserEntitlementsCreateOrConnectWithoutUserInput = {
@@ -603,6 +703,9 @@ export type BundleUserEntitlementsScalarWhereInput = {
   isActive?: Prisma.BoolFilter<"BundleUserEntitlements"> | boolean
   createdAt?: Prisma.DateTimeFilter<"BundleUserEntitlements"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleUserEntitlements"> | Date | string
+  licenseKeyHash?: Prisma.StringNullableFilter<"BundleUserEntitlements"> | string | null
+  revokedAt?: Prisma.DateTimeNullableFilter<"BundleUserEntitlements"> | Date | string | null
+  lastVerifiedAt?: Prisma.DateTimeNullableFilter<"BundleUserEntitlements"> | Date | string | null
 }
 
 export type BundleUserEntitlementsCreateWithoutBundleInput = {
@@ -612,8 +715,12 @@ export type BundleUserEntitlementsCreateWithoutBundleInput = {
   isActive?: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
   order?: Prisma.BundleOrdersCreateNestedOneWithoutUserEntitlementsInput
   user: Prisma.UserCreateNestedOneWithoutUserEntitlementsInput
+  licenses?: Prisma.BundleEntitlementLicensesCreateNestedManyWithoutEntitlementInput
 }
 
 export type BundleUserEntitlementsUncheckedCreateWithoutBundleInput = {
@@ -625,6 +732,10 @@ export type BundleUserEntitlementsUncheckedCreateWithoutBundleInput = {
   isActive?: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
+  licenses?: Prisma.BundleEntitlementLicensesUncheckedCreateNestedManyWithoutEntitlementInput
 }
 
 export type BundleUserEntitlementsCreateOrConnectWithoutBundleInput = {
@@ -660,8 +771,12 @@ export type BundleUserEntitlementsCreateWithoutOrderInput = {
   isActive?: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
   bundle: Prisma.BundlesCreateNestedOneWithoutUserEntitlementsInput
   user: Prisma.UserCreateNestedOneWithoutUserEntitlementsInput
+  licenses?: Prisma.BundleEntitlementLicensesCreateNestedManyWithoutEntitlementInput
 }
 
 export type BundleUserEntitlementsUncheckedCreateWithoutOrderInput = {
@@ -673,6 +788,10 @@ export type BundleUserEntitlementsUncheckedCreateWithoutOrderInput = {
   isActive?: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
+  licenses?: Prisma.BundleEntitlementLicensesUncheckedCreateNestedManyWithoutEntitlementInput
 }
 
 export type BundleUserEntitlementsCreateOrConnectWithoutOrderInput = {
@@ -701,6 +820,82 @@ export type BundleUserEntitlementsUpdateManyWithWhereWithoutOrderInput = {
   data: Prisma.XOR<Prisma.BundleUserEntitlementsUpdateManyMutationInput, Prisma.BundleUserEntitlementsUncheckedUpdateManyWithoutOrderInput>
 }
 
+export type BundleUserEntitlementsCreateWithoutLicensesInput = {
+  id: string
+  entitlementType: string
+  expiresAt?: Date | string | null
+  isActive?: boolean
+  createdAt: Date | string
+  updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
+  bundle: Prisma.BundlesCreateNestedOneWithoutUserEntitlementsInput
+  order?: Prisma.BundleOrdersCreateNestedOneWithoutUserEntitlementsInput
+  user: Prisma.UserCreateNestedOneWithoutUserEntitlementsInput
+}
+
+export type BundleUserEntitlementsUncheckedCreateWithoutLicensesInput = {
+  id: string
+  userId: string
+  bundleId: string
+  orderId?: string | null
+  entitlementType: string
+  expiresAt?: Date | string | null
+  isActive?: boolean
+  createdAt: Date | string
+  updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
+}
+
+export type BundleUserEntitlementsCreateOrConnectWithoutLicensesInput = {
+  where: Prisma.BundleUserEntitlementsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleUserEntitlementsCreateWithoutLicensesInput, Prisma.BundleUserEntitlementsUncheckedCreateWithoutLicensesInput>
+}
+
+export type BundleUserEntitlementsUpsertWithoutLicensesInput = {
+  update: Prisma.XOR<Prisma.BundleUserEntitlementsUpdateWithoutLicensesInput, Prisma.BundleUserEntitlementsUncheckedUpdateWithoutLicensesInput>
+  create: Prisma.XOR<Prisma.BundleUserEntitlementsCreateWithoutLicensesInput, Prisma.BundleUserEntitlementsUncheckedCreateWithoutLicensesInput>
+  where?: Prisma.BundleUserEntitlementsWhereInput
+}
+
+export type BundleUserEntitlementsUpdateToOneWithWhereWithoutLicensesInput = {
+  where?: Prisma.BundleUserEntitlementsWhereInput
+  data: Prisma.XOR<Prisma.BundleUserEntitlementsUpdateWithoutLicensesInput, Prisma.BundleUserEntitlementsUncheckedUpdateWithoutLicensesInput>
+}
+
+export type BundleUserEntitlementsUpdateWithoutLicensesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  entitlementType?: Prisma.StringFieldUpdateOperationsInput | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutUserEntitlementsNestedInput
+  order?: Prisma.BundleOrdersUpdateOneWithoutUserEntitlementsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutUserEntitlementsNestedInput
+}
+
+export type BundleUserEntitlementsUncheckedUpdateWithoutLicensesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  entitlementType?: Prisma.StringFieldUpdateOperationsInput | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
 export type BundleUserEntitlementsCreateManyUserInput = {
   id: string
   bundleId: string
@@ -710,6 +905,9 @@ export type BundleUserEntitlementsCreateManyUserInput = {
   isActive?: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
 }
 
 export type BundleUserEntitlementsUpdateWithoutUserInput = {
@@ -719,8 +917,12 @@ export type BundleUserEntitlementsUpdateWithoutUserInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutUserEntitlementsNestedInput
   order?: Prisma.BundleOrdersUpdateOneWithoutUserEntitlementsNestedInput
+  licenses?: Prisma.BundleEntitlementLicensesUpdateManyWithoutEntitlementNestedInput
 }
 
 export type BundleUserEntitlementsUncheckedUpdateWithoutUserInput = {
@@ -732,6 +934,10 @@ export type BundleUserEntitlementsUncheckedUpdateWithoutUserInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  licenses?: Prisma.BundleEntitlementLicensesUncheckedUpdateManyWithoutEntitlementNestedInput
 }
 
 export type BundleUserEntitlementsUncheckedUpdateManyWithoutUserInput = {
@@ -743,6 +949,9 @@ export type BundleUserEntitlementsUncheckedUpdateManyWithoutUserInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BundleUserEntitlementsCreateManyBundleInput = {
@@ -754,6 +963,9 @@ export type BundleUserEntitlementsCreateManyBundleInput = {
   isActive?: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
 }
 
 export type BundleUserEntitlementsUpdateWithoutBundleInput = {
@@ -763,8 +975,12 @@ export type BundleUserEntitlementsUpdateWithoutBundleInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   order?: Prisma.BundleOrdersUpdateOneWithoutUserEntitlementsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutUserEntitlementsNestedInput
+  licenses?: Prisma.BundleEntitlementLicensesUpdateManyWithoutEntitlementNestedInput
 }
 
 export type BundleUserEntitlementsUncheckedUpdateWithoutBundleInput = {
@@ -776,6 +992,10 @@ export type BundleUserEntitlementsUncheckedUpdateWithoutBundleInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  licenses?: Prisma.BundleEntitlementLicensesUncheckedUpdateManyWithoutEntitlementNestedInput
 }
 
 export type BundleUserEntitlementsUncheckedUpdateManyWithoutBundleInput = {
@@ -787,6 +1007,9 @@ export type BundleUserEntitlementsUncheckedUpdateManyWithoutBundleInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type BundleUserEntitlementsCreateManyOrderInput = {
@@ -798,6 +1021,9 @@ export type BundleUserEntitlementsCreateManyOrderInput = {
   isActive?: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  licenseKeyHash?: string | null
+  revokedAt?: Date | string | null
+  lastVerifiedAt?: Date | string | null
 }
 
 export type BundleUserEntitlementsUpdateWithoutOrderInput = {
@@ -807,8 +1033,12 @@ export type BundleUserEntitlementsUpdateWithoutOrderInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   bundle?: Prisma.BundlesUpdateOneRequiredWithoutUserEntitlementsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutUserEntitlementsNestedInput
+  licenses?: Prisma.BundleEntitlementLicensesUpdateManyWithoutEntitlementNestedInput
 }
 
 export type BundleUserEntitlementsUncheckedUpdateWithoutOrderInput = {
@@ -820,6 +1050,10 @@ export type BundleUserEntitlementsUncheckedUpdateWithoutOrderInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  licenses?: Prisma.BundleEntitlementLicensesUncheckedUpdateManyWithoutEntitlementNestedInput
 }
 
 export type BundleUserEntitlementsUncheckedUpdateManyWithoutOrderInput = {
@@ -831,8 +1065,40 @@ export type BundleUserEntitlementsUncheckedUpdateManyWithoutOrderInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
+
+/**
+ * Count Type BundleUserEntitlementsCountOutputType
+ */
+
+export type BundleUserEntitlementsCountOutputType = {
+  licenses: number
+}
+
+export type BundleUserEntitlementsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  licenses?: boolean | BundleUserEntitlementsCountOutputTypeCountLicensesArgs
+}
+
+/**
+ * BundleUserEntitlementsCountOutputType without action
+ */
+export type BundleUserEntitlementsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleUserEntitlementsCountOutputType
+   */
+  select?: Prisma.BundleUserEntitlementsCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * BundleUserEntitlementsCountOutputType without action
+ */
+export type BundleUserEntitlementsCountOutputTypeCountLicensesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BundleEntitlementLicensesWhereInput
+}
 
 
 export type BundleUserEntitlementsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -845,9 +1111,14 @@ export type BundleUserEntitlementsSelect<ExtArgs extends runtime.Types.Extension
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  licenseKeyHash?: boolean
+  revokedAt?: boolean
+  lastVerifiedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   order?: boolean | Prisma.BundleUserEntitlements$orderArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  licenses?: boolean | Prisma.BundleUserEntitlements$licensesArgs<ExtArgs>
+  _count?: boolean | Prisma.BundleUserEntitlementsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleUserEntitlements"]>
 
 export type BundleUserEntitlementsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -860,6 +1131,9 @@ export type BundleUserEntitlementsSelectCreateManyAndReturn<ExtArgs extends runt
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  licenseKeyHash?: boolean
+  revokedAt?: boolean
+  lastVerifiedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   order?: boolean | Prisma.BundleUserEntitlements$orderArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -875,6 +1149,9 @@ export type BundleUserEntitlementsSelectUpdateManyAndReturn<ExtArgs extends runt
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  licenseKeyHash?: boolean
+  revokedAt?: boolean
+  lastVerifiedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   order?: boolean | Prisma.BundleUserEntitlements$orderArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -890,13 +1167,18 @@ export type BundleUserEntitlementsSelectScalar = {
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  licenseKeyHash?: boolean
+  revokedAt?: boolean
+  lastVerifiedAt?: boolean
 }
 
-export type BundleUserEntitlementsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "bundleId" | "orderId" | "entitlementType" | "expiresAt" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleUserEntitlements"]>
+export type BundleUserEntitlementsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "bundleId" | "orderId" | "entitlementType" | "expiresAt" | "isActive" | "createdAt" | "updatedAt" | "licenseKeyHash" | "revokedAt" | "lastVerifiedAt", ExtArgs["result"]["bundleUserEntitlements"]>
 export type BundleUserEntitlementsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   order?: boolean | Prisma.BundleUserEntitlements$orderArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  licenses?: boolean | Prisma.BundleUserEntitlements$licensesArgs<ExtArgs>
+  _count?: boolean | Prisma.BundleUserEntitlementsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BundleUserEntitlementsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -915,6 +1197,7 @@ export type $BundleUserEntitlementsPayload<ExtArgs extends runtime.Types.Extensi
     bundle: Prisma.$BundlesPayload<ExtArgs>
     order: Prisma.$BundleOrdersPayload<ExtArgs> | null
     user: Prisma.$UserPayload<ExtArgs>
+    licenses: Prisma.$BundleEntitlementLicensesPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -926,6 +1209,9 @@ export type $BundleUserEntitlementsPayload<ExtArgs extends runtime.Types.Extensi
     isActive: boolean
     createdAt: Date
     updatedAt: Date
+    licenseKeyHash: string | null
+    revokedAt: Date | null
+    lastVerifiedAt: Date | null
   }, ExtArgs["result"]["bundleUserEntitlements"]>
   composites: {}
 }
@@ -1323,6 +1609,7 @@ export interface Prisma__BundleUserEntitlementsClient<T, Null = never, ExtArgs e
   bundle<T extends Prisma.BundlesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundlesDefaultArgs<ExtArgs>>): Prisma.Prisma__BundlesClient<runtime.Types.Result.GetResult<Prisma.$BundlesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   order<T extends Prisma.BundleUserEntitlements$orderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleUserEntitlements$orderArgs<ExtArgs>>): Prisma.Prisma__BundleOrdersClient<runtime.Types.Result.GetResult<Prisma.$BundleOrdersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  licenses<T extends Prisma.BundleUserEntitlements$licensesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleUserEntitlements$licensesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleEntitlementLicensesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1361,6 +1648,9 @@ export interface BundleUserEntitlementsFieldRefs {
   readonly isActive: Prisma.FieldRef<"BundleUserEntitlements", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"BundleUserEntitlements", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"BundleUserEntitlements", 'DateTime'>
+  readonly licenseKeyHash: Prisma.FieldRef<"BundleUserEntitlements", 'String'>
+  readonly revokedAt: Prisma.FieldRef<"BundleUserEntitlements", 'DateTime'>
+  readonly lastVerifiedAt: Prisma.FieldRef<"BundleUserEntitlements", 'DateTime'>
 }
     
 
@@ -1778,6 +2068,30 @@ export type BundleUserEntitlements$orderArgs<ExtArgs extends runtime.Types.Exten
    */
   include?: Prisma.BundleOrdersInclude<ExtArgs> | null
   where?: Prisma.BundleOrdersWhereInput
+}
+
+/**
+ * BundleUserEntitlements.licenses
+ */
+export type BundleUserEntitlements$licensesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleEntitlementLicenses
+   */
+  select?: Prisma.BundleEntitlementLicensesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BundleEntitlementLicenses
+   */
+  omit?: Prisma.BundleEntitlementLicensesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BundleEntitlementLicensesInclude<ExtArgs> | null
+  where?: Prisma.BundleEntitlementLicensesWhereInput
+  orderBy?: Prisma.BundleEntitlementLicensesOrderByWithRelationInput | Prisma.BundleEntitlementLicensesOrderByWithRelationInput[]
+  cursor?: Prisma.BundleEntitlementLicensesWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BundleEntitlementLicensesScalarFieldEnum | Prisma.BundleEntitlementLicensesScalarFieldEnum[]
 }
 
 /**

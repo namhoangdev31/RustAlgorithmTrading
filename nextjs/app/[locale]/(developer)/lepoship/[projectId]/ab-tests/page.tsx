@@ -6,9 +6,10 @@ import { StatusBadge } from "@/components/portal/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { startAbTestAction, deleteAbTestAction, endAbTestAction } from "@/app/actions/lepoship-ab";
+import { startAbTestAction, deleteAbTestAction } from "@/app/actions/lepoship-ab";
 import { AbTestActions } from "./AbTestActions";
 import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 
 type Props = {
   params: Promise<{ locale: string; projectId: string }>;
@@ -20,6 +21,8 @@ export default async function AbTestsPage({ params }: Props) {
   const user = await requireCurrentUser();
   const access = await requireProjectRole(user.id, projectId, "viewer");
   const bundle = access.project.bundle;
+  const canEdit = ["editor", "admin", "owner"].includes(access.role);
+  const canAdmin = ["admin", "owner"].includes(access.role);
 
   if (!bundle) {
     return (
@@ -32,6 +35,7 @@ export default async function AbTestsPage({ params }: Props) {
   const tests = await prisma.bundleAbTests.findMany({
     where: { bundleId: bundle.id },
     orderBy: { createdAt: "desc" },
+    include: { analysisSnapshots: { orderBy: { bucketStart: "desc" }, take: 1 } },
   });
 
   // Fetch available release tracks for the create form
@@ -49,7 +53,7 @@ export default async function AbTestsPage({ params }: Props) {
       />
 
       {/* Create form */}
-      <AbTestActions projectId={projectId} tracks={tracks} tests={tests} />
+      {canEdit && <AbTestActions projectId={projectId} tracks={tracks} tests={tests} />}
 
       {/* Test list */}
       {tests.length === 0 ? (
@@ -61,6 +65,7 @@ export default async function AbTestsPage({ params }: Props) {
       ) : (
         <div className="space-y-3">
           {tests.map((test) => {
+            const latest = test.analysisSnapshots[0];
             let targetBuild: number | null = null;
             try {
               const config = JSON.parse(test.variantBConfig);
@@ -91,7 +96,7 @@ export default async function AbTestsPage({ params }: Props) {
                     </div>
                     <StatusBadge
                       status={test.status}
-                      label={test.status === "running" ? "Running" : test.status === "ended" ? "Ended" : "Draft"}
+                      label={test.status === "running" ? "Running" : test.status === "paused_guardrail" ? "Paused" : test.status === "ended" ? "Ended" : "Draft"}
                     />
                   </div>
                 </CardHeader>
@@ -110,13 +115,15 @@ export default async function AbTestsPage({ params }: Props) {
                         Winner: Variant {test.winnerVariant}
                       </Badge>
                     )}
+                    {latest && <span>· {Math.min(latest.analyzableA, latest.analyzableB)} analyzable/arm</span>}
+                    {latest?.liftPercent !== null && latest?.liftPercent !== undefined && <span>· Lift {latest.liftPercent.toFixed(2)}%</span>}
                   </div>
 
                   {/* Action buttons based on status */}
                   <div className="flex items-center gap-2 pt-1">
                     {test.status === "draft" && (
                       <>
-                        <form action={startAbTestAction}>
+                        {canAdmin && <form action={startAbTestAction}>
                           <input type="hidden" name="projectId" value={projectId} />
                           <input type="hidden" name="testId" value={test.id} />
                           <Button
@@ -126,8 +133,8 @@ export default async function AbTestsPage({ params }: Props) {
                           >
                             Start
                           </Button>
-                        </form>
-                        <form action={deleteAbTestAction}>
+                        </form>}
+                        {canEdit && <form action={deleteAbTestAction}>
                           <input type="hidden" name="projectId" value={projectId} />
                           <input type="hidden" name="testId" value={test.id} />
                           <Button
@@ -138,23 +145,12 @@ export default async function AbTestsPage({ params }: Props) {
                           >
                             Delete
                           </Button>
-                        </form>
+                        </form>}
                       </>
                     )}
-                    {test.status === "running" && (
-                      <form action={endAbTestAction}>
-                        <input type="hidden" name="projectId" value={projectId} />
-                        <input type="hidden" name="testId" value={test.id} />
-                        <Button
-                          type="submit"
-                          size="sm"
-                          variant="outline"
-                          className="h-7 text-xs border-amber-500/30 text-amber-500 hover:bg-amber-500/10 cursor-pointer"
-                        >
-                          End Test
-                        </Button>
-                      </form>
-                    )}
+                    <Button asChild type="button" size="sm" variant="outline" className="h-7 text-xs">
+                      <Link href={`/lepoship/${projectId}/ab-tests/${test.id}`}>View evidence</Link>
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

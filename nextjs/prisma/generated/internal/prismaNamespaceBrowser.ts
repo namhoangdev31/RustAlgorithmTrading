@@ -59,10 +59,22 @@ export const ModelName = {
   Project: 'Project',
   BundlePayouts: 'BundlePayouts',
   Bundles: 'Bundles',
+  BundleChannels: 'BundleChannels',
+  BundleReleases: 'BundleReleases',
+  BundleArtifacts: 'BundleArtifacts',
+  BundleBuildJobs: 'BundleBuildJobs',
+  BundleBuildLogChunks: 'BundleBuildLogChunks',
+  BundleReleaseApprovals: 'BundleReleaseApprovals',
+  BundleReleaseOverridesV2: 'BundleReleaseOverridesV2',
+  BundleReleaseOverrideApprovals: 'BundleReleaseOverrideApprovals',
+  BundleDeliveryRollouts: 'BundleDeliveryRollouts',
+  BundleDeliveryRolloutExposures: 'BundleDeliveryRolloutExposures',
   Notifications: 'Notifications',
   Session: 'Session',
   UserDeviceToken: 'UserDeviceToken',
   BundleAbTests: 'BundleAbTests',
+  BundleAbTestExposures: 'BundleAbTestExposures',
+  BundleAbTestAnalysisSnapshots: 'BundleAbTestAnalysisSnapshots',
   BundleAbuseSignals: 'BundleAbuseSignals',
   BundleAdConfigurations: 'BundleAdConfigurations',
   BundleAnalyticsEvents: 'BundleAnalyticsEvents',
@@ -92,6 +104,7 @@ export const ModelName = {
   BundleRetentionStats: 'BundleRetentionStats',
   BundleReviews: 'BundleReviews',
   BundleRuntimeConfig: 'BundleRuntimeConfig',
+  BundleRuntimeConfigEntries: 'BundleRuntimeConfigEntries',
   BundleScreenshots: 'BundleScreenshots',
   BundleSearchKeywords: 'BundleSearchKeywords',
   BundleStateTransitions: 'BundleStateTransitions',
@@ -108,13 +121,25 @@ export const ModelName = {
   BundlePaymentLogs: 'BundlePaymentLogs',
   BundleRefundRequests: 'BundleRefundRequests',
   BundleUserEntitlements: 'BundleUserEntitlements',
+  BundleEntitlementLicenses: 'BundleEntitlementLicenses',
+  BundleLedgerAccounts: 'BundleLedgerAccounts',
+  BundleLedgerTransactions: 'BundleLedgerTransactions',
+  BundleLedgerEntries: 'BundleLedgerEntries',
+  BundleStripeWebhookEvents: 'BundleStripeWebhookEvents',
   BundleRollouts: 'BundleRollouts',
   BundleReviewReports: 'BundleReviewReports',
   BundleSubscriptionHistory: 'BundleSubscriptionHistory',
   BundleCrashReports: 'BundleCrashReports',
+  BundleCrashEvents: 'BundleCrashEvents',
   BundleReviewHistory: 'BundleReviewHistory',
   BundleReviewQueue: 'BundleReviewQueue',
   BundleSecurityScanResults: 'BundleSecurityScanResults',
+  BundleArtifactManifests: 'BundleArtifactManifests',
+  BundleRolloutExposures: 'BundleRolloutExposures',
+  BundleOutboxEvents: 'BundleOutboxEvents',
+  LepoShipIdempotencyKeys: 'LepoShipIdempotencyKeys',
+  BundleReleaseOverrides: 'BundleReleaseOverrides',
+  BundleFinancialLedgerEntries: 'BundleFinancialLedgerEntries',
   BundleUpdatePhases: 'BundleUpdatePhases',
   UserSecrets: 'UserSecrets',
   PersonalAccessToken: 'PersonalAccessToken',
@@ -337,10 +362,171 @@ export const BundlesScalarFieldEnum = {
   deletedAt: 'deletedAt',
   projectId: 'projectId',
   vercelDeploymentId: 'vercelDeploymentId',
-  vercelDeploymentUrl: 'vercelDeploymentUrl'
+  vercelDeploymentUrl: 'vercelDeploymentUrl',
+  primaryReleaseTrackId: 'primaryReleaseTrackId',
+  activeAbTestId: 'activeAbTestId',
+  activeRolloutId: 'activeRolloutId',
+  activeDeliveryMode: 'activeDeliveryMode'
 } as const
 
 export type BundlesScalarFieldEnum = (typeof BundlesScalarFieldEnum)[keyof typeof BundlesScalarFieldEnum]
+
+
+export const BundleChannelsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  name: 'name',
+  currentReleaseId: 'currentReleaseId',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BundleChannelsScalarFieldEnum = (typeof BundleChannelsScalarFieldEnum)[keyof typeof BundleChannelsScalarFieldEnum]
+
+
+export const BundleReleasesScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  channelId: 'channelId',
+  version: 'version',
+  buildNumber: 'buildNumber',
+  status: 'status',
+  source: 'source',
+  sourceCommit: 'sourceCommit',
+  releaseNotes: 'releaseNotes',
+  createdById: 'createdById',
+  submittedAt: 'submittedAt',
+  approvedAt: 'approvedAt',
+  activatedAt: 'activatedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BundleReleasesScalarFieldEnum = (typeof BundleReleasesScalarFieldEnum)[keyof typeof BundleReleasesScalarFieldEnum]
+
+
+export const BundleArtifactsScalarFieldEnum = {
+  id: 'id',
+  releaseId: 'releaseId',
+  kind: 'kind',
+  storageProvider: 'storageProvider',
+  storageBucket: 'storageBucket',
+  storageKey: 'storageKey',
+  checksumSha256: 'checksumSha256',
+  fileSize: 'fileSize',
+  contentType: 'contentType',
+  baseBuildNumber: 'baseBuildNumber',
+  targetBuildNumber: 'targetBuildNumber',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleArtifactsScalarFieldEnum = (typeof BundleArtifactsScalarFieldEnum)[keyof typeof BundleArtifactsScalarFieldEnum]
+
+
+export const BundleBuildJobsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  releaseId: 'releaseId',
+  projectId: 'projectId',
+  triggeredById: 'triggeredById',
+  queueJobId: 'queueJobId',
+  status: 'status',
+  attempt: 'attempt',
+  maxAttempts: 'maxAttempts',
+  workerId: 'workerId',
+  heartbeatAt: 'heartbeatAt',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  errorCode: 'errorCode',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BundleBuildJobsScalarFieldEnum = (typeof BundleBuildJobsScalarFieldEnum)[keyof typeof BundleBuildJobsScalarFieldEnum]
+
+
+export const BundleBuildLogChunksScalarFieldEnum = {
+  id: 'id',
+  buildId: 'buildId',
+  sequence: 'sequence',
+  level: 'level',
+  message: 'message',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleBuildLogChunksScalarFieldEnum = (typeof BundleBuildLogChunksScalarFieldEnum)[keyof typeof BundleBuildLogChunksScalarFieldEnum]
+
+
+export const BundleReleaseApprovalsScalarFieldEnum = {
+  id: 'id',
+  releaseId: 'releaseId',
+  kind: 'kind',
+  status: 'status',
+  actorId: 'actorId',
+  evidence: 'evidence',
+  policyVersion: 'policyVersion',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleReleaseApprovalsScalarFieldEnum = (typeof BundleReleaseApprovalsScalarFieldEnum)[keyof typeof BundleReleaseApprovalsScalarFieldEnum]
+
+
+export const BundleReleaseOverridesV2ScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  releaseId: 'releaseId',
+  createdById: 'createdById',
+  reason: 'reason',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleReleaseOverridesV2ScalarFieldEnum = (typeof BundleReleaseOverridesV2ScalarFieldEnum)[keyof typeof BundleReleaseOverridesV2ScalarFieldEnum]
+
+
+export const BundleReleaseOverrideApprovalsScalarFieldEnum = {
+  id: 'id',
+  overrideId: 'overrideId',
+  approverId: 'approverId',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleReleaseOverrideApprovalsScalarFieldEnum = (typeof BundleReleaseOverrideApprovalsScalarFieldEnum)[keyof typeof BundleReleaseOverrideApprovalsScalarFieldEnum]
+
+
+export const BundleDeliveryRolloutsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  channelId: 'channelId',
+  baselineReleaseId: 'baselineReleaseId',
+  candidateReleaseId: 'candidateReleaseId',
+  percentage: 'percentage',
+  status: 'status',
+  targeting: 'targeting',
+  startedAt: 'startedAt',
+  pausedAt: 'pausedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BundleDeliveryRolloutsScalarFieldEnum = (typeof BundleDeliveryRolloutsScalarFieldEnum)[keyof typeof BundleDeliveryRolloutsScalarFieldEnum]
+
+
+export const BundleDeliveryRolloutExposuresScalarFieldEnum = {
+  id: 'id',
+  rolloutId: 'rolloutId',
+  installationId: 'installationId',
+  releaseId: 'releaseId',
+  bucket: 'bucket',
+  exposedAt: 'exposedAt'
+} as const
+
+export type BundleDeliveryRolloutExposuresScalarFieldEnum = (typeof BundleDeliveryRolloutExposuresScalarFieldEnum)[keyof typeof BundleDeliveryRolloutExposuresScalarFieldEnum]
 
 
 export const NotificationsScalarFieldEnum = {
@@ -401,12 +587,95 @@ export const BundleAbTestsScalarFieldEnum = {
   trafficSplit: 'trafficSplit',
   status: 'status',
   winnerVariant: 'winnerVariant',
+  controlTrackId: 'controlTrackId',
+  treatmentTrackId: 'treatmentTrackId',
+  controlReleaseId: 'controlReleaseId',
+  treatmentReleaseId: 'treatmentReleaseId',
+  analysisStatus: 'analysisStatus',
+  metricType: 'metricType',
+  metricEventName: 'metricEventName',
+  conversionWindowHours: 'conversionWindowHours',
+  targetCountries: 'targetCountries',
+  targetLocales: 'targetLocales',
+  targetPlatforms: 'targetPlatforms',
+  targetOsVersions: 'targetOsVersions',
+  minimumDetectableEffect: 'minimumDetectableEffect',
+  confidenceLevel: 'confidenceLevel',
+  statisticalPower: 'statisticalPower',
+  baselineConversionRate: 'baselineConversionRate',
+  minimumSamplePerVariant: 'minimumSamplePerVariant',
+  maxDurationDays: 'maxDurationDays',
+  recommendedWinner: 'recommendedWinner',
+  pausedAt: 'pausedAt',
+  pauseReason: 'pauseReason',
+  pausedById: 'pausedById',
+  endedById: 'endedById',
+  endReason: 'endReason',
+  lastAnalyzedAt: 'lastAnalyzedAt',
   startedAt: 'startedAt',
   endedAt: 'endedAt',
   createdAt: 'createdAt'
 } as const
 
 export type BundleAbTestsScalarFieldEnum = (typeof BundleAbTestsScalarFieldEnum)[keyof typeof BundleAbTestsScalarFieldEnum]
+
+
+export const BundleAbTestExposuresScalarFieldEnum = {
+  id: 'id',
+  testId: 'testId',
+  deviceId: 'deviceId',
+  variant: 'variant',
+  assignedTrackId: 'assignedTrackId',
+  assignedReleaseId: 'assignedReleaseId',
+  bucket: 'bucket',
+  countryCode: 'countryCode',
+  locale: 'locale',
+  platform: 'platform',
+  osVersion: 'osVersion',
+  exposedAt: 'exposedAt'
+} as const
+
+export type BundleAbTestExposuresScalarFieldEnum = (typeof BundleAbTestExposuresScalarFieldEnum)[keyof typeof BundleAbTestExposuresScalarFieldEnum]
+
+
+export const BundleAbTestAnalysisSnapshotsScalarFieldEnum = {
+  id: 'id',
+  testId: 'testId',
+  bucketStart: 'bucketStart',
+  analysisStatus: 'analysisStatus',
+  exposedA: 'exposedA',
+  exposedB: 'exposedB',
+  analyzableA: 'analyzableA',
+  analyzableB: 'analyzableB',
+  conversionsA: 'conversionsA',
+  conversionsB: 'conversionsB',
+  conversionRateA: 'conversionRateA',
+  conversionRateB: 'conversionRateB',
+  absoluteDifference: 'absoluteDifference',
+  liftPercent: 'liftPercent',
+  confidenceIntervalLow: 'confidenceIntervalLow',
+  confidenceIntervalHigh: 'confidenceIntervalHigh',
+  pValue: 'pValue',
+  confidence: 'confidence',
+  sequentialEvidence: 'sequentialEvidence',
+  posteriorProbabilityB: 'posteriorProbabilityB',
+  expectedLossA: 'expectedLossA',
+  expectedLossB: 'expectedLossB',
+  srmPValue: 'srmPValue',
+  srmDetected: 'srmDetected',
+  dataDelayMinutes: 'dataDelayMinutes',
+  requiredSamplePerVariant: 'requiredSamplePerVariant',
+  crashAffectedA: 'crashAffectedA',
+  crashAffectedB: 'crashAffectedB',
+  crashRateA: 'crashRateA',
+  crashRateB: 'crashRateB',
+  crashDifference: 'crashDifference',
+  crashPValue: 'crashPValue',
+  guardrailTriggered: 'guardrailTriggered',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleAbTestAnalysisSnapshotsScalarFieldEnum = (typeof BundleAbTestAnalysisSnapshotsScalarFieldEnum)[keyof typeof BundleAbTestAnalysisSnapshotsScalarFieldEnum]
 
 
 export const BundleAbuseSignalsScalarFieldEnum = {
@@ -437,6 +706,7 @@ export const BundleAdConfigurationsScalarFieldEnum = {
   nativeId: 'nativeId',
   isTestMode: 'isTestMode',
   isActive: 'isActive',
+  revision: 'revision',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -456,6 +726,9 @@ export const BundleAnalyticsEventsScalarFieldEnum = {
   ipAddress: 'ipAddress',
   deviceFingerprint: 'deviceFingerprint',
   clientEventId: 'clientEventId',
+  abTestId: 'abTestId',
+  abExposureId: 'abExposureId',
+  abVariant: 'abVariant',
   createdAt: 'createdAt'
 } as const
 
@@ -667,6 +940,9 @@ export const BundleInstallEventsScalarFieldEnum = {
   osVersion: 'osVersion',
   bundleVersion: 'bundleVersion',
   countryCode: 'countryCode',
+  abTestId: 'abTestId',
+  abExposureId: 'abExposureId',
+  abVariant: 'abVariant',
   createdAt: 'createdAt'
 } as const
 
@@ -755,6 +1031,9 @@ export const BundlePrivacyDeclarationsScalarFieldEnum = {
   thirdParties: 'thirdParties',
   dataRetentionDays: 'dataRetentionDays',
   privacyContactEmail: 'privacyContactEmail',
+  declarationStatus: 'declarationStatus',
+  revision: 'revision',
+  reviewedAt: 'reviewedAt',
   updatedAt: 'updatedAt',
   createdAt: 'createdAt'
 } as const
@@ -804,7 +1083,8 @@ export const BundleReleaseTracksScalarFieldEnum = {
   storagePath: 'storagePath',
   releaseNotes: 'releaseNotes',
   status: 'status',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  artifactManifestId: 'artifactManifestId'
 } as const
 
 export type BundleReleaseTracksScalarFieldEnum = (typeof BundleReleaseTracksScalarFieldEnum)[keyof typeof BundleReleaseTracksScalarFieldEnum]
@@ -857,6 +1137,23 @@ export const BundleRuntimeConfigScalarFieldEnum = {
 } as const
 
 export type BundleRuntimeConfigScalarFieldEnum = (typeof BundleRuntimeConfigScalarFieldEnum)[keyof typeof BundleRuntimeConfigScalarFieldEnum]
+
+
+export const BundleRuntimeConfigEntriesScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  environment: 'environment',
+  track: 'track',
+  configKey: 'configKey',
+  value: 'value',
+  valueType: 'valueType',
+  revision: 'revision',
+  isSecret: 'isSecret',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleRuntimeConfigEntriesScalarFieldEnum = (typeof BundleRuntimeConfigEntriesScalarFieldEnum)[keyof typeof BundleRuntimeConfigEntriesScalarFieldEnum]
 
 
 export const BundleScreenshotsScalarFieldEnum = {
@@ -1090,10 +1387,86 @@ export const BundleUserEntitlementsScalarFieldEnum = {
   expiresAt: 'expiresAt',
   isActive: 'isActive',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  licenseKeyHash: 'licenseKeyHash',
+  revokedAt: 'revokedAt',
+  lastVerifiedAt: 'lastVerifiedAt'
 } as const
 
 export type BundleUserEntitlementsScalarFieldEnum = (typeof BundleUserEntitlementsScalarFieldEnum)[keyof typeof BundleUserEntitlementsScalarFieldEnum]
+
+
+export const BundleEntitlementLicensesScalarFieldEnum = {
+  id: 'id',
+  entitlementId: 'entitlementId',
+  tokenPrefix: 'tokenPrefix',
+  tokenHash: 'tokenHash',
+  deviceLimit: 'deviceLimit',
+  deviceIds: 'deviceIds',
+  isRevoked: 'isRevoked',
+  graceUntil: 'graceUntil',
+  lastVerifiedAt: 'lastVerifiedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BundleEntitlementLicensesScalarFieldEnum = (typeof BundleEntitlementLicensesScalarFieldEnum)[keyof typeof BundleEntitlementLicensesScalarFieldEnum]
+
+
+export const BundleLedgerAccountsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  code: 'code',
+  accountType: 'accountType',
+  currency: 'currency',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleLedgerAccountsScalarFieldEnum = (typeof BundleLedgerAccountsScalarFieldEnum)[keyof typeof BundleLedgerAccountsScalarFieldEnum]
+
+
+export const BundleLedgerTransactionsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  orderId: 'orderId',
+  transactionType: 'transactionType',
+  status: 'status',
+  providerRef: 'providerRef',
+  idempotencyKey: 'idempotencyKey',
+  currency: 'currency',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleLedgerTransactionsScalarFieldEnum = (typeof BundleLedgerTransactionsScalarFieldEnum)[keyof typeof BundleLedgerTransactionsScalarFieldEnum]
+
+
+export const BundleLedgerEntriesScalarFieldEnum = {
+  id: 'id',
+  transactionId: 'transactionId',
+  accountId: 'accountId',
+  direction: 'direction',
+  amount: 'amount',
+  currency: 'currency',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleLedgerEntriesScalarFieldEnum = (typeof BundleLedgerEntriesScalarFieldEnum)[keyof typeof BundleLedgerEntriesScalarFieldEnum]
+
+
+export const BundleStripeWebhookEventsScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  eventType: 'eventType',
+  bundleId: 'bundleId',
+  payloadHash: 'payloadHash',
+  status: 'status',
+  processedAt: 'processedAt',
+  error: 'error',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleStripeWebhookEventsScalarFieldEnum = (typeof BundleStripeWebhookEventsScalarFieldEnum)[keyof typeof BundleStripeWebhookEventsScalarFieldEnum]
 
 
 export const BundleRolloutsScalarFieldEnum = {
@@ -1104,7 +1477,11 @@ export const BundleRolloutsScalarFieldEnum = {
   targetCountry: 'targetCountry',
   startedAt: 'startedAt',
   completedAt: 'completedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  status: 'status',
+  targetLocale: 'targetLocale',
+  targetPlatform: 'targetPlatform',
+  pausedAt: 'pausedAt'
 } as const
 
 export type BundleRolloutsScalarFieldEnum = (typeof BundleRolloutsScalarFieldEnum)[keyof typeof BundleRolloutsScalarFieldEnum]
@@ -1166,6 +1543,29 @@ export const BundleCrashReportsScalarFieldEnum = {
 export type BundleCrashReportsScalarFieldEnum = (typeof BundleCrashReportsScalarFieldEnum)[keyof typeof BundleCrashReportsScalarFieldEnum]
 
 
+export const BundleCrashEventsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  clientEventId: 'clientEventId',
+  deviceId: 'deviceId',
+  releaseTrackId: 'releaseTrackId',
+  releaseId: 'releaseId',
+  bundleVersion: 'bundleVersion',
+  buildNumber: 'buildNumber',
+  stackTraceHash: 'stackTraceHash',
+  stackTrace: 'stackTrace',
+  platform: 'platform',
+  osVersion: 'osVersion',
+  abTestId: 'abTestId',
+  abExposureId: 'abExposureId',
+  abVariant: 'abVariant',
+  occurredAt: 'occurredAt',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleCrashEventsScalarFieldEnum = (typeof BundleCrashEventsScalarFieldEnum)[keyof typeof BundleCrashEventsScalarFieldEnum]
+
+
 export const BundleReviewHistoryScalarFieldEnum = {
   id: 'id',
   bundleId: 'bundleId',
@@ -1184,6 +1584,7 @@ export const BundleReviewQueueScalarFieldEnum = {
   id: 'id',
   bundleId: 'bundleId',
   submittedVersionId: 'submittedVersionId',
+  releaseId: 'releaseId',
   status: 'status',
   reviewerId: 'reviewerId',
   priority: 'priority',
@@ -1205,10 +1606,112 @@ export const BundleSecurityScanResultsScalarFieldEnum = {
   severity: 'severity',
   findings: 'findings',
   scannedAt: 'scannedAt',
-  scannerVersion: 'scannerVersion'
+  scannerVersion: 'scannerVersion',
+  policyVersion: 'policyVersion',
+  sbom: 'sbom',
+  riskScore: 'riskScore'
 } as const
 
 export type BundleSecurityScanResultsScalarFieldEnum = (typeof BundleSecurityScanResultsScalarFieldEnum)[keyof typeof BundleSecurityScanResultsScalarFieldEnum]
+
+
+export const BundleArtifactManifestsScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  versionId: 'versionId',
+  storageProvider: 'storageProvider',
+  storageBucket: 'storageBucket',
+  storageKey: 'storageKey',
+  checksumSha256: 'checksumSha256',
+  fileSize: 'fileSize',
+  contentType: 'contentType',
+  deltaFromBuild: 'deltaFromBuild',
+  sourceCommit: 'sourceCommit',
+  immutable: 'immutable',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleArtifactManifestsScalarFieldEnum = (typeof BundleArtifactManifestsScalarFieldEnum)[keyof typeof BundleArtifactManifestsScalarFieldEnum]
+
+
+export const BundleRolloutExposuresScalarFieldEnum = {
+  id: 'id',
+  rolloutId: 'rolloutId',
+  bundleId: 'bundleId',
+  trackId: 'trackId',
+  deviceId: 'deviceId',
+  exposedAt: 'exposedAt'
+} as const
+
+export type BundleRolloutExposuresScalarFieldEnum = (typeof BundleRolloutExposuresScalarFieldEnum)[keyof typeof BundleRolloutExposuresScalarFieldEnum]
+
+
+export const BundleOutboxEventsScalarFieldEnum = {
+  id: 'id',
+  eventKey: 'eventKey',
+  aggregateType: 'aggregateType',
+  aggregateId: 'aggregateId',
+  eventType: 'eventType',
+  payload: 'payload',
+  status: 'status',
+  attempts: 'attempts',
+  nextAttemptAt: 'nextAttemptAt',
+  processedAt: 'processedAt',
+  lastError: 'lastError',
+  leaseOwner: 'leaseOwner',
+  leasedUntil: 'leasedUntil',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleOutboxEventsScalarFieldEnum = (typeof BundleOutboxEventsScalarFieldEnum)[keyof typeof BundleOutboxEventsScalarFieldEnum]
+
+
+export const LepoShipIdempotencyKeysScalarFieldEnum = {
+  id: 'id',
+  scope: 'scope',
+  key: 'key',
+  requestHash: 'requestHash',
+  response: 'response',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  completedAt: 'completedAt',
+  leaseOwner: 'leaseOwner',
+  leasedUntil: 'leasedUntil',
+  lastError: 'lastError'
+} as const
+
+export type LepoShipIdempotencyKeysScalarFieldEnum = (typeof LepoShipIdempotencyKeysScalarFieldEnum)[keyof typeof LepoShipIdempotencyKeysScalarFieldEnum]
+
+
+export const BundleReleaseOverridesScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  versionId: 'versionId',
+  createdBy: 'createdBy',
+  reason: 'reason',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleReleaseOverridesScalarFieldEnum = (typeof BundleReleaseOverridesScalarFieldEnum)[keyof typeof BundleReleaseOverridesScalarFieldEnum]
+
+
+export const BundleFinancialLedgerEntriesScalarFieldEnum = {
+  id: 'id',
+  bundleId: 'bundleId',
+  orderId: 'orderId',
+  entryType: 'entryType',
+  amount: 'amount',
+  currency: 'currency',
+  idempotencyKey: 'idempotencyKey',
+  providerRef: 'providerRef',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type BundleFinancialLedgerEntriesScalarFieldEnum = (typeof BundleFinancialLedgerEntriesScalarFieldEnum)[keyof typeof BundleFinancialLedgerEntriesScalarFieldEnum]
 
 
 export const BundleUpdatePhasesScalarFieldEnum = {
@@ -2037,6 +2540,9 @@ export const BundleSdkTokensScalarFieldEnum = {
   tokenPrefix: 'tokenPrefix',
   tokenHash: 'tokenHash',
   label: 'label',
+  scopes: 'scopes',
+  expiresAt: 'expiresAt',
+  rotationGraceUntil: 'rotationGraceUntil',
   lastUsedAt: 'lastUsedAt',
   isRevoked: 'isRevoked',
   createdAt: 'createdAt'

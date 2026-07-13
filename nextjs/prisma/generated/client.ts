@@ -82,6 +82,56 @@ export type BundlePayouts = Prisma.BundlePayoutsModel
  */
 export type Bundles = Prisma.BundlesModel
 /**
+ * Model BundleChannels
+ * 
+ */
+export type BundleChannels = Prisma.BundleChannelsModel
+/**
+ * Model BundleReleases
+ * 
+ */
+export type BundleReleases = Prisma.BundleReleasesModel
+/**
+ * Model BundleArtifacts
+ * 
+ */
+export type BundleArtifacts = Prisma.BundleArtifactsModel
+/**
+ * Model BundleBuildJobs
+ * 
+ */
+export type BundleBuildJobs = Prisma.BundleBuildJobsModel
+/**
+ * Model BundleBuildLogChunks
+ * 
+ */
+export type BundleBuildLogChunks = Prisma.BundleBuildLogChunksModel
+/**
+ * Model BundleReleaseApprovals
+ * 
+ */
+export type BundleReleaseApprovals = Prisma.BundleReleaseApprovalsModel
+/**
+ * Model BundleReleaseOverridesV2
+ * 
+ */
+export type BundleReleaseOverridesV2 = Prisma.BundleReleaseOverridesV2Model
+/**
+ * Model BundleReleaseOverrideApprovals
+ * 
+ */
+export type BundleReleaseOverrideApprovals = Prisma.BundleReleaseOverrideApprovalsModel
+/**
+ * Model BundleDeliveryRollouts
+ * 
+ */
+export type BundleDeliveryRollouts = Prisma.BundleDeliveryRolloutsModel
+/**
+ * Model BundleDeliveryRolloutExposures
+ * 
+ */
+export type BundleDeliveryRolloutExposures = Prisma.BundleDeliveryRolloutExposuresModel
+/**
  * Model Notifications
  * 
  */
@@ -101,6 +151,16 @@ export type UserDeviceToken = Prisma.UserDeviceTokenModel
  * 
  */
 export type BundleAbTests = Prisma.BundleAbTestsModel
+/**
+ * Model BundleAbTestExposures
+ * 
+ */
+export type BundleAbTestExposures = Prisma.BundleAbTestExposuresModel
+/**
+ * Model BundleAbTestAnalysisSnapshots
+ * 
+ */
+export type BundleAbTestAnalysisSnapshots = Prisma.BundleAbTestAnalysisSnapshotsModel
 /**
  * Model BundleAbuseSignals
  * 
@@ -247,6 +307,11 @@ export type BundleReviews = Prisma.BundleReviewsModel
  */
 export type BundleRuntimeConfig = Prisma.BundleRuntimeConfigModel
 /**
+ * Model BundleRuntimeConfigEntries
+ * 
+ */
+export type BundleRuntimeConfigEntries = Prisma.BundleRuntimeConfigEntriesModel
+/**
  * Model BundleScreenshots
  * 
  */
@@ -327,6 +392,31 @@ export type BundleRefundRequests = Prisma.BundleRefundRequestsModel
  */
 export type BundleUserEntitlements = Prisma.BundleUserEntitlementsModel
 /**
+ * Model BundleEntitlementLicenses
+ * 
+ */
+export type BundleEntitlementLicenses = Prisma.BundleEntitlementLicensesModel
+/**
+ * Model BundleLedgerAccounts
+ * 
+ */
+export type BundleLedgerAccounts = Prisma.BundleLedgerAccountsModel
+/**
+ * Model BundleLedgerTransactions
+ * 
+ */
+export type BundleLedgerTransactions = Prisma.BundleLedgerTransactionsModel
+/**
+ * Model BundleLedgerEntries
+ * 
+ */
+export type BundleLedgerEntries = Prisma.BundleLedgerEntriesModel
+/**
+ * Model BundleStripeWebhookEvents
+ * 
+ */
+export type BundleStripeWebhookEvents = Prisma.BundleStripeWebhookEventsModel
+/**
  * Model BundleRollouts
  * 
  */
@@ -347,6 +437,11 @@ export type BundleSubscriptionHistory = Prisma.BundleSubscriptionHistoryModel
  */
 export type BundleCrashReports = Prisma.BundleCrashReportsModel
 /**
+ * Model BundleCrashEvents
+ * 
+ */
+export type BundleCrashEvents = Prisma.BundleCrashEventsModel
+/**
  * Model BundleReviewHistory
  * 
  */
@@ -361,6 +456,36 @@ export type BundleReviewQueue = Prisma.BundleReviewQueueModel
  * 
  */
 export type BundleSecurityScanResults = Prisma.BundleSecurityScanResultsModel
+/**
+ * Model BundleArtifactManifests
+ * 
+ */
+export type BundleArtifactManifests = Prisma.BundleArtifactManifestsModel
+/**
+ * Model BundleRolloutExposures
+ * 
+ */
+export type BundleRolloutExposures = Prisma.BundleRolloutExposuresModel
+/**
+ * Model BundleOutboxEvents
+ * 
+ */
+export type BundleOutboxEvents = Prisma.BundleOutboxEventsModel
+/**
+ * Model LepoShipIdempotencyKeys
+ * 
+ */
+export type LepoShipIdempotencyKeys = Prisma.LepoShipIdempotencyKeysModel
+/**
+ * Model BundleReleaseOverrides
+ * 
+ */
+export type BundleReleaseOverrides = Prisma.BundleReleaseOverridesModel
+/**
+ * Model BundleFinancialLedgerEntries
+ * 
+ */
+export type BundleFinancialLedgerEntries = Prisma.BundleFinancialLedgerEntriesModel
 /**
  * Model BundleUpdatePhases
  * 

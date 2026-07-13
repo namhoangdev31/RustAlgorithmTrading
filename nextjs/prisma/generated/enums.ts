@@ -9,6 +9,80 @@
 * 🟢 You can import this file directly.
 */
 
+export const BundleCatalogStatus = {
+  draft: 'draft',
+  submitted: 'submitted',
+  published: 'published',
+  suspended: 'suspended',
+  removed: 'removed'
+} as const
+
+export type BundleCatalogStatus = (typeof BundleCatalogStatus)[keyof typeof BundleCatalogStatus]
+
+
+export const BundleReleaseStatus = {
+  queued: 'queued',
+  building: 'building',
+  scanning: 'scanning',
+  pending_review: 'pending_review',
+  approved: 'approved',
+  active: 'active',
+  rejected: 'rejected',
+  failed: 'failed',
+  rolled_back: 'rolled_back'
+} as const
+
+export type BundleReleaseStatus = (typeof BundleReleaseStatus)[keyof typeof BundleReleaseStatus]
+
+
+export const BundleArtifactKind = {
+  full: 'full',
+  delta: 'delta',
+  source_map: 'source_map',
+  sbom: 'sbom',
+  build_log: 'build_log'
+} as const
+
+export type BundleArtifactKind = (typeof BundleArtifactKind)[keyof typeof BundleArtifactKind]
+
+
+export const BundleBuildStatus = {
+  queued: 'queued',
+  running: 'running',
+  succeeded: 'succeeded',
+  failed: 'failed',
+  cancelled: 'cancelled'
+} as const
+
+export type BundleBuildStatus = (typeof BundleBuildStatus)[keyof typeof BundleBuildStatus]
+
+
+export const BundleApprovalKind = {
+  moderation: 'moderation',
+  privacy: 'privacy',
+  security: 'security'
+} as const
+
+export type BundleApprovalKind = (typeof BundleApprovalKind)[keyof typeof BundleApprovalKind]
+
+
+export const BundleDeliveryMode = {
+  none: 'none',
+  rollout: 'rollout',
+  experiment: 'experiment'
+} as const
+
+export type BundleDeliveryMode = (typeof BundleDeliveryMode)[keyof typeof BundleDeliveryMode]
+
+
+export const LedgerEntryDirection = {
+  debit: 'debit',
+  credit: 'credit'
+} as const
+
+export type LedgerEntryDirection = (typeof LedgerEntryDirection)[keyof typeof LedgerEntryDirection]
+
+
 export const OrganizationType = {
   personal: 'personal',
   corporate: 'corporate'

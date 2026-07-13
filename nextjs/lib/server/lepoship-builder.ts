@@ -7,6 +7,8 @@ import { checkArtifactExists } from "@/lib/server/remote-cache-engine";
 import { analyzeMonorepo } from "@/lib/server/dependency-graph";
 import { scanWorkspace, shouldBlockBuild, generateReport } from "@/lib/server/security-scanner";
 import { detectMonorepo } from "@/lib/server/native-platform/monorepo";
+import { putArtifactFile } from "@/lib/server/lepoship/artifact-storage";
+import { enqueueOutboxEvent } from "@/lib/server/lepoship/outbox";
 
 interface KnownVulnerability {
   packageName: string;
@@ -365,11 +367,31 @@ async function runSecurityScan(
       await writeLog("[SECURITY SCAN] Audit result: 0 vulnerabilities found. Dependency integrity checked. All packages are secure.");
     }
   } catch (error: any) {
-    if (error.message.includes("Build blocked")) {
-      throw error;
-    }
-    await writeLog(`[SECURITY SCAN WARNING] Failed to complete vulnerability scan: ${error.message}. Proceeding cautiously.`);
+    await writeLog(`[SECURITY SCAN ERROR] Built-in policy scan failed: ${error.message}.`);
+    throw error;
   }
+}
+
+async function runMandatorySecurityTools(workspaceDir: string, artifactDir: string, writeLog: (message: string) => Promise<void>) {
+  const evidenceDir = path.join(workspaceDir, ".lepoship-evidence");
+  await fs.mkdir(evidenceDir, { recursive: true });
+  const trivyReport = path.join(evidenceDir, "trivy.json");
+  const sbomPath = path.join(evidenceDir, "sbom.cdx.json");
+  await writeLog("[SECURITY SCAN] Running mandatory ClamAV malware scan...");
+  await runExecutable("clamscan", ["--recursive", "--infected", "--no-summary", artifactDir], workspaceDir);
+  await writeLog("[SECURITY SCAN] Running mandatory Trivy critical vulnerability and secret scan...");
+  await runExecutable("trivy", ["fs", "--exit-code", "1", "--severity", "CRITICAL", "--scanners", "vuln,secret", "--format", "json", "--output", trivyReport, workspaceDir], workspaceDir);
+  await writeLog("[SECURITY SCAN] Generating CycloneDX SBOM with Syft...");
+  await runExecutable("syft", [`dir:${workspaceDir}`, "-o", `cyclonedx-json=${sbomPath}`], workspaceDir);
+  await writeLog("[SECURITY SCAN] Running mandatory Gitleaks source scan...");
+  await runExecutable("gitleaks", ["detect", "--source", workspaceDir, "--no-git", "--redact", "--exit-code", "1"], workspaceDir);
+  const [clamVersion, trivyVersion, syftVersion, gitleaksVersion] = await Promise.all([
+    runExecutable("clamscan", ["--version"], workspaceDir),
+    runExecutable("trivy", ["--version"], workspaceDir),
+    runExecutable("syft", ["version", "-o", "json"], workspaceDir),
+    runExecutable("gitleaks", ["version"], workspaceDir),
+  ]);
+  return { sbomPath, toolVersions: { clamVersion, trivyVersion, syftVersion, gitleaksVersion } };
 }
 
 async function pruneOldBuildContextsAndCache(
@@ -426,6 +448,29 @@ async function pruneOldBuildContextsAndCache(
   }
 }
 
+async function archiveCanonicalBuildLog(bundleId: string, releaseId: string, logFile: string) {
+  const release = await prisma.bundleReleases.findUnique({ where: { id: releaseId }, select: { id: true } });
+  if (!release) return;
+  const bytes = await fs.readFile(logFile);
+  const checksum = crypto.createHash("sha256").update(bytes).digest("hex");
+  const stored = await putArtifactFile(`releases/${bundleId}/${releaseId}/build.log`, logFile, { contentType: "text/plain", checksumSha256: checksum });
+  const existing = await prisma.bundleArtifacts.findFirst({ where: { releaseId, kind: "build_log" } });
+  if (existing) {
+    await prisma.bundleArtifacts.update({
+      where: { id: existing.id },
+      data: { storageProvider: stored.provider, storageBucket: stored.bucket, storageKey: stored.key, checksumSha256: checksum, fileSize: BigInt(bytes.length) },
+    });
+  } else {
+    await prisma.bundleArtifacts.create({
+      data: {
+        id: crypto.randomUUID(), releaseId, kind: "build_log", storageProvider: stored.provider,
+        storageBucket: stored.bucket, storageKey: stored.key, checksumSha256: checksum,
+        fileSize: BigInt(bytes.length), contentType: "text/plain", createdAt: new Date(),
+      },
+    });
+  }
+}
+
 export async function runLepoShipBuild(
   projectId: string,
   bundleId: string,
@@ -441,19 +486,31 @@ export async function runLepoShipBuild(
     flutterFlavor?: string;
     flutterBuildMode?: string;
   },
-  trackId: string
+  trackId: string,
+  canonicalBuildJobId?: string,
 ) {
   const bundleDir = path.join(process.cwd(), "public", "bundles", projectId);
   await fs.mkdir(bundleDir, { recursive: true });
   const logFile = path.join(bundleDir, `${buildNumber}.log`);
 
+  let logSequence = 0;
   const writeLog = async (message: string) => {
     const timestamp = new Date().toLocaleTimeString();
     await fs.appendFile(logFile, `[${timestamp}] ${message}\n`);
+    if (canonicalBuildJobId) {
+      await prisma.bundleBuildLogChunks.create({
+        data: {
+          id: crypto.randomUUID(), buildId: canonicalBuildJobId,
+          sequence: logSequence++, level: message.startsWith("[ERROR]") ? "error" : "info",
+          message, createdAt: new Date(),
+        },
+      });
+    }
   };
 
-  // Run build process in background
-  (async () => {
+  // The queue worker must not acknowledge the job until every build stage,
+  // artifact upload and state transition has completed.
+  return (async () => {
     let tempBuildDir = "";
     try {
       await fs.writeFile(logFile, ""); // Initialize log file
@@ -467,6 +524,7 @@ export async function runLepoShipBuild(
         where: { id: trackId },
         data: { status: "building" }
       }).catch(() => {});
+      await prisma.bundleReleases.update({ where: { id: trackId }, data: { status: "building", updatedAt: new Date() } }).catch(() => undefined);
 
       await writeLog("Cloning repository into temporary build context...");
       const buildCtxTempId = crypto.randomUUID();
@@ -594,10 +652,10 @@ export async function runLepoShipBuild(
         buildOutputDir = path.join(tempBuildDir, "build", target);
       }
 
-      await runSecurityScan(pkgJsonPath, writeLog);
-
-      // Advanced security scan via npm/yarn/pnpm audit
-      try {
+      if (packageManifestExists) {
+        await runSecurityScan(pkgJsonPath, writeLog);
+        // Advanced security scan via npm/yarn/pnpm audit
+        try {
         await writeLog("[SECURITY SCAN] Running advanced dependency audit via package manager...");
         const advResult = await scanWorkspace(tempBuildDir);
         await writeLog(`[SECURITY SCAN] ${advResult.scanner} audit completed in ${advResult.scanDuration}ms`);
@@ -612,12 +670,13 @@ export async function runLepoShipBuild(
         } else {
           await writeLog("[SECURITY SCAN] No vulnerabilities found. All clear.");
         }
-      } catch (advErr: any) {
-        if (advErr.message.includes("Build blocked") || advErr.message.includes("BLOCK")) {
+        } catch (advErr: any) {
+          await writeLog(`[SECURITY SCAN ERROR] Advanced dependency scan failed: ${advErr.message}.`);
           throw advErr;
         }
-        await writeLog(`[SECURITY SCAN] Advanced scan not available: ${advErr.message}. Falling back to built-in scanner.`);
       }
+
+      const mandatorySecurity = await runMandatorySecurityTools(tempBuildDir, buildOutputDir, writeLog);
 
       // Monorepo dependency analysis
       try {
@@ -834,7 +893,14 @@ export async function runLepoShipBuild(
           const baseBuildNumber = previousActiveTrack.buildNumber;
           await writeLog(`Generating delta patch against build #${baseBuildNumber}...`);
           
-          const prevZipPath = path.join(process.cwd(), "public", previousActiveTrack.storagePath);
+          const prevZipPath = path.join(bundleDir, `base-${baseBuildNumber}-${crypto.randomUUID().slice(0, 8)}.zip`);
+          if (/^https?:\/\//.test(previousActiveTrack.storagePath)) {
+            const previousResponse = await fetch(previousActiveTrack.storagePath, { cache: "no-store", signal: AbortSignal.timeout(60_000) });
+            if (!previousResponse.ok) throw new Error(`Unable to download base artifact: HTTP ${previousResponse.status}`);
+            await fs.writeFile(prevZipPath, Buffer.from(await previousResponse.arrayBuffer()));
+          } else {
+            await fs.copyFile(path.join(process.cwd(), "public", previousActiveTrack.storagePath.replace(/^\/+/, "")), prevZipPath);
+          }
           const prevDir = path.join(bundleDir, `prev-${baseBuildNumber}-${crypto.randomUUID().slice(0, 8)}`);
           await fs.mkdir(prevDir, { recursive: true });
 
@@ -845,7 +911,6 @@ export async function runLepoShipBuild(
               else resolve();
             });
           });
-
           // Helper to recursively list files
           const getFilesList = async (dir: string): Promise<string[]> => {
             const files: string[] = [];
@@ -936,6 +1001,22 @@ export async function runLepoShipBuild(
               else resolve();
             });
           });
+          const deltaBytes = await fs.readFile(deltaBundlePath);
+          const deltaChecksum = crypto.createHash("sha256").update(deltaBytes).digest("hex");
+          const deltaStored = await putArtifactFile(`releases/${bundleId}/${trackId}/${deltaSafeFileName}`, deltaBundlePath, { checksumSha256: deltaChecksum });
+          const canonicalRelease = await prisma.bundleReleases.findUnique({ where: { id: trackId }, select: { id: true } });
+          if (canonicalRelease) {
+            await prisma.bundleArtifacts.upsert({
+              where: { storageProvider_storageBucket_storageKey: { storageProvider: deltaStored.provider, storageBucket: deltaStored.bucket, storageKey: deltaStored.key } },
+              create: {
+                id: crypto.randomUUID(), releaseId: trackId, kind: "delta",
+                storageProvider: deltaStored.provider, storageBucket: deltaStored.bucket, storageKey: deltaStored.key,
+                checksumSha256: deltaChecksum, fileSize: BigInt(deltaBytes.length), contentType: "application/zip",
+                baseBuildNumber, targetBuildNumber: buildNumber, metadata: { sourceCommit }, createdAt: new Date(),
+              },
+              update: { checksumSha256: deltaChecksum, fileSize: BigInt(deltaBytes.length), metadata: { sourceCommit } },
+            });
+          }
 
           await writeLog(`Delta patch archive generated: ${deltaSafeFileName}`);
           await writeLog(`  Added files: ${addedFiles.length}, Changed files: ${changedFiles.length}, Removed files: ${removedFiles.length}`);
@@ -943,13 +1024,14 @@ export async function runLepoShipBuild(
           // Cleanup temp delta folders
           await fs.rm(deltaTempDir, { recursive: true, force: true });
           await fs.rm(prevDir, { recursive: true, force: true });
+          await fs.rm(prevZipPath, { force: true });
         } catch (err: any) {
           await writeLog(`[Delta Update Warning] Failed to generate delta patch: ${err.message}`);
         }
       }
 
       // Archive/Zip using native zip utility
-      const safeFileName = `${Date.now()}-build-${buildNumber}.zip`;
+      const safeFileName = `build-${buildNumber}.zip`;
       const bundlePath = path.join(bundleDir, safeFileName);
 
       await writeLog("Compressing WebView assets...");
@@ -966,6 +1048,7 @@ export async function runLepoShipBuild(
           }
         );
       });
+      await runExecutable("unzip", ["-t", bundlePath], bundleDir);
 
       // Cleanup temp directory
       await fs.rm(tempDir, { recursive: true, force: true });
@@ -980,44 +1063,113 @@ export async function runLepoShipBuild(
       hashSum.update(zipBuffer);
       const checksum = hashSum.digest("hex");
 
-      const relativeStoragePath = `/bundles/${projectId}/${safeFileName}`;
+      const storedArtifact = await putArtifactFile(`releases/${bundleId}/${trackId}/full.zip`, bundlePath, { checksumSha256: checksum });
+      const sbomBytes = await fs.readFile(mandatorySecurity.sbomPath);
+      const sbomChecksum = crypto.createHash("sha256").update(sbomBytes).digest("hex");
+      const sbomStored = await putArtifactFile(`releases/${bundleId}/${trackId}/sbom.cdx.json`, mandatorySecurity.sbomPath, { contentType: "application/vnd.cyclonedx+json", checksumSha256: sbomChecksum });
+      const relativeStoragePath = storedArtifact.downloadUrl;
 
       await writeLog(`WebView bundle created successfully (${(stats.size / 1024).toFixed(2)} KB).`);
       await writeLog(`SHA-256 Checksum: ${checksum}`);
 
       const now = new Date();
 
-      // Perform DB transaction to publish the build
+      // Persist the immutable artifact and submit it to the mandatory release gates.
       await prisma.$transaction(async (tx) => {
-        // Update the release track
+        const canonicalRelease = await tx.bundleReleases.findUnique({ where: { id: trackId } });
+        if (canonicalRelease) {
+          const artifact = await tx.bundleArtifacts.upsert({
+            where: { storageProvider_storageBucket_storageKey: { storageProvider: storedArtifact.provider, storageBucket: storedArtifact.bucket, storageKey: storedArtifact.key } },
+            create: {
+              id: crypto.randomUUID(), releaseId: canonicalRelease.id, kind: "full",
+              storageProvider: storedArtifact.provider, storageBucket: storedArtifact.bucket, storageKey: storedArtifact.key,
+              checksumSha256: checksum, fileSize, contentType: "application/zip",
+              targetBuildNumber: buildNumber, metadata: { sourceCommit }, createdAt: now,
+            },
+            update: { checksumSha256: checksum, fileSize, metadata: { sourceCommit } },
+          });
+          await tx.bundleArtifacts.upsert({
+            where: { storageProvider_storageBucket_storageKey: { storageProvider: sbomStored.provider, storageBucket: sbomStored.bucket, storageKey: sbomStored.key } },
+            create: {
+              id: crypto.randomUUID(), releaseId: canonicalRelease.id, kind: "sbom",
+              storageProvider: sbomStored.provider, storageBucket: sbomStored.bucket, storageKey: sbomStored.key,
+              checksumSha256: sbomChecksum, fileSize: BigInt(sbomBytes.length),
+              contentType: "application/vnd.cyclonedx+json", targetBuildNumber: buildNumber, createdAt: now,
+            },
+            update: { checksumSha256: sbomChecksum, fileSize: BigInt(sbomBytes.length) },
+          });
+          await tx.bundleReleaseApprovals.upsert({
+            where: { releaseId_kind: { releaseId: canonicalRelease.id, kind: "security" } },
+            create: {
+              id: crypto.randomUUID(), releaseId: canonicalRelease.id, kind: "security", status: "approved",
+              actorId: canonicalRelease.createdById, policyVersion: "lepoship-security-v2",
+              evidence: {
+                malwarePassed: true, criticalFindings: 0, digest: checksum,
+                sbomDigest: sbomChecksum, tools: mandatorySecurity.toolVersions,
+              },
+              createdAt: now,
+            },
+            update: {
+              status: "approved", actorId: canonicalRelease.createdById, policyVersion: "lepoship-security-v2",
+              evidence: { malwarePassed: true, criticalFindings: 0, digest: checksum, sbomDigest: sbomChecksum, tools: mandatorySecurity.toolVersions },
+              createdAt: now,
+            },
+          });
+          await tx.bundleReviewQueue.upsert({
+            where: { releaseId: canonicalRelease.id },
+            create: {
+              id: crypto.randomUUID(), bundleId, releaseId: canonicalRelease.id,
+              status: "pending", priority: 0, createdAt: now, updatedAt: now,
+            },
+            update: { status: "pending", reviewerId: null, reviewedAt: null, updatedAt: now },
+          });
+          await tx.bundleReleases.update({
+            where: { id: canonicalRelease.id },
+            data: { status: "pending_review", sourceCommit, submittedAt: now, updatedAt: now },
+          });
+          await enqueueOutboxEvent(tx, {
+            eventKey: `release.scan_requested:${canonicalRelease.id}`,
+            aggregateType: "bundle_release",
+            aggregateId: canonicalRelease.id,
+            eventType: "release.scan_requested",
+            payload: { bundleId, releaseId: canonicalRelease.id, artifactId: artifact.id },
+          });
+          return;
+        }
+        const versionRecord = await tx.bundleVersionHistory.upsert({
+          where: { bundleId_version_buildNumber: { bundleId, version, buildNumber } },
+          create: { id: crypto.randomUUID(), bundleId, version, buildNumber, storagePath: relativeStoragePath, fileSize, status: "reviewing", createdAt: now },
+          update: { storagePath: relativeStoragePath, fileSize, status: "reviewing" },
+        });
+        const artifact = await tx.bundleArtifactManifests.upsert({
+          where: { versionId: versionRecord.id },
+          create: { id: crypto.randomUUID(), bundleId, versionId: versionRecord.id, storageProvider: storedArtifact.provider, storageBucket: storedArtifact.bucket, storageKey: storedArtifact.key, checksumSha256: checksum, fileSize, sourceCommit, createdAt: now },
+          update: { storageProvider: storedArtifact.provider, storageBucket: storedArtifact.bucket, storageKey: storedArtifact.key, checksumSha256: checksum, fileSize, sourceCommit },
+        });
+        await tx.bundleSecurityScanResults.create({
+          data: { id: crypto.randomUUID(), bundleId, versionId: versionRecord.id, scanType: "dependency_and_artifact", result: "passed", severity: "info", findings: JSON.stringify({ checksum, sourceCommit }), scannedAt: now, scannerVersion: "lepoship-builder-v1", policyVersion: "production-gate-v1", riskScore: 0 },
+        });
+        await tx.bundleReviewQueue.create({
+          data: { id: crypto.randomUUID(), bundleId, submittedVersionId: versionRecord.id, status: "pending", priority: 0, createdAt: now, updatedAt: now },
+        });
         await tx.bundleReleaseTracks.update({
           where: { id: trackId },
           data: {
-            status: "active",
+            status: "pending_review",
             storagePath: relativeStoragePath,
+            artifactManifestId: artifact.id,
           },
         });
 
-        // Update the active bundle
-        await tx.bundles.update({
-          where: { id: bundleId },
-          data: {
-            version: version,
-            buildNumber: buildNumber,
-            storagePath: relativeStoragePath,
-            fileSize: fileSize,
-            checksum: checksum,
-            status: "published",
-            updatedAt: now,
-          },
-        });
+        await enqueueOutboxEvent(tx, { eventKey: `bundle.build_ready:${versionRecord.id}`, aggregateType: "bundle", aggregateId: bundleId, eventType: "bundle:review_requested", payload: { bundleId, versionId: versionRecord.id, trackId } });
       });
 
-      await writeLog(`OTA deployment published. Update check is now active.`);
+      await writeLog(`Artifact uploaded and submitted to mandatory release review gates.`);
       await writeLog(`--- LepoShip Build #${buildNumber} Succeeded ---`);
 
       // Save success state to LepoShipBuild
       const successLogs = await fs.readFile(logFile, "utf-8").catch(() => "");
+      await archiveCanonicalBuildLog(bundleId, trackId, logFile);
       await prisma.lepoShipBuild.update({
         where: { id: trackId },
         data: {
@@ -1039,6 +1191,7 @@ export async function runLepoShipBuild(
 
       // Save failure state to LepoShipBuild
       const failedLogs = await fs.readFile(logFile, "utf-8").catch(() => "");
+      await archiveCanonicalBuildLog(bundleId, trackId, logFile).catch(() => undefined);
       await prisma.lepoShipBuild.update({
         where: { id: trackId },
         data: {
@@ -1067,6 +1220,8 @@ export async function runLepoShipBuild(
       } catch (dbErr) {
         console.error("Failed to update build failure status in DB:", dbErr);
       }
+      await prisma.bundleReleases.update({ where: { id: trackId }, data: { status: "failed", updatedAt: new Date() } }).catch(() => undefined);
+      throw error;
     }
   })();
 }
