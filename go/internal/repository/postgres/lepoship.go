@@ -18,6 +18,7 @@ import (
 	"os"
 	"path"
 	"slices"
+	"sort"
 	"strings"
 	"time"
 
@@ -43,6 +44,19 @@ var (
 	ErrConflict     = errors.New("conflict")
 	ErrBadRequest   = errors.New("bad request")
 )
+
+type rankingBundleScore struct {
+	ID             uuid.UUID `gorm:"column:id"`
+	Category       *string   `gorm:"column:category"`
+	ActiveInstalls int64     `gorm:"column:active_installs"`
+	Rating         float64   `gorm:"column:rating"`
+	RatingCount    int64     `gorm:"column:rating_count"`
+	D1Retention    *float64  `gorm:"column:d1_retention"`
+	D7Retention    *float64  `gorm:"column:d7_retention"`
+	D30Retention   *float64  `gorm:"column:d30_retention"`
+	PaidOrders     int64
+	OverallScore   float64
+}
 
 type LepoShipRepository struct {
 	db *gorm.DB
@@ -555,19 +569,7 @@ func (r *LepoShipRepository) runRankingCalculator(ctx context.Context) (reposito
 	now := time.Now().UTC()
 	statsDate := now.Format("2006-01-02")
 	thirtyDaysAgo := now.AddDate(0, 0, -30)
-	type bundleScore struct {
-		ID            uuid.UUID `gorm:"column:id"`
-		Category      *string   `gorm:"column:category"`
-		ActiveInstalls int64    `gorm:"column:active_installs"`
-		Rating        float64   `gorm:"column:rating"`
-		RatingCount   int64     `gorm:"column:rating_count"`
-		D1Retention   *float64  `gorm:"column:d1_retention"`
-		D7Retention   *float64  `gorm:"column:d7_retention"`
-		D30Retention  *float64  `gorm:"column:d30_retention"`
-		PaidOrders    int64
-		OverallScore  float64
-	}
-	var rows []bundleScore
+	var rows []rankingBundleScore
 	if err := r.db.WithContext(ctx).Raw(`
 		SELECT b.id, b.category, COALESCE(bs.active_installs, 0) AS active_installs,
 		       COALESCE(bs.rating, 0) AS rating, COALESCE(bs.rating_count, 0) AS rating_count,
@@ -788,20 +790,354 @@ func (r *LepoShipRepository) runSSLRenew(ctx context.Context) (repositories.Cron
 
 func (r *LepoShipRepository) runABExperiments(ctx context.Context) (repositories.CronJobResult, error) {
 	res := r.db.WithContext(ctx).Exec(`
-		INSERT INTO bundle_ab_test_analysis_snapshots (id, ab_test_id, sample_size, conversion_rate_control, conversion_rate_treatment, confidence, recommendation, created_at)
-		SELECT gen_random_uuid(), t.id,
-		       COUNT(e.id),
-		       0,
-		       0,
-		       0,
-		       'collect_more_data',
+		INSERT INTO bundle_ab_test_analysis_snapshots (
+			id, test_id, bucket_start, analysis_status,
+			exposed_a, exposed_b, analyzable_a, analyzable_b,
+			conversions_a, conversions_b, conversion_rate_a, conversion_rate_b,
+			absolute_difference, confidence, required_sample_per_variant, created_at
+		)
+		SELECT gen_random_uuid(), t.id, date_trunc('hour', now()), 'collecting',
+		       COUNT(e.id) FILTER (WHERE e.variant = 'A'),
+		       COUNT(e.id) FILTER (WHERE e.variant = 'B'),
+		       COUNT(e.id) FILTER (WHERE e.variant = 'A'),
+		       COUNT(e.id) FILTER (WHERE e.variant = 'B'),
+		       0, 0, 0, 0, 0, 0,
+		       COALESCE(t.minimum_sample_per_variant, 0),
 		       now()
 		FROM bundle_ab_tests t
-		LEFT JOIN bundle_ab_test_exposures e ON e.ab_test_id = t.id
+		LEFT JOIN bundle_ab_test_exposures e ON e.test_id = t.id
 		WHERE t.status = 'running'
 		GROUP BY t.id
+		ON CONFLICT (test_id, bucket_start) DO UPDATE SET
+			exposed_a = EXCLUDED.exposed_a,
+			exposed_b = EXCLUDED.exposed_b,
+			analyzable_a = EXCLUDED.analyzable_a,
+			analyzable_b = EXCLUDED.analyzable_b,
+			created_at = EXCLUDED.created_at
 	`)
 	return repositories.CronJobResult{Job: "ab-experiments", Processed: res.RowsAffected, Message: "recorded running AB experiment analysis snapshots"}, res.Error
+}
+
+func (r *LepoShipRepository) distinctActiveUsers(ctx context.Context, bundleID uuid.UUID, start, end time.Time) (int64, error) {
+	var count int64
+	err := r.db.WithContext(ctx).Raw(`
+		SELECT COUNT(DISTINCT COALESCE(device_fingerprint, user_id::text))
+		FROM bundle_analytics_events
+		WHERE bundle_id = ? AND created_at BETWEEN ? AND ? AND (device_fingerprint IS NOT NULL OR user_id IS NOT NULL)
+	`, bundleID, start, end).Scan(&count).Error
+	return count, err
+}
+
+func (r *LepoShipRepository) cohortRetention(ctx context.Context, bundleID uuid.UUID, cohortStart, cohortEnd, activeStart, activeEnd time.Time) (*float64, error) {
+	var cohort int64
+	err := r.db.WithContext(ctx).Raw(`
+		SELECT COUNT(DISTINCT COALESCE(device_fingerprint, user_id::text))
+		FROM bundle_install_events
+		WHERE bundle_id = ? AND event_type = 'install' AND created_at BETWEEN ? AND ?
+		  AND (device_fingerprint IS NOT NULL OR user_id IS NOT NULL)
+	`, bundleID, cohortStart, cohortEnd).Scan(&cohort).Error
+	if err != nil || cohort == 0 {
+		return nil, err
+	}
+	var retained int64
+	err = r.db.WithContext(ctx).Raw(`
+		WITH cohort AS (
+			SELECT DISTINCT COALESCE(device_fingerprint, user_id::text) AS subject
+			FROM bundle_install_events
+			WHERE bundle_id = ? AND event_type = 'install' AND created_at BETWEEN ? AND ?
+			  AND (device_fingerprint IS NOT NULL OR user_id IS NOT NULL)
+		), active AS (
+			SELECT DISTINCT COALESCE(device_fingerprint, user_id::text) AS subject
+			FROM bundle_analytics_events
+			WHERE bundle_id = ? AND created_at BETWEEN ? AND ?
+			  AND (device_fingerprint IS NOT NULL OR user_id IS NOT NULL)
+		)
+		SELECT COUNT(*) FROM cohort c JOIN active a ON a.subject = c.subject
+	`, bundleID, cohortStart, cohortEnd, bundleID, activeStart, activeEnd).Scan(&retained).Error
+	if err != nil {
+		return nil, err
+	}
+	value := float64(retained) / float64(cohort)
+	return &value, nil
+}
+
+func (r *LepoShipRepository) refreshBundleStats(ctx context.Context, bundleID uuid.UUID, now time.Time) error {
+	downloadCount, activeInstalls, err := r.installCounts(ctx, bundleID)
+	if err != nil {
+		return err
+	}
+	type ratings struct {
+		AvgRating float64 `gorm:"column:avg_rating"`
+		Total     int64   `gorm:"column:total"`
+		Rating1   int64   `gorm:"column:rating_1"`
+		Rating2   int64   `gorm:"column:rating_2"`
+		Rating3   int64   `gorm:"column:rating_3"`
+		Rating4   int64   `gorm:"column:rating_4"`
+		Rating5   int64   `gorm:"column:rating_5"`
+	}
+	var row ratings
+	if err := r.db.WithContext(ctx).Raw(`
+		SELECT COALESCE(AVG(rating), 0) AS avg_rating,
+		       COUNT(*) AS total,
+		       COUNT(*) FILTER (WHERE rating = 1) AS rating_1,
+		       COUNT(*) FILTER (WHERE rating = 2) AS rating_2,
+		       COUNT(*) FILTER (WHERE rating = 3) AS rating_3,
+		       COUNT(*) FILTER (WHERE rating = 4) AS rating_4,
+		       COUNT(*) FILTER (WHERE rating = 5) AS rating_5
+		FROM bundle_reviews
+		WHERE bundle_id = ?
+	`, bundleID).Scan(&row).Error; err != nil {
+		return fmt.Errorf("aggregate ratings: %w", err)
+	}
+	if err := r.db.WithContext(ctx).Exec(`
+		INSERT INTO bundle_stats (id, bundle_id, rating, rating_count, rating_1, rating_2, rating_3, rating_4, rating_5, download_count, active_installs, updated_at)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		ON CONFLICT (bundle_id) DO UPDATE SET
+			rating = EXCLUDED.rating,
+			rating_count = EXCLUDED.rating_count,
+			rating_1 = EXCLUDED.rating_1,
+			rating_2 = EXCLUDED.rating_2,
+			rating_3 = EXCLUDED.rating_3,
+			rating_4 = EXCLUDED.rating_4,
+			rating_5 = EXCLUDED.rating_5,
+			download_count = EXCLUDED.download_count,
+			active_installs = EXCLUDED.active_installs,
+			updated_at = EXCLUDED.updated_at
+	`, uuid.New(), bundleID, row.AvgRating, row.Total, row.Rating1, row.Rating2, row.Rating3, row.Rating4, row.Rating5, downloadCount, activeInstalls, now).Error; err != nil {
+		return fmt.Errorf("upsert bundle stats: %w", err)
+	}
+	return nil
+}
+
+func (r *LepoShipRepository) installCounts(ctx context.Context, bundleID uuid.UUID) (int64, int64, error) {
+	var installs, uninstalls int64
+	if err := r.db.WithContext(ctx).Raw("SELECT COUNT(*) FROM bundle_install_events WHERE bundle_id = ? AND event_type = 'install'", bundleID).Scan(&installs).Error; err != nil {
+		return 0, 0, fmt.Errorf("count installs: %w", err)
+	}
+	if err := r.db.WithContext(ctx).Raw("SELECT COUNT(*) FROM bundle_install_events WHERE bundle_id = ? AND event_type = 'uninstall'", bundleID).Scan(&uninstalls).Error; err != nil {
+		return 0, 0, fmt.Errorf("count uninstalls: %w", err)
+	}
+	active := installs - uninstalls
+	if active < 0 {
+		active = 0
+	}
+	return installs, active, nil
+}
+
+func firstFloat(values ...*float64) float64 {
+	for _, value := range values {
+		if value != nil {
+			return *value
+		}
+	}
+	return 0
+}
+
+func uniqueCategories(rows []rankingBundleScore) []string {
+	seen := map[string]struct{}{}
+	for _, row := range rows {
+		seen[coalescePtr(row.Category, "General")] = struct{}{}
+	}
+	categories := make([]string, 0, len(seen))
+	for category := range seen {
+		categories = append(categories, category)
+	}
+	sort.Strings(categories)
+	return categories
+}
+
+func sortedByCategory(rows []rankingBundleScore, category string) []rankingBundleScore {
+	filtered := make([]rankingBundleScore, 0)
+	for _, row := range rows {
+		if coalescePtr(row.Category, "General") == category {
+			filtered = append(filtered, row)
+		}
+	}
+	sort.Slice(filtered, func(i, j int) bool {
+		return filtered[i].OverallScore > filtered[j].OverallScore
+	})
+	return filtered
+}
+
+func coalescePtr(value *string, fallback string) string {
+	if value == nil || strings.TrimSpace(*value) == "" {
+		return fallback
+	}
+	return *value
+}
+
+func (r *LepoShipRepository) queueRecentBuildWebhookEvents(ctx context.Context) (int64, error) {
+	res := r.db.WithContext(ctx).Exec(`
+		INSERT INTO bundle_webhook_deliveries (id, webhook_id, event_key, event_type, payload, status, next_retry_at, created_at, updated_at)
+		SELECT gen_random_uuid(), w.id,
+		       'wh_evt_build_' || lb.status || '_' || lb.id,
+		       CASE WHEN lb.status IN ('queued', 'building') THEN 'build:started'
+		            WHEN lb.status = 'success' THEN 'build:success'
+		            WHEN lb.status = 'failed' THEN 'build:failed'
+		            ELSE 'build:updated' END,
+		       jsonb_build_object('eventId', 'wh_evt_build_' || lb.status || '_' || lb.id, 'eventType', lb.status, 'timestamp', now(), 'bundleId', b.id, 'data', to_jsonb(lb))::text,
+		       'pending', now(), now(), now()
+		FROM lepoship_builds lb
+		JOIN bundles b ON b.project_id = lb.project_id
+		JOIN bundle_webhooks w ON w.bundle_id = b.id AND w.is_active = true
+		WHERE lb.updated_at >= now() - interval '15 minutes'
+		  AND (w.events::jsonb ? '*' OR w.events::jsonb ? CASE WHEN lb.status IN ('queued', 'building') THEN 'build:started' WHEN lb.status = 'success' THEN 'build:success' WHEN lb.status = 'failed' THEN 'build:failed' ELSE 'build:updated' END)
+		ON CONFLICT (webhook_id, event_key) DO NOTHING
+	`)
+	return res.RowsAffected, res.Error
+}
+
+func (r *LepoShipRepository) queueRecentReleaseWebhookEvents(ctx context.Context) (int64, error) {
+	res := r.db.WithContext(ctx).Exec(`
+		INSERT INTO bundle_webhook_deliveries (id, webhook_id, event_key, event_type, payload, status, next_retry_at, created_at, updated_at)
+		SELECT gen_random_uuid(), w.id,
+		       'wh_evt_release_published_' || rt.id,
+		       'release:published',
+		       jsonb_build_object('eventId', 'wh_evt_release_published_' || rt.id, 'eventType', 'release:published', 'timestamp', now(), 'bundleId', rt.bundle_id, 'data', to_jsonb(rt))::text,
+		       'pending', now(), now(), now()
+		FROM bundle_release_tracks rt
+		JOIN bundle_webhooks w ON w.bundle_id = rt.bundle_id AND w.is_active = true
+		WHERE rt.status = 'active' AND rt.created_at >= now() - interval '15 minutes'
+		  AND (w.events::jsonb ? '*' OR w.events::jsonb ? 'release:published')
+		ON CONFLICT (webhook_id, event_key) DO NOTHING
+	`)
+	return res.RowsAffected, res.Error
+}
+
+func (r *LepoShipRepository) dispatchBundleWebhookDeliveries(ctx context.Context, job string) (repositories.CronJobResult, error) {
+	type delivery struct {
+		ID                  uuid.UUID `gorm:"column:id"`
+		WebhookID           uuid.UUID `gorm:"column:webhook_id"`
+		EventKey            string    `gorm:"column:event_key"`
+		EventType           string    `gorm:"column:event_type"`
+		Payload             string    `gorm:"column:payload"`
+		Attempt             int       `gorm:"column:attempt"`
+		URL                 string    `gorm:"column:url"`
+		Secret              *string   `gorm:"column:secret"`
+		FailureCount        int       `gorm:"column:failure_count"`
+		ConsecutiveFailures int       `gorm:"column:consecutive_failures"`
+	}
+	var rows []delivery
+	if err := r.db.WithContext(ctx).Raw(`
+		SELECT d.id, d.webhook_id, d.event_key, d.event_type, d.payload, d.attempt,
+		       w.url, w.secret, w.failure_count, w.consecutive_failures
+		FROM bundle_webhook_deliveries d
+		JOIN bundle_webhooks w ON w.id = d.webhook_id
+		WHERE d.status = 'pending' AND (d.next_retry_at IS NULL OR d.next_retry_at <= now()) AND w.is_active = true
+		ORDER BY d.created_at
+		LIMIT 100
+	`).Scan(&rows).Error; err != nil {
+		return repositories.CronJobResult{}, fmt.Errorf("load webhook deliveries: %w", err)
+	}
+	var successes int64
+	for _, row := range rows {
+		if r.sendBundleWebhook(ctx, row) {
+			successes++
+		}
+	}
+	return repositories.CronJobResult{Job: job, Processed: int64(len(rows)), Skipped: successes, Message: "dispatched pending bundle webhooks"}, nil
+}
+
+func (r *LepoShipRepository) sendBundleWebhook(ctx context.Context, row struct {
+	ID                  uuid.UUID `gorm:"column:id"`
+	WebhookID           uuid.UUID `gorm:"column:webhook_id"`
+	EventKey            string    `gorm:"column:event_key"`
+	EventType           string    `gorm:"column:event_type"`
+	Payload             string    `gorm:"column:payload"`
+	Attempt             int       `gorm:"column:attempt"`
+	URL                 string    `gorm:"column:url"`
+	Secret              *string   `gorm:"column:secret"`
+	FailureCount        int       `gorm:"column:failure_count"`
+	ConsecutiveFailures int       `gorm:"column:consecutive_failures"`
+}) bool {
+	status, body, ok := postWebhook(ctx, row.URL, row.Payload, map[string]string{
+		"User-Agent":           "LepoShip-Webhook-Dispatcher/2026.1",
+		"X-LepoShip-Event":     row.EventType,
+		"X-LepoShip-Signature": hmacHex(stringValue(row.Secret), row.Payload),
+	})
+	now := time.Now().UTC()
+	nextAttempt := row.Attempt + 1
+	if ok {
+		_ = r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+			if err := tx.Exec("UPDATE bundle_webhook_deliveries SET status = 'delivered', http_status = ?, response_body = ?, attempt = ?, next_retry_at = NULL, updated_at = ? WHERE id = ?", status, truncate(body, 1000), nextAttempt, now, row.ID).Error; err != nil {
+				return err
+			}
+			return tx.Exec("UPDATE bundle_webhooks SET consecutive_failures = 0, last_triggered_at = ?, updated_at = ? WHERE id = ?", now, now, row.WebhookID).Error
+		})
+		return true
+	}
+	delay := []time.Duration{time.Minute, 5 * time.Minute, 30 * time.Minute, 2 * time.Hour, 12 * time.Hour}
+	finalStatus := "failed"
+	var nextRetry any
+	if row.Attempt < len(delay) {
+		finalStatus = "pending"
+		nextRetry = now.Add(delay[row.Attempt])
+	}
+	nextFailures := row.ConsecutiveFailures + 1
+	_ = r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Exec("UPDATE bundle_webhook_deliveries SET status = ?, http_status = ?, response_body = ?, attempt = ?, next_retry_at = ?, updated_at = ? WHERE id = ?", finalStatus, status, truncate(body, 1000), nextAttempt, nextRetry, now, row.ID).Error; err != nil {
+			return err
+		}
+		return tx.Exec("UPDATE bundle_webhooks SET failure_count = ?, consecutive_failures = ?, is_active = CASE WHEN ? >= 5 THEN false ELSE is_active END, last_triggered_at = ?, updated_at = ? WHERE id = ?", row.FailureCount+1, nextFailures, nextFailures, now, now, row.WebhookID).Error
+	})
+	return false
+}
+
+func (r *LepoShipRepository) sendFormWebhook(ctx context.Context, deliveryID, targetURL, secret string, payload []byte, attempt int) bool {
+	headers := map[string]string{"User-Agent": "LepoShip-Webhook-Client/1.0"}
+	if secret != "" {
+		headers["x-lepoship-signature"] = "sha256=" + hmacHex(secret, string(payload))
+	}
+	_, body, ok := postWebhook(ctx, targetURL, string(payload), headers)
+	if ok {
+		_ = r.db.WithContext(ctx).Exec("UPDATE form_webhook_deliveries SET status = 'SUCCESS', attempts = ?, last_error = NULL, next_retry_at = NULL WHERE id = ?", attempt, deliveryID).Error
+		return true
+	}
+	delayMinutes := []int{1, 5, 30, 120, 720}
+	var nextRetry any
+	if attempt < 5 {
+		nextRetry = time.Now().UTC().Add(time.Duration(delayMinutes[min(attempt-1, len(delayMinutes)-1)]) * time.Minute)
+	}
+	_ = r.db.WithContext(ctx).Exec("UPDATE form_webhook_deliveries SET status = 'FAILED', attempts = ?, last_error = ?, next_retry_at = ? WHERE id = ?", attempt, truncate(body, 1000), nextRetry, deliveryID).Error
+	return false
+}
+
+func postWebhook(ctx context.Context, targetURL, payload string, headers map[string]string) (int, string, bool) {
+	reqCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(reqCtx, http.MethodPost, targetURL, bytes.NewBufferString(payload))
+	if err != nil {
+		return 0, err.Error(), false
+	}
+	req.Header.Set("Content-Type", "application/json")
+	for key, value := range headers {
+		if value != "" {
+			req.Header.Set(key, value)
+		}
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return 0, err.Error(), false
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
+	return resp.StatusCode, string(body), resp.StatusCode >= 200 && resp.StatusCode < 300
+}
+
+func hmacHex(secret, payload string) string {
+	if secret == "" {
+		return ""
+	}
+	mac := hmac.New(sha256.New, []byte(secret))
+	mac.Write([]byte(payload))
+	return hex.EncodeToString(mac.Sum(nil))
+}
+
+func truncate(value string, limit int) string {
+	if len(value) <= limit {
+		return value
+	}
+	return value[:limit]
 }
 
 func sha256Hex(value string) string {
