@@ -58,6 +58,22 @@ type rankingBundleScore struct {
 	OverallScore   float64
 }
 
+type lepoSSLDomainConfig struct {
+	ID          string     `gorm:"column:id" json:"id"`
+	Domain      string     `gorm:"column:domain" json:"domain"`
+	ProjectID   uuid.UUID  `gorm:"column:project_id" json:"projectId"`
+	DNSProvider *string    `gorm:"column:dns_provider" json:"dnsProvider,omitempty"`
+	ExpiresAt   *time.Time `gorm:"column:cert_expires_at" json:"certExpiresAt,omitempty"`
+}
+
+type lepoSSLRenewalResponse struct {
+	SSLStatus     string     `json:"sslStatus"`
+	CertIssuedAt  *time.Time `json:"certIssuedAt"`
+	CertExpiresAt *time.Time `json:"certExpiresAt"`
+	CertPEMRef    string     `json:"certPemRef"`
+	KeyPEMRef     string     `json:"keyPemRef"`
+}
+
 type LepoShipRepository struct {
 	db *gorm.DB
 }
@@ -747,26 +763,96 @@ func (r *LepoShipRepository) runCleanupWAFLogs(ctx context.Context) (repositorie
 }
 
 func (r *LepoShipRepository) runCleanupPreviews(ctx context.Context) (repositories.CronJobResult, error) {
-	res := r.db.WithContext(ctx).Exec(`
-		WITH old_previews AS (
-			DELETE FROM native_deployments
-			WHERE target = 'preview' AND created_at < now() - interval '7 days'
-			RETURNING project_id, id
-		)
-		DELETE FROM bundle_release_tracks brt
-		USING bundles b, old_previews p
-		WHERE brt.bundle_id = b.id
-		  AND b.project_id = p.project_id
-		  AND brt.version LIKE '%' || p.id || '%'
-	`)
-	return repositories.CronJobResult{Job: "cleanup-previews", Processed: res.RowsAffected, Message: "removed expired preview deployment records and related release tracks; provider/object cleanup handled by external adapters"}, res.Error
+	type previewDeployment struct {
+		ID              string     `gorm:"column:id"`
+		ProjectID       uuid.UUID  `gorm:"column:project_id"`
+		Target          string     `gorm:"column:target"`
+		StorageProvider string     `gorm:"column:storage_provider"`
+		StoragePath     string     `gorm:"column:storage_path"`
+		BundleURL       *string    `gorm:"column:bundle_url"`
+		CreatedAt       time.Time  `gorm:"column:created_at"`
+		ActivatedAt     *time.Time `gorm:"column:activated_at"`
+	}
+	var previews []previewDeployment
+	if err := r.db.WithContext(ctx).Raw(`
+		SELECT id, project_id, target, storage_provider, storage_path, bundle_url, created_at, activated_at
+		FROM native_deployments
+		WHERE target = 'preview' AND created_at < now() - interval '7 days'
+		ORDER BY created_at ASC
+		LIMIT 500
+	`).Scan(&previews).Error; err != nil {
+		return repositories.CronJobResult{}, fmt.Errorf("list expired preview deployments: %w", err)
+	}
+	if len(previews) == 0 {
+		return repositories.CronJobResult{Job: "cleanup-previews", Message: "no expired preview deployments"}, nil
+	}
+
+	adapterURL := strings.TrimSpace(os.Getenv("LEPOS_PREVIEW_CLEANUP_ADAPTER_URL"))
+	token := strings.TrimSpace(os.Getenv("LEPOS_PREVIEW_CLEANUP_ADAPTER_TOKEN"))
+	allowDBOnly := envBool("LEPOS_CLEANUP_PREVIEWS_WITHOUT_ADAPTER")
+	if adapterURL == "" && !allowDBOnly {
+		return repositories.CronJobResult{Job: "cleanup-previews", Skipped: int64(len(previews)), Message: "skipped expired previews because cleanup adapter is not configured"}, nil
+	}
+
+	var processed int64
+	var skipped int64
+	for _, preview := range previews {
+		if adapterURL != "" {
+			status, body, ok := postJSON(ctx, adapterURL, preview, map[string]string{
+				"Authorization": bearerToken(token),
+				"User-Agent":    "LepoShip-Preview-Cleanup/2026.1",
+			})
+			if !ok && status != http.StatusNotFound {
+				skipped++
+				_ = body
+				continue
+			}
+		}
+		err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+			if err := tx.Exec(`
+				DELETE FROM bundle_release_tracks brt
+				USING bundles b
+				WHERE brt.bundle_id = b.id
+				  AND b.project_id = ?
+				  AND brt.version LIKE ?
+			`, preview.ProjectID, "%"+preview.ID+"%").Error; err != nil {
+				return err
+			}
+			return tx.Exec("DELETE FROM native_deployments WHERE id = ?", preview.ID).Error
+		})
+		if err != nil {
+			return repositories.CronJobResult{}, fmt.Errorf("delete expired preview %s: %w", preview.ID, err)
+		}
+		processed++
+	}
+	message := "deleted expired preview deployment records after provider cleanup"
+	if adapterURL == "" {
+		message = "deleted expired preview deployment records in DB-only cleanup mode"
+	}
+	return repositories.CronJobResult{Job: "cleanup-previews", Processed: processed, Skipped: skipped, Message: message}, nil
 }
 
 func (r *LepoShipRepository) runSyncStorage(ctx context.Context) (repositories.CronJobResult, error) {
-	var total int64
-	if err := r.db.WithContext(ctx).Raw("SELECT COUNT(*) FROM bundle_artifacts").Scan(&total).Error; err != nil {
-		return repositories.CronJobResult{}, fmt.Errorf("count canonical artifacts: %w", err)
+	type artifactRow struct {
+		ID              uuid.UUID `gorm:"column:id"`
+		StorageProvider string    `gorm:"column:storage_provider"`
+		StorageBucket   string    `gorm:"column:storage_bucket"`
+		StorageKey      string    `gorm:"column:storage_key"`
+		ChecksumSHA256  string    `gorm:"column:checksum_sha256"`
+		FileSize        int64     `gorm:"column:file_size"`
+		ContentType     string    `gorm:"column:content_type"`
+		CreatedAt       time.Time `gorm:"column:created_at"`
 	}
+	var artifacts []artifactRow
+	if err := r.db.WithContext(ctx).Raw(`
+		SELECT id, storage_provider, storage_bucket, storage_key, checksum_sha256, file_size, content_type, created_at
+		FROM bundle_artifacts
+		ORDER BY created_at DESC
+		LIMIT 1000
+	`).Scan(&artifacts).Error; err != nil {
+		return repositories.CronJobResult{}, fmt.Errorf("list canonical artifacts: %w", err)
+	}
+
 	var legacy int64
 	if err := r.db.WithContext(ctx).Raw(`
 		SELECT COUNT(*) FROM bundle_release_tracks rt
@@ -775,47 +861,147 @@ func (r *LepoShipRepository) runSyncStorage(ctx context.Context) (repositories.C
 	`).Scan(&legacy).Error; err != nil {
 		return repositories.CronJobResult{}, fmt.Errorf("count legacy tracks: %w", err)
 	}
-	return repositories.CronJobResult{Job: "sync-storage", Processed: total, Skipped: legacy, Message: "verified canonical artifact index; legacy tracks without manifests skipped"}, nil
+
+	adapterURL := strings.TrimSpace(os.Getenv("LEPOS_STORAGE_SYNC_ADAPTER_URL"))
+	token := strings.TrimSpace(os.Getenv("LEPOS_STORAGE_SYNC_ADAPTER_TOKEN"))
+	var processed int64
+	var skipped int64 = legacy
+	if adapterURL == "" {
+		for _, artifact := range artifacts {
+			if artifact.StorageProvider == "" || artifact.StorageBucket == "" || artifact.StorageKey == "" || artifact.ChecksumSHA256 == "" || artifact.FileSize <= 0 {
+				skipped++
+				continue
+			}
+			processed++
+		}
+		return repositories.CronJobResult{Job: "sync-storage", Processed: processed, Skipped: skipped, Message: "validated canonical artifact metadata; storage adapter not configured for object probe"}, nil
+	}
+
+	for _, artifact := range artifacts {
+		status, _, ok := postJSON(ctx, adapterURL, artifact, map[string]string{
+			"Authorization": bearerToken(token),
+			"User-Agent":    "LepoShip-Storage-Sync/2026.1",
+		})
+		if !ok && status != http.StatusNotFound {
+			skipped++
+			continue
+		}
+		if status == http.StatusNotFound {
+			skipped++
+			continue
+		}
+		processed++
+	}
+	return repositories.CronJobResult{Job: "sync-storage", Processed: processed, Skipped: skipped, Message: "probed canonical artifact objects through storage sync adapter"}, nil
 }
 
 func (r *LepoShipRepository) runSSLRenew(ctx context.Context) (repositories.CronJobResult, error) {
-	res := r.db.WithContext(ctx).Exec(`
+	var domains []lepoSSLDomainConfig
+	if err := r.db.WithContext(ctx).Raw(`
+		SELECT id, domain, project_id, dns_provider, cert_expires_at
+		FROM native_domain_configs
+		WHERE dns_verified = true
+		  AND (cert_expires_at IS NULL OR cert_expires_at <= now() + interval '15 days')
+		ORDER BY cert_expires_at NULLS FIRST
+		LIMIT 200
+	`).Scan(&domains).Error; err != nil {
+		return repositories.CronJobResult{}, fmt.Errorf("list domains requiring ssl renewal: %w", err)
+	}
+	if len(domains) == 0 {
+		return repositories.CronJobResult{Job: "ssl-renew", Message: "no verified domains require certificate renewal"}, nil
+	}
+
+	adapterURL := strings.TrimSpace(os.Getenv("LEPOS_SSL_RENEWAL_ADAPTER_URL"))
+	token := strings.TrimSpace(os.Getenv("LEPOS_SSL_RENEWAL_ADAPTER_TOKEN"))
+	if adapterURL == "" {
+		res := r.db.WithContext(ctx).Exec(`
 		UPDATE native_domain_configs
 		SET ssl_status = 'RENEWAL_REQUIRED', updated_at = now()
 		WHERE dns_verified = true
 		  AND (cert_expires_at IS NULL OR cert_expires_at <= now() + interval '15 days')
 	`)
-	return repositories.CronJobResult{Job: "ssl-renew", Processed: res.RowsAffected, Message: "marked verified domains requiring certificate renewal"}, res.Error
+		return repositories.CronJobResult{Job: "ssl-renew", Processed: res.RowsAffected, Skipped: int64(len(domains)), Message: "marked verified domains requiring renewal; SSL renewal adapter not configured"}, res.Error
+	}
+
+	var processed int64
+	var skipped int64
+	for _, domain := range domains {
+		response, ok := r.renewDomainCertificate(ctx, adapterURL, token, domain)
+		if !ok {
+			skipped++
+			_ = r.db.WithContext(ctx).Exec("UPDATE native_domain_configs SET ssl_status = 'RENEWAL_REQUIRED', updated_at = now() WHERE id = ?", domain.ID).Error
+			continue
+		}
+		status := strings.TrimSpace(response.SSLStatus)
+		if status == "" {
+			status = "ACTIVE"
+		}
+		if err := r.db.WithContext(ctx).Exec(`
+			UPDATE native_domain_configs
+			SET ssl_status = ?,
+			    cert_issued_at = COALESCE(?, cert_issued_at),
+			    cert_expires_at = COALESCE(?, cert_expires_at),
+			    cert_pem_ref = COALESCE(NULLIF(?, ''), cert_pem_ref),
+			    key_pem_ref = COALESCE(NULLIF(?, ''), key_pem_ref),
+			    updated_at = now()
+			WHERE id = ?
+		`, status, response.CertIssuedAt, response.CertExpiresAt, response.CertPEMRef, response.KeyPEMRef, domain.ID).Error; err != nil {
+			return repositories.CronJobResult{}, fmt.Errorf("persist ssl renewal for %s: %w", domain.Domain, err)
+		}
+		processed++
+	}
+	return repositories.CronJobResult{Job: "ssl-renew", Processed: processed, Skipped: skipped, Message: "renewed expiring certificates through SSL renewal adapter"}, nil
 }
 
 func (r *LepoShipRepository) runABExperiments(ctx context.Context) (repositories.CronJobResult, error) {
-	res := r.db.WithContext(ctx).Exec(`
+	type snapshotInput struct {
+		TestID                   uuid.UUID `gorm:"column:test_id"`
+		BucketStart              time.Time `gorm:"column:bucket_start"`
+		ExposedA                 int64     `gorm:"column:exposed_a"`
+		ExposedB                 int64     `gorm:"column:exposed_b"`
+		AnalyzableA              int64     `gorm:"column:analyzable_a"`
+		AnalyzableB              int64     `gorm:"column:analyzable_b"`
+		RequiredSamplePerVariant int64     `gorm:"column:required_sample_per_variant"`
+	}
+	var rows []snapshotInput
+	if err := r.db.WithContext(ctx).Raw(`
+		SELECT t.id AS test_id,
+		       date_trunc('hour', now()) AS bucket_start,
+		       COUNT(e.id) FILTER (WHERE e.variant = 'A') AS exposed_a,
+		       COUNT(e.id) FILTER (WHERE e.variant = 'B') AS exposed_b,
+		       COUNT(e.id) FILTER (WHERE e.variant = 'A') AS analyzable_a,
+		       COUNT(e.id) FILTER (WHERE e.variant = 'B') AS analyzable_b,
+		       COALESCE(t.minimum_sample_per_variant, 0) AS required_sample_per_variant
+		FROM bundle_ab_tests t
+		LEFT JOIN bundle_ab_test_exposures e ON e.test_id = t.id
+		WHERE t.status = 'running'
+		GROUP BY t.id
+	`).Scan(&rows).Error; err != nil {
+		return repositories.CronJobResult{}, fmt.Errorf("collect running AB experiment snapshots: %w", err)
+	}
+	var processed int64
+	for _, row := range rows {
+		res := r.db.WithContext(ctx).Exec(`
 		INSERT INTO bundle_ab_test_analysis_snapshots (
 			id, test_id, bucket_start, analysis_status,
 			exposed_a, exposed_b, analyzable_a, analyzable_b,
 			conversions_a, conversions_b, conversion_rate_a, conversion_rate_b,
 			absolute_difference, confidence, required_sample_per_variant, created_at
 		)
-		SELECT gen_random_uuid(), t.id, date_trunc('hour', now()), 'collecting',
-		       COUNT(e.id) FILTER (WHERE e.variant = 'A'),
-		       COUNT(e.id) FILTER (WHERE e.variant = 'B'),
-		       COUNT(e.id) FILTER (WHERE e.variant = 'A'),
-		       COUNT(e.id) FILTER (WHERE e.variant = 'B'),
-		       0, 0, 0, 0, 0, 0,
-		       COALESCE(t.minimum_sample_per_variant, 0),
-		       now()
-		FROM bundle_ab_tests t
-		LEFT JOIN bundle_ab_test_exposures e ON e.test_id = t.id
-		WHERE t.status = 'running'
-		GROUP BY t.id
+		VALUES (?, ?, ?, 'collecting', ?, ?, ?, ?, 0, 0, 0, 0, 0, 0, ?, now())
 		ON CONFLICT (test_id, bucket_start) DO UPDATE SET
 			exposed_a = EXCLUDED.exposed_a,
 			exposed_b = EXCLUDED.exposed_b,
 			analyzable_a = EXCLUDED.analyzable_a,
 			analyzable_b = EXCLUDED.analyzable_b,
 			created_at = EXCLUDED.created_at
-	`)
-	return repositories.CronJobResult{Job: "ab-experiments", Processed: res.RowsAffected, Message: "recorded running AB experiment analysis snapshots"}, res.Error
+	`, uuid.New(), row.TestID, row.BucketStart, row.ExposedA, row.ExposedB, row.AnalyzableA, row.AnalyzableB, row.RequiredSamplePerVariant)
+		if res.Error != nil {
+			return repositories.CronJobResult{}, fmt.Errorf("upsert AB snapshot for %s: %w", row.TestID, res.Error)
+		}
+		processed += res.RowsAffected
+	}
+	return repositories.CronJobResult{Job: "ab-experiments", Processed: processed, Message: "recorded running AB experiment analysis snapshots"}, nil
 }
 
 func (r *LepoShipRepository) distinctActiveUsers(ctx context.Context, bundleID uuid.UUID, start, end time.Time) (int64, error) {
@@ -967,41 +1153,77 @@ func coalescePtr(value *string, fallback string) string {
 }
 
 func (r *LepoShipRepository) queueRecentBuildWebhookEvents(ctx context.Context) (int64, error) {
-	res := r.db.WithContext(ctx).Exec(`
-		INSERT INTO bundle_webhook_deliveries (id, webhook_id, event_key, event_type, payload, status, next_retry_at, created_at, updated_at)
-		SELECT gen_random_uuid(), w.id,
-		       'wh_evt_build_' || lb.status || '_' || lb.id,
+	type eventRow struct {
+		WebhookID uuid.UUID `gorm:"column:webhook_id"`
+		EventKey  string    `gorm:"column:event_key"`
+		EventType string    `gorm:"column:event_type"`
+		Payload   string    `gorm:"column:payload"`
+	}
+	var rows []eventRow
+	if err := r.db.WithContext(ctx).Raw(`
+		SELECT w.id AS webhook_id,
+		       'wh_evt_build_' || lb.status || '_' || lb.id AS event_key,
 		       CASE WHEN lb.status IN ('queued', 'building') THEN 'build:started'
 		            WHEN lb.status = 'success' THEN 'build:success'
 		            WHEN lb.status = 'failed' THEN 'build:failed'
-		            ELSE 'build:updated' END,
-		       jsonb_build_object('eventId', 'wh_evt_build_' || lb.status || '_' || lb.id, 'eventType', lb.status, 'timestamp', now(), 'bundleId', b.id, 'data', to_jsonb(lb))::text,
-		       'pending', now(), now(), now()
+		            ELSE 'build:updated' END AS event_type,
+		       jsonb_build_object('eventId', 'wh_evt_build_' || lb.status || '_' || lb.id, 'eventType', lb.status, 'timestamp', now(), 'bundleId', b.id, 'data', to_jsonb(lb))::text AS payload
 		FROM lepoship_builds lb
 		JOIN bundles b ON b.project_id = lb.project_id
 		JOIN bundle_webhooks w ON w.bundle_id = b.id AND w.is_active = true
 		WHERE lb.updated_at >= now() - interval '15 minutes'
 		  AND (w.events::jsonb ? '*' OR w.events::jsonb ? CASE WHEN lb.status IN ('queued', 'building') THEN 'build:started' WHEN lb.status = 'success' THEN 'build:success' WHEN lb.status = 'failed' THEN 'build:failed' ELSE 'build:updated' END)
+	`).Scan(&rows).Error; err != nil {
+		return 0, fmt.Errorf("collect build webhook events: %w", err)
+	}
+	var queued int64
+	for _, row := range rows {
+		res := r.db.WithContext(ctx).Exec(`
+		INSERT INTO bundle_webhook_deliveries (id, webhook_id, event_key, event_type, payload, status, next_retry_at, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, 'pending', now(), now(), now())
 		ON CONFLICT (webhook_id, event_key) DO NOTHING
-	`)
-	return res.RowsAffected, res.Error
+	`, uuid.New(), row.WebhookID, row.EventKey, row.EventType, row.Payload)
+		if res.Error != nil {
+			return queued, fmt.Errorf("queue build webhook event %s: %w", row.EventKey, res.Error)
+		}
+		queued += res.RowsAffected
+	}
+	return queued, nil
 }
 
 func (r *LepoShipRepository) queueRecentReleaseWebhookEvents(ctx context.Context) (int64, error) {
-	res := r.db.WithContext(ctx).Exec(`
-		INSERT INTO bundle_webhook_deliveries (id, webhook_id, event_key, event_type, payload, status, next_retry_at, created_at, updated_at)
-		SELECT gen_random_uuid(), w.id,
-		       'wh_evt_release_published_' || rt.id,
-		       'release:published',
-		       jsonb_build_object('eventId', 'wh_evt_release_published_' || rt.id, 'eventType', 'release:published', 'timestamp', now(), 'bundleId', rt.bundle_id, 'data', to_jsonb(rt))::text,
-		       'pending', now(), now(), now()
+	type eventRow struct {
+		WebhookID uuid.UUID `gorm:"column:webhook_id"`
+		EventKey  string    `gorm:"column:event_key"`
+		EventType string    `gorm:"column:event_type"`
+		Payload   string    `gorm:"column:payload"`
+	}
+	var rows []eventRow
+	if err := r.db.WithContext(ctx).Raw(`
+		SELECT w.id AS webhook_id,
+		       'wh_evt_release_published_' || rt.id AS event_key,
+		       'release:published' AS event_type,
+		       jsonb_build_object('eventId', 'wh_evt_release_published_' || rt.id, 'eventType', 'release:published', 'timestamp', now(), 'bundleId', rt.bundle_id, 'data', to_jsonb(rt))::text AS payload
 		FROM bundle_release_tracks rt
 		JOIN bundle_webhooks w ON w.bundle_id = rt.bundle_id AND w.is_active = true
 		WHERE rt.status = 'active' AND rt.created_at >= now() - interval '15 minutes'
 		  AND (w.events::jsonb ? '*' OR w.events::jsonb ? 'release:published')
+	`).Scan(&rows).Error; err != nil {
+		return 0, fmt.Errorf("collect release webhook events: %w", err)
+	}
+	var queued int64
+	for _, row := range rows {
+		res := r.db.WithContext(ctx).Exec(`
+		INSERT INTO bundle_webhook_deliveries (id, webhook_id, event_key, event_type, payload, status, next_retry_at, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, 'pending', now(), now(), now())
 		ON CONFLICT (webhook_id, event_key) DO NOTHING
-	`)
-	return res.RowsAffected, res.Error
+	`, uuid.New(), row.WebhookID, row.EventKey, row.EventType, row.Payload)
+		if res.Error != nil {
+			return queued, fmt.Errorf("queue release webhook event %s: %w", row.EventKey, res.Error)
+		}
+		queued += res.RowsAffected
+	}
+	return queued, nil
 }
 
 func (r *LepoShipRepository) dispatchBundleWebhookDeliveries(ctx context.Context, job string) (repositories.CronJobResult, error) {
@@ -1035,7 +1257,7 @@ func (r *LepoShipRepository) dispatchBundleWebhookDeliveries(ctx context.Context
 			successes++
 		}
 	}
-	return repositories.CronJobResult{Job: job, Processed: int64(len(rows)), Skipped: successes, Message: "dispatched pending bundle webhooks"}, nil
+	return repositories.CronJobResult{Job: job, Processed: int64(len(rows)), Skipped: int64(len(rows)) - successes, Message: "dispatched pending bundle webhooks"}, nil
 }
 
 func (r *LepoShipRepository) sendBundleWebhook(ctx context.Context, row struct {
@@ -1102,6 +1324,32 @@ func (r *LepoShipRepository) sendFormWebhook(ctx context.Context, deliveryID, ta
 	return false
 }
 
+func (r *LepoShipRepository) renewDomainCertificate(ctx context.Context, adapterURL, token string, domain lepoSSLDomainConfig) (lepoSSLRenewalResponse, bool) {
+	status, body, ok := postJSON(ctx, adapterURL, domain, map[string]string{
+		"Authorization": bearerToken(token),
+		"User-Agent":    "LepoShip-SSL-Renewal/2026.1",
+	})
+	if !ok {
+		return lepoSSLRenewalResponse{}, false
+	}
+	var response lepoSSLRenewalResponse
+	if strings.TrimSpace(body) == "" {
+		return response, true
+	}
+	if err := json.Unmarshal([]byte(body), &response); err != nil {
+		return lepoSSLRenewalResponse{SSLStatus: fmt.Sprintf("RENEWED_HTTP_%d", status)}, true
+	}
+	return response, true
+}
+
+func postJSON(ctx context.Context, targetURL string, payload any, headers map[string]string) (int, string, bool) {
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return 0, err.Error(), false
+	}
+	return postWebhook(ctx, targetURL, string(data), headers)
+}
+
 func postWebhook(ctx context.Context, targetURL, payload string, headers map[string]string) (int, string, bool) {
 	reqCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
@@ -1122,6 +1370,23 @@ func postWebhook(ctx context.Context, targetURL, payload string, headers map[str
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
 	return resp.StatusCode, string(body), resp.StatusCode >= 200 && resp.StatusCode < 300
+}
+
+func bearerToken(token string) string {
+	token = strings.TrimSpace(token)
+	if token == "" {
+		return ""
+	}
+	return "Bearer " + token
+}
+
+func envBool(key string) bool {
+	switch strings.ToLower(strings.TrimSpace(os.Getenv(key))) {
+	case "1", "true", "yes", "y", "on":
+		return true
+	default:
+		return false
+	}
 }
 
 func hmacHex(secret, payload string) string {
