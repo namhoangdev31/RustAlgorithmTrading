@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"io"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -15,6 +16,8 @@ type LepoShipRepository interface {
 	IssueLicense(ctx context.Context, req LicenseIssueRequest) (LicenseIssueResponse, error)
 	VerifyLicense(ctx context.Context, identity SDKIdentity, req LicenseVerifyRequest) (LicenseVerifyResponse, error)
 	RunCronJob(ctx context.Context, name string) (CronJobResult, error)
+	RunCronJobWithTrigger(ctx context.Context, name string, trigger string) (CronJobResult, error)
+	ListCronJobStatus(ctx context.Context) (CronJobStatusResponse, error)
 }
 
 type SDKIdentity struct {
@@ -136,4 +139,31 @@ type CronJobResult struct {
 	Processed int64  `json:"processed"`
 	Skipped   int64  `json:"skipped"`
 	Message   string `json:"message"`
+}
+
+type CronJobStatusResponse struct {
+	Jobs       []CronJobStatus `json:"jobs"`
+	RecentRuns []CronJobRun    `json:"recentRuns"`
+}
+
+type CronJobStatus struct {
+	Job       string      `json:"job"`
+	Schedule  string      `json:"schedule"`
+	Enabled   bool        `json:"enabled"`
+	NextRunAt *time.Time  `json:"nextRunAt,omitempty"`
+	LatestRun *CronJobRun `json:"latestRun,omitempty"`
+}
+
+type CronJobRun struct {
+	ID         uuid.UUID  `json:"id"`
+	Job        string     `json:"job"`
+	Status     string     `json:"status"`
+	Processed  int64      `json:"processed"`
+	Skipped    int64      `json:"skipped"`
+	Message    string     `json:"message"`
+	Error      string     `json:"error,omitempty"`
+	StartedAt  time.Time  `json:"startedAt"`
+	FinishedAt *time.Time `json:"finishedAt,omitempty"`
+	DurationMS int64      `json:"durationMs"`
+	Trigger    string     `json:"trigger"`
 }

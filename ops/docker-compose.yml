@@ -219,7 +219,7 @@ services:
       LEPOS_STORAGE_ROOT: /var/lib/lepos/artifacts
       LEPOS_CONTROL_PLANE_URL: http://nextjs-frontend:3000
       GO_CONTROL_PLANE_PUBLIC_URL: ${GO_CONTROL_PLANE_PUBLIC_URL:-http://localhost:8081}
-      LEPOS_SCHEDULER_ENABLED: ${LEPOS_SCHEDULER_ENABLED:-false}
+      LEPOS_SCHEDULER_ENABLED: ${LEPOS_SCHEDULER_ENABLED:-true}
       TELEMETRY_DEVICE_PEPPER: ${TELEMETRY_DEVICE_PEPPER:-telemetry-device-pepper}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:-encryptionkeyencryptionkeyencryptionkey}
       LEPOS_ARTIFACT_PROVIDER: ${LEPOS_ARTIFACT_PROVIDER:-s3}

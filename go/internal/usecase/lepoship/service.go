@@ -42,3 +42,11 @@ func (s *Service) VerifyLicense(ctx context.Context, identity repositories.SDKId
 func (s *Service) RunCronJob(ctx context.Context, name string) (repositories.CronJobResult, error) {
 	return s.repo.RunCronJob(ctx, name)
 }
+
+func (s *Service) RunCronJobWithTrigger(ctx context.Context, name string, trigger string) (repositories.CronJobResult, error) {
+	return s.repo.RunCronJobWithTrigger(ctx, name, trigger)
+}
+
+func (s *Service) ListCronJobStatus(ctx context.Context) (repositories.CronJobStatusResponse, error) {
+	return s.repo.ListCronJobStatus(ctx)
+}

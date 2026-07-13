@@ -42,6 +42,7 @@ func (h *LepoShipHandler) MapPublicRoutes(r *gin.Engine) {
 func (h *LepoShipHandler) MapInternalRoutes(r *gin.Engine) {
 	r.POST("/api/v1/releases/upload", h.withSignedInternal(h.releaseUpload))
 	r.POST("/api/v1/entitlements/license", h.withSignedInternal(h.issueLicense))
+	r.GET("/api/internal/cron/status", h.withSignedInternal(h.listCronStatus))
 	r.POST("/api/internal/cron/:job/run", h.withSignedInternal(h.runCronJob))
 }
 
@@ -207,12 +208,22 @@ func (h *LepoShipHandler) verifyLicense(c *gin.Context, identity repositories.SD
 
 func (h *LepoShipHandler) runCronJob(c *gin.Context, _ uuid.UUID) {
 	job := c.Param("job")
-	resp, err := h.service.RunCronJob(c.Request.Context(), job)
+	resp, err := h.service.RunCronJobWithTrigger(c.Request.Context(), job, "manual")
 	if err != nil {
 		writeMappedError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "processed": resp.Processed, "skipped": resp.Skipped, "job": resp.Job, "message": resp.Message})
+}
+
+func (h *LepoShipHandler) listCronStatus(c *gin.Context, _ uuid.UUID) {
+	resp, err := h.service.ListCronJobStatus(c.Request.Context())
+	if err != nil {
+		writeMappedError(c, err)
+		return
+	}
+	c.Header("Cache-Control", "no-store")
+	c.JSON(http.StatusOK, gin.H{"success": true, "jobs": resp.Jobs, "recentRuns": resp.RecentRuns})
 }
 
 func verifyInternalSignature(c *gin.Context, redisClient *redis.Client) (uuid.UUID, error) {

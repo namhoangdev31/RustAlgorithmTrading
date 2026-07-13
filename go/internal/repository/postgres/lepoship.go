@@ -24,6 +24,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"github.com/robfig/cron/v3"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
@@ -44,6 +45,21 @@ var (
 	ErrConflict     = errors.New("conflict")
 	ErrBadRequest   = errors.New("bad request")
 )
+
+var lepoCronDefinitions = []lepoCronDefinition{
+	{Job: "bundle-abuse", ScheduleEnv: "LEPOS_CRON_BUNDLE_ABUSE", DefaultSchedule: "0 0 * * * *"},
+	{Job: "retention-calculator", ScheduleEnv: "LEPOS_CRON_RETENTION", DefaultSchedule: "0 15 1 * * *"},
+	{Job: "ab-experiments", ScheduleEnv: "LEPOS_CRON_AB_EXPERIMENTS", DefaultSchedule: "0 */15 * * * *"},
+	{Job: "ranking-calculator", ScheduleEnv: "LEPOS_CRON_RANKING", DefaultSchedule: "0 30 0,12 * * *"},
+	{Job: "bundle-webhooks", ScheduleEnv: "LEPOS_CRON_BUNDLE_WEBHOOKS", DefaultSchedule: "0 */5 * * * *"},
+	{Job: "webhook-retry", ScheduleEnv: "LEPOS_CRON_WEBHOOK_RETRY", DefaultSchedule: "0 */10 * * * *"},
+	{Job: "ssl-renew", ScheduleEnv: "LEPOS_CRON_SSL_RENEW", DefaultSchedule: "0 0 3 * * *"},
+	{Job: "lepoship-outbox", ScheduleEnv: "LEPOS_CRON_OUTBOX", DefaultSchedule: "0 */2 * * * *"},
+	{Job: "lepoship-reconcile", ScheduleEnv: "LEPOS_CRON_RECONCILE", DefaultSchedule: "0 */15 * * * *"},
+	{Job: "cleanup-previews", ScheduleEnv: "LEPOS_CRON_CLEANUP_PREVIEWS", DefaultSchedule: "0 0 2 * * *"},
+	{Job: "cleanup-waf-logs", ScheduleEnv: "LEPOS_CRON_CLEANUP_WAF", DefaultSchedule: "0 30 2 * * *"},
+	{Job: "sync-storage", ScheduleEnv: "LEPOS_CRON_SYNC_STORAGE", DefaultSchedule: "0 0 * * * *"},
+}
 
 type rankingBundleScore struct {
 	ID             uuid.UUID `gorm:"column:id"`
@@ -72,6 +88,12 @@ type lepoSSLRenewalResponse struct {
 	CertExpiresAt *time.Time `json:"certExpiresAt"`
 	CertPEMRef    string     `json:"certPemRef"`
 	KeyPEMRef     string     `json:"keyPemRef"`
+}
+
+type lepoCronDefinition struct {
+	Job             string
+	ScheduleEnv     string
+	DefaultSchedule string
 }
 
 type LepoShipRepository struct {
@@ -417,11 +439,52 @@ func (r *LepoShipRepository) VerifyLicense(ctx context.Context, identity reposit
 }
 
 func (r *LepoShipRepository) RunCronJob(ctx context.Context, name string) (repositories.CronJobResult, error) {
+	return r.RunCronJobWithTrigger(ctx, name, "scheduler")
+}
+
+func (r *LepoShipRepository) RunCronJobWithTrigger(ctx context.Context, name string, trigger string) (repositories.CronJobResult, error) {
 	switch name {
 	case "bundle-abuse", "retention-calculator", "ab-experiments", "ranking-calculator", "bundle-webhooks", "webhook-retry", "ssl-renew", "lepoship-outbox", "lepoship-reconcile", "cleanup-previews", "cleanup-waf-logs", "sync-storage":
 	default:
 		return repositories.CronJobResult{}, fmt.Errorf("%w: unknown job %q", ErrBadRequest, name)
 	}
+
+	if err := r.ensureCronRunTable(ctx); err != nil {
+		return repositories.CronJobResult{}, err
+	}
+	runID := uuid.New()
+	startedAt := time.Now().UTC()
+	if strings.TrimSpace(trigger) == "" {
+		trigger = "scheduler"
+	}
+	if err := r.db.WithContext(ctx).Exec(`
+		INSERT INTO lepoship_cron_runs (id, job, status, started_at, trigger)
+		VALUES (?, ?, 'running', ?, ?)
+	`, runID, name, startedAt, trigger).Error; err != nil {
+		return repositories.CronJobResult{}, fmt.Errorf("record cron run start: %w", err)
+	}
+
+	result, err := r.runCronJobBody(ctx, name)
+	finishedAt := time.Now().UTC()
+	durationMS := finishedAt.Sub(startedAt).Milliseconds()
+	status := "success"
+	errorMessage := ""
+	if err != nil {
+		status = "failed"
+		errorMessage = err.Error()
+		result.Job = name
+	}
+	if updateErr := r.db.WithContext(context.Background()).Exec(`
+		UPDATE lepoship_cron_runs
+		SET status = ?, processed = ?, skipped = ?, message = ?, error = NULLIF(?, ''), finished_at = ?, duration_ms = ?
+		WHERE id = ?
+	`, status, result.Processed, result.Skipped, result.Message, errorMessage, finishedAt, durationMS, runID).Error; updateErr != nil && err == nil {
+		return result, fmt.Errorf("record cron run finish: %w", updateErr)
+	}
+	return result, err
+}
+
+func (r *LepoShipRepository) runCronJobBody(ctx context.Context, name string) (repositories.CronJobResult, error) {
 	switch name {
 	case "bundle-abuse":
 		return r.runBundleAbuse(ctx)
@@ -450,6 +513,41 @@ func (r *LepoShipRepository) RunCronJob(ctx context.Context, name string) (repos
 	default:
 		return repositories.CronJobResult{}, fmt.Errorf("%w: unknown job %q", ErrBadRequest, name)
 	}
+}
+
+func (r *LepoShipRepository) ListCronJobStatus(ctx context.Context) (repositories.CronJobStatusResponse, error) {
+	if err := r.ensureCronRunTable(ctx); err != nil {
+		return repositories.CronJobStatusResponse{}, err
+	}
+	recent, err := r.listRecentCronRuns(ctx, 100)
+	if err != nil {
+		return repositories.CronJobStatusResponse{}, err
+	}
+	latest := map[string]repositories.CronJobRun{}
+	for _, run := range recent {
+		if _, ok := latest[run.Job]; !ok {
+			latest[run.Job] = run
+		}
+	}
+	now := time.Now().UTC()
+	jobs := make([]repositories.CronJobStatus, 0, len(lepoCronDefinitions))
+	for _, definition := range lepoCronDefinitions {
+		schedule := envSchedule(definition.ScheduleEnv, definition.DefaultSchedule)
+		status := repositories.CronJobStatus{
+			Job:      definition.Job,
+			Schedule: schedule,
+			Enabled:  os.Getenv("LEPOS_SCHEDULER_ENABLED") == "true",
+		}
+		if next := nextCronRun(schedule, now); next != nil {
+			status.NextRunAt = next
+		}
+		if run, ok := latest[definition.Job]; ok {
+			runCopy := run
+			status.LatestRun = &runCopy
+		}
+		jobs = append(jobs, status)
+	}
+	return repositories.CronJobStatusResponse{Jobs: jobs, RecentRuns: recent}, nil
 }
 
 func (r *LepoShipRepository) runBundleAbuse(ctx context.Context) (repositories.CronJobResult, error) {
@@ -1150,6 +1248,67 @@ func coalescePtr(value *string, fallback string) string {
 		return fallback
 	}
 	return *value
+}
+
+func (r *LepoShipRepository) ensureCronRunTable(ctx context.Context) error {
+	if err := r.db.WithContext(ctx).Exec(`
+		CREATE TABLE IF NOT EXISTS lepoship_cron_runs (
+			id uuid PRIMARY KEY,
+			job varchar(80) NOT NULL,
+			status varchar(20) NOT NULL,
+			processed bigint NOT NULL DEFAULT 0,
+			skipped bigint NOT NULL DEFAULT 0,
+			message text NOT NULL DEFAULT '',
+			error text,
+			started_at timestamptz NOT NULL,
+			finished_at timestamptz,
+			duration_ms bigint NOT NULL DEFAULT 0,
+			trigger varchar(40) NOT NULL DEFAULT 'scheduler'
+		)
+	`).Error; err != nil {
+		return fmt.Errorf("ensure cron run table: %w", err)
+	}
+	if err := r.db.WithContext(ctx).Exec("CREATE INDEX IF NOT EXISTS lepoship_cron_runs_job_started_idx ON lepoship_cron_runs (job, started_at DESC)").Error; err != nil {
+		return fmt.Errorf("ensure cron run job index: %w", err)
+	}
+	if err := r.db.WithContext(ctx).Exec("CREATE INDEX IF NOT EXISTS lepoship_cron_runs_status_idx ON lepoship_cron_runs (status)").Error; err != nil {
+		return fmt.Errorf("ensure cron run status index: %w", err)
+	}
+	return nil
+}
+
+func (r *LepoShipRepository) listRecentCronRuns(ctx context.Context, limit int) ([]repositories.CronJobRun, error) {
+	if limit <= 0 || limit > 500 {
+		limit = 100
+	}
+	var rows []repositories.CronJobRun
+	if err := r.db.WithContext(ctx).Raw(`
+		SELECT id, job, status, processed, skipped, message, COALESCE(error, '') AS error,
+		       started_at, finished_at, duration_ms, trigger
+		FROM lepoship_cron_runs
+		ORDER BY started_at DESC
+		LIMIT ?
+	`, limit).Scan(&rows).Error; err != nil {
+		return nil, fmt.Errorf("list cron runs: %w", err)
+	}
+	return rows, nil
+}
+
+func envSchedule(key, fallback string) string {
+	if value := strings.TrimSpace(os.Getenv(key)); value != "" {
+		return value
+	}
+	return fallback
+}
+
+func nextCronRun(schedule string, now time.Time) *time.Time {
+	parser := cron.NewParser(cron.Second | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor)
+	parsed, err := parser.Parse(schedule)
+	if err != nil {
+		return nil
+	}
+	next := parsed.Next(now)
+	return &next
 }
 
 func (r *LepoShipRepository) queueRecentBuildWebhookEvents(ctx context.Context) (int64, error) {
