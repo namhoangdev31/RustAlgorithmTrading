@@ -122,6 +122,94 @@ services:
       questdb:
         condition: service_healthy
 
+  postgres-integration:
+    image: postgres:17-alpine
+    profiles: [ "go-integration" ]
+    ports:
+      - "55432:5432"
+    environment:
+      POSTGRES_USER: storefront_test
+      POSTGRES_PASSWORD: storefront_test
+      POSTGRES_DB: storefront_test
+    networks:
+      - private
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U storefront_test -d storefront_test" ]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  redis-integration:
+    image: redis:7-alpine
+    profiles: [ "go-integration" ]
+    ports:
+      - "56379:6379"
+    networks:
+      - private
+    tmpfs:
+      - /data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  nats-integration:
+    image: nats:2.11.6-alpine
+    profiles: [ "go-integration" ]
+    command: [ "-js", "-sd", "/data", "-m", "8222" ]
+    ports:
+      - "54222:4222"
+      - "58222:8222"
+    networks:
+      - private
+    tmpfs:
+      - /data
+
+  minio-integration:
+    image: quay.io/minio/minio:RELEASE.2025-07-23T15-54-02Z
+    profiles: [ "go-integration" ]
+    command: [ "server", "/data", "--console-address", ":9001" ]
+    ports:
+      - "59000:9000"
+      - "59001:9001"
+    environment:
+      MINIO_ROOT_USER: minio_test
+      MINIO_ROOT_PASSWORD: minio_test_secret
+    networks:
+      - private
+    tmpfs:
+      - /data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:9000/minio/health/live >/dev/null" ]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  questdb-integration:
+    image: questdb/questdb:9.4.3
+    profiles: [ "go-integration" ]
+    ports:
+      - "58812:8812"
+      - "59003:9000"
+    environment:
+      QDB_PG_USER: admin
+      QDB_PG_PASSWORD: quest
+      QDB_TELEMETRY_ENABLED: "false"
+      QDB_PG_NET_BIND_TO: 0.0.0.0:8812
+      QDB_HTTP_BIND_TO: 0.0.0.0:9000
+    networks:
+      - private
+    tmpfs:
+      - /var/lib/questdb
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:9003/status >/dev/null" ]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
   trading-core:
     <<: *rust-service
     depends_on:
@@ -213,6 +301,9 @@ services:
       DATABASE_URL: postgresql://noah_admin:noah_master@103.82.36.67:8048/noah_db
       QUESTDB_PG_URL: postgresql://admin:${QUESTDB_PASSWORD:-quest}@questdb:8812/qdb
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      NATS_URL: ${NATS_URL:-}
+      NATS_STREAM_NAME: ${NATS_STREAM_NAME:-CONTROL_GATEWAY_EVENTS}
+      NATS_SUBJECT_PREFIX: ${NATS_SUBJECT_PREFIX:-control-gateway}
       MARKET_DATA_METRICS_URL: http://trading-core:9090/metrics
       EXECUTION_METRICS_URL: http://trading-core:9090/metrics
       RISK_METRICS_URL: http://trading-core:9090/metrics

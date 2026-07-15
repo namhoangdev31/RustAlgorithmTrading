@@ -10,15 +10,15 @@ type AlertRepository interface {
 }
 
 type MetricRepository interface {
-	QueryPerformanceSummary(string) (map[string]any, error)
-	QueryCurrentMetricsSnapshot(string) (map[string]any, error)
-	QueryMetricsHistory(string, string, string, []string) ([]map[string]any, error)
+	QueryPerformanceSummary(string) (PerformanceSummary, error)
+	QueryCurrentMetricsSnapshot(string) (MetricSnapshot, error)
+	QueryMetricsHistory(string, string, string, []string) ([]MetricPoint, error)
 }
 
 type SystemRepository interface {
-	QueryPerformanceHistory(string, int) ([]map[string]any, error)
-	QueryLogs(string, string, int) ([]map[string]any, error)
-	QueryLatestIntegrityReport(string) (map[string]any, error)
+	QueryPerformanceHistory(string, int) ([]PerformancePoint, error)
+	QueryLogs(string, string, int) ([]SystemLog, error)
+	QueryLatestIntegrityReport(string) (domain.Report, error)
 }
 
 type HealthProvider interface{ ComponentsSnapshot() map[string]any }
@@ -37,16 +37,64 @@ type AlertUseCase interface {
 }
 
 type MetricUseCase interface {
-	GetCurrentMetrics(string) (map[string]any, error)
-	GetMetricsHistory(string, string, string, string, string, []string) (map[string]any, error)
+	GetCurrentMetrics(string) (CurrentMetrics, error)
+	GetMetricsHistory(string, string, string, string, string, []string) (MetricsHistory, error)
 	GetSymbols() ([]string, error)
-	GetSummary(string) (map[string]any, error)
+	GetSummary(string) (PerformanceSummary, error)
 }
 
 type SystemUseCase interface {
-	GetPerformance(string) ([]map[string]any, error)
+	GetPerformance(string) ([]PerformancePoint, error)
 	GetComponents() map[string]any
-	GetLogs(string, string, int) ([]map[string]any, error)
+	GetLogs(string, string, int) ([]SystemLog, error)
 	GetStats() map[string]any
 	ValidateIntegrity(domain.Metrics) domain.Report
+}
+
+type PerformanceSummary struct {
+	PortfolioValue float64 `json:"portfolio_value"`
+	PNL            float64 `json:"pnl"`
+	TotalTrades    int64   `json:"total_trades"`
+}
+
+type MetricSnapshot map[string]map[string]float64
+
+type MetricPoint struct {
+	Timestamp  string  `json:"timestamp"`
+	MetricName string  `json:"metric_name"`
+	Value      float64 `json:"value"`
+	Symbol     *string `json:"symbol,omitempty"`
+	Labels     *string `json:"labels,omitempty"`
+}
+
+type CurrentMetrics struct {
+	Timestamp  string             `json:"timestamp"`
+	MarketData map[string]float64 `json:"market_data"`
+	Strategy   PerformanceSummary `json:"strategy"`
+	Execution  map[string]float64 `json:"execution"`
+	System     map[string]float64 `json:"system"`
+}
+
+type MetricsHistory struct {
+	StartTime string        `json:"start_time"`
+	EndTime   string        `json:"end_time"`
+	Interval  string        `json:"interval"`
+	Data      []MetricPoint `json:"data"`
+	Count     int           `json:"count"`
+}
+
+type PerformancePoint struct {
+	Timestamp      string   `json:"timestamp"`
+	PortfolioValue float64  `json:"portfolio_value"`
+	PNL            float64  `json:"pnl"`
+	SharpeRatio    *float64 `json:"sharpe_ratio,omitempty"`
+	MaxDrawdown    *float64 `json:"max_drawdown,omitempty"`
+}
+
+type SystemLog struct {
+	Timestamp string  `json:"timestamp"`
+	EventType string  `json:"event_type"`
+	Severity  string  `json:"severity"`
+	Message   string  `json:"message"`
+	Details   *string `json:"details,omitempty"`
 }

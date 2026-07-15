@@ -9,6 +9,13 @@ import (
 
 type Lock struct{ client *redisclient.Client }
 
+var releaseScript = redisclient.NewScript(`
+if redis.call("GET", KEYS[1]) == ARGV[1] then
+  return redis.call("DEL", KEYS[1])
+end
+return 0
+`)
+
 func NewLock(client *redisclient.Client) *Lock { return &Lock{client: client} }
 
 func (l *Lock) Acquire(ctx context.Context, key, owner string, ttl time.Duration) (func(), bool, error) {
@@ -16,5 +23,5 @@ func (l *Lock) Acquire(ctx context.Context, key, owner string, ttl time.Duration
 	if err != nil || !ok {
 		return func() {}, ok, err
 	}
-	return func() { _ = l.client.Del(context.Background(), key).Err() }, true, nil
+	return func() { _ = releaseScript.Run(context.Background(), l.client, []string{key}, owner).Err() }, true, nil
 }

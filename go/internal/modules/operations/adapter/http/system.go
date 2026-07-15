@@ -8,6 +8,7 @@ import (
 
 	"trading/control-gateway/internal/modules/operations/application"
 	domain "trading/control-gateway/internal/modules/operations/domain"
+	"trading/control-gateway/internal/platform/httpx"
 )
 
 func parseIntWithDefault(raw string, fallback int) int {
@@ -53,7 +54,7 @@ func (h *SystemHandler) GetPerformance(c *gin.Context) {
 
 	history, err := h.useCase.GetPerformance(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"detail": err.Error()})
+		httpx.WriteError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -82,7 +83,7 @@ func (h *SystemHandler) GetLogs(c *gin.Context) {
 	limit := parseIntWithDefault(c.Query("limit"), 100)
 	logs, err := h.useCase.GetLogs(userID, level, limit)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"detail": err.Error()})
+		httpx.WriteError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{

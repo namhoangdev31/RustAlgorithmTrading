@@ -140,6 +140,10 @@ jobs:
         working-directory: ./nextjs
         run: yarn install --frozen-lockfile
 
+      - name: Test Prisma to Ent generator
+        working-directory: ./nextjs
+        run: yarn test:ent-generator
+
       - name: Regenerate Ent schema and client
         run: |
           cd nextjs
@@ -152,7 +156,13 @@ jobs:
 
       - name: Run Go tests
         working-directory: ./go
-        run: go test ./...
+        run: |
+          go build -o /tmp/control-gateway ./cmd/gateway
+          go test ./...
+          go vet ./...
+
+      - name: Validate single-gateway integration topology
+        run: docker compose -f ops/docker-compose.yml --profile go-integration config -q
 
   # Code quality
   code-quality:

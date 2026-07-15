@@ -62,13 +62,13 @@ func (m *MetricsCollector) Start() {
 	}
 }
 
-func (m *MetricsCollector) latestMetricsSnapshot() map[string]interface{} {
+func (m *MetricsCollector) latestMetricsSnapshot() application.MetricSnapshot {
 	if m.metrics != nil {
 		if latest, err := m.metrics.QueryCurrentMetricsSnapshot("admin"); err == nil {
 			return latest
 		}
 	}
-	return map[string]interface{}{}
+	return application.MetricSnapshot{}
 }
 
 func (m *MetricsCollector) Run(ctx context.Context) error {

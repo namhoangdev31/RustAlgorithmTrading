@@ -17,6 +17,7 @@
     "test:ab": "tsx --test --test-concurrency=1 tests/ab-testing/**/*.test.ts",
     "test:lepoship": "tsx --test --test-concurrency=1 tests/lepoship/**/*.test.ts",
     "generate:ent": "prisma generate --generator ent",
+    "test:ent-generator": "tsx --test --test-concurrency=1 tools/prisma-ent-generator/*.test.ts",
     "lepoship:search:index": "tsx scripts/setup-lepoship-search.ts",
     "lepoship:reset": "tsx scripts/reset-lepoship-data.ts --confirm-reset-lepoship",
     "lepoship:seed": "tsx scripts/seed-lepoship.ts",

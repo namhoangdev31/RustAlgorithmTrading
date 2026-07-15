@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"trading/control-gateway/internal/modules/operations/application"
+	"trading/control-gateway/internal/platform/httpx"
 )
 
 // MetricHandler handles HTTP requests relating to metrics and performance summaries.
@@ -37,7 +38,7 @@ func (h *MetricHandler) GetCurrent(c *gin.Context) {
 
 	payload, err := h.useCase.GetCurrentMetrics(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"detail": err.Error()})
+		httpx.WriteError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, payload)
@@ -60,7 +61,7 @@ func (h *MetricHandler) GetHistory(c *gin.Context) {
 
 	payload, err := h.useCase.GetMetricsHistory(userID, req.TimeRange, req.StartTime, req.EndTime, req.Interval, req.MetricTypes)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"detail": err.Error()})
+		httpx.WriteError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, payload)
@@ -69,7 +70,7 @@ func (h *MetricHandler) GetHistory(c *gin.Context) {
 func (h *MetricHandler) GetSymbols(c *gin.Context) {
 	symbols, err := h.useCase.GetSymbols()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"detail": err.Error()})
+		httpx.WriteError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -89,7 +90,7 @@ func (h *MetricHandler) GetSummary(c *gin.Context) {
 
 	summary, err := h.useCase.GetSummary(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"detail": err.Error()})
+		httpx.WriteError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, summary)

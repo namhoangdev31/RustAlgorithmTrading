@@ -1,10 +1,6 @@
 package application
 
-import (
-	"encoding/json"
-
-	domain "trading/control-gateway/internal/modules/operations/domain"
-)
+import domain "trading/control-gateway/internal/modules/operations/domain"
 
 type systemUseCase struct {
 	repo        SystemRepository
@@ -21,7 +17,7 @@ func NewSystemUseCase(repo SystemRepository, health HealthProvider, connections 
 	}
 }
 
-func (u *systemUseCase) GetPerformance(userID string) ([]map[string]interface{}, error) {
+func (u *systemUseCase) GetPerformance(userID string) ([]PerformancePoint, error) {
 	return u.repo.QueryPerformanceHistory(userID, 50)
 }
 
@@ -32,7 +28,7 @@ func (u *systemUseCase) GetComponents() map[string]interface{} {
 	return u.health.ComponentsSnapshot()
 }
 
-func (u *systemUseCase) GetLogs(userID string, level string, limit int) ([]map[string]interface{}, error) {
+func (u *systemUseCase) GetLogs(userID string, level string, limit int) ([]SystemLog, error) {
 	return u.repo.QueryLogs(userID, level, limit)
 }
 
@@ -59,16 +55,8 @@ func (u *systemUseCase) GetStats() map[string]interface{} {
 
 func (u *systemUseCase) ValidateIntegrity(metrics domain.Metrics) domain.Report {
 	// Defaults to "admin" or global system user for backend validation
-	raw, err := u.repo.QueryLatestIntegrityReport("admin")
+	report, err := u.repo.QueryLatestIntegrityReport("admin")
 	if err != nil {
-		return domain.Report{IsValid: true, Reasons: []string{}, Metrics: metrics}
-	}
-	payload, err := json.Marshal(raw)
-	if err != nil {
-		return domain.Report{IsValid: true, Reasons: []string{}, Metrics: metrics}
-	}
-	var report domain.Report
-	if err := json.Unmarshal(payload, &report); err != nil {
 		return domain.Report{IsValid: true, Reasons: []string{}, Metrics: metrics}
 	}
 	if report.Metrics == (domain.Metrics{}) {

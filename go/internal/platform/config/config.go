@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 
@@ -93,6 +94,7 @@ type Scheduler struct {
 
 type Events struct {
 	NATSURL        string
+	StreamName     string
 	SubjectPrefix  string
 	OutboxInterval time.Duration
 	OutboxLeaseTTL time.Duration
@@ -147,7 +149,7 @@ func Load() (*Config, error) {
 			Schedules:     schedulerSchedules(v),
 		},
 		Events: Events{
-			NATSURL: v.GetString("NATS_URL"), SubjectPrefix: v.GetString("NATS_SUBJECT_PREFIX"),
+			NATSURL: v.GetString("NATS_URL"), StreamName: v.GetString("NATS_STREAM_NAME"), SubjectPrefix: v.GetString("NATS_SUBJECT_PREFIX"),
 			OutboxInterval: v.GetDuration("OUTBOX_POLL_INTERVAL"), OutboxLeaseTTL: v.GetDuration("OUTBOX_LEASE_TTL"),
 			OutboxBatch: v.GetInt("OUTBOX_BATCH_SIZE"), MaxAttempts: v.GetInt("OUTBOX_MAX_ATTEMPTS"),
 		},
@@ -168,14 +170,82 @@ func (c *Config) Validate() error {
 	default:
 		return fmt.Errorf("invalid GATEWAY_RUN_MODE %q", c.RunMode)
 	}
-	if c.RunMode != "edge-gateway" && c.Storefront.Enabled {
-		if c.Storage.DatabaseURL == "" {
-			return errors.New("DATABASE_URL is required when Storefront is enabled")
+	if c.Storefront.MockPaymentsEnabled && !c.Storefront.Enabled {
+		return errors.New("STOREFRONT_MOCK_PAYMENTS_ENABLED requires STOREFRONT_API_ENABLED")
+	}
+	controlPlane := c.RunMode == "both" || c.RunMode == "control-plane"
+	if controlPlane {
+		if err := c.ValidateQuant(); err != nil {
+			return fmt.Errorf("quant configuration: %w", err)
 		}
+		if err := c.ValidateOTA(); err != nil {
+			return fmt.Errorf("ota configuration: %w", err)
+		}
+	}
+	if err := c.ValidateEdge(); err != nil {
+		return err
+	}
+	return nil
+}
+
+// ValidateQuant validates only dependencies owned by the Quant component.
+func (c *Config) ValidateQuant() error {
+	if strings.TrimSpace(c.Storage.DatabaseURL) == "" {
+		return errors.New("DATABASE_URL is required")
+	}
+	if strings.TrimSpace(c.Storage.QuestDBURL) == "" {
+		return errors.New("QUESTDB_PG_URL is required")
+	}
+	return nil
+}
+
+// ValidateOTA validates only dependencies owned by the OTA component.
+func (c *Config) ValidateOTA() error {
+	if strings.TrimSpace(c.Storage.DatabaseURL) == "" {
+		return errors.New("DATABASE_URL is required")
+	}
+	if c.Storefront.MockPaymentsEnabled && !c.Storefront.Enabled {
+		return errors.New("STOREFRONT_MOCK_PAYMENTS_ENABLED requires STOREFRONT_API_ENABLED")
+	}
+	if c.Scheduler.Enabled {
+		if strings.TrimSpace(c.Storage.RedisURL) == "" {
+			return errors.New("REDIS_URL is required when the scheduler is enabled")
+		}
+		if strings.TrimSpace(c.Scheduler.HostID) == "" {
+			return errors.New("HOSTNAME is required when the scheduler is enabled")
+		}
+	}
+	if c.Storefront.Enabled {
 		if len(c.Storefront.JWTSecret) < 32 {
 			return errors.New("STOREFRONT_JWT_SECRET must be at least 32 bytes")
 		}
+		if strings.TrimSpace(c.Storefront.FirebaseAPIKey) == "" {
+			return errors.New("FIREBASE_API_KEY is required when Storefront is enabled")
+		}
+		if strings.TrimSpace(c.Storefront.ArtifactProvider) == "" || strings.TrimSpace(c.Storefront.ArtifactBucket) == "" {
+			return errors.New("artifact provider and bucket are required when Storefront is enabled")
+		}
+		if strings.TrimSpace(c.Storefront.ArtifactAccessKeyID) == "" || strings.TrimSpace(c.Storefront.ArtifactSecretKey) == "" {
+			return errors.New("artifact credentials are required when Storefront is enabled")
+		}
+		if strings.EqualFold(strings.TrimSpace(c.Storefront.ArtifactProvider), "minio") {
+			if strings.TrimSpace(c.Storefront.ArtifactRegion) == "" {
+				return errors.New("LEPOS_ARTIFACT_REGION is required for MinIO")
+			}
+			if !c.Storefront.ArtifactForcePathStyle {
+				return errors.New("LEPOS_ARTIFACT_FORCE_PATH_STYLE must be true for MinIO")
+			}
+			endpoint, err := url.ParseRequestURI(strings.TrimSpace(c.Storefront.ArtifactEndpoint))
+			if err != nil || (endpoint.Scheme != "http" && endpoint.Scheme != "https") || endpoint.Host == "" {
+				return errors.New("LEPOS_ARTIFACT_ENDPOINT must be an absolute HTTP(S) URL for MinIO")
+			}
+		}
 	}
+	return nil
+}
+
+// ValidateEdge validates edge-only settings without coupling them to Quant or OTA.
+func (c *Config) ValidateEdge() error {
 	if c.RunMode != "control-plane" && c.Edge.ServiceSecret == "" && c.Environment == "production" {
 		return errors.New("LEPOS_SERVICE_SECRET is required for edge in production")
 	}
@@ -193,7 +263,7 @@ func setDefaults(v *viper.Viper) {
 		"STOREFRONT_REFRESH_TTL": "720h", "LEPOS_ARTIFACT_REGION": "auto", "LEPOS_ARTIFACT_BUCKET": "lepoship-artifacts",
 		"LEPOS_ARTIFACT_PROVIDER": "s3", "LEPOS_STORAGE_ROOT": ".", "LEPOS_CONTROL_PLANE_URL": "http://127.0.0.1:3000",
 		"LEPOS_SERVICE_ID": "edge-gateway", "LEPOS_IPFS_GATEWAY_URL": "https://ipfs.io/ipfs",
-		"LEPOS_ARWEAVE_GATEWAY_URL": "https://arweave.net", "NATS_SUBJECT_PREFIX": "control-gateway",
+		"LEPOS_ARWEAVE_GATEWAY_URL": "https://arweave.net", "NATS_SUBJECT_PREFIX": "control-gateway", "NATS_STREAM_NAME": "CONTROL_GATEWAY_EVENTS",
 		"OUTBOX_POLL_INTERVAL": "2s", "OUTBOX_LEASE_TTL": "30s", "OUTBOX_BATCH_SIZE": 100,
 		"OUTBOX_MAX_ATTEMPTS": 10, "OTEL_SERVICE_NAME": "control-gateway", "TRACING_ENABLED": true, "METRICS_ENABLED": true,
 	}

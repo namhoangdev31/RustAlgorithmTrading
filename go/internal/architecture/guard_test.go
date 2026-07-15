@@ -5,6 +5,7 @@ import (
 	"go/token"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -14,13 +15,23 @@ import (
 func TestModularArchitectureBoundaries(t *testing.T) {
 	_, current, _, _ := runtime.Caller(0)
 	root := filepath.Clean(filepath.Join(filepath.Dir(current), "..", ".."))
+	commands, err := os.ReadDir(filepath.Join(root, "cmd"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(commands) != 1 || commands[0].Name() != "gateway" {
+		t.Errorf("expected exactly one gateway binary, found %v", entryNames(commands))
+	}
 	for _, legacy := range []string{"domain", "delivery", "repository", "storage", "usecase", "worker", "server", "middleware", "alerts", "health", "ws", "edge", "config"} {
 		if _, err := os.Stat(filepath.Join(root, "internal", legacy)); !os.IsNotExist(err) {
 			t.Errorf("legacy package still exists: internal/%s", legacy)
 		}
 	}
+	if _, err := os.Stat(filepath.Join(root, "internal", "app", "controlplane")); !os.IsNotExist(err) {
+		t.Error("mixed app/controlplane package must not exist; use app/quant and app/ota")
+	}
 
-	err := filepath.WalkDir(filepath.Join(root, "internal"), func(path string, entry os.DirEntry, walkErr error) error {
+	err = filepath.WalkDir(filepath.Join(root, "internal"), func(path string, entry os.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
 		}
@@ -46,6 +57,16 @@ func TestModularArchitectureBoundaries(t *testing.T) {
 		if strings.Contains(text, "os.Getenv(") && !strings.Contains(filepath.ToSlash(path), "/internal/platform/config/") {
 			t.Errorf("%s reads environment outside platform/config", path)
 		}
+		if !rawSQLAllowed(path) {
+			for _, forbidden := range []string{".Raw(", "ExecContext(", "QueryContext(", "QueryRowContext("} {
+				if strings.Contains(text, forbidden) {
+					t.Errorf("%s contains forbidden raw SQL call %q", path, forbidden)
+				}
+			}
+			if regexp.MustCompile(`(?i)\b(SELECT\s+.+\s+FROM|INSERT\s+INTO|DELETE\s+FROM)\b`).MatchString(text) {
+				t.Errorf("%s contains a raw SQL statement outside the QuestDB adapter", path)
+			}
+		}
 		if strings.Contains(filepath.ToSlash(path), "/domain/") && (strings.Contains(text, "`json:") || strings.Contains(text, "`form:")) {
 			t.Errorf("domain file %s contains transport tags", path)
 		}
@@ -55,6 +76,9 @@ func TestModularArchitectureBoundaries(t *testing.T) {
 		}
 		for _, spec := range file.Imports {
 			importPath, _ := strconv.Unquote(spec.Path.Value)
+			if importPath == "database/sql" && !databaseSQLAllowed(path) {
+				t.Errorf("%s imports database/sql outside an approved transport adapter", path)
+			}
 			checkImportBoundary(t, filepath.ToSlash(path), importPath)
 		}
 		return nil
@@ -64,7 +88,32 @@ func TestModularArchitectureBoundaries(t *testing.T) {
 	}
 }
 
+func entryNames(entries []os.DirEntry) []string {
+	names := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		names = append(names, entry.Name())
+	}
+	return names
+}
+
+func rawSQLAllowed(path string) bool {
+	path = filepath.ToSlash(path)
+	return strings.Contains(path, "/internal/modules/operations/adapter/questdb/")
+}
+
+func databaseSQLAllowed(path string) bool {
+	path = filepath.ToSlash(path)
+	return strings.Contains(path, "/internal/platform/database/postgres.go") ||
+		strings.Contains(path, "/internal/platform/database/questdb.go") || rawSQLAllowed(path)
+}
+
 func checkImportBoundary(t *testing.T, file, imported string) {
+	if strings.Contains(file, "/internal/app/quant/") && importsAnyModule(imported, "catalog", "commerce", "distribution", "engagement", "identity", "edge") {
+		t.Errorf("Quant app imports OTA module %s: %s", imported, file)
+	}
+	if strings.Contains(file, "/internal/app/ota/") && importsAnyModule(imported, "operations", "trading") {
+		t.Errorf("OTA app imports Quant module %s: %s", imported, file)
+	}
 	if strings.Contains(file, "/domain/") && (strings.Contains(imported, "internal/") || isFramework(imported)) {
 		t.Errorf("domain file %s imports infrastructure %s", file, imported)
 	}
@@ -78,6 +127,15 @@ func checkImportBoundary(t *testing.T, file, imported string) {
 	if owner != "" && dependency != "" && owner != dependency {
 		t.Errorf("module %s imports module %s directly: %s", owner, dependency, file)
 	}
+}
+
+func importsAnyModule(imported string, modules ...string) bool {
+	for _, module := range modules {
+		if strings.Contains(imported, "/internal/modules/"+module+"/") {
+			return true
+		}
+	}
+	return false
 }
 
 func moduleName(path string) string {

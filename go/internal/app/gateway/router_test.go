@@ -1,4 +1,4 @@
-package controlplane
+package gateway
 
 import (
 	"net/http"

@@ -16,7 +16,8 @@ import (
 )
 
 type S3Signer struct {
-	client *s3.PresignClient
+	client    *s3.PresignClient
+	objectAPI *s3.Client
 }
 
 type S3Config struct {
@@ -48,7 +49,17 @@ func NewS3Signer(ctx context.Context, input S3Config) (*S3Signer, error) {
 			options.BaseEndpoint = aws.String(strings.TrimRight(input.Endpoint, "/"))
 		}
 	})
-	return &S3Signer{client: s3.NewPresignClient(client)}, nil
+	return &S3Signer{client: s3.NewPresignClient(client), objectAPI: client}, nil
+}
+
+func (s *S3Signer) Check(ctx context.Context, bucket string) error {
+	if s == nil || s.objectAPI == nil || strings.TrimSpace(bucket) == "" {
+		return apperror.WithMessage(apperror.ErrUnavailable, "artifact storage is not configured")
+	}
+	if _, err := s.objectAPI.HeadBucket(ctx, &s3.HeadBucketInput{Bucket: aws.String(bucket)}); err != nil {
+		return fmt.Errorf("%w: artifact bucket is unavailable", apperror.ErrUnavailable)
+	}
+	return nil
 }
 
 func (s *S3Signer) PresignDownload(ctx context.Context, artifact domain.BundleArtifact, expires time.Duration) (string, error) {
