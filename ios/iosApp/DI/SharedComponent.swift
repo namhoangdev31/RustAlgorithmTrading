@@ -11,10 +11,10 @@ class SharedComponent {
     private let tokenStorage: TokenStorage
     
     // Repositories (lazy singletons)
-    private lazy var userRepo: UserRepository = MockUserRepository(apiService: apiService)
-    private lazy var bundleRepo: BundleRepository = MockBundleRepository(apiService: apiService)
-    private lazy var todayRepo: TodayRepository = MockTodayRepository(apiService: apiService)
-    private lazy var loginRepo: LoginRepository = MockLoginRepository(apiService: apiService, tokenStorage: tokenStorage)
+    private lazy var userRepo: UserRepository = UserRepositoryImpl(apiService: apiService)
+    private lazy var bundleRepo: BundleRepository = BundleRepositoryImpl(apiService: apiService)
+    private lazy var todayRepo: TodayRepository = TodayRepositoryImpl(apiService: apiService)
+    private lazy var loginRepo: LoginRepository = LoginRepositoryImpl(apiService: apiService, tokenStorage: tokenStorage)
     
     init(baseUrl: String, bundleDownloader: BundleDownloader) {
         self.baseUrl = baseUrl

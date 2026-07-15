@@ -14,6 +14,11 @@ enum AppResult<T> {
         if case .success(let value) = self { return value }
         return nil
     }
+    
+    var error: AppError? {
+        if case .error(let err) = self { return err }
+        return nil
+    }
 }
 
 /// Replaces KMP Shared.AppError

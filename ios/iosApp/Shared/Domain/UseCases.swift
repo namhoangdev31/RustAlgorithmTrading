@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - Use Cases (replacing KMP Shared UseCases)
+// MARK: - Use Cases
 
 class LoginUseCase {
     private let repository: LoginRepository
@@ -9,7 +9,7 @@ class LoginUseCase {
         self.repository = repository
     }
     
-    func login(email: String, password: String) async -> DomainResult<Bool> {
+    func login(email: String, password: String) async -> AppResult<Bool> {
         return await repository.login(email: email, password: password)
     }
 }
@@ -108,7 +108,7 @@ class GetFeaturedAppUseCase {
         self.repository = repository
     }
     
-    func execute() async -> DomainResult<FeaturedApp> {
+    func execute() async -> AppResult<FeaturedApp> {
         return await repository.getFeaturedApp()
     }
 }
@@ -120,7 +120,7 @@ class GetAppsWeLoveUseCase {
         self.repository = repository
     }
     
-    func execute() async -> DomainResult<[MiniApp]> {
+    func execute() async -> AppResult<[MiniApp]> {
         return await repository.getAppsWeLove()
     }
 }
@@ -132,7 +132,7 @@ class GetTopCollectionsUseCase {
         self.repository = repository
     }
     
-    func execute() async -> DomainResult<[AppCollection]> {
+    func execute() async -> AppResult<[AppCollection]> {
         return await repository.getTopCollections()
     }
 }
@@ -144,7 +144,7 @@ class GetPersonalizedAppsUseCase {
         self.repository = repository
     }
     
-    func execute() async -> DomainResult<[MiniApp]> {
+    func execute() async -> AppResult<[MiniApp]> {
         return await repository.getPersonalizedApps()
     }
 }

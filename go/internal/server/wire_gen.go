@@ -42,17 +42,18 @@ func InitializeServer(cfg *config.Config) (*Server, error) {
 	metricRepository := questdb.NewQuestDBMetricRepository(store)
 	metricUseCase := usecase.NewMetricUseCase(metricRepository)
 	metricHandler := handlers.NewMetricHandler(metricUseCase)
-	tradeRepository := postgres.NewRawSQLTradeRepository(store)
+	tradeRepository := postgres.NewEntTradeRepository(store)
 	tradeUseCase := usecase.NewTradeUseCase(tradeRepository)
 	tradeHandler := handlers.NewTradeHandler(tradeUseCase)
 	systemRepository := questdb.NewHybridSystemRepository(store)
 	systemUseCase := usecase.NewSystemUseCase(systemRepository, aggregator, manager)
 	systemHandler := handlers.NewSystemHandler(systemUseCase)
-	riskLimitsRepository := postgres.NewGormRiskLimitsRepository(store)
+	riskLimitsRepository := postgres.NewEntRiskLimitsRepository(store)
 	client := ProvideRedisClient(cfg)
 	riskLimitsUseCase := usecase.NewRiskLimitsUseCase(riskLimitsRepository, client)
 	riskLimitsHandler := handlers.NewRiskLimitsHandler(riskLimitsUseCase)
-	server := NewServer(cfg, store, manager, metricsCollector, aggregator, alertsManager, alpacaRepository, alertHandler, alpacaHandler, metricHandler, tradeHandler, systemHandler, riskLimitsHandler)
+	storefrontModule := ProvideStorefrontModule(cfg, store)
+	server := NewServer(cfg, store, manager, metricsCollector, aggregator, alertsManager, alpacaRepository, alertHandler, alpacaHandler, metricHandler, tradeHandler, systemHandler, riskLimitsHandler, storefrontModule)
 	return server, nil
 }
 

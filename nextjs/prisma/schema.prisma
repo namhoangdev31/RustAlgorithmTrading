@@ -11,6 +11,11 @@ generator pothos {
   generateDatamodel = "true"
 }
 
+generator ent {
+  provider = "tsx ./tools/prisma-ent-generator/index.ts"
+  output   = "../../go/internal/data/ent/schema"
+}
+
 datasource db {
   provider = "postgresql"
 }
@@ -3048,4 +3053,22 @@ model BundleWebhookDeliveries {
   @@index([status], map: "bundle_webhook_deliveries_status")
   @@index([nextRetryAt], map: "bundle_webhook_deliveries_next_retry_at")
   @@map("bundle_webhook_deliveries")
+}
+
+model LepoShipCronRun {
+  id         String    @id @db.Uuid
+  job        String    @db.VarChar(80)
+  status     String    @db.VarChar(20)
+  processed  BigInt    @default(0)
+  skipped    BigInt    @default(0)
+  message    String    @default("") @db.Text
+  error      String?   @db.Text
+  startedAt  DateTime  @map("started_at") @db.Timestamptz(6)
+  finishedAt DateTime? @map("finished_at") @db.Timestamptz(6)
+  durationMs BigInt    @default(0) @map("duration_ms")
+  trigger    String    @default("scheduler") @db.VarChar(40)
+
+  @@index([job, startedAt(sort: Desc)], map: "lepoship_cron_runs_job_started_idx")
+  @@index([status], map: "lepoship_cron_runs_status_idx")
+  @@map("lepoship_cron_runs")
 }

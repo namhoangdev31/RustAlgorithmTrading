@@ -3,6 +3,7 @@ package config
 import (
 	"log/slog"
 	"strings"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -10,8 +11,8 @@ import (
 // Config holds the configuration values for the Go control plane.
 type Config struct {
 	Server struct {
-		Port                string
-		Host                string
+		Port            string
+		Host            string
 		TelemetryAPIKey string
 	}
 	Storage struct {
@@ -29,6 +30,21 @@ type Config struct {
 		MarketDataURL string
 		ExecutionURL  string
 		RiskURL       string
+	}
+	Storefront struct {
+		Enabled                bool
+		MockPaymentsEnabled    bool
+		FirebaseAPIKey         string
+		JWTSecret              string
+		JWTIssuer              string
+		JWTAudience            string
+		AccessTTL              time.Duration
+		RefreshTTL             time.Duration
+		ArtifactEndpoint       string
+		ArtifactRegion         string
+		ArtifactAccessKeyID    string
+		ArtifactSecretKey      string
+		ArtifactForcePathStyle bool
 	}
 }
 
@@ -50,6 +66,13 @@ func LoadConfig() *Config {
 	v.SetDefault("EXECUTION_METRICS_URL", "http://127.0.0.1:9090/metrics")
 	v.SetDefault("RISK_METRICS_URL", "http://127.0.0.1:9090/metrics")
 	v.SetDefault("REDIS_URL", "redis://127.0.0.1:6379/0")
+	v.SetDefault("STOREFRONT_API_ENABLED", false)
+	v.SetDefault("STOREFRONT_MOCK_PAYMENTS_ENABLED", false)
+	v.SetDefault("STOREFRONT_JWT_ISSUER", "control-gateway")
+	v.SetDefault("STOREFRONT_JWT_AUDIENCE", "ios-storefront")
+	v.SetDefault("STOREFRONT_ACCESS_TTL", "15m")
+	v.SetDefault("STOREFRONT_REFRESH_TTL", "720h")
+	v.SetDefault("LEPOS_ARTIFACT_REGION", "auto")
 
 	// Read from .env file if it exists at the root path
 	v.SetConfigFile(".env")
@@ -78,6 +101,20 @@ func LoadConfig() *Config {
 	cfg.Metrics.MarketDataURL = v.GetString("MARKET_DATA_METRICS_URL")
 	cfg.Metrics.ExecutionURL = v.GetString("EXECUTION_METRICS_URL")
 	cfg.Metrics.RiskURL = v.GetString("RISK_METRICS_URL")
+
+	cfg.Storefront.Enabled = v.GetBool("STOREFRONT_API_ENABLED")
+	cfg.Storefront.MockPaymentsEnabled = v.GetBool("STOREFRONT_MOCK_PAYMENTS_ENABLED")
+	cfg.Storefront.FirebaseAPIKey = v.GetString("FIREBASE_API_KEY")
+	cfg.Storefront.JWTSecret = v.GetString("STOREFRONT_JWT_SECRET")
+	cfg.Storefront.JWTIssuer = v.GetString("STOREFRONT_JWT_ISSUER")
+	cfg.Storefront.JWTAudience = v.GetString("STOREFRONT_JWT_AUDIENCE")
+	cfg.Storefront.AccessTTL = v.GetDuration("STOREFRONT_ACCESS_TTL")
+	cfg.Storefront.RefreshTTL = v.GetDuration("STOREFRONT_REFRESH_TTL")
+	cfg.Storefront.ArtifactEndpoint = v.GetString("LEPOS_ARTIFACT_ENDPOINT")
+	cfg.Storefront.ArtifactRegion = v.GetString("LEPOS_ARTIFACT_REGION")
+	cfg.Storefront.ArtifactAccessKeyID = v.GetString("LEPOS_ARTIFACT_ACCESS_KEY_ID")
+	cfg.Storefront.ArtifactSecretKey = v.GetString("LEPOS_ARTIFACT_SECRET_ACCESS_KEY")
+	cfg.Storefront.ArtifactForcePathStyle = v.GetBool("LEPOS_ARTIFACT_FORCE_PATH_STYLE")
 
 	return cfg
 }

@@ -13,6 +13,4 @@ import (
 	_ "github.com/spf13/viper"
 	_ "github.com/google/wire"
 	_ "go.opentelemetry.io/otel"
-	_ "gorm.io/driver/postgres"
-	_ "gorm.io/gorm"
 )

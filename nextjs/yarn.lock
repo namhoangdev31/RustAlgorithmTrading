@@ -2072,6 +2072,11 @@
     valibot "1.2.0"
     zeptomatch "2.1.0"
 
+"@prisma/dmmf@7.5.0":
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/@prisma/dmmf/-/dmmf-7.5.0.tgz#09ed8028a0ebc78a36a416eb7a1bf718e192e5d7"
+  integrity sha512-MAIM8Uji/UuT6PokBwfOHtLHV2GTPpeAwcaFDqNvSZR+rbxrV/gJeLuOjmSnFkGpro/Y0un4oxAkUO7mGQeY6g==
+
 "@prisma/dmmf@7.8.0":
   version "7.8.0"
   resolved "https://registry.yarnpkg.com/@prisma/dmmf/-/dmmf-7.8.0.tgz#5da438d664879d1a37fb87d14b6114b2e879741b"
@@ -2108,6 +2113,15 @@
     "@prisma/engines-version" "7.5.0-15.280c870be64f457428992c43c1f6d557fab6e29e"
     "@prisma/get-platform" "7.5.0"
 
+"@prisma/generator-helper@7.5.0":
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/@prisma/generator-helper/-/generator-helper-7.5.0.tgz#c79c111668766dee37cbeafb079e1f30e0314395"
+  integrity sha512-qxV/cqoGyKpt9sKlH5k2FoMlpo7gr/dnb2QvCfOaeWYEFanKQLjRE4lr5MovCq3ihfW5oeOpwuiSqz5SG5nlJg==
+  dependencies:
+    "@prisma/debug" "7.5.0"
+    "@prisma/dmmf" "7.5.0"
+    "@prisma/generator" "7.5.0"
+
 "@prisma/generator-helper@^7.1.0":
   version "7.8.0"
   resolved "https://registry.yarnpkg.com/@prisma/generator-helper/-/generator-helper-7.8.0.tgz#d7b9b55add40928d2b619535a9e9b74dc1f3000c"
@@ -2116,6 +2130,11 @@
     "@prisma/debug" "7.8.0"
     "@prisma/dmmf" "7.8.0"
     "@prisma/generator" "7.8.0"
+
+"@prisma/generator@7.5.0":
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/@prisma/generator/-/generator-7.5.0.tgz#fb7d1901cecf0bc6ec8cbba2f9571220bba737c5"
+  integrity sha512-GwXeQQ3PFN6EPLCXN8lNjQfC1ssE7wm8AMm7kR8Xbi00REiBn7rB4G5QieW1Nv7zl9rqrpAfG5gfOUU0GAaA+w==
 
 "@prisma/generator@7.8.0":
   version "7.8.0"

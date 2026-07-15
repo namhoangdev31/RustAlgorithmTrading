@@ -1,11 +1,9 @@
 import Foundation
 
-/// Replaces KMP BundleDownloader protocol
 protocol BundleDownloader {
     func download(url: String, bundleId: String) async -> AppResult<String>
 }
 
-/// Replaces KMP Bundle_Repository
 protocol BundleRepository {
     func getBundles() async -> AppResult<[Bundle_]>
     func getDownloadUrl(bundleId: String) async -> AppResult<String>
@@ -14,26 +12,23 @@ protocol BundleRepository {
     func trackDownload(bundleId: String) async -> AppResult<Void>
 }
 
-/// Replaces KMP Shared.TodayRepository
 protocol TodayRepository {
-    func getFeaturedApp() async -> DomainResult<FeaturedApp>
-    func getAppsWeLove() async -> DomainResult<[MiniApp]>
-    func getTopCollections() async -> DomainResult<[AppCollection]>
-    func getPersonalizedApps() async -> DomainResult<[MiniApp]>
+    func getFeaturedApp() async -> AppResult<FeaturedApp>
+    func getAppsWeLove() async -> AppResult<[MiniApp]>
+    func getTopCollections() async -> AppResult<[AppCollection]>
+    func getPersonalizedApps() async -> AppResult<[MiniApp]>
 }
 
-/// Replaces KMP Shared.LoginRepository
 protocol LoginRepository {
-    func login(email: String, password: String) async -> DomainResult<Bool>
-    func loginWithFirebase(idToken: String) async -> DomainResult<AuthTokenResponse>
-    func refreshAccessToken(refreshToken: String) async -> DomainResult<AuthTokenResponse>
+    func login(email: String, password: String) async -> AppResult<Bool>
+    func loginWithFirebase(idToken: String) async -> AppResult<AuthTokenResponse>
+    func refreshAccessToken(refreshToken: String) async -> AppResult<AuthTokenResponse>
     func getAccessToken() async -> String?
     func getRefreshToken() async -> String?
     func saveTokens(accessToken: String, refreshToken: String) async
     func clearTokens() async
 }
 
-/// Replaces KMP Shared.UserRepository
 protocol UserRepository {
     func getUsers() async -> AppResult<[User]>
 }

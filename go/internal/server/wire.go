@@ -77,13 +77,14 @@ func InitializeServer(cfg *config.Config) (*Server, error) {
 		ws.NewManager,
 		alerts.NewManager,
 		ProvideAlpacaRepository,
+		ProvideStorefrontModule,
 		health.NewAggregator,
 		worker.NewMetricsCollector,
 
 		// Repositories
-		postgres.NewRawSQLTradeRepository,
+		postgres.NewEntTradeRepository,
 		postgres.NewRawSQLAlertRepository,
-		postgres.NewGormRiskLimitsRepository,
+		postgres.NewEntRiskLimitsRepository,
 		questdb.NewQuestDBMetricRepository,
 		questdb.NewHybridSystemRepository,
 

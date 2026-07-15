@@ -118,6 +118,42 @@ jobs:
           flags: rust
           name: rust-${{ matrix.rust }}
 
+  ent-codegen-drift:
+    name: Ent codegen drift
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: yarn
+          cache-dependency-path: nextjs/yarn.lock
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go/go.mod
+          cache-dependency-path: go/go.sum
+
+      - name: Install Prisma generator dependencies
+        working-directory: ./nextjs
+        run: yarn install --frozen-lockfile
+
+      - name: Regenerate Ent schema and client
+        run: |
+          cd nextjs
+          yarn generate:ent
+          cd ../go
+          go generate ./internal/data/ent
+
+      - name: Fail on generated drift
+        run: git diff --exit-code -- go/internal/data/ent nextjs/tools/prisma-ent-generator nextjs/prisma/schema.prisma
+
+      - name: Run Go tests
+        working-directory: ./go
+        run: go test ./...
+
   # Code quality
   code-quality:
     name: Code Quality

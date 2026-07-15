@@ -16,6 +16,7 @@
     "test:portal": "tsx --test --test-concurrency=1 tests/portal/**/*.test.ts",
     "test:ab": "tsx --test --test-concurrency=1 tests/ab-testing/**/*.test.ts",
     "test:lepoship": "tsx --test --test-concurrency=1 tests/lepoship/**/*.test.ts",
+    "generate:ent": "prisma generate --generator ent",
     "lepoship:search:index": "tsx scripts/setup-lepoship-search.ts",
     "lepoship:reset": "tsx scripts/reset-lepoship-data.ts --confirm-reset-lepoship",
     "lepoship:seed": "tsx scripts/seed-lepoship.ts",
@@ -134,6 +135,7 @@
     "@radix-ui/react-select": "^2.2.6"
   },
   "devDependencies": {
+    "@prisma/generator-helper": "7.5.0",
     "@types/graphql": "14.5.0",
     "@types/lodash": "^4.14.202",
     "@types/node": "25.5.0",

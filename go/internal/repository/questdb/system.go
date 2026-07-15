@@ -1,6 +1,13 @@
 package questdb
 
 import (
+	"context"
+	"fmt"
+	"time"
+
+	"entgo.io/ent/dialect/sql"
+
+	"trading/control-gateway/internal/data/ent/riskevent"
 	"trading/control-gateway/internal/domain/repositories"
 	"trading/control-gateway/internal/storage"
 )
@@ -27,7 +34,25 @@ func (r *HybridSystemRepository) QueryLogs(userID string, level string, limit in
 		return []map[string]interface{}{}, nil
 	}
 	if r.store.Postgres() != nil {
-		return r.store.Postgres().QueryLogs(level, limit)
+		client := r.store.Postgres().Ent()
+		if client == nil {
+			return []map[string]interface{}{}, nil
+		}
+		if limit <= 0 {
+			limit = 100
+		}
+		rows, err := client.RiskEvent.Query().Where(riskevent.SeverityHasPrefix(level)).Order(riskevent.ByOccurredAt(sql.OrderDesc())).Limit(limit).All(context.Background())
+		if err != nil {
+			return nil, fmt.Errorf("query risk event logs: %w", err)
+		}
+		result := make([]map[string]interface{}, 0, len(rows))
+		for _, row := range rows {
+			result = append(result, map[string]interface{}{
+				"id": row.ID, "event_type": row.EventType, "severity": row.Severity,
+				"message": row.Message, "timestamp": row.OccurredAt.Format(time.RFC3339),
+			})
+		}
+		return result, nil
 	}
 	if r.store.QuestDB() != nil {
 		return r.store.QuestDB().QueryLogs(userID, level, limit)

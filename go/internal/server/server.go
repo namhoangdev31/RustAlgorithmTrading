@@ -42,6 +42,7 @@ type Server struct {
 	riskLimitsHandler *handlers.RiskLimitsHandler
 	lepoShipHandler   *handlers.LepoShipHandler
 	lepoShipScheduler *worker.LepoShipScheduler
+	storefrontModule  *StorefrontModule
 	httpServer        *http.Server
 }
 
@@ -59,6 +60,7 @@ func NewServer(
 	tradeHandler *handlers.TradeHandler,
 	systemHandler *handlers.SystemHandler,
 	riskLimitsHandler *handlers.RiskLimitsHandler,
+	storefrontModule *StorefrontModule,
 ) *Server {
 	redisClient := ProvideRedisClient(cfg)
 	var lepoShipHandler *handlers.LepoShipHandler
@@ -89,6 +91,7 @@ func NewServer(
 		riskLimitsHandler: riskLimitsHandler,
 		lepoShipHandler:   lepoShipHandler,
 		lepoShipScheduler: lepoShipScheduler,
+		storefrontModule:  storefrontModule,
 	}
 }
 
@@ -161,7 +164,7 @@ func (s *Server) setupRouter() *gin.Engine {
 	r.Use(limiter.Middleware())
 
 	// Map Routes using pre-injected handlers
-	deliveryHttp.MapRoutes(deliveryHttp.RouterConfig{
+	routerConfig := deliveryHttp.RouterConfig{
 		Engine:            r,
 		HealthAggregator:  s.healthAggregator,
 		WSManager:         s.wsManager,
@@ -172,7 +175,14 @@ func (s *Server) setupRouter() *gin.Engine {
 		SystemHandler:     s.systemHandler,
 		RiskLimitsHandler: s.riskLimitsHandler,
 		LepoShipHandler:   s.lepoShipHandler,
-	})
+	}
+	if s.storefrontModule != nil {
+		routerConfig.AuthStorefrontHandler = s.storefrontModule.AuthHandler
+		routerConfig.StorefrontHandler = s.storefrontModule.StorefrontHandler
+		routerConfig.StorefrontAuth = s.storefrontModule.AuthMiddleware
+		routerConfig.StorefrontAdmin = s.storefrontModule.AdminMiddleware
+	}
+	deliveryHttp.MapRoutes(routerConfig)
 
 	return r
 }

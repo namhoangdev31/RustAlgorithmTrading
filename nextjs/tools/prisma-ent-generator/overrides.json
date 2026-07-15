@@ -1,0 +1,18 @@
+{
+  "sensitiveFieldPatterns": [
+    "password",
+    "secret",
+    "tokenHash",
+    "credentialsEncrypted",
+    "ciphertext"
+  ],
+  "typedJson": {},
+  "softDeleteModels": [
+    "User",
+    "Organization",
+    "Project",
+    "Bundles",
+    "Notifications",
+    "Session"
+  ]
+}
