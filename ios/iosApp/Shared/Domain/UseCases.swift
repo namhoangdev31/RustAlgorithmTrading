@@ -9,8 +9,8 @@ class LoginUseCase {
         self.repository = repository
     }
     
-    func login(email: String, password: String) async -> AppResult<Bool> {
-        return await repository.login(email: email, password: password)
+    func loginWithFirebase(idToken: String) async -> AppResult<AuthTokenResponse> {
+        return await repository.loginWithFirebase(idToken: idToken)
     }
 }
 

@@ -48,21 +48,6 @@ func NewService(repo Repository, firebase FirebaseProvider, config Config) *Serv
 	return &Service{repo: repo, firebase: firebase, config: config, now: func() time.Time { return time.Now().UTC() }}
 }
 
-func (s *Service) Login(ctx context.Context, email, password string) (TokenResponse, error) {
-	if err := s.ensureConfigured(); err != nil {
-		return TokenResponse{}, err
-	}
-	email = strings.ToLower(strings.TrimSpace(email))
-	if email == "" || strings.TrimSpace(password) == "" {
-		return TokenResponse{}, apperror.WithMessage(apperror.ErrInvalidArgument, "email and password are required")
-	}
-	user, err := s.firebase.AuthenticatePassword(ctx, email, password)
-	if err != nil {
-		return TokenResponse{}, err
-	}
-	return s.finishFirebaseLogin(ctx, user)
-}
-
 func (s *Service) LoginWithFirebase(ctx context.Context, idToken string) (TokenResponse, error) {
 	if err := s.ensureConfigured(); err != nil {
 		return TokenResponse{}, err

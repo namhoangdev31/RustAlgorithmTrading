@@ -20,7 +20,6 @@ protocol TodayRepository {
 }
 
 protocol LoginRepository {
-    func login(email: String, password: String) async -> AppResult<Bool>
     func loginWithFirebase(idToken: String) async -> AppResult<AuthTokenResponse>
     func refreshAccessToken(refreshToken: String) async -> AppResult<AuthTokenResponse>
     func getAccessToken() async -> String?

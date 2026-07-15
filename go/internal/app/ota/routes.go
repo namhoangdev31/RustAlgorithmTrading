@@ -16,7 +16,6 @@ func (c *Component) RegisterRoutes(router *gin.Engine) {
 	}
 
 	v1 := router.Group("/api/v1")
-	v1.POST("/auth/login", c.identity.Login)
 	v1.POST("/auth/firebase", c.identity.Firebase)
 	v1.POST("/auth/refresh", c.identity.Refresh)
 	v1.GET("/discovery/featured", c.catalog.Featured)

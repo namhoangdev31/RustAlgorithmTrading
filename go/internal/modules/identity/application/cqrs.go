@@ -2,14 +2,6 @@ package application
 
 import "context"
 
-type LoginCommand struct{ Email, Password string }
-type LoginHandler struct{ commands Commands }
-
-func NewLoginHandler(commands Commands) LoginHandler { return LoginHandler{commands: commands} }
-func (h LoginHandler) Handle(ctx context.Context, command LoginCommand) (TokenResponse, error) {
-	return h.commands.Login(ctx, command.Email, command.Password)
-}
-
 type FirebaseLoginCommand struct{ IDToken string }
 type FirebaseLoginHandler struct{ commands Commands }
 

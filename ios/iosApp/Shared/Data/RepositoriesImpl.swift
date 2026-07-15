@@ -129,11 +129,6 @@ class LoginRepositoryImpl: LoginRepository {
     private let tokenStorage: TokenStorage
     private let apiService: ApiService
     
-    private struct LoginRequest: Codable {
-        let email: String
-        let password: String
-    }
-    
     private struct FirebaseLoginRequest: Codable {
         let idToken: String
     }
@@ -145,19 +140,6 @@ class LoginRepositoryImpl: LoginRepository {
     init(apiService: ApiService, tokenStorage: TokenStorage) {
         self.apiService = apiService
         self.tokenStorage = tokenStorage
-    }
-    
-    func login(email: String, password: String) async -> AppResult<Bool> {
-        do {
-            let body = try JSONEncoder().encode(LoginRequest(email: email, password: password))
-            let response: AuthTokenResponse = try await apiService.request("auth/login", method: "POST", body: body)
-            await saveTokens(accessToken: response.accessToken, refreshToken: response.refreshToken)
-            return .success(true)
-        } catch let appError as AppError {
-            return .error(appError)
-        } catch {
-            return .error(.unknownError(message: error.localizedDescription, cause: error))
-        }
     }
     
     func loginWithFirebase(idToken: String) async -> AppResult<AuthTokenResponse> {

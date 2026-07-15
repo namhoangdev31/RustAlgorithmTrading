@@ -13,6 +13,15 @@
 	<string>$(QUANTANT_CONTROL_PLANE_URL)</string>
 	<key>QUANTANT_WEBSOCKET_URL</key>
 	<string>$(QUANTANT_WEBSOCKET_URL)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.552879969274-473i5iqk6si07872av0uib11ko4kdcro</string>
+			</array>
+		</dict>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Fonts/Roboto-Black.ttf</string>

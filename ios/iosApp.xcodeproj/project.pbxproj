@@ -37,6 +37,8 @@
 		5A7804042F39021A004BBDBF /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804032F39021A004BBDBF /* ZIPFoundation */; };
 		5A7804072F390220004BBDBF /* GCDWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7804062F390220004BBDBF /* GCDWebServer */; };
 		5A7A244C2FF8D61200D8DF26 /* WasmKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5A7A244B2FF8D61200D8DF26 /* WasmKit */; };
+		5A88AA102FFFA00100A0B0C1 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 5A88AA132FFFA00100A0B0C1 /* GoogleSignIn */; };
+		5A88AA112FFFA00100A0B0C1 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5A88AA142FFFA00100A0B0C1 /* GoogleSignInSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -98,6 +100,8 @@
 				5A17A68C2F55798B00D38C28 /* FirebaseAuth in Frameworks */,
 				5A17A6882F55798B00D38C28 /* FirebaseAppCheck in Frameworks */,
 				5A40AFF62F55339500BE0503 /* FirebaseAnalyticsCore in Frameworks */,
+				5A88AA102FFFA00100A0B0C1 /* GoogleSignIn in Frameworks */,
+				5A88AA112FFFA00100A0B0C1 /* GoogleSignInSwift in Frameworks */,
 				5A40AFFB2F554A8C00BE0503 /* GoogleMobileAds in Frameworks */,
 				5A17A6982F55798B00D38C28 /* FirebaseFirestoreCombine-Community in Frameworks */,
 				5A17A6AC2F55798B00D38C28 /* FirebaseStorageCombine-Community in Frameworks */,
@@ -187,6 +191,8 @@
 				5A17A6A72F55798B00D38C28 /* FirebaseRemoteConfig */,
 				5A17A6A92F55798B00D38C28 /* FirebaseStorage */,
 				5A17A6AB2F55798B00D38C28 /* FirebaseStorageCombine-Community */,
+				5A88AA132FFFA00100A0B0C1 /* GoogleSignIn */,
+				5A88AA142FFFA00100A0B0C1 /* GoogleSignInSwift */,
 				5A47BE3A2FBC4F2F000F9C0D /* ExploreSwiftUI */,
 				5A7A244B2FF8D61200D8DF26 /* WasmKit */,
 			);
@@ -226,6 +232,7 @@
 				5A7804052F390220004BBDBF /* XCRemoteSwiftPackageReference "GCDWebServer" */,
 				5A40AFEE2F55339500BE0503 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				5A40AFF92F554A8C00BE0503 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+				5A88AA122FFFA00100A0B0C1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				5A47BE392FBC4F2F000F9C0D /* XCRemoteSwiftPackageReference "ExploreSwiftUI" */,
 				5A7A244A2FF8D61200D8DF26 /* XCRemoteSwiftPackageReference "WasmKit" */,
 			);
@@ -585,6 +592,14 @@
 				version = 0.2.2;
 			};
 		};
+		5A88AA122FFFA00100A0B0C1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -732,6 +747,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5A7A244A2FF8D61200D8DF26 /* XCRemoteSwiftPackageReference "WasmKit" */;
 			productName = WasmKit;
+		};
+		5A88AA132FFFA00100A0B0C1 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A88AA122FFFA00100A0B0C1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		5A88AA142FFFA00100A0B0C1 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A88AA122FFFA00100A0B0C1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

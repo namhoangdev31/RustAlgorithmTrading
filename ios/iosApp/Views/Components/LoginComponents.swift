@@ -1,3 +1,4 @@
+import AuthenticationServices
 import ExploreSwiftUI
 import SwiftUI
 
@@ -10,57 +11,54 @@ struct LoginHeaderView: View {
     }
 }
 
-struct LoginFormView: View {
-    @Binding var email: String
-    @Binding var password: String
+struct OAuthLoginButtonsView: View {
+    let isLoading: Bool
+    let configureAppleRequest: (ASAuthorizationAppleIDRequest) -> Void
+    let appleCompletion: (Result<ASAuthorization, Error>) -> Void
+    let googleAction: () -> Void
 
     var body: some View {
         VStack(spacing: 16) {
-            TextField("Email", text: $email)
-                .padding()
-                .padding()
-                .background(.clear)
-                .uniGlass(cornerRadius: 16)
+            SignInWithAppleButton(.continue, onRequest: configureAppleRequest, onCompletion: appleCompletion)
+                .signInWithAppleButtonStyle(.black)
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-                .autocapitalization(.none)
-                .keyboardType(.emailAddress)
+                .disabled(isLoading)
 
-            SecureField("Password", text: $password)
-                .padding()
-                .padding()
-                .background(.clear)
-                .uniGlass(cornerRadius: 16)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+            GoogleLoginButtonView(action: googleAction, isLoading: isLoading)
         }
     }
 }
 
-struct LoginButtonView: View {
+struct GoogleLoginButtonView: View {
     let action: () -> Void
     let isLoading: Bool
 
     var body: some View {
         UniButton(action: action) {
-            ZStack {
+            HStack(spacing: 10) {
                 if isLoading {
                     UniProgressView()
-                        .uniProgressTint(.white)
+                        .uniProgressTint(.primary)
                 } else {
-                    Text("Login")
+                    Text("G")
+                        .fontWeight(.semibold)
+                    Text("Continue with Google")
                         .fontWeight(.semibold)
                 }
             }
             .frame(maxWidth: .infinity)
             .frame(height: 50)
-            .background(Color.blue)
+            .background(Color.white)
+            .foregroundStyle(Color.black)
             .cornerRadius(12)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.white.opacity(0.3), lineWidth: 1)
+                    .stroke(Color.black.opacity(0.16), lineWidth: 1)
             )
         }
         .disabled(isLoading)
-        .shadow(radius: 5)
     }
 }
 

@@ -88,6 +88,43 @@ func TestModularArchitectureBoundaries(t *testing.T) {
 	}
 }
 
+func TestNoFirebaseServiceAccountSecretsAreCommitted(t *testing.T) {
+	_, current, _, _ := runtime.Caller(0)
+	repoRoot := filepath.Clean(filepath.Join(filepath.Dir(current), "..", "..", ".."))
+	for _, relativeRoot := range []string{"go", "ops"} {
+		root := filepath.Join(repoRoot, relativeRoot)
+		err := filepath.WalkDir(root, func(path string, entry os.DirEntry, walkErr error) error {
+			if walkErr != nil {
+				return walkErr
+			}
+			if entry.IsDir() {
+				slash := filepath.ToSlash(path)
+				if strings.Contains(slash, "/internal/data/ent") || strings.Contains(slash, "/go/.") {
+					return filepath.SkipDir
+				}
+				return nil
+			}
+			if shouldSkipSecretScan(path) {
+				return nil
+			}
+			content, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			text := string(content)
+			for _, forbidden := range forbiddenFirebaseSecretTokens() {
+				if strings.Contains(text, forbidden) {
+					t.Errorf("%s contains forbidden Firebase service-account material %q", path, forbidden)
+				}
+			}
+			return nil
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
 func entryNames(entries []os.DirEntry) []string {
 	names := make([]string, 0, len(entries))
 	for _, entry := range entries {
@@ -153,4 +190,22 @@ func moduleName(path string) string {
 
 func isFramework(imported string) bool {
 	return strings.Contains(imported, "gin-gonic") || strings.Contains(imported, "gorm.io") || strings.Contains(imported, "entgo.io")
+}
+
+func shouldSkipSecretScan(path string) bool {
+	slash := filepath.ToSlash(path)
+	if strings.HasSuffix(slash, "go.sum") || strings.HasSuffix(slash, ".lock") {
+		return true
+	}
+	return strings.Contains(slash, "/ops/secrets/")
+}
+
+func forbiddenFirebaseSecretTokens() []string {
+	return []string{
+		`"type": "service_` + `account"`,
+		`"private_` + `key"`,
+		"-----BEGIN " + "PRIVATE KEY-----",
+		"firebase-" + "adminsdk-",
+		"reactjs-ts-firebase-" + "adminsdk",
+	}
 }

@@ -8,7 +8,6 @@ enum Route: Hashable {
     case library
     case profile
     case login
-    case forgotPassword
     case onboarding
     case miniAppDetails(bundleId: String)
     case miniAppStore

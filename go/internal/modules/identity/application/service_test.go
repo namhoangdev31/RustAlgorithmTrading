@@ -19,7 +19,7 @@ func TestAccessTokenSignatureAndExpiry(t *testing.T) {
 	now := time.Now().UTC()
 	service.now = func() time.Time { return now }
 
-	tokens, err := service.Login(context.Background(), "pilot@example.com", "password")
+	tokens, err := service.LoginWithFirebase(context.Background(), "firebase-id-token")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -47,9 +47,6 @@ func TestAccessTokenSignatureAndExpiry(t *testing.T) {
 
 type firebaseFake struct{}
 
-func (firebaseFake) AuthenticatePassword(context.Context, string, string) (FirebaseUser, error) {
-	return FirebaseUser{LocalID: "firebase-user", Email: "pilot@example.com"}, nil
-}
 func (firebaseFake) VerifyIDToken(context.Context, string) (FirebaseUser, error) {
 	return FirebaseUser{LocalID: "firebase-user", Email: "pilot@example.com"}, nil
 }

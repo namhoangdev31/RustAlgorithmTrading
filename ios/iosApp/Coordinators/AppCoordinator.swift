@@ -170,8 +170,6 @@ struct AppCoordinator: View {
             EmptyView()
         case .reviewGuidelines:
             ReviewGuidelinesView()
-        case .forgotPassword:
-            ForgotPasswordView()
         case .checkout(let appId, let price):
             CheckoutView(appId: appId, price: price)
         case .paymentMethods:

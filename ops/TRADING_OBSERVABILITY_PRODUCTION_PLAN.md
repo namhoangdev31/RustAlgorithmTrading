@@ -672,7 +672,7 @@ Mobile should see risk status, not mutate it.
 
 | Method | Endpoint | Purpose | Client meaning |
 |---|---|---|---|
-| `POST` | `/api/v1/auth/login` | Start a user session with mobile-safe credentials or provider auth. | Replaces shared API keys with user-scoped auth. |
+| `POST` | `/api/v1/auth/firebase` | Start a user session from a Firebase OAuth ID token verified by Go through Firebase Admin SDK credentials. | Replaces shared API keys with user-scoped auth. |
 | `POST` | `/api/v1/auth/refresh` | Rotate access token using a refresh token. | Keeps mobile sessions alive without long-lived access tokens. |
 | `POST` | `/api/v1/auth/logout` | End the current session and revoke refresh token state. | Lets users and security tooling terminate a mobile session. |
 | `GET` | `/api/v1/devices` | List devices linked to the user. | Lets users review trusted phones/tablets and security posture. |

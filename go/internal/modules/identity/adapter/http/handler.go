@@ -12,7 +12,6 @@ import (
 )
 
 type Handler struct {
-	login    identity.LoginHandler
 	firebase identity.FirebaseLoginHandler
 	refresh  identity.RefreshHandler
 	me       identity.MeHandler
@@ -20,24 +19,7 @@ type Handler struct {
 }
 
 func New(service identity.ServicePort) *Handler {
-	return &Handler{login: identity.NewLoginHandler(service), firebase: identity.NewFirebaseLoginHandler(service), refresh: identity.NewRefreshHandler(service), me: identity.NewMeHandler(service), users: identity.NewUsersHandler(service)}
-}
-
-func (h *Handler) Login(c *gin.Context) {
-	var request struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-	if c.ShouldBindJSON(&request) != nil {
-		httpx.WriteError(c, apperror.ErrInvalidArgument)
-		return
-	}
-	response, err := h.login.Handle(c.Request.Context(), identity.LoginCommand{Email: request.Email, Password: request.Password})
-	if err != nil {
-		httpx.WriteError(c, err)
-		return
-	}
-	c.JSON(http.StatusOK, mapTokens(response))
+	return &Handler{firebase: identity.NewFirebaseLoginHandler(service), refresh: identity.NewRefreshHandler(service), me: identity.NewMeHandler(service), users: identity.NewUsersHandler(service)}
 }
 
 func (h *Handler) Firebase(c *gin.Context) {

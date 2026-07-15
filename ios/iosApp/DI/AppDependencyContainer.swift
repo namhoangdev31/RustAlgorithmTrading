@@ -20,7 +20,14 @@ final class AppDependencyContainer: ObservableObject {
     
     @MainActor
     func makeLoginViewModel() -> LoginViewModel {
-        return LoginViewModel(loginUseCase: sharedComponent.loginUseCase)
+        return LoginViewModel(
+            loginUseCase: sharedComponent.loginUseCase,
+            firebaseOAuthService: sharedComponent.firebaseOAuthService
+        )
+    }
+
+    func hasAccessToken() -> Bool {
+        sharedComponent.hasAccessToken()
     }
     
     @MainActor

@@ -21,7 +21,6 @@ enum AppRoute: Hashable, Identifiable {
     case writeReview(appId: String)
     case developer(id: String)
     case allReviews(appId: String)
-    case forgotPassword
     case forYou
     case favorites
     case browser(initialURL: String?, privateMode: Bool)
@@ -92,7 +91,6 @@ enum AppRoute: Hashable, Identifiable {
         case .downloadHistory: return "downloadHistory"
         case .developer(let id): return "developer-\(id)"
         case .allReviews(let id): return "allReviews-\(id)"
-        case .forgotPassword: return "forgotPassword"
         case .forYou: return "forYou"
         case .globalError: return "globalError"
         case .noInternet: return "noInternet"
@@ -151,7 +149,6 @@ enum AppRoute: Hashable, Identifiable {
         case .writeReview(let id): hasher.combine(id)
         case .developer(let id): hasher.combine(id)
         case .allReviews(let id): hasher.combine(id)
-        case .forgotPassword: hasher.combine(11)
         case .forYou: hasher.combine(12)
         case .globalError: hasher.combine(12)
         case .noInternet: hasher.combine(13)
@@ -221,7 +218,6 @@ enum AppRoute: Hashable, Identifiable {
         case (.writeReview(let a), .writeReview(let b)): return a == b
         case (.developer(let a), .developer(let b)): return a == b
         case (.allReviews(let a), .allReviews(let b)): return a == b
-        case (.forgotPassword, .forgotPassword): return true
         case (.forYou, .forYou): return true
         case (.globalError, .globalError): return true
         case (.noInternet, .noInternet): return true

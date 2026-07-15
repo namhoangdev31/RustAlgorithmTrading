@@ -24,6 +24,7 @@ target
 # Local environment and secrets
 .env
 .env*
+ops/secrets/*.json
 
 # Virtual Environments (consolidated to .venv)
 venv/
@@ -99,3 +100,4 @@ nextjs/.cache/
 game/node_modules/
 game/.next/
 game/.cache/
+reactjs-ts-firebase-adminsdk-rfdnk-dfa3ebe25c.json

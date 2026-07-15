@@ -1,9 +1,11 @@
 import ExploreSwiftUI
+import AuthenticationServices
 import SwiftUI
 
 struct LoginView: View {
     @StateObject private var viewModel: LoginViewModel
     @EnvironmentObject var navigation: NavigationViewModel
+    @AppStorage("isLoggedIn") private var isLoggedIn = false
     @Namespace private var animation  // For matchedGeometryEffect if needed
 
     init(viewModel: LoginViewModel) {
@@ -23,7 +25,16 @@ struct LoginView: View {
                         .transition(.slide)
 
                     VStack(spacing: 24) {
-                        LoginFormView(email: $viewModel.email, password: $viewModel.password)
+                        OAuthLoginButtonsView(
+                            isLoading: viewModel.isLoading,
+                            configureAppleRequest: viewModel.configureAppleRequest,
+                            appleCompletion: { result in
+                                Task { await viewModel.loginWithApple(result) }
+                            },
+                            googleAction: {
+                                Task { await viewModel.loginWithGoogle() }
+                            }
+                        )
 
                         if let error = viewModel.error {
                             Text(error)
@@ -32,19 +43,6 @@ struct LoginView: View {
                                 .transition(.opacity)
                         }
 
-                        LoginButtonView(
-                            action: {
-                                Task { await viewModel.login() }
-                            }, isLoading: viewModel.isLoading)
-
-                        UniButton(action: {
-                            navigation.navigate(to: .forgotPassword)
-                        }) {
-                            Text("Forgot Password?")
-                                .font(.caption)
-                                .uniForegroundStyle(.blue)
-                        }
-                        .uniButtonStyle(.plain)
                     }
                     .padding(.horizontal)
 
@@ -57,8 +55,10 @@ struct LoginView: View {
                 .animation(.spring(), value: viewModel.isLoading)  // Smooth state changes
             }
         }
-        .fullScreenCover(isPresented: $viewModel.isLoggedIn) {
-            Text("Home Screen (Logged In)")
+        .onChange(of: viewModel.isLoggedIn) { _, loggedIn in
+            guard loggedIn else { return }
+            isLoggedIn = true
+            navigation.goBack()
         }
     }
 }

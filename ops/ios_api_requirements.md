@@ -20,19 +20,18 @@ These contracts are implemented by the Go `control-gateway` under `/api/v1`. The
 The authentication module handles securing the client, managing user sessions, and retrieving user profiles.
 
 ### Screens & Features:
-* **Login View** (`LoginView.swift`): Traditional password entry and Firebase Social Auth options.
+* **Login View** (`LoginView.swift`): Firebase OAuth-only sign-in with Apple and Google.
 * **Profile View** (`ProfileView.swift`): Displays personal details, email, and user type.
 
 ### Required API Endpoints:
 
-#### 1. Traditional Credentials Login
-* **Route**: `POST /api/v1/auth/login`
-* **Purpose**: Authenticate email/password through Firebase Identity Toolkit, synchronize the Prisma `users` record, and issue Go-owned session tokens. Go does not validate or write `users.password`.
+#### 1. Firebase OAuth Token Exchange
+* **Route**: `POST /api/v1/auth/firebase`
+* **Purpose**: Verify a Firebase ID token created by Apple or Google OAuth using Go's Firebase Admin SDK credentials, synchronize the Prisma `users` record, and issue Go-owned session tokens. Email/password login is not exposed by Go.
 * **Payload (JSON)**:
   ```json
   {
-    "email": "user@example.com",
-    "password": "secure_password"
+    "idToken": "firebase_id_token_string"
   }
   ```
 * **Response (JSON)**:
@@ -44,18 +43,7 @@ The authentication module handles securing the client, managing user sessions, a
   }
   ```
 
-#### 2. Firebase SSO Validation
-* **Route**: `POST /api/v1/auth/firebase`
-* **Purpose**: Verify a Firebase ID token through Firebase Identity Toolkit, synchronize the Prisma `users` record, and issue Go-owned session tokens.
-* **Payload (JSON)**:
-  ```json
-  {
-    "idToken": "firebase_id_token_string"
-  }
-  ```
-* **Response (JSON)**: Same as Credentials Login (`AuthTokenResponse`).
-
-#### 3. Refresh Access Token
+#### 2. Refresh Access Token
 * **Route**: `POST /api/v1/auth/refresh`
 * **Purpose**: Rotate the opaque refresh token and issue a new access JWT. A token can be used only once; replaying the old token returns `401`.
 * **Payload (JSON)**:
@@ -64,9 +52,9 @@ The authentication module handles securing the client, managing user sessions, a
     "refreshToken": "refresh_token_string"
   }
   ```
-* **Response (JSON)**: Same as Credentials Login (`AuthTokenResponse`), including a new `refreshToken`.
+* **Response (JSON)**: Same as Firebase OAuth Token Exchange (`AuthTokenResponse`), including a new `refreshToken`.
 
-#### 4. Fetch Current Profile
+#### 3. Fetch Current Profile
 * **Route**: `GET /api/v1/auth/me`
 * **Authorization**: JWT required.
 * **Response (JSON)**:
@@ -468,7 +456,8 @@ Batch checks bundle assets for live OTA version updates.
 |---|---|
 | `STOREFRONT_API_ENABLED` | `false`; registers the Storefront routes when enabled. |
 | `STOREFRONT_MOCK_PAYMENTS_ENABLED` | `false`; enables sandbox payment fixtures and transactional mock checkout. |
-| `FIREBASE_API_KEY` | Firebase Identity Toolkit API key used by both login flows. |
+| `FIREBASE_CREDENTIALS_FILE` / `GOOGLE_APPLICATION_CREDENTIALS` | Read-only Firebase service-account credential path used by Go to verify Firebase OAuth ID tokens. |
+| `FIREBASE_PROJECT_ID` | Optional Firebase project ID override for Go Admin SDK initialization. |
 | `STOREFRONT_JWT_SECRET` | HS256 signing key; must contain at least 32 bytes. |
 | `STOREFRONT_JWT_ISSUER` | `control-gateway`. |
 | `STOREFRONT_JWT_AUDIENCE` | `ios-storefront`. |

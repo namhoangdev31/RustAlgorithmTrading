@@ -158,7 +158,7 @@ Quản lý phiên đăng nhập và bảo mật thiết bị truy cập của ng
 
 | Method | Endpoint | Purpose | Client meaning |
 |---|---|---|---|
-| `POST` | `/api/v1/auth/login` | Khởi tạo session đăng nhập bằng credentials hoặc OAuth. | Thay thế các API keys dùng chung bằng token bảo mật gán với định danh user. |
+| `POST` | `/api/v1/auth/firebase` | Khởi tạo session từ Firebase OAuth ID token được Go xác thực bằng Firebase Admin SDK credentials. | Thay thế các API keys dùng chung bằng token bảo mật gán với định danh user. |
 | `POST` | `/api/v1/auth/refresh` | Rotate access token bằng refresh token. | Duy trì session đăng nhập của mobile mà không cần lưu access token với thời hạn quá dài. |
 | `POST` | `/api/v1/auth/logout` | Đăng xuất và thu hồi trạng thái của refresh token. | Cho phép user hủy session hoạt động hiện tại vì lý do bảo mật. |
 | `GET` | `/api/v1/devices` | Danh sách thiết bị đã liên kết với tài khoản user. | Giúp người dùng kiểm tra các điện thoại/máy tính bảng tin cậy đã đăng nhập. |
@@ -540,4 +540,3 @@ Thay vì dùng ORM tự động sinh schema hoặc sử dụng các công cụ m
   * Hỗ trợ quản lý phân vùng dữ liệu động (Dynamic Partitioning) hàng ngày/hàng tháng.
   * Tự động phát hiện sai lệch schema thực tế so với thiết kế (Drift Detection).
   * Tích hợp CI/CD để tự động hóa kiểm tra (Migration Linting) trước khi triển khai lên Production.
-

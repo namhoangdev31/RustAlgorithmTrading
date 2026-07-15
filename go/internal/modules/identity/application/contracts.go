@@ -41,7 +41,6 @@ type UserView struct {
 }
 
 type FirebaseProvider interface {
-	AuthenticatePassword(context.Context, string, string) (FirebaseUser, error)
 	VerifyIDToken(context.Context, string) (FirebaseUser, error)
 }
 
@@ -54,7 +53,6 @@ type Repository interface {
 }
 
 type Commands interface {
-	Login(context.Context, string, string) (TokenResponse, error)
 	LoginWithFirebase(context.Context, string) (TokenResponse, error)
 	Refresh(context.Context, string) (TokenResponse, error)
 }

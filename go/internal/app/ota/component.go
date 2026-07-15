@@ -176,7 +176,14 @@ func buildStorefront(ctx context.Context, cfg *config.Config, postgres *database
 	if err != nil {
 		return nil, nil, nil, nil, nil, nil, err
 	}
-	identityService := identityapp.NewService(identityRepo, identityfirebase.NewClient(cfg.Storefront.FirebaseAPIKey), identityapp.Config{
+	firebaseClient, err := identityfirebase.NewClient(ctx, identityfirebase.Config{
+		CredentialsFile: cfg.Storefront.FirebaseCredentialsFile,
+		ProjectID:       cfg.Storefront.FirebaseProjectID,
+	})
+	if err != nil {
+		return nil, nil, nil, nil, nil, nil, fmt.Errorf("initialize firebase admin: %w", err)
+	}
+	identityService := identityapp.NewService(identityRepo, firebaseClient, identityapp.Config{
 		SigningSecret: cfg.Storefront.JWTSecret, Issuer: cfg.Storefront.JWTIssuer, Audience: cfg.Storefront.JWTAudience,
 		AccessTTL: cfg.Storefront.AccessTTL, RefreshTTL: cfg.Storefront.RefreshTTL,
 	})

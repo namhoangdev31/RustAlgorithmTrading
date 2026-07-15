@@ -44,22 +44,23 @@ type Alpaca struct {
 }
 
 type Storefront struct {
-	Enabled                bool
-	MockPaymentsEnabled    bool
-	FirebaseAPIKey         string
-	JWTSecret              string
-	JWTIssuer              string
-	JWTAudience            string
-	AccessTTL              time.Duration
-	RefreshTTL             time.Duration
-	ArtifactEndpoint       string
-	ArtifactRegion         string
-	ArtifactAccessKeyID    string
-	ArtifactSecretKey      string
-	ArtifactForcePathStyle bool
-	ArtifactBucket         string
-	ArtifactProvider       string
-	ArtifactPublicURL      string
+	Enabled                 bool
+	MockPaymentsEnabled     bool
+	FirebaseCredentialsFile string
+	FirebaseProjectID       string
+	JWTSecret               string
+	JWTIssuer               string
+	JWTAudience             string
+	AccessTTL               time.Duration
+	RefreshTTL              time.Duration
+	ArtifactEndpoint        string
+	ArtifactRegion          string
+	ArtifactAccessKeyID     string
+	ArtifactSecretKey       string
+	ArtifactForcePathStyle  bool
+	ArtifactBucket          string
+	ArtifactProvider        string
+	ArtifactPublicURL       string
 }
 
 type Edge struct {
@@ -133,7 +134,8 @@ func Load() (*Config, error) {
 		Alpaca:      Alpaca{BaseURL: v.GetString("ALPACA_BASE_URL"), DataBaseURL: v.GetString("ALPACA_DATA_BASE_URL"), APIKey: v.GetString("ALPACA_API_KEY"), SecretKey: v.GetString("ALPACA_SECRET_KEY")},
 		Storefront: Storefront{
 			Enabled: v.GetBool("STOREFRONT_API_ENABLED"), MockPaymentsEnabled: v.GetBool("STOREFRONT_MOCK_PAYMENTS_ENABLED"),
-			FirebaseAPIKey: v.GetString("FIREBASE_API_KEY"), JWTSecret: v.GetString("STOREFRONT_JWT_SECRET"),
+			FirebaseCredentialsFile: firstNonEmpty(v.GetString("FIREBASE_CREDENTIALS_FILE"), v.GetString("GOOGLE_APPLICATION_CREDENTIALS")),
+			FirebaseProjectID:       v.GetString("FIREBASE_PROJECT_ID"), JWTSecret: v.GetString("STOREFRONT_JWT_SECRET"),
 			JWTIssuer: v.GetString("STOREFRONT_JWT_ISSUER"), JWTAudience: v.GetString("STOREFRONT_JWT_AUDIENCE"),
 			AccessTTL: v.GetDuration("STOREFRONT_ACCESS_TTL"), RefreshTTL: v.GetDuration("STOREFRONT_REFRESH_TTL"),
 			ArtifactEndpoint: v.GetString("LEPOS_ARTIFACT_ENDPOINT"), ArtifactRegion: v.GetString("LEPOS_ARTIFACT_REGION"),
@@ -177,6 +179,15 @@ func Load() (*Config, error) {
 		return nil, err
 	}
 	return cfg, nil
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if strings.TrimSpace(value) != "" {
+			return value
+		}
+	}
+	return ""
 }
 
 func (c *Config) Validate() error {
@@ -245,8 +256,8 @@ func (c *Config) ValidateOTA() error {
 		if len(c.Storefront.JWTSecret) < 32 {
 			return errors.New("STOREFRONT_JWT_SECRET must be at least 32 bytes")
 		}
-		if strings.TrimSpace(c.Storefront.FirebaseAPIKey) == "" {
-			return errors.New("FIREBASE_API_KEY is required when Storefront is enabled")
+		if strings.TrimSpace(c.Storefront.FirebaseCredentialsFile) == "" {
+			return errors.New("FIREBASE_CREDENTIALS_FILE or GOOGLE_APPLICATION_CREDENTIALS is required when Storefront is enabled")
 		}
 		if strings.TrimSpace(c.Storefront.ArtifactProvider) == "" || strings.TrimSpace(c.Storefront.ArtifactBucket) == "" {
 			return errors.New("artifact provider and bucket are required when Storefront is enabled")

@@ -34,6 +34,7 @@ Set these core secrets in the orchestrator secret store before rendering `ops/do
 - `LEPOS_INTERNAL_API_KEY` - Internal API key shared by edge/control-plane calls.
 - `LEPOS_SERVICE_SECRET` - Edge gateway service identity secret.
 - `LEPOS_NATIVE_TELEMETRY_KEY` - Native telemetry signing key.
+- `FIREBASE_CREDENTIALS_FILE` or `GOOGLE_APPLICATION_CREDENTIALS` - Read-only Firebase service-account credential path for Go Storefront OAuth token verification.
 - `STRIPE_SECRET_KEY` and `STRIPE_CONNECT_WEBHOOK_SECRET` - Paid plans and billing webhooks.
 
 Trader services run behind the `trading` profile. Set `ALPACA_API_KEY` and `ALPACA_SECRET_KEY` before enabling that profile for managed trader accounts.

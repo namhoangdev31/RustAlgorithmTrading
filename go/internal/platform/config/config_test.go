@@ -23,7 +23,7 @@ func TestStorefrontValidation(t *testing.T) {
 		RunMode: "control-plane",
 		Storage: Storage{DatabaseURL: "postgres://localhost/app", QuestDBURL: "postgres://localhost/qdb"},
 		Storefront: Storefront{
-			Enabled: true, FirebaseAPIKey: "firebase", JWTSecret: "01234567890123456789012345678901",
+			Enabled: true, FirebaseCredentialsFile: "/run/secrets/firebase-service-account.json", JWTSecret: "01234567890123456789012345678901",
 			ArtifactProvider: "minio", ArtifactEndpoint: "http://localhost:9000", ArtifactRegion: "us-east-1",
 			ArtifactAccessKeyID: "access", ArtifactSecretKey: "secret", ArtifactBucket: "artifacts", ArtifactForcePathStyle: true,
 		},
@@ -35,7 +35,7 @@ func TestStorefrontValidation(t *testing.T) {
 		name   string
 		mutate func(*Config)
 	}{
-		{"firebase", func(c *Config) { c.Storefront.FirebaseAPIKey = "" }},
+		{"firebase credentials", func(c *Config) { c.Storefront.FirebaseCredentialsFile = "" }},
 		{"artifact credentials", func(c *Config) { c.Storefront.ArtifactSecretKey = "" }},
 		{"minio endpoint", func(c *Config) { c.Storefront.ArtifactEndpoint = "minio:9000" }},
 		{"minio path style", func(c *Config) { c.Storefront.ArtifactForcePathStyle = false }},

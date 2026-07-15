@@ -1,38 +1,63 @@
+import AuthenticationServices
 import Foundation
 
 @MainActor
 class LoginViewModel: ObservableObject {
-    @Published var email = ""
-    @Published var password = ""
     @Published var isLoading = false
     @Published var error: String? = nil
     @Published var isLoggedIn = false
     
     private let loginUseCase: LoginUseCase
+    private let firebaseOAuthService: FirebaseOAuthService
     
-    init(loginUseCase: LoginUseCase) {
+    init(loginUseCase: LoginUseCase, firebaseOAuthService: FirebaseOAuthService) {
         self.loginUseCase = loginUseCase
+        self.firebaseOAuthService = firebaseOAuthService
     }
     
-    func login() async {
+    func configureAppleRequest(_ request: ASAuthorizationAppleIDRequest) {
+        firebaseOAuthService.configureAppleRequest(request)
+    }
+
+    func loginWithApple(_ result: Result<ASAuthorization, Error>) async {
+        await performOAuthLogin {
+            try await firebaseOAuthService.signInWithApple(result: result)
+        }
+    }
+
+    func loginWithGoogle() async {
+        await performOAuthLogin {
+            try await firebaseOAuthService.signInWithGoogle()
+        }
+    }
+
+    private func performOAuthLogin(_ idTokenProvider: () async throws -> String) async {
+        guard !isLoading else { return }
         isLoading = true
         error = nil
-        
-        let result = await loginUseCase.login(email: email, password: password)
 
+        do {
+            let idToken = try await idTokenProvider()
+            let result = await loginUseCase.loginWithFirebase(idToken: idToken)
+            applyLoginResult(result)
+        } catch {
+            self.error = error.localizedDescription
+        }
+
+        isLoading = false
+    }
+
+    private func applyLoginResult(_ result: AppResult<AuthTokenResponse>) {
         if result.isSuccess {
-            if result.data == true {
-                isLoggedIn = true
-            } else {
-                error = "Login failed"
-            }
-        } else if let appError = result.error {
+            isLoggedIn = true
+            return
+        }
+
+        if let appError = result.error {
             error = message(for: appError)
         } else {
             error = "Unknown login error"
         }
-
-        isLoading = false
     }
 
     private func message(for error: AppError) -> String {

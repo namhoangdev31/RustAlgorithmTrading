@@ -96,45 +96,6 @@ services:
       timeout: 5s
       retries: 20
 
-  minio:
-    image: quay.io/minio/minio:RELEASE.2025-07-23T15-54-02Z
-    restart: unless-stopped
-    command: [ "server", "/data", "--console-address", ":9001" ]
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-local_minio}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-local-minio-password}
-    ports:
-      - "${MINIO_API_PORT:-9000}:9000"
-      - "${MINIO_CONSOLE_PORT:-9001}:9001"
-    volumes:
-      - minio-data:/data
-    networks:
-      - private
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:9000/minio/health/live >/dev/null" ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  minio-init:
-    image: quay.io/minio/mc:latest
-    restart: "no"
-    entrypoint: [ "/bin/sh", "-c" ]
-    command:
-      - >-
-        mc alias set local http://minio:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}" &&
-        mc mb --ignore-existing "local/$${MINIO_BUCKET}" &&
-        mc mb --ignore-existing "local/$${MINIO_CACHE_BUCKET}"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-local_minio}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-local-minio-password}
-      MINIO_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-lepoship-artifacts}
-      MINIO_CACHE_BUCKET: ${LEPOS_CACHE_BUCKET:-lepoship-cache}
-    networks:
-      - private
-    depends_on:
-      minio:
-        condition: service_healthy
 
   questdb:
     image: questdb/questdb:9.4.3
@@ -207,7 +168,6 @@ services:
       DATABASE_URL: ${DATABASE_URL:-postgresql://local_app:local-postgres-password@postgres:5432/rust_algorithm_trading}
     networks:
       - private
-
 
   postgres-integration:
     image: postgres:17-alpine
@@ -379,6 +339,7 @@ services:
       - private
     volumes:
       - edge-artifact-data:/var/lib/lepos
+      - ./secrets/firebase-service-account.json:/run/secrets/firebase-service-account.json:ro
     environment:
       <<: *saas-env
       SERVICE_NAME: gateway
@@ -424,13 +385,15 @@ services:
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:-local-encryption-key-32-bytes-minimum}
       LEPOS_ARTIFACT_PROVIDER: ${LEPOS_ARTIFACT_PROVIDER:-minio}
       LEPOS_ARTIFACT_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-lepoship-artifacts}
-      LEPOS_ARTIFACT_PUBLIC_URL: ${LEPOS_ARTIFACT_PUBLIC_URL:-http://localhost:9000/lepoship-artifacts}
-      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-http://minio:9000}
+      LEPOS_ARTIFACT_PUBLIC_URL: ${LEPOS_ARTIFACT_PUBLIC_URL:-http://${MINIO_ENDPOINT:-localhost}:${MINIO_PORT:-9000}/lepoship-artifacts}
+      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-http://${MINIO_ENDPOINT:-minio}:${MINIO_PORT:-9000}}
       LEPOS_ARTIFACT_REGION: ${LEPOS_ARTIFACT_REGION:-us-east-1}
-      LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-local_minio}
-      LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-local-minio-password}
+      LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-${MINIO_ACCESS_KEY:-local_minio}}
+      LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-${MINIO_SECRET_KEY:-local-minio-password}}
       LEPOS_ARTIFACT_FORCE_PATH_STYLE: ${LEPOS_ARTIFACT_FORCE_PATH_STYLE:-true}
-      FIREBASE_API_KEY: ${FIREBASE_API_KEY:-local-firebase-api-key-not-configured}
+      FIREBASE_CREDENTIALS_FILE: ${FIREBASE_CREDENTIALS_FILE:-/run/secrets/firebase-service-account.json}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/run/secrets/firebase-service-account.json}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-reactjs-ts}
       STOREFRONT_API_ENABLED: ${STOREFRONT_API_ENABLED:-false}
       STOREFRONT_MOCK_PAYMENTS_ENABLED: ${STOREFRONT_MOCK_PAYMENTS_ENABLED:-false}
       STOREFRONT_JWT_SECRET: ${STOREFRONT_JWT_SECRET:-local-storefront-jwt-secret-at-least-32-bytes}
@@ -476,8 +439,7 @@ services:
         condition: service_healthy
       nats:
         condition: service_healthy
-      minio-init:
-        condition: service_completed_successfully
+
       questdb:
         condition: service_healthy
       trading-core:
@@ -567,10 +529,10 @@ services:
       UPSTASH_REDIS_REST_URL: ${UPSTASH_REDIS_REST_URL:-}
       UPSTASH_REDIS_REST_TOKEN: ${UPSTASH_REDIS_REST_TOKEN:-}
       EDGE_CONFIG: ${EDGE_CONFIG:-}
-      LEPOS_CACHE_ACCESS_KEY_ID: ${LEPOS_CACHE_ACCESS_KEY_ID:-local_minio}
-      LEPOS_CACHE_SECRET_ACCESS_KEY: ${LEPOS_CACHE_SECRET_ACCESS_KEY:-local-minio-password}
+      LEPOS_CACHE_ACCESS_KEY_ID: ${LEPOS_CACHE_ACCESS_KEY_ID:-${MINIO_ACCESS_KEY:-local_minio}}
+      LEPOS_CACHE_SECRET_ACCESS_KEY: ${LEPOS_CACHE_SECRET_ACCESS_KEY:-${MINIO_SECRET_KEY:-local-minio-password}}
       LEPOS_CACHE_BUCKET: ${LEPOS_CACHE_BUCKET:-lepoship-cache}
-      LEPOS_CACHE_ENDPOINT: ${LEPOS_CACHE_ENDPOINT:-http://minio:9000}
+      LEPOS_CACHE_ENDPOINT: ${LEPOS_CACHE_ENDPOINT:-http://${MINIO_ENDPOINT:-minio}:${MINIO_PORT:-9000}}
       LEPOS_CACHE_REGION: ${LEPOS_CACHE_REGION:-us-east-1}
       CRON_SECRET: ${CRON_SECRET:-local-cron-secret}
       TELEMETRY_DEVICE_PEPPER: ${TELEMETRY_DEVICE_PEPPER:-local-telemetry-device-pepper}
@@ -582,11 +544,11 @@ services:
       ACME_ACCOUNT_EMAIL: ${ACME_ACCOUNT_EMAIL:-}
       ACME_ACCOUNT_KEY: ${ACME_ACCOUNT_KEY:-}
       ACME_DIRECTORY_URL: ${ACME_DIRECTORY_URL:-}
-      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-http://minio:9000}
+      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-http://${MINIO_ENDPOINT:-minio}:${MINIO_PORT:-9000}}
       LEPOS_ARTIFACT_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-lepoship-artifacts}
-      LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-local_minio}
-      LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-local-minio-password}
-      LEPOS_ARTIFACT_PUBLIC_BASE_URL: ${LEPOS_ARTIFACT_PUBLIC_BASE_URL:-http://localhost:9000/lepoship-artifacts}
+      LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-${MINIO_ACCESS_KEY:-local_minio}}
+      LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-${MINIO_SECRET_KEY:-local-minio-password}}
+      LEPOS_ARTIFACT_PUBLIC_BASE_URL: ${LEPOS_ARTIFACT_PUBLIC_BASE_URL:-http://${MINIO_ENDPOINT:-localhost}:${MINIO_PORT:-9000}/lepoship-artifacts}
       LEPOS_ARTIFACT_PROVIDER: ${LEPOS_ARTIFACT_PROVIDER:-minio}
       LEPOS_ARTIFACT_REGION: ${LEPOS_ARTIFACT_REGION:-us-east-1}
       LEPOS_ARTIFACT_FORCE_PATH_STYLE: ${LEPOS_ARTIFACT_FORCE_PATH_STYLE:-true}
@@ -635,7 +597,6 @@ services:
       com.rustalgorithmtrading.role: public-saas-portal
       com.rustalgorithmtrading.audience: developer,trader,regular
 
-
 networks:
   public:
   private:
@@ -643,6 +604,5 @@ networks:
 volumes:
   questdb-data:
   nats-data:
-  minio-data:
   edge-artifact-data:
   redis-data:

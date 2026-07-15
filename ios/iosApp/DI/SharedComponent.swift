@@ -11,6 +11,12 @@ class SharedComponent {
     private let tokenStorage: TokenStorage
 
     var authTokenStorage: TokenStorage { tokenStorage }
+    lazy var firebaseOAuthService = FirebaseOAuthService()
+
+    func hasAccessToken() -> Bool {
+        guard let token = tokenStorage.get(key: "access_token") else { return false }
+        return !token.isEmpty
+    }
     
     // Repositories (lazy singletons)
     private lazy var userRepo: UserRepository = UserRepositoryImpl(apiService: apiService)
