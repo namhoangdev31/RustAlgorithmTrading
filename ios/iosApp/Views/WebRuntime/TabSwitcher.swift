@@ -322,7 +322,7 @@ private struct DeckMetrics {
 
         return DeckMetrics(
             cardWidth: cardWidth,
-            cardHeight: cardHeight,
+            cardHeight: targetHeight,
             cardSpacing: max(56, min(shortest * 0.11, 96)),
             maxSideOffset: max(220, min(size.width * 0.36, 420)),
             scaleStep: isPad ? 0.045 : 0.055,

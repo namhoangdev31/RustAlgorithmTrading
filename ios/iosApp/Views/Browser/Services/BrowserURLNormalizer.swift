@@ -92,7 +92,7 @@ public struct BrowserURLNormalizer {
     /// to parse and let Foundation handle percent-encoding automatically.
     private func percentEncodeAndParse(_ rawURL: String) -> URL? {
         // URLComponents is more lenient than URL(string:) and auto-encodes
-        guard var components = URLComponents(string: rawURL) else {
+        guard let components = URLComponents(string: rawURL) else {
             // Last resort: manually encode the path/query portion
             return manualPercentEncode(rawURL)
         }

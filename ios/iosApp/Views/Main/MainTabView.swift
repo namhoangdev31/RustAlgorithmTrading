@@ -8,7 +8,7 @@ struct MainTabView: View {
 
     var body: some View {
         UniTabView(selection: $selection) {
-            UniTab("", systemImage: "safari", value: 0) {
+            UniTab("LeBrowser", systemImage: "safari", value: 0) {
                 BrowserStartPageView(viewModel: container.makeBrowserViewModel(initialURL: nil, privateMode: false)) { route in
                     switch route {
                     case .search:
@@ -21,15 +21,15 @@ struct MainTabView: View {
                 }
             }
 
-            UniTab("", systemImage: "chart.xyaxis.line", value: 1) {
+            UniTab("QuantAnt", systemImage: "sparkles", value: 1) {
                 QuantAntView(store: container.makeQuantAntStore())
             }
 
-            UniTab("", systemImage: "square.stack.3d.up.fill", value: 2) {
+            UniTab("My Apps", systemImage: "square.stack.3d.up.fill", value: 2) {
                 LibraryView()
             }
 
-            UniTab("", systemImage: "person.crop.circle.fill", value: 3) {
+            UniTab("Profile", systemImage: "person.crop.circle.fill", value: 3) {
                 ProfileView()
             }
 

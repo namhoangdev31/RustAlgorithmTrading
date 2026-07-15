@@ -66,12 +66,8 @@ struct SearchView: View {
         .onSubmit(of: .search) {
             isSearching = true
         }
-        .onChange(of: searchText) { newValue in
-            if newValue.isEmpty {
-                isSearching = false
-            } else {
-                isSearching = false
-            }
+        .onChange(of: searchText) {
+            isSearching = false
         }
     }
 }

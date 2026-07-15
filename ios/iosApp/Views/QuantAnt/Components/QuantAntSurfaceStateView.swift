@@ -1,11 +1,5 @@
+import ExploreSwiftUI
 import SwiftUI
-
-enum QuantAntTheme {
-    static let indigo = Color(red: 0.25, green: 0.22, blue: 0.72)
-    static let teal = Color(red: 0.04, green: 0.64, blue: 0.58)
-    static let positive = Color.green
-    static let negative = Color.red
-}
 
 struct QuantAntStateView<Content: View>: View {
     let state: QuantAntViewState
@@ -46,7 +40,7 @@ struct QuantAntStateView<Content: View>: View {
                 Text(message)
             } actions: {
                 if retryable, let retry {
-                    Button("Retry") { Task { await retry() } }
+                    UniButton("Retry") { Task { await retry() } }
                 }
             }
         case .stale:
@@ -67,7 +61,7 @@ struct QuantAntStateView<Content: View>: View {
     private func statusBanner(_ title: String, icon: String) -> some View {
         Label(title, systemImage: icon)
             .font(.footnote.weight(.semibold))
-            .foregroundStyle(.orange)
+            .uniForegroundStyle(.orange)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -76,49 +70,3 @@ struct QuantAntStateView<Content: View>: View {
     }
 }
 
-struct QuantAntStatusBadge: View {
-    let title: String
-    let color: Color
-
-    var body: some View {
-        Text(title.uppercased())
-            .font(.caption2.weight(.bold))
-            .padding(.horizontal, 9)
-            .padding(.vertical, 5)
-            .foregroundStyle(color)
-            .background(color.opacity(0.13), in: Capsule())
-            .accessibilityLabel(title)
-    }
-}
-
-struct QuantAntMetricCard: View {
-    let title: String
-    let value: String
-    let systemImage: String
-    var tint = QuantAntTheme.indigo
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Label(title, systemImage: systemImage)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Text(value)
-                .font(.title3.weight(.bold))
-                .contentTransition(.numericText())
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).stroke(tint.opacity(0.18)))
-        .accessibilityElement(children: .combine)
-    }
-}
-
-extension String {
-    func quantAntCurrency(_ currency: String = "USD") -> String {
-        guard let value = Decimal(string: self) else { return self }
-        return value.formatted(.currency(code: currency))
-    }
-}
