@@ -10,12 +10,12 @@ x-rust-env: &rust-env
   RUST_LOG: ${RUST_LOG:-debug}
   TRADING_ENV: ${TRADING_ENV:-sandbox}
   METRICS_HOST: ${METRICS_HOST:-0.0.0.0}
-  ALPACA_API_KEY: ${ALPACA_API_KEY:-}
-  ALPACA_SECRET_KEY: ${ALPACA_SECRET_KEY:-}
-  APCA_API_KEY_ID: ${ALPACA_API_KEY:-}
-  APCA_API_SECRET_KEY: ${ALPACA_SECRET_KEY:-}
-  ALPACA_PAPER_API_KEY: ${ALPACA_PAPER_API_KEY:-}
-  ALPACA_PAPER_SECRET_KEY: ${ALPACA_PAPER_SECRET_KEY:-}
+  ALPACA_API_KEY: ${ALPACA_API_KEY:-local-alpaca-key-not-configured}
+  ALPACA_SECRET_KEY: ${ALPACA_SECRET_KEY:-local-alpaca-secret-not-configured}
+  APCA_API_KEY_ID: ${ALPACA_API_KEY:-local-alpaca-key-not-configured}
+  APCA_API_SECRET_KEY: ${ALPACA_SECRET_KEY:-local-alpaca-secret-not-configured}
+  ALPACA_PAPER_API_KEY: ${ALPACA_PAPER_API_KEY:-local-alpaca-key-not-configured}
+  ALPACA_PAPER_SECRET_KEY: ${ALPACA_PAPER_SECRET_KEY:-local-alpaca-secret-not-configured}
   ALPACA_LIVE_API_KEY: ${ALPACA_LIVE_API_KEY:-}
   ALPACA_LIVE_SECRET_KEY: ${ALPACA_LIVE_SECRET_KEY:-}
   MASSIVE_API_KEY: ${MASSIVE_API_KEY:-}
@@ -25,8 +25,8 @@ x-rust-env: &rust-env
   QUANTANT_MARKET_DATA_PROVIDER: ${QUANTANT_MARKET_DATA_PROVIDER:-alpaca}
   QUANTANT_EXECUTION_DELIVERY_SUBJECT: ${QUANTANT_EXECUTION_DELIVERY_SUBJECT:-quantant.execution.delivery}
   GO_CONTROL_PLANE_URL: ${GO_CONTROL_PLANE_URL:-http://gateway:8081}
-  LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:-}
-  TELEMETRY_API_KEY: ${TELEMETRY_API_KEY:-}
+  LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:-local-lepos-internal-api-key}
+  TELEMETRY_API_KEY: ${TELEMETRY_API_KEY:-local-telemetry-api-key}
   OBSERVABILITY_DUCKDB_PATH: ${OBSERVABILITY_DUCKDB_PATH:-/data/observability.duckdb}
 
 x-rust-service: &rust-service
@@ -54,6 +54,7 @@ x-rust-service: &rust-service
         memory: 320M
 
 services:
+
   redis:
     image: redis:7-alpine
     restart: unless-stopped
@@ -78,6 +79,63 @@ services:
           cpus: '0.1'
           memory: 128M
 
+  nats:
+    image: nats:2.11.6-alpine
+    restart: unless-stopped
+    command: [ "-js", "-sd", "/data", "-m", "8222" ]
+    ports:
+      - "${NATS_CLIENT_PORT:-4222}:4222"
+      - "${NATS_MONITOR_PORT:-8222}:8222"
+    volumes:
+      - nats-data:/data
+    networks:
+      - private
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:8222/healthz >/dev/null" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-07-23T15-54-02Z
+    restart: unless-stopped
+    command: [ "server", "/data", "--console-address", ":9001" ]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-local_minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-local-minio-password}
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio-data:/data
+    networks:
+      - private
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:9000/minio/health/live >/dev/null" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  minio-init:
+    image: quay.io/minio/mc:latest
+    restart: "no"
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - >-
+        mc alias set local http://minio:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}" &&
+        mc mb --ignore-existing "local/$${MINIO_BUCKET}" &&
+        mc mb --ignore-existing "local/$${MINIO_CACHE_BUCKET}"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-local_minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-local-minio-password}
+      MINIO_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-lepoship-artifacts}
+      MINIO_CACHE_BUCKET: ${LEPOS_CACHE_BUCKET:-lepoship-cache}
+    networks:
+      - private
+    depends_on:
+      minio:
+        condition: service_healthy
+
   questdb:
     image: questdb/questdb:9.4.3
     restart: unless-stopped
@@ -91,8 +149,8 @@ services:
         read_only: true
     environment:
       QDB_LOG_W_STDOUT_LEVEL: ERROR
-      QDB_PG_USER: admin
-      QDB_PG_PASSWORD: ${QUESTDB_PASSWORD:-quest}
+      QDB_PG_USER: ${QUESTDB_USER:-admin}
+      QDB_PG_PASSWORD: ${QUESTDB_PASSWORD:-local-questdb-password}
       QDB_TELEMETRY_ENABLED: "false"
       QDB_LINE_TCP_NET_BIND_TO: 0.0.0.0:9009
       QDB_PG_NET_BIND_TO: 0.0.0.0:8812
@@ -122,19 +180,34 @@ services:
     volumes:
       - ./scripts/questdb/init.sql:/init.sql:ro
     environment:
-      PGPASSWORD: ${QUESTDB_PASSWORD:-quest}
+      PGUSER: ${QUESTDB_USER:-admin}
+      PGPASSWORD: ${QUESTDB_PASSWORD:-local-questdb-password}
     command: |
       sh -c '
-      until pg_isready -h questdb -p 8812 -U admin; do
+      until pg_isready -h questdb -p 8812 -U "$${PGUSER}"; do
         echo "Waiting for QuestDB PgWire port..."
         sleep 1
       done
       echo "QuestDB PgWire is ready, running init.sql..."
-      psql -h questdb -p 8812 -U admin -d qdb -f /init.sql
+      psql -h questdb -p 8812 -U "$${PGUSER}" -d qdb -f /init.sql
       '
     depends_on:
       questdb:
         condition: service_healthy
+
+  postgres-schema-init:
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-frontend:${IMAGE_TAG:-development}
+    build:
+      context: ..
+      dockerfile: ops/deployment/nextjs.Dockerfile
+      target: runner
+    restart: "no"
+    command: [ "npx", "prisma", "db", "push" ]
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://local_app:local-postgres-password@postgres:5432/rust_algorithm_trading}
+    networks:
+      - private
+
 
   postgres-integration:
     image: postgres:17-alpine
@@ -229,6 +302,8 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+      nats:
+        condition: service_healthy
       questdb-schema-init:
         condition: service_completed_successfully
     image: ${TRADING_IMAGE_REGISTRY:-trading}/trading-core:${IMAGE_TAG:-development}
@@ -249,14 +324,14 @@ services:
     environment:
       <<: *rust-env
       SERVICE_NAME: trading-core
-      TRADING_CORE_METRICS_HOST: 0.0.0.0
-      TRADING_CORE_METRICS_PORT: 9090
-      QUESTDB_ILP_ADDR: questdb:9009
-      HEALTHCHECK_URL: http://127.0.0.1:9090/metrics
-      MARKET_DATA_METRICS_URL: http://127.0.0.1:9090/metrics
-      EXECUTION_METRICS_URL: http://127.0.0.1:9090/metrics
-      RISK_METRICS_URL: http://127.0.0.1:9090/metrics
-      GO_CONTROL_PLANE_URL: http://gateway:8081
+      TRADING_CORE_METRICS_HOST: ${TRADING_CORE_METRICS_HOST:-0.0.0.0}
+      TRADING_CORE_METRICS_PORT: ${TRADING_CORE_METRICS_PORT:-9090}
+      QUESTDB_ILP_ADDR: ${QUESTDB_ILP_ADDR:-questdb:9009}
+      HEALTHCHECK_URL: ${TRADING_CORE_HEALTHCHECK_URL:-http://127.0.0.1:9090/metrics}
+      MARKET_DATA_METRICS_URL: ${MARKET_DATA_METRICS_URL:-http://127.0.0.1:9090/metrics}
+      EXECUTION_METRICS_URL: ${EXECUTION_METRICS_URL:-http://127.0.0.1:9090/metrics}
+      RISK_METRICS_URL: ${RISK_METRICS_URL:-http://127.0.0.1:9090/metrics}
+      GO_CONTROL_PLANE_URL: ${GO_CONTROL_PLANE_URL:-http://gateway:8081}
       INTEGRITY_MAX_PNL_DRIFT_PCT: ${INTEGRITY_MAX_PNL_DRIFT_PCT:-0.10}
       INTEGRITY_MAX_EXPOSURE_DRIFT_BPS: ${INTEGRITY_MAX_EXPOSURE_DRIFT_BPS:-5.0}
       INTEGRITY_MAX_LATENCY_REGRESSION_RATIO: ${INTEGRITY_MAX_LATENCY_REGRESSION_RATIO:-1.50}
@@ -280,8 +355,8 @@ services:
     environment:
       <<: *rust-env
       SERVICE_NAME: signal-bridge
-      SIGNAL_BRIDGE_METRICS_HOST: 0.0.0.0
-      HEALTHCHECK_URL: http://127.0.0.1:9094/metrics
+      SIGNAL_BRIDGE_METRICS_HOST: ${SIGNAL_BRIDGE_METRICS_HOST:-0.0.0.0}
+      HEALTHCHECK_URL: ${SIGNAL_BRIDGE_HEALTHCHECK_URL:-http://127.0.0.1:9094/metrics}
     ports:
       - "${SIGNAL_BRIDGE_PORT:-5556}:5556"
       - "${SIGNAL_BRIDGE_METRICS_PORT:-9094}:9094"
@@ -313,10 +388,10 @@ services:
       TLS_PORT: ${TLS_PORT:-8443}
       HOST: ${GATEWAY_HOST:-0.0.0.0}
       HOSTNAME: ${GATEWAY_HOST_ID:-gateway}
-      DATABASE_URL: ${DATABASE_URL:-}
-      QUESTDB_PG_URL: postgresql://admin:${QUESTDB_PASSWORD:-quest}@questdb:8812/qdb
+      DATABASE_URL: ${DATABASE_URL:-postgresql://local_app:local-postgres-password@postgres:5432/rust_algorithm_trading}
+      QUESTDB_PG_URL: postgresql://${QUESTDB_USER:-admin}:${QUESTDB_PASSWORD:-local-questdb-password}@questdb:8812/qdb
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      NATS_URL: ${NATS_URL:-}
+      NATS_URL: ${NATS_URL:-nats://nats:4222}
       NATS_STREAM_NAME: ${NATS_STREAM_NAME:-CONTROL_GATEWAY_EVENTS}
       NATS_SUBJECT_PREFIX: ${NATS_SUBJECT_PREFIX:-control-gateway}
       OUTBOX_POLL_INTERVAL: ${OUTBOX_POLL_INTERVAL:-2s}
@@ -325,56 +400,56 @@ services:
       OUTBOX_MAX_ATTEMPTS: ${OUTBOX_MAX_ATTEMPTS:-10}
       ALPACA_BASE_URL: ${ALPACA_BASE_URL:-https://paper-api.alpaca.markets}
       ALPACA_DATA_BASE_URL: ${ALPACA_DATA_BASE_URL:-https://data.alpaca.markets}
-      ALPACA_API_KEY: ${ALPACA_API_KEY:-}
-      ALPACA_SECRET_KEY: ${ALPACA_SECRET_KEY:-}
+      ALPACA_API_KEY: ${ALPACA_API_KEY:-local-alpaca-key-not-configured}
+      ALPACA_SECRET_KEY: ${ALPACA_SECRET_KEY:-local-alpaca-secret-not-configured}
       QUANTANT_ENABLED: ${QUANTANT_ENABLED:-false}
       QUANTANT_LIVE_ENABLED: ${QUANTANT_LIVE_ENABLED:-false}
       QUANTANT_STRATEGY_LIVE_ENABLED: ${QUANTANT_STRATEGY_LIVE_ENABLED:-false}
       QUANTANT_COMMAND_STREAM: ${QUANTANT_COMMAND_STREAM:-QUANTANT_COMMANDS}
       QUANTANT_EXECUTION_SUBJECT: ${QUANTANT_EXECUTION_SUBJECT:-quantant.execution}
       QUANTANT_LIVE_SESSION_TTL: ${QUANTANT_LIVE_SESSION_TTL:-15m}
-      TELEMETRY_API_KEY: ${TELEMETRY_API_KEY:-}
+      TELEMETRY_API_KEY: ${TELEMETRY_API_KEY:-local-telemetry-api-key}
       OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-control-gateway}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
       TRACING_ENABLED: ${TRACING_ENABLED:-true}
       METRICS_ENABLED: ${METRICS_ENABLED:-true}
-      MARKET_DATA_METRICS_URL: http://trading-core:9090/metrics
-      EXECUTION_METRICS_URL: http://trading-core:9090/metrics
-      RISK_METRICS_URL: http://trading-core:9090/metrics
-      LEPOS_STORAGE_ROOT: /var/lib/lepos/artifacts
-      LEPOS_CONTROL_PLANE_URL: http://nextjs-frontend:3000
+      MARKET_DATA_METRICS_URL: ${MARKET_DATA_METRICS_URL:-http://trading-core:9090/metrics}
+      EXECUTION_METRICS_URL: ${EXECUTION_METRICS_URL:-http://trading-core:9090/metrics}
+      RISK_METRICS_URL: ${RISK_METRICS_URL:-http://trading-core:9090/metrics}
+      LEPOS_STORAGE_ROOT: ${LEPOS_STORAGE_ROOT:-/var/lib/lepos/artifacts}
+      LEPOS_CONTROL_PLANE_URL: ${LEPOS_CONTROL_PLANE_URL:-http://nextjs-frontend:3000}
       GO_CONTROL_PLANE_PUBLIC_URL: ${GO_CONTROL_PLANE_PUBLIC_URL:-http://localhost:8081}
       LEPOS_SCHEDULER_ENABLED: ${LEPOS_SCHEDULER_ENABLED:-true}
-      TELEMETRY_DEVICE_PEPPER: ${TELEMETRY_DEVICE_PEPPER:-}
-      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
-      LEPOS_ARTIFACT_PROVIDER: ${LEPOS_ARTIFACT_PROVIDER:-s3}
+      TELEMETRY_DEVICE_PEPPER: ${TELEMETRY_DEVICE_PEPPER:-local-telemetry-device-pepper}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-local-encryption-key-32-bytes-minimum}
+      LEPOS_ARTIFACT_PROVIDER: ${LEPOS_ARTIFACT_PROVIDER:-minio}
       LEPOS_ARTIFACT_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-lepoship-artifacts}
-      LEPOS_ARTIFACT_PUBLIC_URL: ${LEPOS_ARTIFACT_PUBLIC_URL:-}
-      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-}
-      LEPOS_ARTIFACT_REGION: ${LEPOS_ARTIFACT_REGION:-auto}
-      LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-}
-      LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-}
-      LEPOS_ARTIFACT_FORCE_PATH_STYLE: ${LEPOS_ARTIFACT_FORCE_PATH_STYLE:-false}
-      FIREBASE_API_KEY: ${FIREBASE_API_KEY:-}
+      LEPOS_ARTIFACT_PUBLIC_URL: ${LEPOS_ARTIFACT_PUBLIC_URL:-http://localhost:9000/lepoship-artifacts}
+      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-http://minio:9000}
+      LEPOS_ARTIFACT_REGION: ${LEPOS_ARTIFACT_REGION:-us-east-1}
+      LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-local_minio}
+      LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-local-minio-password}
+      LEPOS_ARTIFACT_FORCE_PATH_STYLE: ${LEPOS_ARTIFACT_FORCE_PATH_STYLE:-true}
+      FIREBASE_API_KEY: ${FIREBASE_API_KEY:-local-firebase-api-key-not-configured}
       STOREFRONT_API_ENABLED: ${STOREFRONT_API_ENABLED:-false}
       STOREFRONT_MOCK_PAYMENTS_ENABLED: ${STOREFRONT_MOCK_PAYMENTS_ENABLED:-false}
-      STOREFRONT_JWT_SECRET: ${STOREFRONT_JWT_SECRET:-}
+      STOREFRONT_JWT_SECRET: ${STOREFRONT_JWT_SECRET:-local-storefront-jwt-secret-at-least-32-bytes}
       STOREFRONT_JWT_ISSUER: ${STOREFRONT_JWT_ISSUER:-control-gateway}
       STOREFRONT_JWT_AUDIENCE: ${STOREFRONT_JWT_AUDIENCE:-ios-storefront}
       STOREFRONT_ACCESS_TTL: ${STOREFRONT_ACCESS_TTL:-15m}
       STOREFRONT_REFRESH_TTL: ${STOREFRONT_REFRESH_TTL:-720h}
-      LEPOS_CRON_BUNDLE_ABUSE: ${LEPOS_CRON_BUNDLE_ABUSE:-}
-      LEPOS_CRON_RETENTION: ${LEPOS_CRON_RETENTION:-}
-      LEPOS_CRON_AB_EXPERIMENTS: ${LEPOS_CRON_AB_EXPERIMENTS:-}
-      LEPOS_CRON_RANKING: ${LEPOS_CRON_RANKING:-}
-      LEPOS_CRON_BUNDLE_WEBHOOKS: ${LEPOS_CRON_BUNDLE_WEBHOOKS:-}
-      LEPOS_CRON_WEBHOOK_RETRY: ${LEPOS_CRON_WEBHOOK_RETRY:-}
-      LEPOS_CRON_SSL_RENEW: ${LEPOS_CRON_SSL_RENEW:-}
-      LEPOS_CRON_OUTBOX: ${LEPOS_CRON_OUTBOX:-}
-      LEPOS_CRON_RECONCILE: ${LEPOS_CRON_RECONCILE:-}
-      LEPOS_CRON_CLEANUP_PREVIEWS: ${LEPOS_CRON_CLEANUP_PREVIEWS:-}
-      LEPOS_CRON_CLEANUP_WAF: ${LEPOS_CRON_CLEANUP_WAF:-}
-      LEPOS_CRON_SYNC_STORAGE: ${LEPOS_CRON_SYNC_STORAGE:-}
+      LEPOS_CRON_BUNDLE_ABUSE: ${LEPOS_CRON_BUNDLE_ABUSE:-0 0 * * * *}
+      LEPOS_CRON_RETENTION: ${LEPOS_CRON_RETENTION:-0 15 1 * * *}
+      LEPOS_CRON_AB_EXPERIMENTS: ${LEPOS_CRON_AB_EXPERIMENTS:-0 */15 * * * *}
+      LEPOS_CRON_RANKING: ${LEPOS_CRON_RANKING:-0 30 0,12 * * *}
+      LEPOS_CRON_BUNDLE_WEBHOOKS: ${LEPOS_CRON_BUNDLE_WEBHOOKS:-0 */5 * * * *}
+      LEPOS_CRON_WEBHOOK_RETRY: ${LEPOS_CRON_WEBHOOK_RETRY:-0 */10 * * * *}
+      LEPOS_CRON_SSL_RENEW: ${LEPOS_CRON_SSL_RENEW:-0 0 3 * * *}
+      LEPOS_CRON_OUTBOX: ${LEPOS_CRON_OUTBOX:-0 */2 * * * *}
+      LEPOS_CRON_RECONCILE: ${LEPOS_CRON_RECONCILE:-0 */15 * * * *}
+      LEPOS_CRON_CLEANUP_PREVIEWS: ${LEPOS_CRON_CLEANUP_PREVIEWS:-0 0 2 * * *}
+      LEPOS_CRON_CLEANUP_WAF: ${LEPOS_CRON_CLEANUP_WAF:-0 30 2 * * *}
+      LEPOS_CRON_SYNC_STORAGE: ${LEPOS_CRON_SYNC_STORAGE:-0 0 * * * *}
       LEPOS_PREVIEW_CLEANUP_ADAPTER_URL: ${LEPOS_PREVIEW_CLEANUP_ADAPTER_URL:-}
       LEPOS_PREVIEW_CLEANUP_ADAPTER_TOKEN: ${LEPOS_PREVIEW_CLEANUP_ADAPTER_TOKEN:-}
       LEPOS_CLEANUP_PREVIEWS_WITHOUT_ADAPTER: ${LEPOS_CLEANUP_PREVIEWS_WITHOUT_ADAPTER:-false}
@@ -382,27 +457,33 @@ services:
       LEPOS_STORAGE_SYNC_ADAPTER_TOKEN: ${LEPOS_STORAGE_SYNC_ADAPTER_TOKEN:-}
       LEPOS_SSL_RENEWAL_ADAPTER_URL: ${LEPOS_SSL_RENEWAL_ADAPTER_URL:-}
       LEPOS_SSL_RENEWAL_ADAPTER_TOKEN: ${LEPOS_SSL_RENEWAL_ADAPTER_TOKEN:-}
-      LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:-}
+      LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:-local-lepos-internal-api-key}
       LEPOS_SERVICE_ID: ${LEPOS_SERVICE_ID:-edge-gateway}
-      LEPOS_SERVICE_SECRET: ${LEPOS_SERVICE_SECRET:-}
+      LEPOS_SERVICE_SECRET: ${LEPOS_SERVICE_SECRET:-local-lepos-service-secret}
       LEPOS_IPFS_GATEWAY_URL: ${LEPOS_IPFS_GATEWAY_URL:-https://ipfs.io/ipfs}
       LEPOS_ARWEAVE_GATEWAY_URL: ${LEPOS_ARWEAVE_GATEWAY_URL:-https://arweave.net}
       LEPOS_CONTROL_PLANE_TLS_CERT: ${LEPOS_CONTROL_PLANE_TLS_CERT:-}
       LEPOS_CONTROL_PLANE_TLS_KEY: ${LEPOS_CONTROL_PLANE_TLS_KEY:-}
       LEPOS_CONTROL_PLANE_TLS_CA: ${LEPOS_CONTROL_PLANE_TLS_CA:-}
     ports:
-      - "${CONTROL_PLANE_PORT:-8081}:8081"
-      - "${EDGE_HTTP_PORT:-8088}:8088"
-      - "${EDGE_TLS_PORT:-8443}:8443"
+      - "${CONTROL_PLANE_PORT:-8081}:${GATEWAY_PORT:-8081}"
+      - "${EDGE_HTTP_PORT:-8088}:${EDGE_PORT:-8088}"
+      - "${EDGE_TLS_PORT:-8443}:${TLS_PORT:-8443}"
     depends_on:
+      postgres-schema-init:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
+      nats:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
       questdb:
         condition: service_healthy
       trading-core:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:8081/health/ready >/dev/null || exit 1" ]
+      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:$${PORT}/health/ready >/dev/null || exit 1" ]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -435,26 +516,29 @@ services:
       SERVICE_NAME: nextjs-frontend
       NODE_ENV: production
       PORT: 3000
-      NODE_OPTIONS: --max-old-space-size=1536
-      DATABASE_URL: ${DATABASE_URL:-}
+      NODE_OPTIONS: ${NODE_OPTIONS:---max-old-space-size=1536}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://local_app:local-postgres-password@postgres:5432/rust_algorithm_trading}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      GO_CONTROL_PLANE_URL: http://gateway:8081
+      GO_CONTROL_PLANE_URL: ${GO_CONTROL_PLANE_URL:-http://gateway:8081}
       GO_CONTROL_PLANE_PUBLIC_URL: ${GO_CONTROL_PLANE_PUBLIC_URL:-http://localhost:8081}
-      NEXT_PUBLIC_GO_CONTROL_PLANE_URL: ${GO_CONTROL_PLANE_PUBLIC_URL:-http://localhost:8081}
+      NEXT_PUBLIC_GO_CONTROL_PLANE_URL: ${NEXT_PUBLIC_GO_CONTROL_PLANE_URL:-http://localhost:8081}
+      LEPOS_API_HOST: ${LEPOS_API_HOST:-http://gateway:8081}
+      LEPOSHIP_SEED_PROJECT_ID: ${LEPOSHIP_SEED_PROJECT_ID:-}
+      LEPOSHIP_SEED_USER_ID: ${LEPOSHIP_SEED_USER_ID:-}
       LEPOS_SERVICE_ID: ${LEPOS_NEXT_SERVICE_ID:-nextjs-frontend}
-      LEPOS_SERVICE_SECRET: ${LEPOS_SERVICE_SECRET:-}
+      LEPOS_SERVICE_SECRET: ${LEPOS_SERVICE_SECRET:-local-lepos-service-secret}
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
       AUTH_URL: ${AUTH_URL:-http://localhost:3000}
-      AUTH_SECRET: ${AUTH_SECRET:-}
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-}
-      APP_SECRETS_MASTER_KEY: ${APP_SECRETS_MASTER_KEY:-}
-      AUDIT_LOG_KEY: ${AUDIT_LOG_KEY:-}
-      LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:-}
-      LEPOS_NATIVE_TELEMETRY_KEY: ${LEPOS_NATIVE_TELEMETRY_KEY:-}
-      LEPOS_NATIVE_TELEMETRY_KEY_VERSION: ${LEPOS_NATIVE_TELEMETRY_KEY_VERSION:-}
-      LEPOS_WEBHOOK_SECRET: ${LEPOS_WEBHOOK_SECRET:-}
-      LEPOS_PARTNER_API_KEY: ${LEPOS_PARTNER_API_KEY:-}
-      REVALIDATION_SECRET: ${REVALIDATION_SECRET:-}
+      AUTH_SECRET: ${AUTH_SECRET:-local-auth-secret-at-least-32-bytes-long}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-local-nextauth-secret-at-least-32-bytes}
+      APP_SECRETS_MASTER_KEY: ${APP_SECRETS_MASTER_KEY:-local-app-secrets-master-key-32-bytes}
+      AUDIT_LOG_KEY: ${AUDIT_LOG_KEY:-local-audit-log-key}
+      LEPOS_INTERNAL_API_KEY: ${LEPOS_INTERNAL_API_KEY:-local-lepos-internal-api-key}
+      LEPOS_NATIVE_TELEMETRY_KEY: ${LEPOS_NATIVE_TELEMETRY_KEY:-local-native-telemetry-key}
+      LEPOS_NATIVE_TELEMETRY_KEY_VERSION: ${LEPOS_NATIVE_TELEMETRY_KEY_VERSION:-1}
+      LEPOS_WEBHOOK_SECRET: ${LEPOS_WEBHOOK_SECRET:-local-lepos-webhook-secret}
+      LEPOS_PARTNER_API_KEY: ${LEPOS_PARTNER_API_KEY:-local-lepos-partner-api-key}
+      REVALIDATION_SECRET: ${REVALIDATION_SECRET:-local-revalidation-secret}
       SCIM_BEARER_TOKEN: ${SCIM_BEARER_TOKEN:-}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
       STRIPE_CONNECT_WEBHOOK_SECRET: ${STRIPE_CONNECT_WEBHOOK_SECRET:-}
@@ -471,26 +555,26 @@ services:
       VERCEL_WEBHOOK_SECRET: ${VERCEL_WEBHOOK_SECRET:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-1.5-flash}
-      FIREBASE_API_KEY: ${FIREBASE_API_KEY:-}
-      NEXT_PUBLIC_FIREBASE_API_KEY: ${NEXT_PUBLIC_FIREBASE_API_KEY:-}
-      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:-}
-      NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${NEXT_PUBLIC_FIREBASE_PROJECT_ID:-}
-      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET:-}
-      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID:-}
-      NEXT_PUBLIC_FIREBASE_APP_ID: ${NEXT_PUBLIC_FIREBASE_APP_ID:-}
+      FIREBASE_API_KEY: ${FIREBASE_API_KEY:-local-firebase-api-key-not-configured}
+      NEXT_PUBLIC_FIREBASE_API_KEY: ${NEXT_PUBLIC_FIREBASE_API_KEY:-local-firebase-api-key-not-configured}
+      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:-local.firebaseapp.com}
+      NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${NEXT_PUBLIC_FIREBASE_PROJECT_ID:-local-project}
+      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET:-local-project.appspot.com}
+      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID:-000000000000}
+      NEXT_PUBLIC_FIREBASE_APP_ID: ${NEXT_PUBLIC_FIREBASE_APP_ID:-1:000000000000:web:local}
       NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID:-}
-      NEXT_PUBLIC_FIREBASE_DATABASE_URL: ${NEXT_PUBLIC_FIREBASE_DATABASE_URL:-}
+      NEXT_PUBLIC_FIREBASE_DATABASE_URL: ${NEXT_PUBLIC_FIREBASE_DATABASE_URL:-http://127.0.0.1:9000}
       UPSTASH_REDIS_REST_URL: ${UPSTASH_REDIS_REST_URL:-}
       UPSTASH_REDIS_REST_TOKEN: ${UPSTASH_REDIS_REST_TOKEN:-}
       EDGE_CONFIG: ${EDGE_CONFIG:-}
-      LEPOS_CACHE_ACCESS_KEY_ID: ${LEPOS_CACHE_ACCESS_KEY_ID:-}
-      LEPOS_CACHE_SECRET_ACCESS_KEY: ${LEPOS_CACHE_SECRET_ACCESS_KEY:-}
-      LEPOS_CACHE_BUCKET: ${LEPOS_CACHE_BUCKET:-}
-      LEPOS_CACHE_ENDPOINT: ${LEPOS_CACHE_ENDPOINT:-}
+      LEPOS_CACHE_ACCESS_KEY_ID: ${LEPOS_CACHE_ACCESS_KEY_ID:-local_minio}
+      LEPOS_CACHE_SECRET_ACCESS_KEY: ${LEPOS_CACHE_SECRET_ACCESS_KEY:-local-minio-password}
+      LEPOS_CACHE_BUCKET: ${LEPOS_CACHE_BUCKET:-lepoship-cache}
+      LEPOS_CACHE_ENDPOINT: ${LEPOS_CACHE_ENDPOINT:-http://minio:9000}
       LEPOS_CACHE_REGION: ${LEPOS_CACHE_REGION:-us-east-1}
-      CRON_SECRET: ${CRON_SECRET:-}
-      TELEMETRY_DEVICE_PEPPER: ${TELEMETRY_DEVICE_PEPPER:-}
-      TELEMETRY_API_KEY: ${TELEMETRY_API_KEY:-}
+      CRON_SECRET: ${CRON_SECRET:-local-cron-secret}
+      TELEMETRY_DEVICE_PEPPER: ${TELEMETRY_DEVICE_PEPPER:-local-telemetry-device-pepper}
+      TELEMETRY_API_KEY: ${TELEMETRY_API_KEY:-local-telemetry-api-key}
       ALERT_SLACK_WEBHOOK_URL: ${ALERT_SLACK_WEBHOOK_URL:-}
       ALERT_DISCORD_WEBHOOK_URL: ${ALERT_DISCORD_WEBHOOK_URL:-}
       ALERT_TELEGRAM_BOT_TOKEN: ${ALERT_TELEGRAM_BOT_TOKEN:-}
@@ -498,14 +582,14 @@ services:
       ACME_ACCOUNT_EMAIL: ${ACME_ACCOUNT_EMAIL:-}
       ACME_ACCOUNT_KEY: ${ACME_ACCOUNT_KEY:-}
       ACME_DIRECTORY_URL: ${ACME_DIRECTORY_URL:-}
-      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-}
-      LEPOS_ARTIFACT_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-}
-      LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-}
-      LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-}
-      LEPOS_ARTIFACT_PUBLIC_BASE_URL: ${LEPOS_ARTIFACT_PUBLIC_BASE_URL:-}
-      LEPOS_ARTIFACT_PROVIDER: ${LEPOS_ARTIFACT_PROVIDER:-s3}
-      LEPOS_ARTIFACT_REGION: ${LEPOS_ARTIFACT_REGION:-auto}
-      LEPOS_ARTIFACT_FORCE_PATH_STYLE: ${LEPOS_ARTIFACT_FORCE_PATH_STYLE:-false}
+      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-http://minio:9000}
+      LEPOS_ARTIFACT_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-lepoship-artifacts}
+      LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-local_minio}
+      LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-local-minio-password}
+      LEPOS_ARTIFACT_PUBLIC_BASE_URL: ${LEPOS_ARTIFACT_PUBLIC_BASE_URL:-http://localhost:9000/lepoship-artifacts}
+      LEPOS_ARTIFACT_PROVIDER: ${LEPOS_ARTIFACT_PROVIDER:-minio}
+      LEPOS_ARTIFACT_REGION: ${LEPOS_ARTIFACT_REGION:-us-east-1}
+      LEPOS_ARTIFACT_FORCE_PATH_STYLE: ${LEPOS_ARTIFACT_FORCE_PATH_STYLE:-true}
       LEPOS_IPFS_PIN_ENDPOINT: ${LEPOS_IPFS_PIN_ENDPOINT:-}
       LEPOS_IPFS_PIN_TOKEN: ${LEPOS_IPFS_PIN_TOKEN:-}
       LEPOS_ARWEAVE_PUBLISH_ENDPOINT: ${LEPOS_ARWEAVE_PUBLISH_ENDPOINT:-}
@@ -520,15 +604,17 @@ services:
       LEPOS_REPLICA_REGIONS: ${LEPOS_REPLICA_REGIONS:-}
       LEPOS_NATIVE_REMEDIATION_SCRIPT: ${LEPOS_NATIVE_REMEDIATION_SCRIPT:-}
       LEPOS_DEBUG_WS: ${LEPOS_DEBUG_WS:-false}
-      LEPOS_DEV_PORT: ${LEPOS_DEV_PORT:-}
+      LEPOS_DEV_PORT: ${LEPOS_DEV_PORT:-3000}
       LEPOS_HTTPS: ${LEPOS_HTTPS:-false}
       LEPOS_TUNNEL: ${LEPOS_TUNNEL:-false}
-      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-local-encryption-key-32-bytes-minimum}
       GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
-    expose:
-      - "3000"
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
     depends_on:
+      postgres-schema-init:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
     healthcheck:
@@ -549,43 +635,6 @@ services:
       com.rustalgorithmtrading.role: public-saas-portal
       com.rustalgorithmtrading.audience: developer,trader,regular
 
-  lepoship-worker:
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/lepoship-worker:${IMAGE_TAG:-development}
-    build:
-      context: ..
-      dockerfile: ops/deployment/nextjs.Dockerfile
-      target: worker
-    restart: unless-stopped
-    init: true
-    networks:
-      - private
-    environment:
-      <<: *saas-env
-      SERVICE_NAME: lepoship-worker
-      NODE_ENV: production
-      DATABASE_URL: postgresql://noah_admin:noah_master@103.82.36.67:8048/noah_db
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-}
-      LEPOS_ARTIFACT_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-}
-      LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-}
-      LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-}
-      LEPOS_ARTIFACT_PUBLIC_BASE_URL: ${LEPOS_ARTIFACT_PUBLIC_BASE_URL:-}
-      TELEMETRY_DEVICE_PEPPER: ${TELEMETRY_DEVICE_PEPPER:-}
-      LEPOSHIP_WORKER_CONCURRENCY: ${LEPOSHIP_WORKER_CONCURRENCY:-2}
-    depends_on:
-      redis:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 2048M
-        reservations:
-          cpus: '0.5'
-          memory: 1024M
-    labels:
-      com.rustalgorithmtrading.role: private-worker
-      com.rustalgorithmtrading.audience: internal
 
 networks:
   public:
@@ -593,5 +642,7 @@ networks:
 
 volumes:
   questdb-data:
+  nats-data:
+  minio-data:
   edge-artifact-data:
   redis-data:

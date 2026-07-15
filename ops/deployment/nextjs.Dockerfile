@@ -47,25 +47,3 @@ COPY --from=builder /workspace/nextjs/prisma.config.ts ./prisma.config.ts
 EXPOSE 3000
 CMD ["yarn", "start"]
 
-# --- Stage 4: Worker (LepoShip) ---
-FROM node:22-bookworm-slim AS worker
-WORKDIR /workspace/nextjs
-
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-
-# Install scanner runtime dependencies
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends ca-certificates clamav git unzip zip \
-  && rm -rf /var/lib/apt/lists/*
-
-# Copy security tool binaries from official images
-COPY --from=aquasec/trivy:0.60.0 /usr/local/bin/trivy /usr/local/bin/trivy
-COPY --from=anchore/syft:v1.20.0 /syft /usr/local/bin/syft
-COPY --from=gitleaks/gitleaks:v8.24.2 /usr/bin/gitleaks /usr/local/bin/gitleaks
-
-# Copy full built workspace context
-COPY --from=builder /workspace/nextjs /workspace/nextjs
-
-CMD ["yarn", "lepoship:worker"]
-
