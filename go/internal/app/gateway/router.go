@@ -12,6 +12,7 @@ import (
 	_ "trading/control-gateway/docs"
 	"trading/control-gateway/internal/app/ota"
 	"trading/control-gateway/internal/app/quant"
+	identityhttp "trading/control-gateway/internal/modules/identity/adapter/http"
 	"trading/control-gateway/internal/platform/health"
 	"trading/control-gateway/internal/platform/httpx"
 	"trading/control-gateway/internal/platform/observability"
@@ -23,6 +24,7 @@ type RouterDependencies struct {
 	Health      *health.Aggregator
 	Quant       *quant.Component
 	OTA         *ota.Component
+	Identity    identityhttp.AccessTokenVerifier
 }
 
 func NewRouter(input RouterDependencies) *gin.Engine {
@@ -44,7 +46,7 @@ func NewRouter(input RouterDependencies) *gin.Engine {
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("/metrics", httpx.APIKeyAuth(input.APIKey), gin.WrapH(promhttp.Handler()))
 	if input.Quant != nil {
-		input.Quant.RegisterRoutes(router, input.APIKey, input.Health)
+		input.Quant.RegisterRoutes(router, input.APIKey, input.Health, identityhttp.RequireAuth(input.Identity))
 	}
 	if input.OTA != nil {
 		input.OTA.RegisterRoutes(router)

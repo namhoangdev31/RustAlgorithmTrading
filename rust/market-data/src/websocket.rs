@@ -1,15 +1,17 @@
+use crate::provider::{AlpacaProvider, MarketDataEvent, MarketDataProvider};
 use common::{Result, TradingError};
 use futures_util::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use std::sync::Arc;
 use tokio::time::{sleep, Duration};
 use tokio_tungstenite::{connect_async, tungstenite::Message};
 use tracing::{debug, error, info, warn};
 use url::Url;
 
-const ALPACA_WSS_URL: &str = "wss://stream.data.alpaca.markets/v2/iex";
 const RECONNECT_DELAY_MS: u64 = 5000;
 
+/// Legacy Alpaca wire contract retained while runtime processing uses the
+/// normalized `MarketDataEvent` contract.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "T")]
 pub enum AlpacaMessage {
@@ -65,21 +67,25 @@ pub enum AlpacaMessage {
 #[derive(Clone)]
 pub struct WebSocketClient {
     url: Url,
-    api_key: String,
-    api_secret: String,
+    provider: Arc<dyn MarketDataProvider>,
     symbols: Vec<String>,
     reconnect_delay: Duration,
 }
 
 impl WebSocketClient {
     pub fn new(api_key: String, api_secret: String, symbols: Vec<String>) -> Result<Self> {
-        let url = Url::parse(ALPACA_WSS_URL)
-            .map_err(|e| TradingError::Configuration(format!("Invalid WebSocket URL: {}", e)))?;
+        let provider = Arc::new(AlpacaProvider::new(api_key, api_secret));
+        Self::new_with_provider(provider, symbols)
+    }
 
+    pub fn new_with_provider(
+        provider: Arc<dyn MarketDataProvider>,
+        symbols: Vec<String>,
+    ) -> Result<Self> {
+        let url = provider.websocket_url()?;
         Ok(Self {
             url,
-            api_key,
-            api_secret,
+            provider,
             symbols,
             reconnect_delay: Duration::from_millis(RECONNECT_DELAY_MS),
         })
@@ -87,7 +93,7 @@ impl WebSocketClient {
 
     pub async fn connect<F>(&self, mut on_message: F) -> Result<()>
     where
-        F: FnMut(AlpacaMessage) -> Result<()> + Send + 'static,
+        F: FnMut(MarketDataEvent) -> Result<()> + Send + 'static,
     {
         loop {
             match self.connect_inner(&mut on_message).await {
@@ -109,9 +115,13 @@ impl WebSocketClient {
 
     async fn connect_inner<F>(&self, on_message: &mut F) -> Result<()>
     where
-        F: FnMut(AlpacaMessage) -> Result<()>,
+        F: FnMut(MarketDataEvent) -> Result<()>,
     {
-        info!("Connecting to Alpaca WebSocket: {}", self.url);
+        info!(
+            "Connecting to {} WebSocket: {}",
+            self.provider.name(),
+            self.url
+        );
 
         let (ws_stream, _) = connect_async(self.url.as_str())
             .await
@@ -121,17 +131,12 @@ impl WebSocketClient {
 
         let (mut write, mut read) = ws_stream.split();
 
-        // Send authentication
-        let auth_msg = json!({
-            "action": "auth",
-            "key": self.api_key,
-            "secret": self.api_secret
-        });
-
-        write
-            .send(Message::Text(auth_msg.to_string()))
-            .await
-            .map_err(|e| TradingError::Network(format!("Auth failed: {}", e)))?;
+        for auth_msg in self.provider.authentication_messages() {
+            write
+                .send(Message::Text(auth_msg.to_string()))
+                .await
+                .map_err(|e| TradingError::Network(format!("Auth failed: {}", e)))?;
+        }
 
         info!("Authentication sent");
 
@@ -142,18 +147,12 @@ impl WebSocketClient {
             debug!("Auth response: {:?}", msg);
         }
 
-        // Subscribe to symbols
-        let subscribe_msg = json!({
-            "action": "subscribe",
-            "trades": self.symbols,
-            "quotes": self.symbols,
-            "bars": self.symbols
-        });
-
-        write
-            .send(Message::Text(subscribe_msg.to_string()))
-            .await
-            .map_err(|e| TradingError::Network(format!("Subscribe failed: {}", e)))?;
+        for subscribe_msg in self.provider.subscription_messages(&self.symbols) {
+            write
+                .send(Message::Text(subscribe_msg.to_string()))
+                .await
+                .map_err(|e| TradingError::Network(format!("Subscribe failed: {}", e)))?;
+        }
 
         info!("Subscribed to symbols: {:?}", self.symbols);
 
@@ -191,25 +190,10 @@ impl WebSocketClient {
 
     fn handle_text_message<F>(&self, text: &str, on_message: &mut F) -> Result<()>
     where
-        F: FnMut(AlpacaMessage) -> Result<()>,
+        F: FnMut(MarketDataEvent) -> Result<()>,
     {
-        // Try to parse as array of messages
-        if let Ok(messages) = serde_json::from_str::<Vec<AlpacaMessage>>(text) {
-            for msg in messages {
-                match msg {
-                    AlpacaMessage::Unknown => {
-                        debug!("Unknown message type: {}", text);
-                    }
-                    _ => {
-                        on_message(msg)?;
-                    }
-                }
-            }
-        } else if let Ok(value) = serde_json::from_str::<Value>(text) {
-            // Handle control messages (auth confirmation, subscription confirmation, etc.)
-            debug!("Control message: {:?}", value);
-        } else {
-            warn!("Failed to parse message: {}", text);
+        for message in self.provider.decode(text)? {
+            on_message(message)?;
         }
 
         Ok(())
@@ -224,14 +208,14 @@ mod tests {
     fn test_parse_trade_message() {
         let json =
             r#"[{"T":"t","S":"AAPL","p":150.25,"s":100,"t":"2024-01-01T10:00:00Z","i":12345}]"#;
-        let messages: Vec<AlpacaMessage> = serde_json::from_str(json).unwrap();
-        assert_eq!(messages.len(), 1);
+        let provider = AlpacaProvider::new("key".to_string(), "secret".to_string());
+        assert_eq!(provider.decode(json).unwrap().len(), 1);
     }
 
     #[test]
     fn test_parse_quote_message() {
         let json = r#"[{"T":"q","S":"AAPL","bp":150.00,"bs":10,"ap":150.05,"as":5,"t":"2024-01-01T10:00:00Z"}]"#;
-        let messages: Vec<AlpacaMessage> = serde_json::from_str(json).unwrap();
-        assert_eq!(messages.len(), 1);
+        let provider = AlpacaProvider::new("key".to_string(), "secret".to_string());
+        assert_eq!(provider.decode(json).unwrap().len(), 1);
     }
 }

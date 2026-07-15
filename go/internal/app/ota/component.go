@@ -207,6 +207,13 @@ func buildStorefront(ctx context.Context, cfg *config.Config, postgres *database
 
 func (c *Component) ReadinessChecks() []health.DependencyCheck { return c.checks }
 
+func (c *Component) AccessTokenVerifier() identityhttp.AccessTokenVerifier {
+	if c == nil {
+		return nil
+	}
+	return c.identityService
+}
+
 func (c *Component) Run(ctx context.Context) error {
 	c.scheduler.Start()
 	group, runCtx := errgroup.WithContext(ctx)

@@ -50,7 +50,7 @@ func Build(ctx context.Context, cfg *config.Config) (*App, error) {
 		aggregator := health.New(quant.Connections(), checks...)
 		router := NewRouter(RouterDependencies{
 			ServiceName: cfg.Observability.ServiceName, APIKey: cfg.Server.TelemetryAPIKey,
-			Health: aggregator, Quant: quant, OTA: ota,
+			Health: aggregator, Quant: quant, OTA: ota, Identity: ota.AccessTokenVerifier(),
 		})
 		server := httpserver.New(cfg.Server.Host+":"+cfg.Server.Port, router)
 		runners = append(runners, server, quant, ota)

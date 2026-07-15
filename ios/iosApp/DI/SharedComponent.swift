@@ -9,6 +9,8 @@ class SharedComponent {
     // Services
     private let apiService: ApiService
     private let tokenStorage: TokenStorage
+
+    var authTokenStorage: TokenStorage { tokenStorage }
     
     // Repositories (lazy singletons)
     private lazy var userRepo: UserRepository = UserRepositoryImpl(apiService: apiService)

@@ -1,4 +1,5 @@
 import Foundation
+import Security
 
 // MARK: - API Service (replaces KMP ApiService + BundleApiService)
 
@@ -46,22 +47,47 @@ class ApiService {
 
 // MARK: - Token Storage (replaces KMP TokenStorage)
 
-class TokenStorage {
-    private var storage: [String: String] = [:]
-    
+final class TokenStorage: @unchecked Sendable {
+    private let service = Bundle.main.bundleIdentifier ?? "com.lepos.quantant"
+
     func save(key: String, value: String) {
-        storage[key] = value
+        let data = Data(value.utf8)
+        let query = baseQuery(key: key)
+        SecItemDelete(query as CFDictionary)
+        var insert = query
+        insert[kSecValueData as String] = data
+        insert[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        SecItemAdd(insert as CFDictionary, nil)
     }
-    
+
     func get(key: String) -> String? {
-        return storage[key]
+        var query = baseQuery(key: key)
+        query[kSecReturnData as String] = true
+        query[kSecMatchLimit as String] = kSecMatchLimitOne
+        var result: CFTypeRef?
+        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
+              let data = result as? Data else { return nil }
+        return String(data: data, encoding: .utf8)
     }
-    
+
     func remove(key: String) {
-        storage.removeValue(forKey: key)
+        SecItemDelete(baseQuery(key: key) as CFDictionary)
     }
-    
+
     func clear() {
-        storage.removeAll()
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service
+        ]
+        SecItemDelete(query as CFDictionary)
+    }
+
+    private func baseQuery(key: String) -> [String: Any] {
+        [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: key,
+            kSecAttrSynchronizable as String: kCFBooleanFalse as Any
+        ]
     }
 }

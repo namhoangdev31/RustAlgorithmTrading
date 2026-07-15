@@ -71,7 +71,7 @@ async fn main() -> anyhow::Result<()> {
     let risk_config = config.risk.clone();
 
     // Initialize service
-    let _service = match ExecutionEngineService::new(config.execution, risk_config).await {
+    let service = match ExecutionEngineService::new(config.execution, risk_config).await {
         Ok(svc) => {
             tracing::info!("[cid:INIT] ✓ Execution Engine initialized successfully");
             svc
@@ -97,6 +97,23 @@ async fn main() -> anyhow::Result<()> {
     }
 
     tracing::info!("[cid:INIT] 🚀 Execution Engine is ready");
+
+    let service = Arc::new(service);
+    if let Ok(address) = std::env::var("QUANTANT_NATS_ADDRESS") {
+        let delivery_subject = std::env::var("QUANTANT_EXECUTION_DELIVERY_SUBJECT")
+            .unwrap_or_else(|_| "quantant.execution.engine".to_string());
+        let consumer_service = service.clone();
+        tokio::spawn(async move {
+            if let Err(error) =
+                execution_engine::nats_consumer::run(consumer_service, address, delivery_subject)
+                    .await
+            {
+                tracing::error!("[cid:INIT] QuantAnt command consumer stopped: {error}");
+            }
+        });
+    } else {
+        tracing::warn!("[cid:INIT] QUANTANT_NATS_ADDRESS unset; command consumer disabled");
+    }
 
     // Keep service running
     tokio::signal::ctrl_c().await?;

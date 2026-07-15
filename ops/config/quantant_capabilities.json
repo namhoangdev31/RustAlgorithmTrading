@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "default": {
+    "market_data": "unavailable",
+    "execution": "unavailable",
+    "order_types": []
+  },
+  "providers": {
+    "alpaca": {
+      "equity": {
+        "market_data": "live",
+        "execution": "live",
+        "order_types": ["market", "limit", "stop", "stop_limit", "bracket", "trailing_stop"]
+      },
+      "crypto": {
+        "market_data": "live",
+        "execution": "live",
+        "order_types": ["market", "limit", "stop_limit"]
+      }
+    },
+    "massive": {
+      "equity": { "market_data": "live", "execution": "view_only", "order_types": [] },
+      "crypto": { "market_data": "live", "execution": "view_only", "order_types": [] },
+      "forex": { "market_data": "live", "execution": "paper", "order_types": ["market", "limit", "stop", "stop_limit"] },
+      "index": { "market_data": "live", "execution": "view_only", "order_types": [] },
+      "commodity_future": { "market_data": "live", "execution": "paper", "order_types": ["market", "limit", "stop", "stop_limit"] }
+    }
+  },
+  "certification_required_for_live": ["forex", "index", "commodity_future"]
+}

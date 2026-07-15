@@ -21,8 +21,8 @@ struct MainTabView: View {
                 }
             }
 
-            UniTab("", systemImage: "sparkles", value: 1) {
-                DiscoveryView()
+            UniTab("", systemImage: "chart.xyaxis.line", value: 1) {
+                QuantAntView(store: container.makeQuantAntStore())
             }
 
             UniTab("", systemImage: "square.stack.3d.up.fill", value: 2) {
@@ -46,7 +46,7 @@ struct MainTabView: View {
     private var currentTitle: String {
         switch selection {
         case 0: return "Today"
-        case 1: return "Discovery"
+        case 1: return "QuantAnt"
         case 2: return "Library"
         case 3: return "Profile"
         case 4: return "Search"

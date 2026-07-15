@@ -3072,3 +3072,441 @@ model LepoShipCronRun {
   @@index([status], map: "lepoship_cron_runs_status_idx")
   @@map("lepoship_cron_runs")
 }
+
+// ----------------------------------------------------
+// QuantAnt trading control-plane (additive v1 contract)
+// ----------------------------------------------------
+
+enum QuantAssetClass {
+  equity
+  crypto
+  forex
+  index
+  commodity_future
+}
+
+enum QuantTradingMode {
+  paper
+  live
+}
+
+enum QuantSupportLevel {
+  unavailable
+  view_only
+  paper
+  live
+}
+
+enum QuantOrderType {
+  market
+  limit
+  stop
+  stop_limit
+  bracket
+  trailing_stop
+}
+
+enum QuantStrategyLifecycle {
+  draft
+  backtesting
+  paper_ready
+  paper_active
+  live_ready
+  live_active
+  paused
+  failed
+  archived
+}
+
+model QuantInstrument {
+  id               String                 @id @default(uuid()) @db.Uuid
+  provider         String                 @db.VarChar(32)
+  providerSymbol   String                 @map("provider_symbol") @db.VarChar(96)
+  canonicalSymbol  String                 @map("canonical_symbol") @db.VarChar(96)
+  displayName      String                 @map("display_name") @db.VarChar(255)
+  assetClass       QuantAssetClass        @map("asset_class")
+  exchange         String?                @db.VarChar(64)
+  currency         String                 @db.VarChar(12)
+  timezone         String                 @db.VarChar(64)
+  priceScale       Int                    @default(4) @map("price_scale")
+  quantityScale    Int                    @default(8) @map("quantity_scale")
+  marketDataLevel  QuantSupportLevel      @default(view_only) @map("market_data_level")
+  executionLevel   QuantSupportLevel      @default(unavailable) @map("execution_level")
+  capabilities     Json                   @default("{}")
+  isActive         Boolean                @default(true) @map("is_active")
+  createdAt        DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+  watchlistItems   QuantWatchlistItem[]
+  orders           QuantOrder[]
+  fills            QuantFill[]
+  positions        QuantPosition[]
+
+  @@unique([provider, providerSymbol])
+  @@unique([canonicalSymbol, assetClass])
+  @@index([assetClass, isActive])
+  @@map("quant_instruments")
+}
+
+model QuantBrokerAccount {
+  id                String                 @id @default(uuid()) @db.Uuid
+  provider          String                 @db.VarChar(32)
+  externalAccountId String                 @map("external_account_id") @db.VarChar(128)
+  displayName       String                 @map("display_name") @db.VarChar(128)
+  baseCurrency      String                 @map("base_currency") @db.VarChar(12)
+  supportByAsset    Json                   @map("support_by_asset")
+  isEnabled         Boolean                @default(false) @map("is_enabled")
+  createdAt         DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+  grants            QuantOperatorGrant[]
+  liveSessions      QuantLiveSession[]
+  orders            QuantOrder[]
+  fills             QuantFill[]
+  positions         QuantPosition[]
+  strategies        QuantStrategy[]
+  deployments       QuantDeployment[]
+  riskPolicies      QuantRiskPolicyVersion[]
+
+  @@unique([provider, externalAccountId])
+  @@map("quant_broker_accounts")
+}
+
+model QuantOperatorGrant {
+  id               String             @id @default(uuid()) @db.Uuid
+  accountId        String             @map("account_id") @db.Uuid
+  operatorId       String             @map("operator_id") @db.Uuid
+  scopes           String[]           @default([])
+  deviceBoundOnly  Boolean            @default(true) @map("device_bound_only")
+  revokedAt        DateTime?          @map("revoked_at") @db.Timestamptz(6)
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  account          QuantBrokerAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, operatorId])
+  @@index([operatorId, revokedAt])
+  @@map("quant_operator_grants")
+}
+
+model QuantWatchlist {
+  id         String               @id @default(uuid()) @db.Uuid
+  operatorId String               @map("operator_id") @db.Uuid
+  name       String               @db.VarChar(80)
+  sortOrder  Int                  @default(0) @map("sort_order")
+  createdAt  DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  items      QuantWatchlistItem[]
+
+  @@unique([operatorId, name])
+  @@map("quant_watchlists")
+}
+
+model QuantWatchlistItem {
+  id           String          @id @default(uuid()) @db.Uuid
+  watchlistId  String          @map("watchlist_id") @db.Uuid
+  instrumentId String          @map("instrument_id") @db.Uuid
+  sortOrder    Int             @default(0) @map("sort_order")
+  createdAt    DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  watchlist    QuantWatchlist  @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  instrument   QuantInstrument @relation(fields: [instrumentId], references: [id], onDelete: Cascade)
+
+  @@unique([watchlistId, instrumentId])
+  @@index([watchlistId, sortOrder])
+  @@map("quant_watchlist_items")
+}
+
+model QuantStrategy {
+  id              String                    @id @default(uuid()) @db.Uuid
+  accountId       String                    @map("account_id") @db.Uuid
+  templateKey     String                    @map("template_key") @db.VarChar(64)
+  name            String                    @db.VarChar(120)
+  lifecycle       QuantStrategyLifecycle    @default(draft)
+  currentVersionId String?                  @unique @map("current_version_id") @db.Uuid
+  archivedAt      DateTime?                 @map("archived_at") @db.Timestamptz(6)
+  createdAt       DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  account         QuantBrokerAccount        @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  currentVersion  QuantStrategyVersion?     @relation("CurrentQuantStrategyVersion", fields: [currentVersionId], references: [id], onDelete: SetNull)
+  versions        QuantStrategyVersion[]    @relation("QuantStrategyVersions")
+  deployments     QuantDeployment[]
+
+  @@index([accountId, lifecycle])
+  @@map("quant_strategies")
+}
+
+model QuantStrategyVersion {
+  id              String                 @id @default(uuid()) @db.Uuid
+  strategyId      String                 @map("strategy_id") @db.Uuid
+  version         Int
+  versionHash     String                 @map("version_hash") @db.VarChar(128)
+  schemaVersion   Int                    @default(1) @map("schema_version")
+  parameters      Json
+  riskSnapshot    Json                   @map("risk_snapshot")
+  createdBy       String                 @map("created_by") @db.Uuid
+  createdAt       DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  strategy        QuantStrategy          @relation("QuantStrategyVersions", fields: [strategyId], references: [id], onDelete: Cascade)
+  currentFor      QuantStrategy?         @relation("CurrentQuantStrategyVersion")
+  backtests       QuantBacktestRun[]
+  deployments     QuantDeployment[]
+
+  @@unique([strategyId, version])
+  @@unique([strategyId, versionHash])
+  @@map("quant_strategy_versions")
+}
+
+model QuantBacktestRun {
+  id                String               @id @default(uuid()) @db.Uuid
+  strategyVersionId String               @map("strategy_version_id") @db.Uuid
+  status            String               @default("queued") @db.VarChar(24)
+  datasetHash       String               @map("dataset_hash") @db.VarChar(128)
+  seed              BigInt
+  setup             Json
+  progressPercent   Decimal              @default(0) @map("progress_percent") @db.Decimal(5, 2)
+  result            Json?
+  error             Json?
+  startedAt         DateTime?            @map("started_at") @db.Timestamptz(6)
+  finishedAt        DateTime?            @map("finished_at") @db.Timestamptz(6)
+  createdAt         DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  strategyVersion   QuantStrategyVersion @relation(fields: [strategyVersionId], references: [id], onDelete: Restrict)
+
+  @@index([status, createdAt])
+  @@map("quant_backtest_runs")
+}
+
+model QuantDeployment {
+  id                String               @id @default(uuid()) @db.Uuid
+  accountId         String               @map("account_id") @db.Uuid
+  strategyId        String               @map("strategy_id") @db.Uuid
+  strategyVersionId String               @map("strategy_version_id") @db.Uuid
+  mode              QuantTradingMode
+  status            String               @default("pending") @db.VarChar(24)
+  desiredState      String               @default("running") @map("desired_state") @db.VarChar(24)
+  actualState       String               @default("pending") @map("actual_state") @db.VarChar(24)
+  runtimeIdentity   String?              @map("runtime_identity") @db.VarChar(128)
+  version           Int                  @default(1)
+  lastHeartbeatAt   DateTime?            @map("last_heartbeat_at") @db.Timestamptz(6)
+  createdBy         String               @map("created_by") @db.Uuid
+  createdAt         DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  account           QuantBrokerAccount   @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  strategy          QuantStrategy        @relation(fields: [strategyId], references: [id], onDelete: Restrict)
+  strategyVersion   QuantStrategyVersion @relation(fields: [strategyVersionId], references: [id], onDelete: Restrict)
+
+  @@index([accountId, mode, status])
+  @@map("quant_deployments")
+}
+
+model QuantOrder {
+  id                   String              @id @default(uuid()) @db.Uuid
+  accountId            String              @map("account_id") @db.Uuid
+  instrumentId         String              @map("instrument_id") @db.Uuid
+  deploymentId         String?             @map("deployment_id") @db.Uuid
+  clientOrderId        String              @unique @map("client_order_id") @db.VarChar(128)
+  brokerOrderId        String?             @map("broker_order_id") @db.VarChar(128)
+  idempotencyKey       String              @map("idempotency_key") @db.VarChar(128)
+  mode                 QuantTradingMode
+  side                 String              @db.VarChar(8)
+  orderType            QuantOrderType      @map("order_type")
+  timeInForce          String              @map("time_in_force") @db.VarChar(16)
+  quantity             Decimal             @db.Decimal(38, 18)
+  limitPrice           Decimal?            @map("limit_price") @db.Decimal(38, 18)
+  stopPrice            Decimal?            @map("stop_price") @db.Decimal(38, 18)
+  trailValue           Decimal?            @map("trail_value") @db.Decimal(38, 18)
+  takeProfitPrice      Decimal?            @map("take_profit_price") @db.Decimal(38, 18)
+  stopLossPrice        Decimal?            @map("stop_loss_price") @db.Decimal(38, 18)
+  status               String              @db.VarChar(32)
+  version              Int                 @default(1)
+  strategyVersionHash  String?             @map("strategy_version_hash") @db.VarChar(128)
+  riskSnapshot         Json                 @map("risk_snapshot")
+  submittedAt          DateTime?            @map("submitted_at") @db.Timestamptz(6)
+  createdAt            DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  account              QuantBrokerAccount   @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  instrument           QuantInstrument      @relation(fields: [instrumentId], references: [id], onDelete: Restrict)
+  fills                QuantFill[]
+
+  @@unique([accountId, idempotencyKey])
+  @@index([accountId, status, createdAt(sort: Desc)])
+  @@index([brokerOrderId])
+  @@map("quant_orders")
+}
+
+model QuantFill {
+  id             String             @id @default(uuid()) @db.Uuid
+  orderId        String             @map("order_id") @db.Uuid
+  accountId      String             @map("account_id") @db.Uuid
+  instrumentId   String             @map("instrument_id") @db.Uuid
+  brokerFillId   String             @map("broker_fill_id") @db.VarChar(128)
+  quantity       Decimal            @db.Decimal(38, 18)
+  price          Decimal            @db.Decimal(38, 18)
+  commission     Decimal            @default(0) @db.Decimal(38, 18)
+  liquidity      String?            @db.VarChar(16)
+  occurredAt     DateTime           @map("occurred_at") @db.Timestamptz(6)
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  order          QuantOrder         @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  account        QuantBrokerAccount @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  instrument     QuantInstrument    @relation(fields: [instrumentId], references: [id], onDelete: Restrict)
+
+  @@unique([accountId, brokerFillId])
+  @@index([accountId, occurredAt(sort: Desc)])
+  @@map("quant_fills")
+}
+
+model QuantPosition {
+  id             String             @id @default(uuid()) @db.Uuid
+  accountId      String             @map("account_id") @db.Uuid
+  instrumentId   String             @map("instrument_id") @db.Uuid
+  mode           QuantTradingMode
+  quantity       Decimal            @db.Decimal(38, 18)
+  averagePrice   Decimal            @map("average_price") @db.Decimal(38, 18)
+  realizedPnl    Decimal            @default(0) @map("realized_pnl") @db.Decimal(38, 18)
+  version        Int                @default(1)
+  reconciledAt   DateTime           @map("reconciled_at") @db.Timestamptz(6)
+  updatedAt      DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  account        QuantBrokerAccount @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  instrument     QuantInstrument    @relation(fields: [instrumentId], references: [id], onDelete: Restrict)
+
+  @@unique([accountId, instrumentId, mode])
+  @@map("quant_positions")
+}
+
+model QuantRiskPolicyVersion {
+  id              String             @id @default(uuid()) @db.Uuid
+  accountId       String             @map("account_id") @db.Uuid
+  version         Int
+  policy          Json
+  policyHash      String             @map("policy_hash") @db.VarChar(128)
+  status          String             @default("draft") @db.VarChar(24)
+  effectiveAt     DateTime?          @map("effective_at") @db.Timestamptz(6)
+  createdBy       String             @map("created_by") @db.Uuid
+  stepUpSessionId String?            @map("step_up_session_id") @db.Uuid
+  createdAt       DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  account         QuantBrokerAccount @relation(fields: [accountId], references: [id], onDelete: Restrict)
+
+  @@unique([accountId, version])
+  @@unique([accountId, policyHash])
+  @@map("quant_risk_policy_versions")
+}
+
+model QuantAlert {
+  id             String    @id @default(uuid()) @db.Uuid
+  accountId      String?   @map("account_id") @db.Uuid
+  severity       String    @db.VarChar(16)
+  type           String    @db.VarChar(64)
+  title          String    @db.VarChar(255)
+  message        String    @db.Text
+  aggregateId    String?   @map("aggregate_id") @db.VarChar(128)
+  payload        Json      @default("{}")
+  acknowledgedBy String?   @map("acknowledged_by") @db.Uuid
+  acknowledgedAt DateTime? @map("acknowledged_at") @db.Timestamptz(6)
+  resolvedAt     DateTime? @map("resolved_at") @db.Timestamptz(6)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([accountId, acknowledgedAt, createdAt(sort: Desc)])
+  @@map("quant_alerts")
+}
+
+model QuantLiveSession {
+  id                  String             @id @default(uuid()) @db.Uuid
+  accountId           String             @map("account_id") @db.Uuid
+  operatorId          String             @map("operator_id") @db.Uuid
+  deviceId            String             @map("device_id") @db.VarChar(128)
+  challengeHash       String             @map("challenge_hash") @db.VarChar(128)
+  sessionTokenHash    String             @unique @map("session_token_hash") @db.VarChar(128)
+  publicKeyThumbprint String             @map("public_key_thumbprint") @db.VarChar(128)
+  expiresAt           DateTime           @map("expires_at") @db.Timestamptz(6)
+  revokedAt           DateTime?          @map("revoked_at") @db.Timestamptz(6)
+  createdAt           DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  account             QuantBrokerAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([operatorId, deviceId, expiresAt])
+  @@map("quant_live_sessions")
+}
+
+model QuantDevice {
+  id                String    @id @default(uuid()) @db.Uuid
+  operatorId        String    @map("operator_id") @db.Uuid
+  deviceIdentifier  String    @map("device_identifier") @db.VarChar(128)
+  displayName       String    @map("display_name") @db.VarChar(128)
+  publicKeyJwk      Json      @map("public_key_jwk")
+  appAttestKeyId    String    @map("app_attest_key_id") @db.VarChar(255)
+  status            String    @default("pending_attestation") @db.VarChar(32)
+  lastAttestedAt    DateTime? @map("last_attested_at") @db.Timestamptz(6)
+  revokedAt         DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([operatorId, deviceIdentifier])
+  @@unique([appAttestKeyId])
+  @@map("quant_devices")
+}
+
+model QuantLiveChallenge {
+  id               String    @id @default(uuid()) @db.Uuid
+  operatorId       String    @map("operator_id") @db.Uuid
+  accountId        String    @map("account_id") @db.Uuid
+  deviceIdentifier String    @map("device_identifier") @db.VarChar(128)
+  challengeHash    String    @map("challenge_hash") @db.VarChar(128)
+  expiresAt        DateTime  @map("expires_at") @db.Timestamptz(6)
+  consumedAt       DateTime? @map("consumed_at") @db.Timestamptz(6)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([operatorId, deviceIdentifier, expiresAt])
+  @@map("quant_live_challenges")
+}
+
+model QuantIdempotencyKey {
+  id             String   @id @default(uuid()) @db.Uuid
+  operatorId     String   @map("operator_id") @db.Uuid
+  key            String   @db.VarChar(128)
+  requestHash    String   @map("request_hash") @db.VarChar(128)
+  statusCode     Int?     @map("status_code")
+  response       Json?
+  lockedUntil    DateTime @map("locked_until") @db.Timestamptz(6)
+  expiresAt      DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([operatorId, key])
+  @@index([expiresAt])
+  @@map("quant_idempotency_keys")
+}
+
+model QuantOutboxEvent {
+  id            String    @id @default(uuid()) @db.Uuid
+  aggregateType String    @map("aggregate_type") @db.VarChar(64)
+  aggregateId   String    @map("aggregate_id") @db.VarChar(128)
+  sequence      BigInt
+  type          String    @db.VarChar(128)
+  schemaVersion Int       @default(1) @map("schema_version")
+  payload       Json
+  occurredAt    DateTime  @map("occurred_at") @db.Timestamptz(6)
+  publishedAt   DateTime? @map("published_at") @db.Timestamptz(6)
+  attempts      Int       @default(0)
+  lastError     String?   @map("last_error") @db.Text
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([aggregateType, aggregateId, sequence])
+  @@index([publishedAt, createdAt])
+  @@map("quant_outbox_events")
+}
+
+model QuantAuditEvent {
+  id            String           @id @default(uuid()) @db.Uuid
+  sequence      BigInt           @unique @default(autoincrement())
+  operatorId    String?          @map("operator_id") @db.Uuid
+  deviceId      String?          @map("device_id") @db.VarChar(128)
+  accountId     String?          @map("account_id") @db.Uuid
+  mode          QuantTradingMode?
+  action        String           @db.VarChar(128)
+  aggregateType String           @map("aggregate_type") @db.VarChar(64)
+  aggregateId   String?          @map("aggregate_id") @db.VarChar(128)
+  correlationId String           @map("correlation_id") @db.VarChar(128)
+  stepUp        Boolean          @default(false) @map("step_up")
+  requestHash   String?          @map("request_hash") @db.VarChar(128)
+  before        Json?
+  after         Json?
+  occurredAt    DateTime         @map("occurred_at") @db.Timestamptz(6)
+  createdAt     DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([accountId, occurredAt(sort: Desc)])
+  @@index([correlationId])
+  @@map("quant_audit_events")
+}

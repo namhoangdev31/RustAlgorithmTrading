@@ -27,6 +27,7 @@ enum AppRoute: Hashable, Identifiable {
     case browser(initialURL: String?, privateMode: Bool)
     case browserSearch(isPrivate: Bool)
     case browserTabSwitcher
+    case quantAnt(QuantAntRoute)
     
     // Batch 1: System & Lifecycle
     case globalError
@@ -71,6 +72,7 @@ enum AppRoute: Hashable, Identifiable {
         case .browser(let url, let privateMode): return "browser-\(url ?? "")-\(privateMode)"
         case .browserSearch(let privateMode): return "browserSearch-\(privateMode)"
         case .browserTabSwitcher: return "browserTabSwitcher"
+        case .quantAnt(let route): return "quantAnt-\(route.id)"
         case .writeReview(let id): return "writeReview-\(id)"
         case .login: return "login"
         case .home: return "home"
@@ -191,6 +193,9 @@ enum AppRoute: Hashable, Identifiable {
             hasher.combine(privateMode)
         case .browserTabSwitcher:
             hasher.combine(999)
+        case .quantAnt(let route):
+            hasher.combine(1000)
+            hasher.combine(route)
         }
     }
 
@@ -255,6 +260,8 @@ enum AppRoute: Hashable, Identifiable {
             return pa == pb
         case (.browserTabSwitcher, .browserTabSwitcher):
             return true
+        case (.quantAnt(let a), .quantAnt(let b)):
+            return a == b
         default: return false
         }
     }

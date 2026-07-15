@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "policies": [
+    { "key": "market_feed_lag", "warning_after_seconds": 2, "critical_after_seconds": 5 },
+    { "key": "worker_heartbeat", "warning_after_seconds": 10, "critical_after_seconds": 30 },
+    { "key": "broker_divergence", "warning_count": 1, "critical_count": 1 },
+    { "key": "nats_consumer_lag", "warning_messages": 100, "critical_messages": 1000 },
+    { "key": "database_health", "warning_after_seconds": 5, "critical_after_seconds": 15 }
+  ],
+  "critical_action": "disable_live_revoke_sessions_pause_live_strategies",
+  "safety_commands_remain_enabled": ["cancel_order", "close_position"]
+}

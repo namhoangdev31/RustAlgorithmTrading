@@ -9,6 +9,10 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>QUANTANT_CONTROL_PLANE_URL</key>
+	<string>$(QUANTANT_CONTROL_PLANE_URL)</string>
+	<key>QUANTANT_WEBSOCKET_URL</key>
+	<string>$(QUANTANT_WEBSOCKET_URL)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Fonts/Roboto-Black.ttf</string>

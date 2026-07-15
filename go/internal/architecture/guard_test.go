@@ -98,7 +98,9 @@ func entryNames(entries []os.DirEntry) []string {
 
 func rawSQLAllowed(path string) bool {
 	path = filepath.ToSlash(path)
-	return strings.Contains(path, "/internal/modules/operations/adapter/questdb/")
+	return strings.Contains(path, "/internal/modules/operations/adapter/questdb/") ||
+		strings.Contains(path, "/internal/modules/quantant/adapter/questdb/") ||
+		strings.Contains(path, "/internal/modules/quantant/adapter/postgres/")
 }
 
 func databaseSQLAllowed(path string) bool {

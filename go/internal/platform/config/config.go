@@ -20,6 +20,7 @@ type Config struct {
 	Edge          Edge
 	Scheduler     Scheduler
 	Events        Events
+	QuantAnt      QuantAnt
 	Observability Observability
 }
 
@@ -102,6 +103,15 @@ type Events struct {
 	MaxAttempts    int
 }
 
+type QuantAnt struct {
+	Enabled             bool
+	LiveEnabled         bool
+	StrategyLiveEnabled bool
+	LiveSessionTTL      time.Duration
+	ExecutionSubject    string
+	CommandStream       string
+}
+
 type Observability struct {
 	ServiceName  string
 	OTLPEndpoint string
@@ -153,6 +163,11 @@ func Load() (*Config, error) {
 			OutboxInterval: v.GetDuration("OUTBOX_POLL_INTERVAL"), OutboxLeaseTTL: v.GetDuration("OUTBOX_LEASE_TTL"),
 			OutboxBatch: v.GetInt("OUTBOX_BATCH_SIZE"), MaxAttempts: v.GetInt("OUTBOX_MAX_ATTEMPTS"),
 		},
+		QuantAnt: QuantAnt{
+			Enabled: v.GetBool("QUANTANT_ENABLED"), LiveEnabled: v.GetBool("QUANTANT_LIVE_ENABLED"),
+			StrategyLiveEnabled: v.GetBool("QUANTANT_STRATEGY_LIVE_ENABLED"), LiveSessionTTL: v.GetDuration("QUANTANT_LIVE_SESSION_TTL"),
+			ExecutionSubject: v.GetString("QUANTANT_EXECUTION_SUBJECT"), CommandStream: v.GetString("QUANTANT_COMMAND_STREAM"),
+		},
 		Observability: Observability{
 			ServiceName: v.GetString("OTEL_SERVICE_NAME"), OTLPEndpoint: v.GetString("OTEL_EXPORTER_OTLP_ENDPOINT"),
 			Tracing: v.GetBool("TRACING_ENABLED"), Metrics: v.GetBool("METRICS_ENABLED"),
@@ -192,6 +207,17 @@ func (c *Config) Validate() error {
 func (c *Config) ValidateQuant() error {
 	if strings.TrimSpace(c.Storage.DatabaseURL) == "" {
 		return errors.New("DATABASE_URL is required")
+	}
+	if c.QuantAnt.Enabled {
+		if !c.Storefront.Enabled {
+			return errors.New("QUANTANT_ENABLED requires STOREFRONT_API_ENABLED for JWT identity")
+		}
+		if strings.TrimSpace(c.Events.NATSURL) == "" {
+			return errors.New("QUANTANT_ENABLED requires NATS_URL")
+		}
+		if c.QuantAnt.LiveEnabled && c.QuantAnt.LiveSessionTTL > 5*time.Minute {
+			return errors.New("QUANTANT_LIVE_SESSION_TTL must not exceed 5m")
+		}
 	}
 	if strings.TrimSpace(c.Storage.QuestDBURL) == "" {
 		return errors.New("QUESTDB_PG_URL is required")
@@ -266,6 +292,8 @@ func setDefaults(v *viper.Viper) {
 		"LEPOS_ARWEAVE_GATEWAY_URL": "https://arweave.net", "NATS_SUBJECT_PREFIX": "control-gateway", "NATS_STREAM_NAME": "CONTROL_GATEWAY_EVENTS",
 		"OUTBOX_POLL_INTERVAL": "2s", "OUTBOX_LEASE_TTL": "30s", "OUTBOX_BATCH_SIZE": 100,
 		"OUTBOX_MAX_ATTEMPTS": 10, "OTEL_SERVICE_NAME": "control-gateway", "TRACING_ENABLED": true, "METRICS_ENABLED": true,
+		"QUANTANT_ENABLED": false, "QUANTANT_LIVE_ENABLED": false, "QUANTANT_STRATEGY_LIVE_ENABLED": false,
+		"QUANTANT_LIVE_SESSION_TTL": "5m", "QUANTANT_EXECUTION_SUBJECT": "quantant.execution.commands", "QUANTANT_COMMAND_STREAM": "QUANTANT_COMMANDS",
 	}
 	for key, value := range defaults {
 		v.SetDefault(key, value)

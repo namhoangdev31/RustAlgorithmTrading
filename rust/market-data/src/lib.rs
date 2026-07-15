@@ -1,15 +1,20 @@
 pub mod aggregation;
 pub mod orderbook;
+pub mod provider;
 pub mod publisher;
 pub mod websocket;
 
 pub use aggregation::{BarAggregator, TimeWindow};
 pub use orderbook::OrderBookManager;
+pub use provider::{
+    AlpacaProvider, AssetClass, MarketDataEvent, MarketDataProvider, MassiveProvider,
+};
 pub use publisher::MarketDataPublisher;
 pub use websocket::WebSocketClient;
 
 use common::messaging::Message;
 use common::{Result, TradingError};
+use std::sync::Arc;
 use tracing::info;
 
 /// Main market data service
@@ -40,7 +45,9 @@ impl MarketDataService {
             )
         } else {
             let key = std::env::var("ALPACA_API_KEY").map_err(|_| {
-                TradingError::Configuration("ALPACA_API_KEY environment variable not set".to_string())
+                TradingError::Configuration(
+                    "ALPACA_API_KEY environment variable not set".to_string(),
+                )
             })?;
             let secret = std::env::var("ALPACA_SECRET_KEY").map_err(|_| {
                 TradingError::Configuration(
@@ -50,8 +57,43 @@ impl MarketDataService {
             (key, secret)
         };
 
-        // Create WebSocket client with proper parameters
-        let ws_client = WebSocketClient::new(api_key, api_secret, config.symbols.clone())?;
+        let ws_client = match std::env::var("QUANTANT_MARKET_DATA_PROVIDER")
+            .unwrap_or_else(|_| "alpaca".to_string())
+            .as_str()
+        {
+            "massive" => {
+                let massive_key = std::env::var("MASSIVE_API_KEY").map_err(|_| {
+                    TradingError::Configuration(
+                        "MASSIVE_API_KEY environment variable not set".to_string(),
+                    )
+                })?;
+                let asset_class = match std::env::var("QUANTANT_ASSET_CLASS")
+                    .unwrap_or_else(|_| "equity".to_string())
+                    .as_str()
+                {
+                    "equity" => AssetClass::Equity,
+                    "crypto" => AssetClass::Crypto,
+                    "forex" => AssetClass::Forex,
+                    "index" => AssetClass::Index,
+                    "commodity_future" => AssetClass::CommodityFuture,
+                    value => {
+                        return Err(TradingError::Configuration(format!(
+                            "Unsupported QUANTANT_ASSET_CLASS: {value}"
+                        )))
+                    }
+                };
+                WebSocketClient::new_with_provider(
+                    Arc::new(MassiveProvider::new(massive_key, asset_class)?),
+                    config.symbols.clone(),
+                )?
+            }
+            "alpaca" => WebSocketClient::new(api_key, api_secret, config.symbols.clone())?,
+            value => {
+                return Err(TradingError::Configuration(format!(
+                    "Unsupported QUANTANT_MARKET_DATA_PROVIDER: {value}"
+                )))
+            }
+        };
 
         let orderbook_manager = OrderBookManager::new();
 
@@ -130,7 +172,11 @@ impl MarketDataService {
                             symbol: common::types::Symbol(symbol.clone()),
                             price: common::types::Price(price),
                             quantity: common::types::Quantity(size),
-                            side: if rng.gen::<bool>() { common::types::Side::Bid } else { common::types::Side::Ask },
+                            side: if rng.gen::<bool>() {
+                                common::types::Side::Bid
+                            } else {
+                                common::types::Side::Ask
+                            },
                             timestamp,
                             trade_id: trade_id_counter.to_string(),
                         };
@@ -178,7 +224,7 @@ impl MarketDataService {
             }
         }
 
-        let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<websocket::AlpacaMessage>();
+        let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel::<MarketDataEvent>();
         let ws_client = self.ws_client.clone();
 
         tokio::spawn(async move {
@@ -195,7 +241,7 @@ impl MarketDataService {
 
         while let Some(msg) = rx.recv().await {
             match msg {
-                websocket::AlpacaMessage::Trade {
+                MarketDataEvent::Trade {
                     symbol,
                     price,
                     size,
@@ -228,7 +274,7 @@ impl MarketDataService {
                         }
                     }
                 }
-                websocket::AlpacaMessage::Quote {
+                MarketDataEvent::Quote {
                     symbol,
                     bid_price,
                     bid_size,
@@ -254,7 +300,7 @@ impl MarketDataService {
                         }
                     }
                 }
-                websocket::AlpacaMessage::Bar {
+                MarketDataEvent::Bar {
                     symbol,
                     open,
                     high,
@@ -280,7 +326,6 @@ impl MarketDataService {
                         tracing::error!("Failed to publish bar: {:?}", e);
                     }
                 }
-                websocket::AlpacaMessage::Unknown => {}
             }
         }
 

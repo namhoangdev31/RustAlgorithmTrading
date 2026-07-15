@@ -1,4 +1,6 @@
 pub mod broker;
+pub mod command;
+pub mod nats_consumer;
 pub mod reconciliation;
 pub mod retry;
 /// Execution Engine Component
@@ -85,6 +87,15 @@ impl ExecutionEngineService {
     /// This is a production safety rule: cancels must never be blocked.
     pub async fn cancel_order(&self, order_id: &str) -> Result<common::types::BrokerOrderStatus> {
         self.router.cancel_order(order_id).await
+    }
+
+    /// Close a full or partial position. This intentionally bypasses entry risk gates.
+    pub async fn close_position(
+        &self,
+        symbol: &str,
+        quantity: Option<common::types::Quantity>,
+    ) -> Result<common::types::BrokerOrderStatus> {
+        self.router.close_position(symbol, quantity).await
     }
 
     /// Expose risk manager for position updates, CB management, and reconciliation.

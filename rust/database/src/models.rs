@@ -40,6 +40,41 @@ pub struct CandleRecord {
     pub trade_count: Option<i32>,
 }
 
+/// Normalized QuantAnt quote written to the read-optimized QuestDB cache.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct QuantQuoteRecord {
+    pub timestamp: DateTime<Utc>,
+    pub provider: String,
+    pub asset_class: String,
+    pub symbol: String,
+    pub bid: Option<f64>,
+    pub ask: Option<f64>,
+    pub bid_size: Option<f64>,
+    pub ask_size: Option<f64>,
+    pub last: Option<f64>,
+    pub source_sequence: i64,
+    pub is_snapshot: bool,
+}
+
+/// Normalized QuantAnt candle. Provider timestamps are converted to UTC upstream.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct QuantCandleRecord {
+    pub timestamp: DateTime<Utc>,
+    pub provider: String,
+    pub asset_class: String,
+    pub symbol: String,
+    pub interval: String,
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+    pub vwap: Option<f64>,
+    pub trade_count: Option<i64>,
+    pub source_sequence: i64,
+    pub is_final: bool,
+}
+
 /// Trade execution record
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TradeRecord {

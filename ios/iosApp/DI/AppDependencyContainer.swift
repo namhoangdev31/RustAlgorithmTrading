@@ -51,6 +51,25 @@ final class AppDependencyContainer: ObservableObject {
     }
     
     static var cachedBrowserViewModel: BrowserViewModel?
+
+    @MainActor private static var cachedQuantAntStore: QuantAntStore?
+
+    @MainActor
+    func makeQuantAntStore() -> QuantAntStore {
+        if let cached = Self.cachedQuantAntStore { return cached }
+        let client = QuantAntAPIClient(
+            baseURL: AppConfig.quantAntBaseURL,
+            tokenStorage: sharedComponent.authTokenStorage
+        )
+        let cache = QuantAntCache(container: QuantAntCache.makeContainer())
+        let webSocket = QuantAntWebSocketClient(
+            url: AppConfig.quantAntWebSocketURL,
+            tokenStorage: sharedComponent.authTokenStorage
+        )
+        let store = QuantAntStore(client: client, cache: cache, webSocket: webSocket)
+        Self.cachedQuantAntStore = store
+        return store
+    }
     
     @MainActor
     func makeBrowserViewModel(initialURL: String?, privateMode: Bool) -> BrowserViewModel {

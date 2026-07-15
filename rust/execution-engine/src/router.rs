@@ -518,6 +518,16 @@ impl OrderRouter {
         self.rate_limiter.until_ready().await;
         self.broker_client.cancel_order(order_id).await
     }
+
+    /// Reducing exposure remains available while kill switches or circuit breakers are open.
+    pub async fn close_position(
+        &self,
+        symbol: &str,
+        quantity: Option<common::types::Quantity>,
+    ) -> Result<common::types::BrokerOrderStatus> {
+        self.rate_limiter.until_ready().await;
+        self.broker_client.close_position(symbol, quantity).await
+    }
 }
 
 #[cfg(test)]

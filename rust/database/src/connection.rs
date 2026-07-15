@@ -200,6 +200,73 @@ impl DatabaseManager {
         Ok(())
     }
 
+    /// Batch-write normalized quotes. One ILP flush is used for the entire batch.
+    pub async fn insert_quant_quotes(&self, records: &[QuantQuoteRecord]) -> Result<()> {
+        if records.is_empty() {
+            return Ok(());
+        }
+        let mut buf = self.new_buffer()?;
+        for record in records {
+            let mut row = buf.table("quant_quotes_v1").map_err(ilp_err)?;
+            row = row.symbol("provider", &record.provider).map_err(ilp_err)?;
+            row = row.symbol("asset_class", &record.asset_class).map_err(ilp_err)?;
+            row = row.symbol("symbol", &record.symbol).map_err(ilp_err)?;
+            if let Some(value) = record.bid {
+                row = row.column_f64("bid", value).map_err(ilp_err)?;
+            }
+            if let Some(value) = record.ask {
+                row = row.column_f64("ask", value).map_err(ilp_err)?;
+            }
+            if let Some(value) = record.bid_size {
+                row = row.column_f64("bid_size", value).map_err(ilp_err)?;
+            }
+            if let Some(value) = record.ask_size {
+                row = row.column_f64("ask_size", value).map_err(ilp_err)?;
+            }
+            if let Some(value) = record.last {
+                row = row.column_f64("last", value).map_err(ilp_err)?;
+            }
+            row = row.column_i64("source_sequence", record.source_sequence).map_err(ilp_err)?;
+            row = row.column_bool("is_snapshot", record.is_snapshot).map_err(ilp_err)?;
+            row.at(TimestampNanos::from_datetime(record.timestamp).map_err(ilp_err)?).map_err(ilp_err)?;
+        }
+        self.flush_buffer(&mut buf)?;
+        metrics::counter!("database_quant_quotes_inserted_total").increment(records.len() as u64);
+        Ok(())
+    }
+
+    /// Batch-write normalized candles to quant_candles_v2.
+    pub async fn insert_quant_candles(&self, records: &[QuantCandleRecord]) -> Result<()> {
+        if records.is_empty() {
+            return Ok(());
+        }
+        let mut buf = self.new_buffer()?;
+        for record in records {
+            let mut row = buf.table("quant_candles_v2").map_err(ilp_err)?;
+            row = row.symbol("provider", &record.provider).map_err(ilp_err)?;
+            row = row.symbol("asset_class", &record.asset_class).map_err(ilp_err)?;
+            row = row.symbol("symbol", &record.symbol).map_err(ilp_err)?;
+            row = row.symbol("interval", &record.interval).map_err(ilp_err)?;
+            row = row.column_f64("open", record.open).map_err(ilp_err)?;
+            row = row.column_f64("high", record.high).map_err(ilp_err)?;
+            row = row.column_f64("low", record.low).map_err(ilp_err)?;
+            row = row.column_f64("close", record.close).map_err(ilp_err)?;
+            row = row.column_f64("volume", record.volume).map_err(ilp_err)?;
+            if let Some(value) = record.vwap {
+                row = row.column_f64("vwap", value).map_err(ilp_err)?;
+            }
+            if let Some(value) = record.trade_count {
+                row = row.column_i64("trade_count", value).map_err(ilp_err)?;
+            }
+            row = row.column_i64("source_sequence", record.source_sequence).map_err(ilp_err)?;
+            row = row.column_bool("is_final", record.is_final).map_err(ilp_err)?;
+            row.at(TimestampNanos::from_datetime(record.timestamp).map_err(ilp_err)?).map_err(ilp_err)?;
+        }
+        self.flush_buffer(&mut buf)?;
+        metrics::counter!("database_quant_candles_inserted_total").increment(records.len() as u64);
+        Ok(())
+    }
+
     /// Insert a trade record (analytics copy — canonical in PostgreSQL).
     pub async fn insert_trade(&self, trade: &TradeRecord) -> Result<()> {
         let mut buf = self.new_buffer()?;

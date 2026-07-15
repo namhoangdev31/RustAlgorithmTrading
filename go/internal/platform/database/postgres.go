@@ -58,6 +58,15 @@ func (p *Postgres) Ent() *entdb.Client {
 	return p.client
 }
 
+// SQL exposes the canonical connection to outbound adapters that use additive
+// schemas before Ent code generation has been promoted.
+func (p *Postgres) SQL() *sql.DB {
+	if p == nil {
+		return nil
+	}
+	return p.db
+}
+
 func (p *Postgres) Client(ctx context.Context) *entdb.Client {
 	if tx, ok := ctx.Value(txKey{}).(*entdb.Tx); ok {
 		return tx.Client()

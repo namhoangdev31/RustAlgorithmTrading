@@ -67,6 +67,8 @@ struct AppCoordinator: View {
             } else {
                 BrowserTabSwitcherView(viewModel: container.makeBrowserViewModel(initialURL: nil, privateMode: false))
             }
+        case .quantAnt(let route):
+            QuantAntDestinationView(route: route, store: container.makeQuantAntStore())
         case .login:
             LoginView(viewModel: container.makeLoginViewModel())
         case .home:

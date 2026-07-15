@@ -11,6 +11,16 @@ use serde::{Deserialize, Serialize};
 pub trait BrokerClient: Send + Sync {
     async fn submit_order(&self, order: &Order) -> Result<BrokerOrderStatus>;
     async fn cancel_order(&self, order_id: &str) -> Result<BrokerOrderStatus>;
+    async fn close_position(
+        &self,
+        symbol: &str,
+        quantity: Option<Quantity>,
+    ) -> Result<BrokerOrderStatus> {
+        let _ = (symbol, quantity);
+        Err(TradingError::Configuration(
+            "required_capability: position.close".to_string(),
+        ))
+    }
     async fn get_order_status(&self, order_id: &str) -> Result<BrokerOrderStatus>;
     async fn list_open_orders(&self) -> Result<Vec<BrokerOrderStatus>>;
     async fn list_positions(&self) -> Result<Vec<BrokerPosition>>;
@@ -85,6 +95,21 @@ impl BrokerClient for SimulatedBrokerClient {
                 error_message: None,
             })
         }
+    }
+
+    async fn close_position(
+        &self,
+        symbol: &str,
+        quantity: Option<Quantity>,
+    ) -> Result<BrokerOrderStatus> {
+        Ok(BrokerOrderStatus {
+            broker_order_id: format!("sim-close-{}", uuid::Uuid::new_v4()),
+            client_order_id: format!("close-{symbol}"),
+            status: OrderStatus::Filled,
+            filled_qty: quantity.unwrap_or(Quantity(0.0)),
+            avg_fill_price: Some(Price(100.0)),
+            error_message: None,
+        })
     }
 
     async fn list_open_orders(&self) -> Result<Vec<BrokerOrderStatus>> {
@@ -295,6 +320,38 @@ impl BrokerClient for AlpacaBrokerClient {
             .await
             .map_err(|e| TradingError::Parse(format!("Response parse error: {}", e)))?;
         Ok(alpaca_resp.to_broker_order_status())
+    }
+
+    async fn close_position(
+        &self,
+        symbol: &str,
+        quantity: Option<Quantity>,
+    ) -> Result<BrokerOrderStatus> {
+        let url = format!("{}/v2/positions/{}", self.api_url, symbol);
+        let mut request = self
+            .http_client
+            .delete(&url)
+            .header("APCA-API-KEY-ID", &self.api_key)
+            .header("APCA-API-SECRET-KEY", &self.api_secret);
+        if let Some(quantity) = quantity {
+            request = request.query(&[("qty", quantity.0.to_string())]);
+        }
+        let response = request
+            .send()
+            .await
+            .map_err(|error| TradingError::Network(format!("Close position failed: {error}")))?;
+        if !response.status().is_success() {
+            let status = response.status();
+            let text = response.text().await.unwrap_or_default();
+            return Err(TradingError::Exchange(format!(
+                "Close position failed: {status} - {text}"
+            )));
+        }
+        response
+            .json::<AlpacaOrderResponse>()
+            .await
+            .map(|value| value.to_broker_order_status())
+            .map_err(|error| TradingError::Parse(format!("Close response parse error: {error}")))
     }
 
     async fn get_order_status(&self, order_id: &str) -> Result<BrokerOrderStatus> {
