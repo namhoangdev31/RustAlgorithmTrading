@@ -13,7 +13,7 @@ WORKDIR /workspace/go
 COPY go/go.mod go/go.sum* ./
 RUN go mod download
 COPY go ./
-RUN CGO_ENABLED=1 GOOS=linux go build -trimpath -ldflags="-s -w" \
+RUN GOGC=50 CGO_ENABLED=1 GOOS=linux go build -p 2 -trimpath -ldflags="-s -w" \
     -o /out/gateway ./cmd/gateway/main.go
 
 FROM debian:bookworm-slim

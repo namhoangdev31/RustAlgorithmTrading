@@ -339,7 +339,7 @@ services:
       - private
     volumes:
       - edge-artifact-data:/var/lib/lepos
-      - ./secrets/firebase-service-account.json:/run/secrets/firebase-service-account.json:ro
+      - ../reactjs-ts-firebase-adminsdk-rfdnk-dfa3ebe25c.json:/run/secrets/firebase-service-account.json:ro
     environment:
       <<: *saas-env
       SERVICE_NAME: gateway
@@ -385,8 +385,8 @@ services:
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:-local-encryption-key-32-bytes-minimum}
       LEPOS_ARTIFACT_PROVIDER: ${LEPOS_ARTIFACT_PROVIDER:-minio}
       LEPOS_ARTIFACT_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-lepoship-artifacts}
-      LEPOS_ARTIFACT_PUBLIC_URL: ${LEPOS_ARTIFACT_PUBLIC_URL:-http://${MINIO_ENDPOINT:-localhost}:${MINIO_PORT:-9000}/lepoship-artifacts}
-      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-http://${MINIO_ENDPOINT:-minio}:${MINIO_PORT:-9000}}
+      LEPOS_ARTIFACT_PUBLIC_URL: ${LEPOS_ARTIFACT_PUBLIC_URL:-${MINIO_PROTOCOL:-http}://${MINIO_ENDPOINT:-localhost}:${MINIO_PORT:-9000}/lepoship-artifacts}
+      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-${MINIO_PROTOCOL:-http}://${MINIO_ENDPOINT:-minio}:${MINIO_PORT:-9000}}
       LEPOS_ARTIFACT_REGION: ${LEPOS_ARTIFACT_REGION:-us-east-1}
       LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-${MINIO_ACCESS_KEY:-local_minio}}
       LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-${MINIO_SECRET_KEY:-local-minio-password}}
@@ -394,7 +394,7 @@ services:
       FIREBASE_CREDENTIALS_FILE: ${FIREBASE_CREDENTIALS_FILE:-/run/secrets/firebase-service-account.json}
       GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/run/secrets/firebase-service-account.json}
       FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-reactjs-ts}
-      STOREFRONT_API_ENABLED: ${STOREFRONT_API_ENABLED:-false}
+      STOREFRONT_API_ENABLED: ${STOREFRONT_API_ENABLED:-true}
       STOREFRONT_MOCK_PAYMENTS_ENABLED: ${STOREFRONT_MOCK_PAYMENTS_ENABLED:-false}
       STOREFRONT_JWT_SECRET: ${STOREFRONT_JWT_SECRET:-local-storefront-jwt-secret-at-least-32-bytes}
       STOREFRONT_JWT_ISSUER: ${STOREFRONT_JWT_ISSUER:-control-gateway}
@@ -544,11 +544,11 @@ services:
       ACME_ACCOUNT_EMAIL: ${ACME_ACCOUNT_EMAIL:-}
       ACME_ACCOUNT_KEY: ${ACME_ACCOUNT_KEY:-}
       ACME_DIRECTORY_URL: ${ACME_DIRECTORY_URL:-}
-      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-http://${MINIO_ENDPOINT:-minio}:${MINIO_PORT:-9000}}
+      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-${MINIO_PROTOCOL:-http}://${MINIO_ENDPOINT:-minio}:${MINIO_PORT:-9000}}
       LEPOS_ARTIFACT_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-lepoship-artifacts}
       LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-${MINIO_ACCESS_KEY:-local_minio}}
       LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-${MINIO_SECRET_KEY:-local-minio-password}}
-      LEPOS_ARTIFACT_PUBLIC_BASE_URL: ${LEPOS_ARTIFACT_PUBLIC_BASE_URL:-http://${MINIO_ENDPOINT:-localhost}:${MINIO_PORT:-9000}/lepoship-artifacts}
+      LEPOS_ARTIFACT_PUBLIC_BASE_URL: ${LEPOS_ARTIFACT_PUBLIC_BASE_URL:-${MINIO_PROTOCOL:-http}://${MINIO_ENDPOINT:-localhost}:${MINIO_PORT:-9000}/lepoship-artifacts}
       LEPOS_ARTIFACT_PROVIDER: ${LEPOS_ARTIFACT_PROVIDER:-minio}
       LEPOS_ARTIFACT_REGION: ${LEPOS_ARTIFACT_REGION:-us-east-1}
       LEPOS_ARTIFACT_FORCE_PATH_STYLE: ${LEPOS_ARTIFACT_FORCE_PATH_STYLE:-true}
