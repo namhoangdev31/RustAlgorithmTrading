@@ -38,11 +38,42 @@ class ApiService {
         }
         
         guard (200...299).contains(httpResponse.statusCode) else {
-            throw AppError.serverError(code: httpResponse.statusCode, message: String(data: data, encoding: .utf8))
+            throw AppError.serverError(
+                code: httpResponse.statusCode,
+                message: errorMessage(from: data, response: httpResponse)
+            )
         }
         
         return try decoder.decode(T.self, from: data)
     }
+
+    private func errorMessage(from data: Data, response: HTTPURLResponse) -> String {
+        if let apiError = try? decoder.decode(APIErrorEnvelope.self, from: data),
+           let message = apiError.error?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !message.isEmpty {
+            return message
+        }
+
+        if response.statusCode == 502 || response.statusCode == 503 || response.statusCode == 504 {
+            return "Service temporarily unavailable. Please try again in a moment."
+        }
+
+        guard let raw = String(data: data, encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty else {
+            return HTTPURLResponse.localizedString(forStatusCode: response.statusCode).capitalized
+        }
+
+        if raw.contains("<html") || raw.contains("<body") || raw.contains("<!DOCTYPE") {
+            return "Server returned an unexpected response. Please try again later."
+        }
+
+        return raw
+    }
+}
+
+private struct APIErrorEnvelope: Decodable {
+    let error: String?
 }
 
 // MARK: - Token Storage (replaces KMP TokenStorage)
