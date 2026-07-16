@@ -7,6 +7,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	edgeapp "trading/control-gateway/internal/app/edge"
+	leposhipapp "trading/control-gateway/internal/app/lepoship"
 	otaapp "trading/control-gateway/internal/app/ota"
 	quantapp "trading/control-gateway/internal/app/quant"
 	"trading/control-gateway/internal/platform/config"
@@ -21,6 +22,15 @@ type App struct{ runners []Runner }
 func Build(ctx context.Context, cfg *config.Config) (*App, error) {
 	runners := make([]Runner, 0, 4)
 	var edge *edgeapp.App
+	workerRole := cfg.RunMode == "lepoship-worker" || cfg.RunMode == "both" || cfg.RunMode == "control-plane"
+	workerConfigured := cfg.Storage.RedisURL != "" && cfg.Storefront.ArtifactEndpoint != "" && cfg.Storefront.ArtifactBucket != "" && cfg.Storefront.ArtifactAccessKeyID != "" && cfg.Storefront.ArtifactSecretKey != ""
+	if workerRole && workerConfigured {
+		worker, err := leposhipapp.Build(ctx, cfg)
+		if err != nil {
+			return nil, err
+		}
+		runners = append(runners, worker)
+	}
 	if cfg.RunMode == "both" || cfg.RunMode == "edge-gateway" {
 		app, err := edgeapp.Build(cfg)
 		if err != nil {

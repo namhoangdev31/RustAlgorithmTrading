@@ -22,6 +22,7 @@ import (
 	"trading/control-gateway/internal/data/ent/bundles"
 	"trading/control-gateway/internal/data/ent/predicate"
 	"trading/control-gateway/internal/data/ent/schema"
+	"trading/control-gateway/internal/data/ent/verificationruns"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -251,6 +252,26 @@ func (_u *BundleReleasesUpdate) SetNillableActivatedAt(v *time.Time) *BundleRele
 // ClearActivatedAt clears the value of the "activatedAt" field.
 func (_u *BundleReleasesUpdate) ClearActivatedAt() *BundleReleasesUpdate {
 	_u.mutation.ClearActivatedAt()
+	return _u
+}
+
+// SetEligibleVerificationRunId sets the "eligibleVerificationRunId" field.
+func (_u *BundleReleasesUpdate) SetEligibleVerificationRunId(v uuid.UUID) *BundleReleasesUpdate {
+	_u.mutation.SetEligibleVerificationRunId(v)
+	return _u
+}
+
+// SetNillableEligibleVerificationRunId sets the "eligibleVerificationRunId" field if the given value is not nil.
+func (_u *BundleReleasesUpdate) SetNillableEligibleVerificationRunId(v *uuid.UUID) *BundleReleasesUpdate {
+	if v != nil {
+		_u.SetEligibleVerificationRunId(*v)
+	}
+	return _u
+}
+
+// ClearEligibleVerificationRunId clears the value of the "eligibleVerificationRunId" field.
+func (_u *BundleReleasesUpdate) ClearEligibleVerificationRunId() *BundleReleasesUpdate {
+	_u.mutation.ClearEligibleVerificationRunId()
 	return _u
 }
 
@@ -497,6 +518,40 @@ func (_u *BundleReleasesUpdate) AddBundleAbTestExposures(v ...*BundleAbTestExpos
 		ids[i] = v[i].ID
 	}
 	return _u.AddBundleAbTestExposureIDs(ids...)
+}
+
+// AddVerificationRunIDs adds the "verificationRuns" edge to the VerificationRuns entity by IDs.
+func (_u *BundleReleasesUpdate) AddVerificationRunIDs(ids ...uuid.UUID) *BundleReleasesUpdate {
+	_u.mutation.AddVerificationRunIDs(ids...)
+	return _u
+}
+
+// AddVerificationRuns adds the "verificationRuns" edges to the VerificationRuns entity.
+func (_u *BundleReleasesUpdate) AddVerificationRuns(v ...*VerificationRuns) *BundleReleasesUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationRunIDs(ids...)
+}
+
+// SetEligibleVerificationRunID sets the "eligibleVerificationRun" edge to the VerificationRuns entity by ID.
+func (_u *BundleReleasesUpdate) SetEligibleVerificationRunID(id uuid.UUID) *BundleReleasesUpdate {
+	_u.mutation.SetEligibleVerificationRunID(id)
+	return _u
+}
+
+// SetNillableEligibleVerificationRunID sets the "eligibleVerificationRun" edge to the VerificationRuns entity by ID if the given value is not nil.
+func (_u *BundleReleasesUpdate) SetNillableEligibleVerificationRunID(id *uuid.UUID) *BundleReleasesUpdate {
+	if id != nil {
+		_u = _u.SetEligibleVerificationRunID(*id)
+	}
+	return _u
+}
+
+// SetEligibleVerificationRun sets the "eligibleVerificationRun" edge to the VerificationRuns entity.
+func (_u *BundleReleasesUpdate) SetEligibleVerificationRun(v *VerificationRuns) *BundleReleasesUpdate {
+	return _u.SetEligibleVerificationRunID(v.ID)
 }
 
 // Mutation returns the BundleReleasesMutation object of the builder.
@@ -787,6 +842,33 @@ func (_u *BundleReleasesUpdate) RemoveBundleAbTestExposures(v ...*BundleAbTestEx
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveBundleAbTestExposureIDs(ids...)
+}
+
+// ClearVerificationRuns clears all "verificationRuns" edges to the VerificationRuns entity.
+func (_u *BundleReleasesUpdate) ClearVerificationRuns() *BundleReleasesUpdate {
+	_u.mutation.ClearVerificationRuns()
+	return _u
+}
+
+// RemoveVerificationRunIDs removes the "verificationRuns" edge to VerificationRuns entities by IDs.
+func (_u *BundleReleasesUpdate) RemoveVerificationRunIDs(ids ...uuid.UUID) *BundleReleasesUpdate {
+	_u.mutation.RemoveVerificationRunIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationRuns removes "verificationRuns" edges to VerificationRuns entities.
+func (_u *BundleReleasesUpdate) RemoveVerificationRuns(v ...*VerificationRuns) *BundleReleasesUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationRunIDs(ids...)
+}
+
+// ClearEligibleVerificationRun clears the "eligibleVerificationRun" edge to the VerificationRuns entity.
+func (_u *BundleReleasesUpdate) ClearEligibleVerificationRun() *BundleReleasesUpdate {
+	_u.mutation.ClearEligibleVerificationRun()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1550,6 +1632,80 @@ func (_u *BundleReleasesUpdate) sqlSave(ctx context.Context) (_node int, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundlereleases.VerificationRunsTable,
+			Columns: []string{bundlereleases.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationRunsIDs(); len(nodes) > 0 && !_u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundlereleases.VerificationRunsTable,
+			Columns: []string{bundlereleases.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationRunsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundlereleases.VerificationRunsTable,
+			Columns: []string{bundlereleases.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.EligibleVerificationRunCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   bundlereleases.EligibleVerificationRunTable,
+			Columns: []string{bundlereleases.EligibleVerificationRunColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.EligibleVerificationRunIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   bundlereleases.EligibleVerificationRunTable,
+			Columns: []string{bundlereleases.EligibleVerificationRunColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -1780,6 +1936,26 @@ func (_u *BundleReleasesUpdateOne) SetNillableActivatedAt(v *time.Time) *BundleR
 // ClearActivatedAt clears the value of the "activatedAt" field.
 func (_u *BundleReleasesUpdateOne) ClearActivatedAt() *BundleReleasesUpdateOne {
 	_u.mutation.ClearActivatedAt()
+	return _u
+}
+
+// SetEligibleVerificationRunId sets the "eligibleVerificationRunId" field.
+func (_u *BundleReleasesUpdateOne) SetEligibleVerificationRunId(v uuid.UUID) *BundleReleasesUpdateOne {
+	_u.mutation.SetEligibleVerificationRunId(v)
+	return _u
+}
+
+// SetNillableEligibleVerificationRunId sets the "eligibleVerificationRunId" field if the given value is not nil.
+func (_u *BundleReleasesUpdateOne) SetNillableEligibleVerificationRunId(v *uuid.UUID) *BundleReleasesUpdateOne {
+	if v != nil {
+		_u.SetEligibleVerificationRunId(*v)
+	}
+	return _u
+}
+
+// ClearEligibleVerificationRunId clears the value of the "eligibleVerificationRunId" field.
+func (_u *BundleReleasesUpdateOne) ClearEligibleVerificationRunId() *BundleReleasesUpdateOne {
+	_u.mutation.ClearEligibleVerificationRunId()
 	return _u
 }
 
@@ -2026,6 +2202,40 @@ func (_u *BundleReleasesUpdateOne) AddBundleAbTestExposures(v ...*BundleAbTestEx
 		ids[i] = v[i].ID
 	}
 	return _u.AddBundleAbTestExposureIDs(ids...)
+}
+
+// AddVerificationRunIDs adds the "verificationRuns" edge to the VerificationRuns entity by IDs.
+func (_u *BundleReleasesUpdateOne) AddVerificationRunIDs(ids ...uuid.UUID) *BundleReleasesUpdateOne {
+	_u.mutation.AddVerificationRunIDs(ids...)
+	return _u
+}
+
+// AddVerificationRuns adds the "verificationRuns" edges to the VerificationRuns entity.
+func (_u *BundleReleasesUpdateOne) AddVerificationRuns(v ...*VerificationRuns) *BundleReleasesUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationRunIDs(ids...)
+}
+
+// SetEligibleVerificationRunID sets the "eligibleVerificationRun" edge to the VerificationRuns entity by ID.
+func (_u *BundleReleasesUpdateOne) SetEligibleVerificationRunID(id uuid.UUID) *BundleReleasesUpdateOne {
+	_u.mutation.SetEligibleVerificationRunID(id)
+	return _u
+}
+
+// SetNillableEligibleVerificationRunID sets the "eligibleVerificationRun" edge to the VerificationRuns entity by ID if the given value is not nil.
+func (_u *BundleReleasesUpdateOne) SetNillableEligibleVerificationRunID(id *uuid.UUID) *BundleReleasesUpdateOne {
+	if id != nil {
+		_u = _u.SetEligibleVerificationRunID(*id)
+	}
+	return _u
+}
+
+// SetEligibleVerificationRun sets the "eligibleVerificationRun" edge to the VerificationRuns entity.
+func (_u *BundleReleasesUpdateOne) SetEligibleVerificationRun(v *VerificationRuns) *BundleReleasesUpdateOne {
+	return _u.SetEligibleVerificationRunID(v.ID)
 }
 
 // Mutation returns the BundleReleasesMutation object of the builder.
@@ -2316,6 +2526,33 @@ func (_u *BundleReleasesUpdateOne) RemoveBundleAbTestExposures(v ...*BundleAbTes
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveBundleAbTestExposureIDs(ids...)
+}
+
+// ClearVerificationRuns clears all "verificationRuns" edges to the VerificationRuns entity.
+func (_u *BundleReleasesUpdateOne) ClearVerificationRuns() *BundleReleasesUpdateOne {
+	_u.mutation.ClearVerificationRuns()
+	return _u
+}
+
+// RemoveVerificationRunIDs removes the "verificationRuns" edge to VerificationRuns entities by IDs.
+func (_u *BundleReleasesUpdateOne) RemoveVerificationRunIDs(ids ...uuid.UUID) *BundleReleasesUpdateOne {
+	_u.mutation.RemoveVerificationRunIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationRuns removes "verificationRuns" edges to VerificationRuns entities.
+func (_u *BundleReleasesUpdateOne) RemoveVerificationRuns(v ...*VerificationRuns) *BundleReleasesUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationRunIDs(ids...)
+}
+
+// ClearEligibleVerificationRun clears the "eligibleVerificationRun" edge to the VerificationRuns entity.
+func (_u *BundleReleasesUpdateOne) ClearEligibleVerificationRun() *BundleReleasesUpdateOne {
+	_u.mutation.ClearEligibleVerificationRun()
+	return _u
 }
 
 // Where appends a list predicates to the BundleReleasesUpdate builder.
@@ -3102,6 +3339,80 @@ func (_u *BundleReleasesUpdateOne) sqlSave(ctx context.Context) (_node *BundleRe
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(bundleabtestexposures.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundlereleases.VerificationRunsTable,
+			Columns: []string{bundlereleases.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationRunsIDs(); len(nodes) > 0 && !_u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundlereleases.VerificationRunsTable,
+			Columns: []string{bundlereleases.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationRunsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundlereleases.VerificationRunsTable,
+			Columns: []string{bundlereleases.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.EligibleVerificationRunCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   bundlereleases.EligibleVerificationRunTable,
+			Columns: []string{bundlereleases.EligibleVerificationRunColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.EligibleVerificationRunIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   bundlereleases.EligibleVerificationRunTable,
+			Columns: []string{bundlereleases.EligibleVerificationRunColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

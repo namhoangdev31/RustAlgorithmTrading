@@ -1,6 +1,5 @@
-# Next.js SaaS frontend & worker production image. Build from repository root.
+# Next.js SaaS frontend production image. Build from repository root.
 # docker build -f ops/deployment/nextjs.Dockerfile --target runner -t trading/nextjs-frontend:local .
-# docker build -f ops/deployment/nextjs.Dockerfile --target worker -t trading/lepoship-worker:local .
 
 # --- Stage 1: Dependencies ---
 FROM node:22-bookworm-slim AS deps
@@ -46,4 +45,3 @@ COPY --from=builder /workspace/nextjs/prisma.config.ts ./prisma.config.ts
 
 EXPOSE 3000
 CMD ["yarn", "start"]
-

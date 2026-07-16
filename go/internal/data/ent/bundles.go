@@ -31,6 +31,8 @@ type Bundles struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
+	// DeletedAt holds the value of the "deletedAt" field.
+	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	// BundleKey holds the value of the "bundleKey" field.
 	BundleKey *string `json:"bundleKey,omitempty"`
 	// Name holds the value of the "name" field.
@@ -119,8 +121,6 @@ type Bundles struct {
 	ActiveRolloutId *uuid.UUID `json:"activeRolloutId,omitempty"`
 	// ActiveDeliveryMode holds the value of the "activeDeliveryMode" field.
 	ActiveDeliveryMode schema.BundleDeliveryMode `json:"activeDeliveryMode,omitempty"`
-	// DeletedAt holds the value of the "deletedAt" field.
-	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BundlesQuery when eager-loading is set.
 	Edges        BundlesEdges `json:"edges"`
@@ -267,9 +267,11 @@ type BundlesEdges struct {
 	StripeWebhookEvents []*BundleStripeWebhookEvents `json:"stripeWebhookEvents,omitempty"`
 	// SdkTokens holds the value of the sdkTokens edge.
 	SdkTokens []*BundleSDKTokens `json:"sdkTokens,omitempty"`
+	// VerificationRuns holds the value of the verificationRuns edge.
+	VerificationRuns []*VerificationRuns `json:"verificationRuns,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [69]bool
+	loadedTypes [70]bool
 }
 
 // ProjectOrErr returns the Project value or an error if the edge
@@ -917,6 +919,15 @@ func (e BundlesEdges) SdkTokensOrErr() ([]*BundleSDKTokens, error) {
 	return nil, &NotLoadedError{edge: "sdkTokens"}
 }
 
+// VerificationRunsOrErr returns the VerificationRuns value or an error if the edge
+// was not loaded in eager-loading.
+func (e BundlesEdges) VerificationRunsOrErr() ([]*VerificationRuns, error) {
+	if e.loadedTypes[69] {
+		return e.VerificationRuns, nil
+	}
+	return nil, &NotLoadedError{edge: "verificationRuns"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Bundles) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -932,7 +943,7 @@ func (*Bundles) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case bundles.FieldBundleKey, bundles.FieldName, bundles.FieldSlug, bundles.FieldVersion, bundles.FieldIconUrl, bundles.FieldBannerUrl, bundles.FieldShortDescription, bundles.FieldDescription, bundles.FieldPrivacyPolicyUrl, bundles.FieldSupportUrl, bundles.FieldWebsiteUrl, bundles.FieldDeveloperName, bundles.FieldDeveloperEmail, bundles.FieldCategory, bundles.FieldSubCategory, bundles.FieldStoragePath, bundles.FieldBucket, bundles.FieldChecksum, bundles.FieldCurrency, bundles.FieldStatus, bundles.FieldRejectionReason, bundles.FieldChangelog, bundles.FieldReleaseNotes, bundles.FieldAgeRating, bundles.FieldContentAdvisory, bundles.FieldVercelDeploymentId, bundles.FieldVercelDeploymentUrl, bundles.FieldActiveDeliveryMode:
 			values[i] = new(sql.NullString)
-		case bundles.FieldPublishedAt, bundles.FieldExpiresAt, bundles.FieldCreatedAt, bundles.FieldUpdatedAt, bundles.FieldDeletedAt:
+		case bundles.FieldDeletedAt, bundles.FieldPublishedAt, bundles.FieldExpiresAt, bundles.FieldCreatedAt, bundles.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case bundles.FieldID:
 			values[i] = new(uuid.UUID)
@@ -956,6 +967,13 @@ func (_m *Bundles) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
 				_m.ID = *value
+			}
+		case bundles.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deletedAt", values[i])
+			} else if value.Valid {
+				_m.DeletedAt = new(time.Time)
+				*_m.DeletedAt = value.Time
 			}
 		case bundles.FieldBundleKey:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -1251,13 +1269,6 @@ func (_m *Bundles) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field activeDeliveryMode", values[i])
 			} else if value.Valid {
 				_m.ActiveDeliveryMode = schema.BundleDeliveryMode(value.String)
-			}
-		case bundles.FieldDeletedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field deletedAt", values[i])
-			} else if value.Valid {
-				_m.DeletedAt = new(time.Time)
-				*_m.DeletedAt = value.Time
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -1617,6 +1628,11 @@ func (_m *Bundles) QuerySdkTokens() *BundleSDKTokensQuery {
 	return NewBundlesClient(_m.config).QuerySdkTokens(_m)
 }
 
+// QueryVerificationRuns queries the "verificationRuns" edge of the Bundles entity.
+func (_m *Bundles) QueryVerificationRuns() *VerificationRunsQuery {
+	return NewBundlesClient(_m.config).QueryVerificationRuns(_m)
+}
+
 // Update returns a builder for updating this Bundles.
 // Note that you need to call Bundles.Unwrap() before calling this method if this Bundles
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -1640,6 +1656,11 @@ func (_m *Bundles) String() string {
 	var builder strings.Builder
 	builder.WriteString("Bundles(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.DeletedAt; v != nil {
+		builder.WriteString("deletedAt=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
 	if v := _m.BundleKey; v != nil {
 		builder.WriteString("bundleKey=")
 		builder.WriteString(*v)
@@ -1833,11 +1854,6 @@ func (_m *Bundles) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("activeDeliveryMode=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ActiveDeliveryMode))
-	builder.WriteString(", ")
-	if v := _m.DeletedAt; v != nil {
-		builder.WriteString("deletedAt=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
 	builder.WriteByte(')')
 	return builder.String()
 }

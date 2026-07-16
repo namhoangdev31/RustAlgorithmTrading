@@ -48,6 +48,7 @@ export type BundleReleasesMinAggregateOutputType = {
   submittedAt: Date | null
   approvedAt: Date | null
   activatedAt: Date | null
+  eligibleVerificationRunId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,6 +67,7 @@ export type BundleReleasesMaxAggregateOutputType = {
   submittedAt: Date | null
   approvedAt: Date | null
   activatedAt: Date | null
+  eligibleVerificationRunId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -84,6 +86,7 @@ export type BundleReleasesCountAggregateOutputType = {
   submittedAt: number
   approvedAt: number
   activatedAt: number
+  eligibleVerificationRunId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -112,6 +115,7 @@ export type BundleReleasesMinAggregateInputType = {
   submittedAt?: true
   approvedAt?: true
   activatedAt?: true
+  eligibleVerificationRunId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -130,6 +134,7 @@ export type BundleReleasesMaxAggregateInputType = {
   submittedAt?: true
   approvedAt?: true
   activatedAt?: true
+  eligibleVerificationRunId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -148,6 +153,7 @@ export type BundleReleasesCountAggregateInputType = {
   submittedAt?: true
   approvedAt?: true
   activatedAt?: true
+  eligibleVerificationRunId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -253,6 +259,7 @@ export type BundleReleasesGroupByOutputType = {
   submittedAt: Date | null
   approvedAt: Date | null
   activatedAt: Date | null
+  eligibleVerificationRunId: string | null
   createdAt: Date
   updatedAt: Date
   _count: BundleReleasesCountAggregateOutputType | null
@@ -294,6 +301,7 @@ export type BundleReleasesWhereInput = {
   submittedAt?: Prisma.DateTimeNullableFilter<"BundleReleases"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"BundleReleases"> | Date | string | null
   activatedAt?: Prisma.DateTimeNullableFilter<"BundleReleases"> | Date | string | null
+  eligibleVerificationRunId?: Prisma.UuidNullableFilter<"BundleReleases"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleReleases"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleReleases"> | Date | string
   bundle?: Prisma.XOR<Prisma.BundlesScalarRelationFilter, Prisma.BundlesWhereInput>
@@ -311,6 +319,8 @@ export type BundleReleasesWhereInput = {
   reviewQueue?: Prisma.BundleReviewQueueListRelationFilter
   crashEvents?: Prisma.BundleCrashEventsListRelationFilter
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresListRelationFilter
+  verificationRuns?: Prisma.VerificationRunsListRelationFilter
+  eligibleVerificationRun?: Prisma.XOR<Prisma.VerificationRunsNullableScalarRelationFilter, Prisma.VerificationRunsWhereInput> | null
 }
 
 export type BundleReleasesOrderByWithRelationInput = {
@@ -327,6 +337,7 @@ export type BundleReleasesOrderByWithRelationInput = {
   submittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   activatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  eligibleVerificationRunId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   bundle?: Prisma.BundlesOrderByWithRelationInput
@@ -344,10 +355,13 @@ export type BundleReleasesOrderByWithRelationInput = {
   reviewQueue?: Prisma.BundleReviewQueueOrderByRelationAggregateInput
   crashEvents?: Prisma.BundleCrashEventsOrderByRelationAggregateInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresOrderByRelationAggregateInput
+  verificationRuns?: Prisma.VerificationRunsOrderByRelationAggregateInput
+  eligibleVerificationRun?: Prisma.VerificationRunsOrderByWithRelationInput
 }
 
 export type BundleReleasesWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  eligibleVerificationRunId?: string
   bundleId_buildNumber?: Prisma.BundleReleasesBundleIdBuildNumberCompoundUniqueInput
   bundleId_version_buildNumber?: Prisma.BundleReleasesBundleIdVersionBuildNumberCompoundUniqueInput
   AND?: Prisma.BundleReleasesWhereInput | Prisma.BundleReleasesWhereInput[]
@@ -382,7 +396,9 @@ export type BundleReleasesWhereUniqueInput = Prisma.AtLeast<{
   reviewQueue?: Prisma.BundleReviewQueueListRelationFilter
   crashEvents?: Prisma.BundleCrashEventsListRelationFilter
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresListRelationFilter
-}, "id" | "bundleId_buildNumber" | "bundleId_version_buildNumber">
+  verificationRuns?: Prisma.VerificationRunsListRelationFilter
+  eligibleVerificationRun?: Prisma.XOR<Prisma.VerificationRunsNullableScalarRelationFilter, Prisma.VerificationRunsWhereInput> | null
+}, "id" | "eligibleVerificationRunId" | "bundleId_buildNumber" | "bundleId_version_buildNumber">
 
 export type BundleReleasesOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -398,6 +414,7 @@ export type BundleReleasesOrderByWithAggregationInput = {
   submittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   activatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  eligibleVerificationRunId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BundleReleasesCountOrderByAggregateInput
@@ -424,6 +441,7 @@ export type BundleReleasesScalarWhereWithAggregatesInput = {
   submittedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleReleases"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleReleases"> | Date | string | null
   activatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BundleReleases"> | Date | string | null
+  eligibleVerificationRunId?: Prisma.UuidNullableWithAggregatesFilter<"BundleReleases"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BundleReleases"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BundleReleases"> | Date | string
 }
@@ -457,6 +475,8 @@ export type BundleReleasesCreateInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateInput = {
@@ -473,6 +493,7 @@ export type BundleReleasesUncheckedCreateInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -488,6 +509,7 @@ export type BundleReleasesUncheckedCreateInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesUpdateInput = {
@@ -519,6 +541,8 @@ export type BundleReleasesUpdateInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateInput = {
@@ -535,6 +559,7 @@ export type BundleReleasesUncheckedUpdateInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -550,6 +575,7 @@ export type BundleReleasesUncheckedUpdateInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesCreateManyInput = {
@@ -566,6 +592,7 @@ export type BundleReleasesCreateManyInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -600,6 +627,7 @@ export type BundleReleasesUncheckedUpdateManyInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -644,6 +672,7 @@ export type BundleReleasesCountOrderByAggregateInput = {
   submittedAt?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   activatedAt?: Prisma.SortOrder
+  eligibleVerificationRunId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -666,6 +695,7 @@ export type BundleReleasesMaxOrderByAggregateInput = {
   submittedAt?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   activatedAt?: Prisma.SortOrder
+  eligibleVerificationRunId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -684,6 +714,7 @@ export type BundleReleasesMinOrderByAggregateInput = {
   submittedAt?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   activatedAt?: Prisma.SortOrder
+  eligibleVerificationRunId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -979,6 +1010,52 @@ export type BundleReleasesUpdateOneWithoutReviewQueueNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BundleReleasesUpdateToOneWithWhereWithoutReviewQueueInput, Prisma.BundleReleasesUpdateWithoutReviewQueueInput>, Prisma.BundleReleasesUncheckedUpdateWithoutReviewQueueInput>
 }
 
+export type BundleReleasesCreateNestedOneWithoutVerificationRunsInput = {
+  create?: Prisma.XOR<Prisma.BundleReleasesCreateWithoutVerificationRunsInput, Prisma.BundleReleasesUncheckedCreateWithoutVerificationRunsInput>
+  connectOrCreate?: Prisma.BundleReleasesCreateOrConnectWithoutVerificationRunsInput
+  connect?: Prisma.BundleReleasesWhereUniqueInput
+}
+
+export type BundleReleasesCreateNestedOneWithoutEligibleVerificationRunInput = {
+  create?: Prisma.XOR<Prisma.BundleReleasesCreateWithoutEligibleVerificationRunInput, Prisma.BundleReleasesUncheckedCreateWithoutEligibleVerificationRunInput>
+  connectOrCreate?: Prisma.BundleReleasesCreateOrConnectWithoutEligibleVerificationRunInput
+  connect?: Prisma.BundleReleasesWhereUniqueInput
+}
+
+export type BundleReleasesUncheckedCreateNestedOneWithoutEligibleVerificationRunInput = {
+  create?: Prisma.XOR<Prisma.BundleReleasesCreateWithoutEligibleVerificationRunInput, Prisma.BundleReleasesUncheckedCreateWithoutEligibleVerificationRunInput>
+  connectOrCreate?: Prisma.BundleReleasesCreateOrConnectWithoutEligibleVerificationRunInput
+  connect?: Prisma.BundleReleasesWhereUniqueInput
+}
+
+export type BundleReleasesUpdateOneRequiredWithoutVerificationRunsNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReleasesCreateWithoutVerificationRunsInput, Prisma.BundleReleasesUncheckedCreateWithoutVerificationRunsInput>
+  connectOrCreate?: Prisma.BundleReleasesCreateOrConnectWithoutVerificationRunsInput
+  upsert?: Prisma.BundleReleasesUpsertWithoutVerificationRunsInput
+  connect?: Prisma.BundleReleasesWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleReleasesUpdateToOneWithWhereWithoutVerificationRunsInput, Prisma.BundleReleasesUpdateWithoutVerificationRunsInput>, Prisma.BundleReleasesUncheckedUpdateWithoutVerificationRunsInput>
+}
+
+export type BundleReleasesUpdateOneWithoutEligibleVerificationRunNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReleasesCreateWithoutEligibleVerificationRunInput, Prisma.BundleReleasesUncheckedCreateWithoutEligibleVerificationRunInput>
+  connectOrCreate?: Prisma.BundleReleasesCreateOrConnectWithoutEligibleVerificationRunInput
+  upsert?: Prisma.BundleReleasesUpsertWithoutEligibleVerificationRunInput
+  disconnect?: Prisma.BundleReleasesWhereInput | boolean
+  delete?: Prisma.BundleReleasesWhereInput | boolean
+  connect?: Prisma.BundleReleasesWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleReleasesUpdateToOneWithWhereWithoutEligibleVerificationRunInput, Prisma.BundleReleasesUpdateWithoutEligibleVerificationRunInput>, Prisma.BundleReleasesUncheckedUpdateWithoutEligibleVerificationRunInput>
+}
+
+export type BundleReleasesUncheckedUpdateOneWithoutEligibleVerificationRunNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleReleasesCreateWithoutEligibleVerificationRunInput, Prisma.BundleReleasesUncheckedCreateWithoutEligibleVerificationRunInput>
+  connectOrCreate?: Prisma.BundleReleasesCreateOrConnectWithoutEligibleVerificationRunInput
+  upsert?: Prisma.BundleReleasesUpsertWithoutEligibleVerificationRunInput
+  disconnect?: Prisma.BundleReleasesWhereInput | boolean
+  delete?: Prisma.BundleReleasesWhereInput | boolean
+  connect?: Prisma.BundleReleasesWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleReleasesUpdateToOneWithWhereWithoutEligibleVerificationRunInput, Prisma.BundleReleasesUpdateWithoutEligibleVerificationRunInput>, Prisma.BundleReleasesUncheckedUpdateWithoutEligibleVerificationRunInput>
+}
+
 export type BundleReleasesCreateWithoutBundleInput = {
   id: string
   version: string
@@ -1007,6 +1084,8 @@ export type BundleReleasesCreateWithoutBundleInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutBundleInput = {
@@ -1022,6 +1101,7 @@ export type BundleReleasesUncheckedCreateWithoutBundleInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -1037,6 +1117,7 @@ export type BundleReleasesUncheckedCreateWithoutBundleInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutBundleInput = {
@@ -1082,6 +1163,7 @@ export type BundleReleasesScalarWhereInput = {
   submittedAt?: Prisma.DateTimeNullableFilter<"BundleReleases"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"BundleReleases"> | Date | string | null
   activatedAt?: Prisma.DateTimeNullableFilter<"BundleReleases"> | Date | string | null
+  eligibleVerificationRunId?: Prisma.UuidNullableFilter<"BundleReleases"> | string | null
   createdAt?: Prisma.DateTimeFilter<"BundleReleases"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BundleReleases"> | Date | string
 }
@@ -1114,6 +1196,8 @@ export type BundleReleasesCreateWithoutCurrentForChannelsInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutCurrentForChannelsInput = {
@@ -1130,6 +1214,7 @@ export type BundleReleasesUncheckedCreateWithoutCurrentForChannelsInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   artifacts?: Prisma.BundleArtifactsUncheckedCreateNestedManyWithoutReleaseInput
@@ -1144,6 +1229,7 @@ export type BundleReleasesUncheckedCreateWithoutCurrentForChannelsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutCurrentForChannelsInput = {
@@ -1179,6 +1265,8 @@ export type BundleReleasesCreateWithoutChannelInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutChannelInput = {
@@ -1194,6 +1282,7 @@ export type BundleReleasesUncheckedCreateWithoutChannelInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -1209,6 +1298,7 @@ export type BundleReleasesUncheckedCreateWithoutChannelInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutChannelInput = {
@@ -1260,6 +1350,8 @@ export type BundleReleasesUpdateWithoutCurrentForChannelsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutCurrentForChannelsInput = {
@@ -1276,6 +1368,7 @@ export type BundleReleasesUncheckedUpdateWithoutCurrentForChannelsInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   artifacts?: Prisma.BundleArtifactsUncheckedUpdateManyWithoutReleaseNestedInput
@@ -1290,6 +1383,7 @@ export type BundleReleasesUncheckedUpdateWithoutCurrentForChannelsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesUpsertWithWhereUniqueWithoutChannelInput = {
@@ -1336,6 +1430,8 @@ export type BundleReleasesCreateWithoutArtifactsInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutArtifactsInput = {
@@ -1352,6 +1448,7 @@ export type BundleReleasesUncheckedCreateWithoutArtifactsInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -1366,6 +1463,7 @@ export type BundleReleasesUncheckedCreateWithoutArtifactsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutArtifactsInput = {
@@ -1412,6 +1510,8 @@ export type BundleReleasesUpdateWithoutArtifactsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutArtifactsInput = {
@@ -1428,6 +1528,7 @@ export type BundleReleasesUncheckedUpdateWithoutArtifactsInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -1442,6 +1543,7 @@ export type BundleReleasesUncheckedUpdateWithoutArtifactsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesCreateWithoutBuildJobsInput = {
@@ -1472,6 +1574,8 @@ export type BundleReleasesCreateWithoutBuildJobsInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutBuildJobsInput = {
@@ -1488,6 +1592,7 @@ export type BundleReleasesUncheckedCreateWithoutBuildJobsInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -1502,6 +1607,7 @@ export type BundleReleasesUncheckedCreateWithoutBuildJobsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutBuildJobsInput = {
@@ -1548,6 +1654,8 @@ export type BundleReleasesUpdateWithoutBuildJobsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutBuildJobsInput = {
@@ -1564,6 +1672,7 @@ export type BundleReleasesUncheckedUpdateWithoutBuildJobsInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -1578,6 +1687,7 @@ export type BundleReleasesUncheckedUpdateWithoutBuildJobsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesCreateWithoutApprovalsInput = {
@@ -1608,6 +1718,8 @@ export type BundleReleasesCreateWithoutApprovalsInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutApprovalsInput = {
@@ -1624,6 +1736,7 @@ export type BundleReleasesUncheckedCreateWithoutApprovalsInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -1638,6 +1751,7 @@ export type BundleReleasesUncheckedCreateWithoutApprovalsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutApprovalsInput = {
@@ -1684,6 +1798,8 @@ export type BundleReleasesUpdateWithoutApprovalsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutApprovalsInput = {
@@ -1700,6 +1816,7 @@ export type BundleReleasesUncheckedUpdateWithoutApprovalsInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -1714,6 +1831,7 @@ export type BundleReleasesUncheckedUpdateWithoutApprovalsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesCreateWithoutOverridesInput = {
@@ -1744,6 +1862,8 @@ export type BundleReleasesCreateWithoutOverridesInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutOverridesInput = {
@@ -1760,6 +1880,7 @@ export type BundleReleasesUncheckedCreateWithoutOverridesInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -1774,6 +1895,7 @@ export type BundleReleasesUncheckedCreateWithoutOverridesInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutOverridesInput = {
@@ -1820,6 +1942,8 @@ export type BundleReleasesUpdateWithoutOverridesInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutOverridesInput = {
@@ -1836,6 +1960,7 @@ export type BundleReleasesUncheckedUpdateWithoutOverridesInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -1850,6 +1975,7 @@ export type BundleReleasesUncheckedUpdateWithoutOverridesInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesCreateWithoutBaselineRolloutsInput = {
@@ -1880,6 +2006,8 @@ export type BundleReleasesCreateWithoutBaselineRolloutsInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutBaselineRolloutsInput = {
@@ -1896,6 +2024,7 @@ export type BundleReleasesUncheckedCreateWithoutBaselineRolloutsInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -1910,6 +2039,7 @@ export type BundleReleasesUncheckedCreateWithoutBaselineRolloutsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutBaselineRolloutsInput = {
@@ -1945,6 +2075,8 @@ export type BundleReleasesCreateWithoutCandidateRolloutsInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutCandidateRolloutsInput = {
@@ -1961,6 +2093,7 @@ export type BundleReleasesUncheckedCreateWithoutCandidateRolloutsInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -1975,6 +2108,7 @@ export type BundleReleasesUncheckedCreateWithoutCandidateRolloutsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutCandidateRolloutsInput = {
@@ -2021,6 +2155,8 @@ export type BundleReleasesUpdateWithoutBaselineRolloutsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutBaselineRolloutsInput = {
@@ -2037,6 +2173,7 @@ export type BundleReleasesUncheckedUpdateWithoutBaselineRolloutsInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -2051,6 +2188,7 @@ export type BundleReleasesUncheckedUpdateWithoutBaselineRolloutsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesUpsertWithoutCandidateRolloutsInput = {
@@ -2092,6 +2230,8 @@ export type BundleReleasesUpdateWithoutCandidateRolloutsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutCandidateRolloutsInput = {
@@ -2108,6 +2248,7 @@ export type BundleReleasesUncheckedUpdateWithoutCandidateRolloutsInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -2122,6 +2263,7 @@ export type BundleReleasesUncheckedUpdateWithoutCandidateRolloutsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesCreateWithoutRolloutExposuresInput = {
@@ -2152,6 +2294,8 @@ export type BundleReleasesCreateWithoutRolloutExposuresInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutRolloutExposuresInput = {
@@ -2168,6 +2312,7 @@ export type BundleReleasesUncheckedCreateWithoutRolloutExposuresInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -2182,6 +2327,7 @@ export type BundleReleasesUncheckedCreateWithoutRolloutExposuresInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutRolloutExposuresInput = {
@@ -2228,6 +2374,8 @@ export type BundleReleasesUpdateWithoutRolloutExposuresInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutRolloutExposuresInput = {
@@ -2244,6 +2392,7 @@ export type BundleReleasesUncheckedUpdateWithoutRolloutExposuresInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -2258,6 +2407,7 @@ export type BundleReleasesUncheckedUpdateWithoutRolloutExposuresInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesCreateWithoutControlExperimentsInput = {
@@ -2288,6 +2438,8 @@ export type BundleReleasesCreateWithoutControlExperimentsInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutControlExperimentsInput = {
@@ -2304,6 +2456,7 @@ export type BundleReleasesUncheckedCreateWithoutControlExperimentsInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -2318,6 +2471,7 @@ export type BundleReleasesUncheckedCreateWithoutControlExperimentsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutControlExperimentsInput = {
@@ -2353,6 +2507,8 @@ export type BundleReleasesCreateWithoutTreatmentExperimentsInput = {
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutTreatmentExperimentsInput = {
@@ -2369,6 +2525,7 @@ export type BundleReleasesUncheckedCreateWithoutTreatmentExperimentsInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -2383,6 +2540,7 @@ export type BundleReleasesUncheckedCreateWithoutTreatmentExperimentsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutTreatmentExperimentsInput = {
@@ -2429,6 +2587,8 @@ export type BundleReleasesUpdateWithoutControlExperimentsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutControlExperimentsInput = {
@@ -2445,6 +2605,7 @@ export type BundleReleasesUncheckedUpdateWithoutControlExperimentsInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -2459,6 +2620,7 @@ export type BundleReleasesUncheckedUpdateWithoutControlExperimentsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesUpsertWithoutTreatmentExperimentsInput = {
@@ -2500,6 +2662,8 @@ export type BundleReleasesUpdateWithoutTreatmentExperimentsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutTreatmentExperimentsInput = {
@@ -2516,6 +2680,7 @@ export type BundleReleasesUncheckedUpdateWithoutTreatmentExperimentsInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -2530,6 +2695,7 @@ export type BundleReleasesUncheckedUpdateWithoutTreatmentExperimentsInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesCreateWithoutBundleAbTestExposuresInput = {
@@ -2560,6 +2726,8 @@ export type BundleReleasesCreateWithoutBundleAbTestExposuresInput = {
   treatmentExperiments?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentReleaseInput
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutBundleAbTestExposuresInput = {
@@ -2576,6 +2744,7 @@ export type BundleReleasesUncheckedCreateWithoutBundleAbTestExposuresInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -2590,6 +2759,7 @@ export type BundleReleasesUncheckedCreateWithoutBundleAbTestExposuresInput = {
   treatmentExperiments?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentReleaseInput
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutBundleAbTestExposuresInput = {
@@ -2636,6 +2806,8 @@ export type BundleReleasesUpdateWithoutBundleAbTestExposuresInput = {
   treatmentExperiments?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentReleaseNestedInput
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutBundleAbTestExposuresInput = {
@@ -2652,6 +2824,7 @@ export type BundleReleasesUncheckedUpdateWithoutBundleAbTestExposuresInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -2666,6 +2839,7 @@ export type BundleReleasesUncheckedUpdateWithoutBundleAbTestExposuresInput = {
   treatmentExperiments?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentReleaseNestedInput
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesCreateWithoutCrashEventsInput = {
@@ -2696,6 +2870,8 @@ export type BundleReleasesCreateWithoutCrashEventsInput = {
   treatmentExperiments?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentReleaseInput
   reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutCrashEventsInput = {
@@ -2712,6 +2888,7 @@ export type BundleReleasesUncheckedCreateWithoutCrashEventsInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -2726,6 +2903,7 @@ export type BundleReleasesUncheckedCreateWithoutCrashEventsInput = {
   treatmentExperiments?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentReleaseInput
   reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutCrashEventsInput = {
@@ -2772,6 +2950,8 @@ export type BundleReleasesUpdateWithoutCrashEventsInput = {
   treatmentExperiments?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentReleaseNestedInput
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutCrashEventsInput = {
@@ -2788,6 +2968,7 @@ export type BundleReleasesUncheckedUpdateWithoutCrashEventsInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -2802,6 +2983,7 @@ export type BundleReleasesUncheckedUpdateWithoutCrashEventsInput = {
   treatmentExperiments?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentReleaseNestedInput
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesCreateWithoutReviewQueueInput = {
@@ -2832,6 +3014,8 @@ export type BundleReleasesCreateWithoutReviewQueueInput = {
   treatmentExperiments?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentReleaseInput
   crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
 }
 
 export type BundleReleasesUncheckedCreateWithoutReviewQueueInput = {
@@ -2848,6 +3032,7 @@ export type BundleReleasesUncheckedCreateWithoutReviewQueueInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
@@ -2862,6 +3047,7 @@ export type BundleReleasesUncheckedCreateWithoutReviewQueueInput = {
   treatmentExperiments?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentReleaseInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
 }
 
 export type BundleReleasesCreateOrConnectWithoutReviewQueueInput = {
@@ -2908,9 +3094,299 @@ export type BundleReleasesUpdateWithoutReviewQueueInput = {
   treatmentExperiments?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutReviewQueueInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  channelId?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumBundleReleaseStatusFieldUpdateOperationsInput | $Enums.BundleReleaseStatus
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceCommit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
+  artifacts?: Prisma.BundleArtifactsUncheckedUpdateManyWithoutReleaseNestedInput
+  buildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutReleaseNestedInput
+  approvals?: Prisma.BundleReleaseApprovalsUncheckedUpdateManyWithoutReleaseNestedInput
+  overrides?: Prisma.BundleReleaseOverridesV2UncheckedUpdateManyWithoutReleaseNestedInput
+  baselineRollouts?: Prisma.BundleDeliveryRolloutsUncheckedUpdateManyWithoutBaselineReleaseNestedInput
+  candidateRollouts?: Prisma.BundleDeliveryRolloutsUncheckedUpdateManyWithoutCandidateReleaseNestedInput
+  rolloutExposures?: Prisma.BundleDeliveryRolloutExposuresUncheckedUpdateManyWithoutReleaseNestedInput
+  controlExperiments?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlReleaseNestedInput
+  treatmentExperiments?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentReleaseNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
+  bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
+}
+
+export type BundleReleasesCreateWithoutVerificationRunsInput = {
+  id: string
+  version: string
+  buildNumber: number
+  status?: $Enums.BundleReleaseStatus
+  source?: string
+  sourceCommit?: string | null
+  releaseNotes?: string | null
+  createdById?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  activatedAt?: Date | string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutReleasesInput
+  channel: Prisma.BundleChannelsCreateNestedOneWithoutReleasesInput
+  currentForChannels?: Prisma.BundleChannelsCreateNestedManyWithoutCurrentReleaseInput
+  artifacts?: Prisma.BundleArtifactsCreateNestedManyWithoutReleaseInput
+  buildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutReleaseInput
+  approvals?: Prisma.BundleReleaseApprovalsCreateNestedManyWithoutReleaseInput
+  overrides?: Prisma.BundleReleaseOverridesV2CreateNestedManyWithoutReleaseInput
+  baselineRollouts?: Prisma.BundleDeliveryRolloutsCreateNestedManyWithoutBaselineReleaseInput
+  candidateRollouts?: Prisma.BundleDeliveryRolloutsCreateNestedManyWithoutCandidateReleaseInput
+  rolloutExposures?: Prisma.BundleDeliveryRolloutExposuresCreateNestedManyWithoutReleaseInput
+  controlExperiments?: Prisma.BundleAbTestsCreateNestedManyWithoutControlReleaseInput
+  treatmentExperiments?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentReleaseInput
+  reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
+  bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  eligibleVerificationRun?: Prisma.VerificationRunsCreateNestedOneWithoutEligibleForReleaseInput
+}
+
+export type BundleReleasesUncheckedCreateWithoutVerificationRunsInput = {
+  id: string
+  bundleId: string
+  channelId: string
+  version: string
+  buildNumber: number
+  status?: $Enums.BundleReleaseStatus
+  source?: string
+  sourceCommit?: string | null
+  releaseNotes?: string | null
+  createdById?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
+  artifacts?: Prisma.BundleArtifactsUncheckedCreateNestedManyWithoutReleaseInput
+  buildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutReleaseInput
+  approvals?: Prisma.BundleReleaseApprovalsUncheckedCreateNestedManyWithoutReleaseInput
+  overrides?: Prisma.BundleReleaseOverridesV2UncheckedCreateNestedManyWithoutReleaseInput
+  baselineRollouts?: Prisma.BundleDeliveryRolloutsUncheckedCreateNestedManyWithoutBaselineReleaseInput
+  candidateRollouts?: Prisma.BundleDeliveryRolloutsUncheckedCreateNestedManyWithoutCandidateReleaseInput
+  rolloutExposures?: Prisma.BundleDeliveryRolloutExposuresUncheckedCreateNestedManyWithoutReleaseInput
+  controlExperiments?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutControlReleaseInput
+  treatmentExperiments?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentReleaseInput
+  reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
+  bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+}
+
+export type BundleReleasesCreateOrConnectWithoutVerificationRunsInput = {
+  where: Prisma.BundleReleasesWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleReleasesCreateWithoutVerificationRunsInput, Prisma.BundleReleasesUncheckedCreateWithoutVerificationRunsInput>
+}
+
+export type BundleReleasesCreateWithoutEligibleVerificationRunInput = {
+  id: string
+  version: string
+  buildNumber: number
+  status?: $Enums.BundleReleaseStatus
+  source?: string
+  sourceCommit?: string | null
+  releaseNotes?: string | null
+  createdById?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  activatedAt?: Date | string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  bundle: Prisma.BundlesCreateNestedOneWithoutReleasesInput
+  channel: Prisma.BundleChannelsCreateNestedOneWithoutReleasesInput
+  currentForChannels?: Prisma.BundleChannelsCreateNestedManyWithoutCurrentReleaseInput
+  artifacts?: Prisma.BundleArtifactsCreateNestedManyWithoutReleaseInput
+  buildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutReleaseInput
+  approvals?: Prisma.BundleReleaseApprovalsCreateNestedManyWithoutReleaseInput
+  overrides?: Prisma.BundleReleaseOverridesV2CreateNestedManyWithoutReleaseInput
+  baselineRollouts?: Prisma.BundleDeliveryRolloutsCreateNestedManyWithoutBaselineReleaseInput
+  candidateRollouts?: Prisma.BundleDeliveryRolloutsCreateNestedManyWithoutCandidateReleaseInput
+  rolloutExposures?: Prisma.BundleDeliveryRolloutExposuresCreateNestedManyWithoutReleaseInput
+  controlExperiments?: Prisma.BundleAbTestsCreateNestedManyWithoutControlReleaseInput
+  treatmentExperiments?: Prisma.BundleAbTestsCreateNestedManyWithoutTreatmentReleaseInput
+  reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutReleaseInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutReleaseInput
+  bundleAbTestExposures?: Prisma.BundleAbTestExposuresCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutReleaseInput
+}
+
+export type BundleReleasesUncheckedCreateWithoutEligibleVerificationRunInput = {
+  id: string
+  bundleId: string
+  channelId: string
+  version: string
+  buildNumber: number
+  status?: $Enums.BundleReleaseStatus
+  source?: string
+  sourceCommit?: string | null
+  releaseNotes?: string | null
+  createdById?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  activatedAt?: Date | string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  currentForChannels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutCurrentReleaseInput
+  artifacts?: Prisma.BundleArtifactsUncheckedCreateNestedManyWithoutReleaseInput
+  buildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutReleaseInput
+  approvals?: Prisma.BundleReleaseApprovalsUncheckedCreateNestedManyWithoutReleaseInput
+  overrides?: Prisma.BundleReleaseOverridesV2UncheckedCreateNestedManyWithoutReleaseInput
+  baselineRollouts?: Prisma.BundleDeliveryRolloutsUncheckedCreateNestedManyWithoutBaselineReleaseInput
+  candidateRollouts?: Prisma.BundleDeliveryRolloutsUncheckedCreateNestedManyWithoutCandidateReleaseInput
+  rolloutExposures?: Prisma.BundleDeliveryRolloutExposuresUncheckedCreateNestedManyWithoutReleaseInput
+  controlExperiments?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutControlReleaseInput
+  treatmentExperiments?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutTreatmentReleaseInput
+  reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutReleaseInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutReleaseInput
+  bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedCreateNestedManyWithoutAssignedReleaseInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutReleaseInput
+}
+
+export type BundleReleasesCreateOrConnectWithoutEligibleVerificationRunInput = {
+  where: Prisma.BundleReleasesWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleReleasesCreateWithoutEligibleVerificationRunInput, Prisma.BundleReleasesUncheckedCreateWithoutEligibleVerificationRunInput>
+}
+
+export type BundleReleasesUpsertWithoutVerificationRunsInput = {
+  update: Prisma.XOR<Prisma.BundleReleasesUpdateWithoutVerificationRunsInput, Prisma.BundleReleasesUncheckedUpdateWithoutVerificationRunsInput>
+  create: Prisma.XOR<Prisma.BundleReleasesCreateWithoutVerificationRunsInput, Prisma.BundleReleasesUncheckedCreateWithoutVerificationRunsInput>
+  where?: Prisma.BundleReleasesWhereInput
+}
+
+export type BundleReleasesUpdateToOneWithWhereWithoutVerificationRunsInput = {
+  where?: Prisma.BundleReleasesWhereInput
+  data: Prisma.XOR<Prisma.BundleReleasesUpdateWithoutVerificationRunsInput, Prisma.BundleReleasesUncheckedUpdateWithoutVerificationRunsInput>
+}
+
+export type BundleReleasesUpdateWithoutVerificationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumBundleReleaseStatusFieldUpdateOperationsInput | $Enums.BundleReleaseStatus
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceCommit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutReleasesNestedInput
+  channel?: Prisma.BundleChannelsUpdateOneRequiredWithoutReleasesNestedInput
+  currentForChannels?: Prisma.BundleChannelsUpdateManyWithoutCurrentReleaseNestedInput
+  artifacts?: Prisma.BundleArtifactsUpdateManyWithoutReleaseNestedInput
+  buildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutReleaseNestedInput
+  approvals?: Prisma.BundleReleaseApprovalsUpdateManyWithoutReleaseNestedInput
+  overrides?: Prisma.BundleReleaseOverridesV2UpdateManyWithoutReleaseNestedInput
+  baselineRollouts?: Prisma.BundleDeliveryRolloutsUpdateManyWithoutBaselineReleaseNestedInput
+  candidateRollouts?: Prisma.BundleDeliveryRolloutsUpdateManyWithoutCandidateReleaseNestedInput
+  rolloutExposures?: Prisma.BundleDeliveryRolloutExposuresUpdateManyWithoutReleaseNestedInput
+  controlExperiments?: Prisma.BundleAbTestsUpdateManyWithoutControlReleaseNestedInput
+  treatmentExperiments?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentReleaseNestedInput
+  reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
+  bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
+}
+
+export type BundleReleasesUncheckedUpdateWithoutVerificationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleId?: Prisma.StringFieldUpdateOperationsInput | string
+  channelId?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumBundleReleaseStatusFieldUpdateOperationsInput | $Enums.BundleReleaseStatus
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceCommit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
+  artifacts?: Prisma.BundleArtifactsUncheckedUpdateManyWithoutReleaseNestedInput
+  buildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutReleaseNestedInput
+  approvals?: Prisma.BundleReleaseApprovalsUncheckedUpdateManyWithoutReleaseNestedInput
+  overrides?: Prisma.BundleReleaseOverridesV2UncheckedUpdateManyWithoutReleaseNestedInput
+  baselineRollouts?: Prisma.BundleDeliveryRolloutsUncheckedUpdateManyWithoutBaselineReleaseNestedInput
+  candidateRollouts?: Prisma.BundleDeliveryRolloutsUncheckedUpdateManyWithoutCandidateReleaseNestedInput
+  rolloutExposures?: Prisma.BundleDeliveryRolloutExposuresUncheckedUpdateManyWithoutReleaseNestedInput
+  controlExperiments?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlReleaseNestedInput
+  treatmentExperiments?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentReleaseNestedInput
+  reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
+  bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+}
+
+export type BundleReleasesUpsertWithoutEligibleVerificationRunInput = {
+  update: Prisma.XOR<Prisma.BundleReleasesUpdateWithoutEligibleVerificationRunInput, Prisma.BundleReleasesUncheckedUpdateWithoutEligibleVerificationRunInput>
+  create: Prisma.XOR<Prisma.BundleReleasesCreateWithoutEligibleVerificationRunInput, Prisma.BundleReleasesUncheckedCreateWithoutEligibleVerificationRunInput>
+  where?: Prisma.BundleReleasesWhereInput
+}
+
+export type BundleReleasesUpdateToOneWithWhereWithoutEligibleVerificationRunInput = {
+  where?: Prisma.BundleReleasesWhereInput
+  data: Prisma.XOR<Prisma.BundleReleasesUpdateWithoutEligibleVerificationRunInput, Prisma.BundleReleasesUncheckedUpdateWithoutEligibleVerificationRunInput>
+}
+
+export type BundleReleasesUpdateWithoutEligibleVerificationRunInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumBundleReleaseStatusFieldUpdateOperationsInput | $Enums.BundleReleaseStatus
+  source?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceCommit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  bundle?: Prisma.BundlesUpdateOneRequiredWithoutReleasesNestedInput
+  channel?: Prisma.BundleChannelsUpdateOneRequiredWithoutReleasesNestedInput
+  currentForChannels?: Prisma.BundleChannelsUpdateManyWithoutCurrentReleaseNestedInput
+  artifacts?: Prisma.BundleArtifactsUpdateManyWithoutReleaseNestedInput
+  buildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutReleaseNestedInput
+  approvals?: Prisma.BundleReleaseApprovalsUpdateManyWithoutReleaseNestedInput
+  overrides?: Prisma.BundleReleaseOverridesV2UpdateManyWithoutReleaseNestedInput
+  baselineRollouts?: Prisma.BundleDeliveryRolloutsUpdateManyWithoutBaselineReleaseNestedInput
+  candidateRollouts?: Prisma.BundleDeliveryRolloutsUpdateManyWithoutCandidateReleaseNestedInput
+  rolloutExposures?: Prisma.BundleDeliveryRolloutExposuresUpdateManyWithoutReleaseNestedInput
+  controlExperiments?: Prisma.BundleAbTestsUpdateManyWithoutControlReleaseNestedInput
+  treatmentExperiments?: Prisma.BundleAbTestsUpdateManyWithoutTreatmentReleaseNestedInput
+  reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
+  bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+}
+
+export type BundleReleasesUncheckedUpdateWithoutEligibleVerificationRunInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bundleId?: Prisma.StringFieldUpdateOperationsInput | string
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2936,8 +3412,10 @@ export type BundleReleasesUncheckedUpdateWithoutReviewQueueInput = {
   rolloutExposures?: Prisma.BundleDeliveryRolloutExposuresUncheckedUpdateManyWithoutReleaseNestedInput
   controlExperiments?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutControlReleaseNestedInput
   treatmentExperiments?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutTreatmentReleaseNestedInput
+  reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesCreateManyBundleInput = {
@@ -2953,6 +3431,7 @@ export type BundleReleasesCreateManyBundleInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -2985,6 +3464,8 @@ export type BundleReleasesUpdateWithoutBundleInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutBundleInput = {
@@ -3000,6 +3481,7 @@ export type BundleReleasesUncheckedUpdateWithoutBundleInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -3015,6 +3497,7 @@ export type BundleReleasesUncheckedUpdateWithoutBundleInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateManyWithoutBundleInput = {
@@ -3030,6 +3513,7 @@ export type BundleReleasesUncheckedUpdateManyWithoutBundleInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3047,6 +3531,7 @@ export type BundleReleasesCreateManyChannelInput = {
   submittedAt?: Date | string | null
   approvedAt?: Date | string | null
   activatedAt?: Date | string | null
+  eligibleVerificationRunId?: string | null
   createdAt: Date | string
   updatedAt: Date | string
 }
@@ -3079,6 +3564,8 @@ export type BundleReleasesUpdateWithoutChannelInput = {
   reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutReleaseNestedInput
+  eligibleVerificationRun?: Prisma.VerificationRunsUpdateOneWithoutEligibleForReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateWithoutChannelInput = {
@@ -3094,6 +3581,7 @@ export type BundleReleasesUncheckedUpdateWithoutChannelInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentForChannels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutCurrentReleaseNestedInput
@@ -3109,6 +3597,7 @@ export type BundleReleasesUncheckedUpdateWithoutChannelInput = {
   reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutReleaseNestedInput
   crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutReleaseNestedInput
   bundleAbTestExposures?: Prisma.BundleAbTestExposuresUncheckedUpdateManyWithoutAssignedReleaseNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutReleaseNestedInput
 }
 
 export type BundleReleasesUncheckedUpdateManyWithoutChannelInput = {
@@ -3124,6 +3613,7 @@ export type BundleReleasesUncheckedUpdateManyWithoutChannelInput = {
   submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eligibleVerificationRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3147,6 +3637,7 @@ export type BundleReleasesCountOutputType = {
   reviewQueue: number
   crashEvents: number
   bundleAbTestExposures: number
+  verificationRuns: number
 }
 
 export type BundleReleasesCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3163,6 +3654,7 @@ export type BundleReleasesCountOutputTypeSelect<ExtArgs extends runtime.Types.Ex
   reviewQueue?: boolean | BundleReleasesCountOutputTypeCountReviewQueueArgs
   crashEvents?: boolean | BundleReleasesCountOutputTypeCountCrashEventsArgs
   bundleAbTestExposures?: boolean | BundleReleasesCountOutputTypeCountBundleAbTestExposuresArgs
+  verificationRuns?: boolean | BundleReleasesCountOutputTypeCountVerificationRunsArgs
 }
 
 /**
@@ -3266,6 +3758,13 @@ export type BundleReleasesCountOutputTypeCountBundleAbTestExposuresArgs<ExtArgs 
   where?: Prisma.BundleAbTestExposuresWhereInput
 }
 
+/**
+ * BundleReleasesCountOutputType without action
+ */
+export type BundleReleasesCountOutputTypeCountVerificationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VerificationRunsWhereInput
+}
+
 
 export type BundleReleasesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3281,6 +3780,7 @@ export type BundleReleasesSelect<ExtArgs extends runtime.Types.Extensions.Intern
   submittedAt?: boolean
   approvedAt?: boolean
   activatedAt?: boolean
+  eligibleVerificationRunId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
@@ -3298,6 +3798,8 @@ export type BundleReleasesSelect<ExtArgs extends runtime.Types.Extensions.Intern
   reviewQueue?: boolean | Prisma.BundleReleases$reviewQueueArgs<ExtArgs>
   crashEvents?: boolean | Prisma.BundleReleases$crashEventsArgs<ExtArgs>
   bundleAbTestExposures?: boolean | Prisma.BundleReleases$bundleAbTestExposuresArgs<ExtArgs>
+  verificationRuns?: boolean | Prisma.BundleReleases$verificationRunsArgs<ExtArgs>
+  eligibleVerificationRun?: boolean | Prisma.BundleReleases$eligibleVerificationRunArgs<ExtArgs>
   _count?: boolean | Prisma.BundleReleasesCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleReleases"]>
 
@@ -3315,10 +3817,12 @@ export type BundleReleasesSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   submittedAt?: boolean
   approvedAt?: boolean
   activatedAt?: boolean
+  eligibleVerificationRunId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   channel?: boolean | Prisma.BundleChannelsDefaultArgs<ExtArgs>
+  eligibleVerificationRun?: boolean | Prisma.BundleReleases$eligibleVerificationRunArgs<ExtArgs>
 }, ExtArgs["result"]["bundleReleases"]>
 
 export type BundleReleasesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -3335,10 +3839,12 @@ export type BundleReleasesSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   submittedAt?: boolean
   approvedAt?: boolean
   activatedAt?: boolean
+  eligibleVerificationRunId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   channel?: boolean | Prisma.BundleChannelsDefaultArgs<ExtArgs>
+  eligibleVerificationRun?: boolean | Prisma.BundleReleases$eligibleVerificationRunArgs<ExtArgs>
 }, ExtArgs["result"]["bundleReleases"]>
 
 export type BundleReleasesSelectScalar = {
@@ -3355,11 +3861,12 @@ export type BundleReleasesSelectScalar = {
   submittedAt?: boolean
   approvedAt?: boolean
   activatedAt?: boolean
+  eligibleVerificationRunId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BundleReleasesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "channelId" | "version" | "buildNumber" | "status" | "source" | "sourceCommit" | "releaseNotes" | "createdById" | "submittedAt" | "approvedAt" | "activatedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleReleases"]>
+export type BundleReleasesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bundleId" | "channelId" | "version" | "buildNumber" | "status" | "source" | "sourceCommit" | "releaseNotes" | "createdById" | "submittedAt" | "approvedAt" | "activatedAt" | "eligibleVerificationRunId" | "createdAt" | "updatedAt", ExtArgs["result"]["bundleReleases"]>
 export type BundleReleasesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   channel?: boolean | Prisma.BundleChannelsDefaultArgs<ExtArgs>
@@ -3376,15 +3883,19 @@ export type BundleReleasesInclude<ExtArgs extends runtime.Types.Extensions.Inter
   reviewQueue?: boolean | Prisma.BundleReleases$reviewQueueArgs<ExtArgs>
   crashEvents?: boolean | Prisma.BundleReleases$crashEventsArgs<ExtArgs>
   bundleAbTestExposures?: boolean | Prisma.BundleReleases$bundleAbTestExposuresArgs<ExtArgs>
+  verificationRuns?: boolean | Prisma.BundleReleases$verificationRunsArgs<ExtArgs>
+  eligibleVerificationRun?: boolean | Prisma.BundleReleases$eligibleVerificationRunArgs<ExtArgs>
   _count?: boolean | Prisma.BundleReleasesCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BundleReleasesIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   channel?: boolean | Prisma.BundleChannelsDefaultArgs<ExtArgs>
+  eligibleVerificationRun?: boolean | Prisma.BundleReleases$eligibleVerificationRunArgs<ExtArgs>
 }
 export type BundleReleasesIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   bundle?: boolean | Prisma.BundlesDefaultArgs<ExtArgs>
   channel?: boolean | Prisma.BundleChannelsDefaultArgs<ExtArgs>
+  eligibleVerificationRun?: boolean | Prisma.BundleReleases$eligibleVerificationRunArgs<ExtArgs>
 }
 
 export type $BundleReleasesPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3405,6 +3916,8 @@ export type $BundleReleasesPayload<ExtArgs extends runtime.Types.Extensions.Inte
     reviewQueue: Prisma.$BundleReviewQueuePayload<ExtArgs>[]
     crashEvents: Prisma.$BundleCrashEventsPayload<ExtArgs>[]
     bundleAbTestExposures: Prisma.$BundleAbTestExposuresPayload<ExtArgs>[]
+    verificationRuns: Prisma.$VerificationRunsPayload<ExtArgs>[]
+    eligibleVerificationRun: Prisma.$VerificationRunsPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3420,6 +3933,7 @@ export type $BundleReleasesPayload<ExtArgs extends runtime.Types.Extensions.Inte
     submittedAt: Date | null
     approvedAt: Date | null
     activatedAt: Date | null
+    eligibleVerificationRunId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["bundleReleases"]>
@@ -3831,6 +4345,8 @@ export interface Prisma__BundleReleasesClient<T, Null = never, ExtArgs extends r
   reviewQueue<T extends Prisma.BundleReleases$reviewQueueArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleases$reviewQueueArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleReviewQueuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   crashEvents<T extends Prisma.BundleReleases$crashEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleases$crashEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleCrashEventsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bundleAbTestExposures<T extends Prisma.BundleReleases$bundleAbTestExposuresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleases$bundleAbTestExposuresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleAbTestExposuresPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  verificationRuns<T extends Prisma.BundleReleases$verificationRunsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleases$verificationRunsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationRunsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  eligibleVerificationRun<T extends Prisma.BundleReleases$eligibleVerificationRunArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleases$eligibleVerificationRunArgs<ExtArgs>>): Prisma.Prisma__VerificationRunsClient<runtime.Types.Result.GetResult<Prisma.$VerificationRunsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3873,6 +4389,7 @@ export interface BundleReleasesFieldRefs {
   readonly submittedAt: Prisma.FieldRef<"BundleReleases", 'DateTime'>
   readonly approvedAt: Prisma.FieldRef<"BundleReleases", 'DateTime'>
   readonly activatedAt: Prisma.FieldRef<"BundleReleases", 'DateTime'>
+  readonly eligibleVerificationRunId: Prisma.FieldRef<"BundleReleases", 'String'>
   readonly createdAt: Prisma.FieldRef<"BundleReleases", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"BundleReleases", 'DateTime'>
 }
@@ -4585,6 +5102,49 @@ export type BundleReleases$bundleAbTestExposuresArgs<ExtArgs extends runtime.Typ
   take?: number
   skip?: number
   distinct?: Prisma.BundleAbTestExposuresScalarFieldEnum | Prisma.BundleAbTestExposuresScalarFieldEnum[]
+}
+
+/**
+ * BundleReleases.verificationRuns
+ */
+export type BundleReleases$verificationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the VerificationRuns
+   */
+  select?: Prisma.VerificationRunsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the VerificationRuns
+   */
+  omit?: Prisma.VerificationRunsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VerificationRunsInclude<ExtArgs> | null
+  where?: Prisma.VerificationRunsWhereInput
+  orderBy?: Prisma.VerificationRunsOrderByWithRelationInput | Prisma.VerificationRunsOrderByWithRelationInput[]
+  cursor?: Prisma.VerificationRunsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VerificationRunsScalarFieldEnum | Prisma.VerificationRunsScalarFieldEnum[]
+}
+
+/**
+ * BundleReleases.eligibleVerificationRun
+ */
+export type BundleReleases$eligibleVerificationRunArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the VerificationRuns
+   */
+  select?: Prisma.VerificationRunsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the VerificationRuns
+   */
+  omit?: Prisma.VerificationRunsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VerificationRunsInclude<ExtArgs> | null
+  where?: Prisma.VerificationRunsWhereInput
 }
 
 /**

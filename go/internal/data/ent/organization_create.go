@@ -31,6 +31,20 @@ type OrganizationCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetDeletedAt sets the "deletedAt" field.
+func (_c *OrganizationCreate) SetDeletedAt(v time.Time) *OrganizationCreate {
+	_c.mutation.SetDeletedAt(v)
+	return _c
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_c *OrganizationCreate) SetNillableDeletedAt(v *time.Time) *OrganizationCreate {
+	if v != nil {
+		_c.SetDeletedAt(*v)
+	}
+	return _c
+}
+
 // SetName sets the "name" field.
 func (_c *OrganizationCreate) SetName(v string) *OrganizationCreate {
 	_c.mutation.SetName(v)
@@ -58,20 +72,6 @@ func (_c *OrganizationCreate) SetCreatedAt(v time.Time) *OrganizationCreate {
 // SetUpdatedAt sets the "updatedAt" field.
 func (_c *OrganizationCreate) SetUpdatedAt(v time.Time) *OrganizationCreate {
 	_c.mutation.SetUpdatedAt(v)
-	return _c
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (_c *OrganizationCreate) SetDeletedAt(v time.Time) *OrganizationCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_c *OrganizationCreate) SetNillableDeletedAt(v *time.Time) *OrganizationCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
-	}
 	return _c
 }
 
@@ -264,6 +264,10 @@ func (_c *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
+	if value, ok := _c.mutation.DeletedAt(); ok {
+		_spec.SetField(organization.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = &value
+	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(organization.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -279,10 +283,6 @@ func (_c *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(organization.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(organization.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -388,7 +388,7 @@ func (_c *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 // of the `INSERT` statement. For example:
 //
 //	client.Organization.Create().
-//		SetName(v).
+//		SetDeletedAt(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -397,7 +397,7 @@ func (_c *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.OrganizationUpsert) {
-//			SetName(v+v).
+//			SetDeletedAt(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *OrganizationCreate) OnConflict(opts ...sql.ConflictOption) *OrganizationUpsertOne {
@@ -432,6 +432,24 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *OrganizationUpsert) SetDeletedAt(v time.Time) *OrganizationUpsert {
+	u.Set(organization.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *OrganizationUpsert) UpdateDeletedAt() *OrganizationUpsert {
+	u.SetExcluded(organization.FieldDeletedAt)
+	return u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *OrganizationUpsert) ClearDeletedAt() *OrganizationUpsert {
+	u.SetNull(organization.FieldDeletedAt)
+	return u
+}
 
 // SetName sets the "name" field.
 func (u *OrganizationUpsert) SetName(v string) *OrganizationUpsert {
@@ -493,24 +511,6 @@ func (u *OrganizationUpsert) UpdateUpdatedAt() *OrganizationUpsert {
 	return u
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (u *OrganizationUpsert) SetDeletedAt(v time.Time) *OrganizationUpsert {
-	u.Set(organization.FieldDeletedAt, v)
-	return u
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *OrganizationUpsert) UpdateDeletedAt() *OrganizationUpsert {
-	u.SetExcluded(organization.FieldDeletedAt)
-	return u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *OrganizationUpsert) ClearDeletedAt() *OrganizationUpsert {
-	u.SetNull(organization.FieldDeletedAt)
-	return u
-}
-
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -557,6 +557,27 @@ func (u *OrganizationUpsertOne) Update(set func(*OrganizationUpsert)) *Organizat
 		set(&OrganizationUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *OrganizationUpsertOne) SetDeletedAt(v time.Time) *OrganizationUpsertOne {
+	return u.Update(func(s *OrganizationUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *OrganizationUpsertOne) UpdateDeletedAt() *OrganizationUpsertOne {
+	return u.Update(func(s *OrganizationUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *OrganizationUpsertOne) ClearDeletedAt() *OrganizationUpsertOne {
+	return u.Update(func(s *OrganizationUpsert) {
+		s.ClearDeletedAt()
+	})
 }
 
 // SetName sets the "name" field.
@@ -626,27 +647,6 @@ func (u *OrganizationUpsertOne) SetUpdatedAt(v time.Time) *OrganizationUpsertOne
 func (u *OrganizationUpsertOne) UpdateUpdatedAt() *OrganizationUpsertOne {
 	return u.Update(func(s *OrganizationUpsert) {
 		s.UpdateUpdatedAt()
-	})
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (u *OrganizationUpsertOne) SetDeletedAt(v time.Time) *OrganizationUpsertOne {
-	return u.Update(func(s *OrganizationUpsert) {
-		s.SetDeletedAt(v)
-	})
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *OrganizationUpsertOne) UpdateDeletedAt() *OrganizationUpsertOne {
-	return u.Update(func(s *OrganizationUpsert) {
-		s.UpdateDeletedAt()
-	})
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *OrganizationUpsertOne) ClearDeletedAt() *OrganizationUpsertOne {
-	return u.Update(func(s *OrganizationUpsert) {
-		s.ClearDeletedAt()
 	})
 }
 
@@ -785,7 +785,7 @@ func (_c *OrganizationCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.OrganizationUpsert) {
-//			SetName(v+v).
+//			SetDeletedAt(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *OrganizationCreateBulk) OnConflict(opts ...sql.ConflictOption) *OrganizationUpsertBulk {
@@ -864,6 +864,27 @@ func (u *OrganizationUpsertBulk) Update(set func(*OrganizationUpsert)) *Organiza
 	return u
 }
 
+// SetDeletedAt sets the "deletedAt" field.
+func (u *OrganizationUpsertBulk) SetDeletedAt(v time.Time) *OrganizationUpsertBulk {
+	return u.Update(func(s *OrganizationUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *OrganizationUpsertBulk) UpdateDeletedAt() *OrganizationUpsertBulk {
+	return u.Update(func(s *OrganizationUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *OrganizationUpsertBulk) ClearDeletedAt() *OrganizationUpsertBulk {
+	return u.Update(func(s *OrganizationUpsert) {
+		s.ClearDeletedAt()
+	})
+}
+
 // SetName sets the "name" field.
 func (u *OrganizationUpsertBulk) SetName(v string) *OrganizationUpsertBulk {
 	return u.Update(func(s *OrganizationUpsert) {
@@ -931,27 +952,6 @@ func (u *OrganizationUpsertBulk) SetUpdatedAt(v time.Time) *OrganizationUpsertBu
 func (u *OrganizationUpsertBulk) UpdateUpdatedAt() *OrganizationUpsertBulk {
 	return u.Update(func(s *OrganizationUpsert) {
 		s.UpdateUpdatedAt()
-	})
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (u *OrganizationUpsertBulk) SetDeletedAt(v time.Time) *OrganizationUpsertBulk {
-	return u.Update(func(s *OrganizationUpsert) {
-		s.SetDeletedAt(v)
-	})
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *OrganizationUpsertBulk) UpdateDeletedAt() *OrganizationUpsertBulk {
-	return u.Update(func(s *OrganizationUpsert) {
-		s.UpdateDeletedAt()
-	})
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *OrganizationUpsertBulk) ClearDeletedAt() *OrganizationUpsertBulk {
-	return u.Update(func(s *OrganizationUpsert) {
-		s.ClearDeletedAt()
 	})
 }
 

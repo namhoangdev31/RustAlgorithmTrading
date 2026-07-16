@@ -21,9 +21,9 @@
     "lepoship:search:index": "tsx scripts/setup-lepoship-search.ts",
     "lepoship:reset": "tsx scripts/reset-lepoship-data.ts --confirm-reset-lepoship",
     "lepoship:seed": "tsx scripts/seed-lepoship.ts",
+    "lepoship:seed-verification": "tsx scripts/seed-verification.ts",
     "lepoship:schema:invariants": "tsx scripts/apply-lepoship-invariants.ts",
-    "lepoship:schema:verify": "tsx scripts/verify-lepoship-schema.ts",
-    "lepoship:worker": "tsx workers/lepoship/worker.ts"
+    "lepoship:schema:verify": "tsx scripts/verify-lepoship-schema.ts"
   },
   "dependencies": {
     "@apollo/client": "4.1.6",
@@ -75,7 +75,6 @@
     "@types/mdx": "^2.0.13",
     "@vercel/sdk": "^1.21.8",
     "acme-client": "^5.4.0",
-    "bullmq": "^5.78.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

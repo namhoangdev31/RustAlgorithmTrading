@@ -43,6 +43,10 @@ import (
 	"trading/control-gateway/internal/data/ent/project"
 	"trading/control-gateway/internal/data/ent/projectmembership"
 	"trading/control-gateway/internal/data/ent/projectproviderbinding"
+	"trading/control-gateway/internal/data/ent/verificationalerts"
+	"trading/control-gateway/internal/data/ent/verificationmetricrollups"
+	"trading/control-gateway/internal/data/ent/verificationruns"
+	"trading/control-gateway/internal/data/ent/verificationtelemetryevents"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -57,6 +61,20 @@ type ProjectCreate struct {
 	mutation *ProjectMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_c *ProjectCreate) SetDeletedAt(v time.Time) *ProjectCreate {
+	_c.mutation.SetDeletedAt(v)
+	return _c
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_c *ProjectCreate) SetNillableDeletedAt(v *time.Time) *ProjectCreate {
+	if v != nil {
+		_c.SetDeletedAt(*v)
+	}
+	return _c
 }
 
 // SetName sets the "name" field.
@@ -136,20 +154,6 @@ func (_c *ProjectCreate) SetCreatedAt(v time.Time) *ProjectCreate {
 // SetUpdatedAt sets the "updatedAt" field.
 func (_c *ProjectCreate) SetUpdatedAt(v time.Time) *ProjectCreate {
 	_c.mutation.SetUpdatedAt(v)
-	return _c
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (_c *ProjectCreate) SetDeletedAt(v time.Time) *ProjectCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_c *ProjectCreate) SetNillableDeletedAt(v *time.Time) *ProjectCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
-	}
 	return _c
 }
 
@@ -715,6 +719,66 @@ func (_c *ProjectCreate) AddCanonicalBuildJobs(v ...*BundleBuildJobs) *ProjectCr
 	return _c.AddCanonicalBuildJobIDs(ids...)
 }
 
+// AddVerificationRunIDs adds the "verificationRuns" edge to the VerificationRuns entity by IDs.
+func (_c *ProjectCreate) AddVerificationRunIDs(ids ...uuid.UUID) *ProjectCreate {
+	_c.mutation.AddVerificationRunIDs(ids...)
+	return _c
+}
+
+// AddVerificationRuns adds the "verificationRuns" edges to the VerificationRuns entity.
+func (_c *ProjectCreate) AddVerificationRuns(v ...*VerificationRuns) *ProjectCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddVerificationRunIDs(ids...)
+}
+
+// AddVerificationTelemetryIDs adds the "verificationTelemetry" edge to the VerificationTelemetryEvents entity by IDs.
+func (_c *ProjectCreate) AddVerificationTelemetryIDs(ids ...uuid.UUID) *ProjectCreate {
+	_c.mutation.AddVerificationTelemetryIDs(ids...)
+	return _c
+}
+
+// AddVerificationTelemetry adds the "verificationTelemetry" edges to the VerificationTelemetryEvents entity.
+func (_c *ProjectCreate) AddVerificationTelemetry(v ...*VerificationTelemetryEvents) *ProjectCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddVerificationTelemetryIDs(ids...)
+}
+
+// AddVerificationRollupIDs adds the "verificationRollups" edge to the VerificationMetricRollups entity by IDs.
+func (_c *ProjectCreate) AddVerificationRollupIDs(ids ...uuid.UUID) *ProjectCreate {
+	_c.mutation.AddVerificationRollupIDs(ids...)
+	return _c
+}
+
+// AddVerificationRollups adds the "verificationRollups" edges to the VerificationMetricRollups entity.
+func (_c *ProjectCreate) AddVerificationRollups(v ...*VerificationMetricRollups) *ProjectCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddVerificationRollupIDs(ids...)
+}
+
+// AddVerificationAlertIDs adds the "verificationAlerts" edge to the VerificationAlerts entity by IDs.
+func (_c *ProjectCreate) AddVerificationAlertIDs(ids ...uuid.UUID) *ProjectCreate {
+	_c.mutation.AddVerificationAlertIDs(ids...)
+	return _c
+}
+
+// AddVerificationAlerts adds the "verificationAlerts" edges to the VerificationAlerts entity.
+func (_c *ProjectCreate) AddVerificationAlerts(v ...*VerificationAlerts) *ProjectCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddVerificationAlertIDs(ids...)
+}
+
 // Mutation returns the ProjectMutation object of the builder.
 func (_c *ProjectCreate) Mutation() *ProjectMutation {
 	return _c.mutation
@@ -800,6 +864,10 @@ func (_c *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
+	if value, ok := _c.mutation.DeletedAt(); ok {
+		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = &value
+	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(project.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -823,10 +891,6 @@ func (_c *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
 	}
 	if nodes := _c.mutation.OrganizationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1406,6 +1470,70 @@ func (_c *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := _c.mutation.VerificationRunsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRunsTable,
+			Columns: []string{project.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.VerificationTelemetryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationTelemetryTable,
+			Columns: []string{project.VerificationTelemetryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationtelemetryevents.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.VerificationRollupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRollupsTable,
+			Columns: []string{project.VerificationRollupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationmetricrollups.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.VerificationAlertsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationAlertsTable,
+			Columns: []string{project.VerificationAlertsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationalerts.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -1413,7 +1541,7 @@ func (_c *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Project.Create().
-//		SetName(v).
+//		SetDeletedAt(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -1422,7 +1550,7 @@ func (_c *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.ProjectUpsert) {
-//			SetName(v+v).
+//			SetDeletedAt(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *ProjectCreate) OnConflict(opts ...sql.ConflictOption) *ProjectUpsertOne {
@@ -1457,6 +1585,24 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *ProjectUpsert) SetDeletedAt(v time.Time) *ProjectUpsert {
+	u.Set(project.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *ProjectUpsert) UpdateDeletedAt() *ProjectUpsert {
+	u.SetExcluded(project.FieldDeletedAt)
+	return u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *ProjectUpsert) ClearDeletedAt() *ProjectUpsert {
+	u.SetNull(project.FieldDeletedAt)
+	return u
+}
 
 // SetName sets the "name" field.
 func (u *ProjectUpsert) SetName(v string) *ProjectUpsert {
@@ -1578,24 +1724,6 @@ func (u *ProjectUpsert) UpdateUpdatedAt() *ProjectUpsert {
 	return u
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (u *ProjectUpsert) SetDeletedAt(v time.Time) *ProjectUpsert {
-	u.Set(project.FieldDeletedAt, v)
-	return u
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *ProjectUpsert) UpdateDeletedAt() *ProjectUpsert {
-	u.SetExcluded(project.FieldDeletedAt)
-	return u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *ProjectUpsert) ClearDeletedAt() *ProjectUpsert {
-	u.SetNull(project.FieldDeletedAt)
-	return u
-}
-
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1642,6 +1770,27 @@ func (u *ProjectUpsertOne) Update(set func(*ProjectUpsert)) *ProjectUpsertOne {
 		set(&ProjectUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *ProjectUpsertOne) SetDeletedAt(v time.Time) *ProjectUpsertOne {
+	return u.Update(func(s *ProjectUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *ProjectUpsertOne) UpdateDeletedAt() *ProjectUpsertOne {
+	return u.Update(func(s *ProjectUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *ProjectUpsertOne) ClearDeletedAt() *ProjectUpsertOne {
+	return u.Update(func(s *ProjectUpsert) {
+		s.ClearDeletedAt()
+	})
 }
 
 // SetName sets the "name" field.
@@ -1784,27 +1933,6 @@ func (u *ProjectUpsertOne) UpdateUpdatedAt() *ProjectUpsertOne {
 	})
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (u *ProjectUpsertOne) SetDeletedAt(v time.Time) *ProjectUpsertOne {
-	return u.Update(func(s *ProjectUpsert) {
-		s.SetDeletedAt(v)
-	})
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *ProjectUpsertOne) UpdateDeletedAt() *ProjectUpsertOne {
-	return u.Update(func(s *ProjectUpsert) {
-		s.UpdateDeletedAt()
-	})
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *ProjectUpsertOne) ClearDeletedAt() *ProjectUpsertOne {
-	return u.Update(func(s *ProjectUpsert) {
-		s.ClearDeletedAt()
-	})
-}
-
 // Exec executes the query.
 func (u *ProjectUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -1940,7 +2068,7 @@ func (_c *ProjectCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.ProjectUpsert) {
-//			SetName(v+v).
+//			SetDeletedAt(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *ProjectCreateBulk) OnConflict(opts ...sql.ConflictOption) *ProjectUpsertBulk {
@@ -2017,6 +2145,27 @@ func (u *ProjectUpsertBulk) Update(set func(*ProjectUpsert)) *ProjectUpsertBulk 
 		set(&ProjectUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *ProjectUpsertBulk) SetDeletedAt(v time.Time) *ProjectUpsertBulk {
+	return u.Update(func(s *ProjectUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *ProjectUpsertBulk) UpdateDeletedAt() *ProjectUpsertBulk {
+	return u.Update(func(s *ProjectUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *ProjectUpsertBulk) ClearDeletedAt() *ProjectUpsertBulk {
+	return u.Update(func(s *ProjectUpsert) {
+		s.ClearDeletedAt()
+	})
 }
 
 // SetName sets the "name" field.
@@ -2156,27 +2305,6 @@ func (u *ProjectUpsertBulk) SetUpdatedAt(v time.Time) *ProjectUpsertBulk {
 func (u *ProjectUpsertBulk) UpdateUpdatedAt() *ProjectUpsertBulk {
 	return u.Update(func(s *ProjectUpsert) {
 		s.UpdateUpdatedAt()
-	})
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (u *ProjectUpsertBulk) SetDeletedAt(v time.Time) *ProjectUpsertBulk {
-	return u.Update(func(s *ProjectUpsert) {
-		s.SetDeletedAt(v)
-	})
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *ProjectUpsertBulk) UpdateDeletedAt() *ProjectUpsertBulk {
-	return u.Update(func(s *ProjectUpsert) {
-		s.UpdateDeletedAt()
-	})
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *ProjectUpsertBulk) ClearDeletedAt() *ProjectUpsertBulk {
-	return u.Update(func(s *ProjectUpsert) {
-		s.ClearDeletedAt()
 	})
 }
 

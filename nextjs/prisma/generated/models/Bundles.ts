@@ -621,6 +621,7 @@ export type BundlesWhereInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsListRelationFilter
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsListRelationFilter
   sdkTokens?: Prisma.BundleSdkTokensListRelationFilter
+  verificationRuns?: Prisma.VerificationRunsListRelationFilter
 }
 
 export type BundlesOrderByWithRelationInput = {
@@ -739,6 +740,7 @@ export type BundlesOrderByWithRelationInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsOrderByRelationAggregateInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsOrderByRelationAggregateInput
   sdkTokens?: Prisma.BundleSdkTokensOrderByRelationAggregateInput
+  verificationRuns?: Prisma.VerificationRunsOrderByRelationAggregateInput
 }
 
 export type BundlesWhereUniqueInput = Prisma.AtLeast<{
@@ -860,6 +862,7 @@ export type BundlesWhereUniqueInput = Prisma.AtLeast<{
   ledgerTransactions?: Prisma.BundleLedgerTransactionsListRelationFilter
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsListRelationFilter
   sdkTokens?: Prisma.BundleSdkTokensListRelationFilter
+  verificationRuns?: Prisma.VerificationRunsListRelationFilter
 }, "id" | "bundleKey" | "slug" | "projectId" | "primaryReleaseTrackId" | "activeAbTestId" | "activeRolloutId">
 
 export type BundlesOrderByWithAggregationInput = {
@@ -1080,6 +1083,7 @@ export type BundlesCreateInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateInput = {
@@ -1194,6 +1198,7 @@ export type BundlesUncheckedCreateInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUpdateInput = {
@@ -1308,6 +1313,7 @@ export type BundlesUpdateInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateInput = {
@@ -1422,6 +1428,7 @@ export type BundlesUncheckedUpdateInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateManyInput = {
@@ -2748,6 +2755,20 @@ export type BundlesUpdateOneRequiredWithoutRolloutExposuresNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BundlesUpdateToOneWithWhereWithoutRolloutExposuresInput, Prisma.BundlesUpdateWithoutRolloutExposuresInput>, Prisma.BundlesUncheckedUpdateWithoutRolloutExposuresInput>
 }
 
+export type BundlesCreateNestedOneWithoutVerificationRunsInput = {
+  create?: Prisma.XOR<Prisma.BundlesCreateWithoutVerificationRunsInput, Prisma.BundlesUncheckedCreateWithoutVerificationRunsInput>
+  connectOrCreate?: Prisma.BundlesCreateOrConnectWithoutVerificationRunsInput
+  connect?: Prisma.BundlesWhereUniqueInput
+}
+
+export type BundlesUpdateOneRequiredWithoutVerificationRunsNestedInput = {
+  create?: Prisma.XOR<Prisma.BundlesCreateWithoutVerificationRunsInput, Prisma.BundlesUncheckedCreateWithoutVerificationRunsInput>
+  connectOrCreate?: Prisma.BundlesCreateOrConnectWithoutVerificationRunsInput
+  upsert?: Prisma.BundlesUpsertWithoutVerificationRunsInput
+  connect?: Prisma.BundlesWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundlesUpdateToOneWithWhereWithoutVerificationRunsInput, Prisma.BundlesUpdateWithoutVerificationRunsInput>, Prisma.BundlesUncheckedUpdateWithoutVerificationRunsInput>
+}
+
 export type BundlesCreateNestedOneWithoutFinancialLedgerInput = {
   create?: Prisma.XOR<Prisma.BundlesCreateWithoutFinancialLedgerInput, Prisma.BundlesUncheckedCreateWithoutFinancialLedgerInput>
   connectOrCreate?: Prisma.BundlesCreateOrConnectWithoutFinancialLedgerInput
@@ -2901,6 +2922,7 @@ export type BundlesCreateWithoutProjectInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutProjectInput = {
@@ -3014,6 +3036,7 @@ export type BundlesUncheckedCreateWithoutProjectInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutProjectInput = {
@@ -3143,6 +3166,7 @@ export type BundlesUpdateWithoutProjectInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutProjectInput = {
@@ -3256,6 +3280,7 @@ export type BundlesUncheckedUpdateWithoutProjectInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutChannelsInput = {
@@ -3369,6 +3394,7 @@ export type BundlesCreateWithoutChannelsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutChannelsInput = {
@@ -3482,6 +3508,7 @@ export type BundlesUncheckedCreateWithoutChannelsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutChannelsInput = {
@@ -3611,6 +3638,7 @@ export type BundlesUpdateWithoutChannelsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutChannelsInput = {
@@ -3724,6 +3752,7 @@ export type BundlesUncheckedUpdateWithoutChannelsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutReleasesInput = {
@@ -3837,6 +3866,7 @@ export type BundlesCreateWithoutReleasesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutReleasesInput = {
@@ -3950,6 +3980,7 @@ export type BundlesUncheckedCreateWithoutReleasesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutReleasesInput = {
@@ -4079,6 +4110,7 @@ export type BundlesUpdateWithoutReleasesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutReleasesInput = {
@@ -4192,6 +4224,7 @@ export type BundlesUncheckedUpdateWithoutReleasesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutCanonicalBuildJobsInput = {
@@ -4305,6 +4338,7 @@ export type BundlesCreateWithoutCanonicalBuildJobsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutCanonicalBuildJobsInput = {
@@ -4418,6 +4452,7 @@ export type BundlesUncheckedCreateWithoutCanonicalBuildJobsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutCanonicalBuildJobsInput = {
@@ -4547,6 +4582,7 @@ export type BundlesUpdateWithoutCanonicalBuildJobsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutCanonicalBuildJobsInput = {
@@ -4660,6 +4696,7 @@ export type BundlesUncheckedUpdateWithoutCanonicalBuildJobsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutReleaseOverridesV2Input = {
@@ -4773,6 +4810,7 @@ export type BundlesCreateWithoutReleaseOverridesV2Input = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutReleaseOverridesV2Input = {
@@ -4886,6 +4924,7 @@ export type BundlesUncheckedCreateWithoutReleaseOverridesV2Input = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutReleaseOverridesV2Input = {
@@ -5015,6 +5054,7 @@ export type BundlesUpdateWithoutReleaseOverridesV2Input = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutReleaseOverridesV2Input = {
@@ -5128,6 +5168,7 @@ export type BundlesUncheckedUpdateWithoutReleaseOverridesV2Input = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutCanonicalRolloutsInput = {
@@ -5241,6 +5282,7 @@ export type BundlesCreateWithoutCanonicalRolloutsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutCanonicalRolloutsInput = {
@@ -5354,6 +5396,7 @@ export type BundlesUncheckedCreateWithoutCanonicalRolloutsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutCanonicalRolloutsInput = {
@@ -5472,6 +5515,7 @@ export type BundlesCreateWithoutActiveRolloutInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutActiveRolloutInput = {
@@ -5585,6 +5629,7 @@ export type BundlesUncheckedCreateWithoutActiveRolloutInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutActiveRolloutInput = {
@@ -5714,6 +5759,7 @@ export type BundlesUpdateWithoutCanonicalRolloutsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutCanonicalRolloutsInput = {
@@ -5827,6 +5873,7 @@ export type BundlesUncheckedUpdateWithoutCanonicalRolloutsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUpsertWithoutActiveRolloutInput = {
@@ -5951,6 +5998,7 @@ export type BundlesUpdateWithoutActiveRolloutInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutActiveRolloutInput = {
@@ -6064,6 +6112,7 @@ export type BundlesUncheckedUpdateWithoutActiveRolloutInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutAbTestsInput = {
@@ -6177,6 +6226,7 @@ export type BundlesCreateWithoutAbTestsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutAbTestsInput = {
@@ -6290,6 +6340,7 @@ export type BundlesUncheckedCreateWithoutAbTestsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutAbTestsInput = {
@@ -6408,6 +6459,7 @@ export type BundlesCreateWithoutActiveAbTestInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutActiveAbTestInput = {
@@ -6521,6 +6573,7 @@ export type BundlesUncheckedCreateWithoutActiveAbTestInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutActiveAbTestInput = {
@@ -6650,6 +6703,7 @@ export type BundlesUpdateWithoutAbTestsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutAbTestsInput = {
@@ -6763,6 +6817,7 @@ export type BundlesUncheckedUpdateWithoutAbTestsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUpsertWithoutActiveAbTestInput = {
@@ -6887,6 +6942,7 @@ export type BundlesUpdateWithoutActiveAbTestInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutActiveAbTestInput = {
@@ -7000,6 +7056,7 @@ export type BundlesUncheckedUpdateWithoutActiveAbTestInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutAbuseSignalsInput = {
@@ -7113,6 +7170,7 @@ export type BundlesCreateWithoutAbuseSignalsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutAbuseSignalsInput = {
@@ -7226,6 +7284,7 @@ export type BundlesUncheckedCreateWithoutAbuseSignalsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutAbuseSignalsInput = {
@@ -7355,6 +7414,7 @@ export type BundlesUpdateWithoutAbuseSignalsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutAbuseSignalsInput = {
@@ -7468,6 +7528,7 @@ export type BundlesUncheckedUpdateWithoutAbuseSignalsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutAdConfigurationsInput = {
@@ -7581,6 +7642,7 @@ export type BundlesCreateWithoutAdConfigurationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutAdConfigurationsInput = {
@@ -7694,6 +7756,7 @@ export type BundlesUncheckedCreateWithoutAdConfigurationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutAdConfigurationsInput = {
@@ -7823,6 +7886,7 @@ export type BundlesUpdateWithoutAdConfigurationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutAdConfigurationsInput = {
@@ -7936,6 +8000,7 @@ export type BundlesUncheckedUpdateWithoutAdConfigurationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutAnalyticsEventsInput = {
@@ -8049,6 +8114,7 @@ export type BundlesCreateWithoutAnalyticsEventsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutAnalyticsEventsInput = {
@@ -8162,6 +8228,7 @@ export type BundlesUncheckedCreateWithoutAnalyticsEventsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutAnalyticsEventsInput = {
@@ -8291,6 +8358,7 @@ export type BundlesUpdateWithoutAnalyticsEventsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutAnalyticsEventsInput = {
@@ -8404,6 +8472,7 @@ export type BundlesUncheckedUpdateWithoutAnalyticsEventsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutApiUsageStatsInput = {
@@ -8517,6 +8586,7 @@ export type BundlesCreateWithoutApiUsageStatsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutApiUsageStatsInput = {
@@ -8630,6 +8700,7 @@ export type BundlesUncheckedCreateWithoutApiUsageStatsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutApiUsageStatsInput = {
@@ -8759,6 +8830,7 @@ export type BundlesUpdateWithoutApiUsageStatsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutApiUsageStatsInput = {
@@ -8872,6 +8944,7 @@ export type BundlesUncheckedUpdateWithoutApiUsageStatsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutAuditLogsInput = {
@@ -8985,6 +9058,7 @@ export type BundlesCreateWithoutAuditLogsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutAuditLogsInput = {
@@ -9098,6 +9172,7 @@ export type BundlesUncheckedCreateWithoutAuditLogsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutAuditLogsInput = {
@@ -9227,6 +9302,7 @@ export type BundlesUpdateWithoutAuditLogsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutAuditLogsInput = {
@@ -9340,6 +9416,7 @@ export type BundlesUncheckedUpdateWithoutAuditLogsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutBetaTestersInput = {
@@ -9453,6 +9530,7 @@ export type BundlesCreateWithoutBetaTestersInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutBetaTestersInput = {
@@ -9566,6 +9644,7 @@ export type BundlesUncheckedCreateWithoutBetaTestersInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutBetaTestersInput = {
@@ -9695,6 +9774,7 @@ export type BundlesUpdateWithoutBetaTestersInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutBetaTestersInput = {
@@ -9808,6 +9888,7 @@ export type BundlesUncheckedUpdateWithoutBetaTestersInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutChangeLogsInput = {
@@ -9921,6 +10002,7 @@ export type BundlesCreateWithoutChangeLogsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutChangeLogsInput = {
@@ -10034,6 +10116,7 @@ export type BundlesUncheckedCreateWithoutChangeLogsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutChangeLogsInput = {
@@ -10163,6 +10246,7 @@ export type BundlesUpdateWithoutChangeLogsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutChangeLogsInput = {
@@ -10276,6 +10360,7 @@ export type BundlesUncheckedUpdateWithoutChangeLogsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutCollaboratorsInput = {
@@ -10389,6 +10474,7 @@ export type BundlesCreateWithoutCollaboratorsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutCollaboratorsInput = {
@@ -10502,6 +10588,7 @@ export type BundlesUncheckedCreateWithoutCollaboratorsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutCollaboratorsInput = {
@@ -10631,6 +10718,7 @@ export type BundlesUpdateWithoutCollaboratorsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutCollaboratorsInput = {
@@ -10744,6 +10832,7 @@ export type BundlesUncheckedUpdateWithoutCollaboratorsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutContentRatingsInput = {
@@ -10857,6 +10946,7 @@ export type BundlesCreateWithoutContentRatingsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutContentRatingsInput = {
@@ -10970,6 +11060,7 @@ export type BundlesUncheckedCreateWithoutContentRatingsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutContentRatingsInput = {
@@ -11099,6 +11190,7 @@ export type BundlesUpdateWithoutContentRatingsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutContentRatingsInput = {
@@ -11212,6 +11304,7 @@ export type BundlesUncheckedUpdateWithoutContentRatingsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutCountriesInput = {
@@ -11325,6 +11418,7 @@ export type BundlesCreateWithoutCountriesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutCountriesInput = {
@@ -11438,6 +11532,7 @@ export type BundlesUncheckedCreateWithoutCountriesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutCountriesInput = {
@@ -11567,6 +11662,7 @@ export type BundlesUpdateWithoutCountriesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutCountriesInput = {
@@ -11680,6 +11776,7 @@ export type BundlesUncheckedUpdateWithoutCountriesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutDependenciesInput = {
@@ -11793,6 +11890,7 @@ export type BundlesCreateWithoutDependenciesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutDependenciesInput = {
@@ -11906,6 +12004,7 @@ export type BundlesUncheckedCreateWithoutDependenciesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutDependenciesInput = {
@@ -12024,6 +12123,7 @@ export type BundlesCreateWithoutDependentBundlesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutDependentBundlesInput = {
@@ -12137,6 +12237,7 @@ export type BundlesUncheckedCreateWithoutDependentBundlesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutDependentBundlesInput = {
@@ -12266,6 +12367,7 @@ export type BundlesUpdateWithoutDependenciesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutDependenciesInput = {
@@ -12379,6 +12481,7 @@ export type BundlesUncheckedUpdateWithoutDependenciesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUpsertWithoutDependentBundlesInput = {
@@ -12503,6 +12606,7 @@ export type BundlesUpdateWithoutDependentBundlesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutDependentBundlesInput = {
@@ -12616,6 +12720,7 @@ export type BundlesUncheckedUpdateWithoutDependentBundlesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutDeveloperStrikesInput = {
@@ -12729,6 +12834,7 @@ export type BundlesCreateWithoutDeveloperStrikesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutDeveloperStrikesInput = {
@@ -12842,6 +12948,7 @@ export type BundlesUncheckedCreateWithoutDeveloperStrikesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutDeveloperStrikesInput = {
@@ -12971,6 +13078,7 @@ export type BundlesUpdateWithoutDeveloperStrikesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutDeveloperStrikesInput = {
@@ -13084,6 +13192,7 @@ export type BundlesUncheckedUpdateWithoutDeveloperStrikesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutDeviceSupportsInput = {
@@ -13197,6 +13306,7 @@ export type BundlesCreateWithoutDeviceSupportsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutDeviceSupportsInput = {
@@ -13310,6 +13420,7 @@ export type BundlesUncheckedCreateWithoutDeviceSupportsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutDeviceSupportsInput = {
@@ -13439,6 +13550,7 @@ export type BundlesUpdateWithoutDeviceSupportsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutDeviceSupportsInput = {
@@ -13552,6 +13664,7 @@ export type BundlesUncheckedUpdateWithoutDeviceSupportsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutExternalIntegrationsInput = {
@@ -13665,6 +13778,7 @@ export type BundlesCreateWithoutExternalIntegrationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutExternalIntegrationsInput = {
@@ -13778,6 +13892,7 @@ export type BundlesUncheckedCreateWithoutExternalIntegrationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutExternalIntegrationsInput = {
@@ -13907,6 +14022,7 @@ export type BundlesUpdateWithoutExternalIntegrationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutExternalIntegrationsInput = {
@@ -14020,6 +14136,7 @@ export type BundlesUncheckedUpdateWithoutExternalIntegrationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutFeaturedSlotsInput = {
@@ -14133,6 +14250,7 @@ export type BundlesCreateWithoutFeaturedSlotsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutFeaturedSlotsInput = {
@@ -14246,6 +14364,7 @@ export type BundlesUncheckedCreateWithoutFeaturedSlotsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutFeaturedSlotsInput = {
@@ -14375,6 +14494,7 @@ export type BundlesUpdateWithoutFeaturedSlotsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutFeaturedSlotsInput = {
@@ -14488,6 +14608,7 @@ export type BundlesUncheckedUpdateWithoutFeaturedSlotsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutInAppPurchasesInput = {
@@ -14601,6 +14722,7 @@ export type BundlesCreateWithoutInAppPurchasesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutInAppPurchasesInput = {
@@ -14714,6 +14836,7 @@ export type BundlesUncheckedCreateWithoutInAppPurchasesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutInAppPurchasesInput = {
@@ -14843,6 +14966,7 @@ export type BundlesUpdateWithoutInAppPurchasesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutInAppPurchasesInput = {
@@ -14956,6 +15080,7 @@ export type BundlesUncheckedUpdateWithoutInAppPurchasesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutInstallEventsInput = {
@@ -15069,6 +15194,7 @@ export type BundlesCreateWithoutInstallEventsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutInstallEventsInput = {
@@ -15182,6 +15308,7 @@ export type BundlesUncheckedCreateWithoutInstallEventsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutInstallEventsInput = {
@@ -15311,6 +15438,7 @@ export type BundlesUpdateWithoutInstallEventsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutInstallEventsInput = {
@@ -15424,6 +15552,7 @@ export type BundlesUncheckedUpdateWithoutInstallEventsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutLanguagesInput = {
@@ -15537,6 +15666,7 @@ export type BundlesCreateWithoutLanguagesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutLanguagesInput = {
@@ -15650,6 +15780,7 @@ export type BundlesUncheckedCreateWithoutLanguagesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutLanguagesInput = {
@@ -15779,6 +15910,7 @@ export type BundlesUpdateWithoutLanguagesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutLanguagesInput = {
@@ -15892,6 +16024,7 @@ export type BundlesUncheckedUpdateWithoutLanguagesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutLocalizationsInput = {
@@ -16005,6 +16138,7 @@ export type BundlesCreateWithoutLocalizationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutLocalizationsInput = {
@@ -16118,6 +16252,7 @@ export type BundlesUncheckedCreateWithoutLocalizationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutLocalizationsInput = {
@@ -16247,6 +16382,7 @@ export type BundlesUpdateWithoutLocalizationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutLocalizationsInput = {
@@ -16360,6 +16496,7 @@ export type BundlesUncheckedUpdateWithoutLocalizationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutMonetizationConfigsInput = {
@@ -16473,6 +16610,7 @@ export type BundlesCreateWithoutMonetizationConfigsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutMonetizationConfigsInput = {
@@ -16586,6 +16724,7 @@ export type BundlesUncheckedCreateWithoutMonetizationConfigsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutMonetizationConfigsInput = {
@@ -16715,6 +16854,7 @@ export type BundlesUpdateWithoutMonetizationConfigsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutMonetizationConfigsInput = {
@@ -16828,6 +16968,7 @@ export type BundlesUncheckedUpdateWithoutMonetizationConfigsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutOrdersInput = {
@@ -16941,6 +17082,7 @@ export type BundlesCreateWithoutOrdersInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutOrdersInput = {
@@ -17054,6 +17196,7 @@ export type BundlesUncheckedCreateWithoutOrdersInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutOrdersInput = {
@@ -17183,6 +17326,7 @@ export type BundlesUpdateWithoutOrdersInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutOrdersInput = {
@@ -17296,6 +17440,7 @@ export type BundlesUncheckedUpdateWithoutOrdersInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutPermissionsInput = {
@@ -17409,6 +17554,7 @@ export type BundlesCreateWithoutPermissionsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutPermissionsInput = {
@@ -17522,6 +17668,7 @@ export type BundlesUncheckedCreateWithoutPermissionsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutPermissionsInput = {
@@ -17651,6 +17798,7 @@ export type BundlesUpdateWithoutPermissionsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutPermissionsInput = {
@@ -17764,6 +17912,7 @@ export type BundlesUncheckedUpdateWithoutPermissionsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutPrivacyDeclarationsInput = {
@@ -17877,6 +18026,7 @@ export type BundlesCreateWithoutPrivacyDeclarationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutPrivacyDeclarationsInput = {
@@ -17990,6 +18140,7 @@ export type BundlesUncheckedCreateWithoutPrivacyDeclarationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutPrivacyDeclarationsInput = {
@@ -18119,6 +18270,7 @@ export type BundlesUpdateWithoutPrivacyDeclarationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutPrivacyDeclarationsInput = {
@@ -18232,6 +18384,7 @@ export type BundlesUncheckedUpdateWithoutPrivacyDeclarationsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutPromotionsInput = {
@@ -18345,6 +18498,7 @@ export type BundlesCreateWithoutPromotionsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutPromotionsInput = {
@@ -18458,6 +18612,7 @@ export type BundlesUncheckedCreateWithoutPromotionsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutPromotionsInput = {
@@ -18587,6 +18742,7 @@ export type BundlesUpdateWithoutPromotionsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutPromotionsInput = {
@@ -18700,6 +18856,7 @@ export type BundlesUncheckedUpdateWithoutPromotionsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutRankingScoresInput = {
@@ -18813,6 +18970,7 @@ export type BundlesCreateWithoutRankingScoresInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutRankingScoresInput = {
@@ -18926,6 +19084,7 @@ export type BundlesUncheckedCreateWithoutRankingScoresInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutRankingScoresInput = {
@@ -19055,6 +19214,7 @@ export type BundlesUpdateWithoutRankingScoresInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutRankingScoresInput = {
@@ -19168,6 +19328,7 @@ export type BundlesUncheckedUpdateWithoutRankingScoresInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutReleaseTracksInput = {
@@ -19281,6 +19442,7 @@ export type BundlesCreateWithoutReleaseTracksInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutReleaseTracksInput = {
@@ -19394,6 +19556,7 @@ export type BundlesUncheckedCreateWithoutReleaseTracksInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutReleaseTracksInput = {
@@ -19512,6 +19675,7 @@ export type BundlesCreateWithoutPrimaryReleaseTrackInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutPrimaryReleaseTrackInput = {
@@ -19625,6 +19789,7 @@ export type BundlesUncheckedCreateWithoutPrimaryReleaseTrackInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutPrimaryReleaseTrackInput = {
@@ -19754,6 +19919,7 @@ export type BundlesUpdateWithoutReleaseTracksInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutReleaseTracksInput = {
@@ -19867,6 +20033,7 @@ export type BundlesUncheckedUpdateWithoutReleaseTracksInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUpsertWithoutPrimaryReleaseTrackInput = {
@@ -19991,6 +20158,7 @@ export type BundlesUpdateWithoutPrimaryReleaseTrackInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutPrimaryReleaseTrackInput = {
@@ -20104,6 +20272,7 @@ export type BundlesUncheckedUpdateWithoutPrimaryReleaseTrackInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutRetentionStatsInput = {
@@ -20217,6 +20386,7 @@ export type BundlesCreateWithoutRetentionStatsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutRetentionStatsInput = {
@@ -20330,6 +20500,7 @@ export type BundlesUncheckedCreateWithoutRetentionStatsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutRetentionStatsInput = {
@@ -20459,6 +20630,7 @@ export type BundlesUpdateWithoutRetentionStatsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutRetentionStatsInput = {
@@ -20572,6 +20744,7 @@ export type BundlesUncheckedUpdateWithoutRetentionStatsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutReviewsInput = {
@@ -20685,6 +20858,7 @@ export type BundlesCreateWithoutReviewsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutReviewsInput = {
@@ -20798,6 +20972,7 @@ export type BundlesUncheckedCreateWithoutReviewsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutReviewsInput = {
@@ -20927,6 +21102,7 @@ export type BundlesUpdateWithoutReviewsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutReviewsInput = {
@@ -21040,6 +21216,7 @@ export type BundlesUncheckedUpdateWithoutReviewsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutRuntimeConfigInput = {
@@ -21153,6 +21330,7 @@ export type BundlesCreateWithoutRuntimeConfigInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutRuntimeConfigInput = {
@@ -21266,6 +21444,7 @@ export type BundlesUncheckedCreateWithoutRuntimeConfigInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutRuntimeConfigInput = {
@@ -21395,6 +21574,7 @@ export type BundlesUpdateWithoutRuntimeConfigInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutRuntimeConfigInput = {
@@ -21508,6 +21688,7 @@ export type BundlesUncheckedUpdateWithoutRuntimeConfigInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutRuntimeConfigEntriesInput = {
@@ -21621,6 +21802,7 @@ export type BundlesCreateWithoutRuntimeConfigEntriesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutRuntimeConfigEntriesInput = {
@@ -21734,6 +21916,7 @@ export type BundlesUncheckedCreateWithoutRuntimeConfigEntriesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutRuntimeConfigEntriesInput = {
@@ -21863,6 +22046,7 @@ export type BundlesUpdateWithoutRuntimeConfigEntriesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutRuntimeConfigEntriesInput = {
@@ -21976,6 +22160,7 @@ export type BundlesUncheckedUpdateWithoutRuntimeConfigEntriesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutScreenshotsInput = {
@@ -22089,6 +22274,7 @@ export type BundlesCreateWithoutScreenshotsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutScreenshotsInput = {
@@ -22202,6 +22388,7 @@ export type BundlesUncheckedCreateWithoutScreenshotsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutScreenshotsInput = {
@@ -22331,6 +22518,7 @@ export type BundlesUpdateWithoutScreenshotsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutScreenshotsInput = {
@@ -22444,6 +22632,7 @@ export type BundlesUncheckedUpdateWithoutScreenshotsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutSearchKeywordsInput = {
@@ -22557,6 +22746,7 @@ export type BundlesCreateWithoutSearchKeywordsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutSearchKeywordsInput = {
@@ -22670,6 +22860,7 @@ export type BundlesUncheckedCreateWithoutSearchKeywordsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutSearchKeywordsInput = {
@@ -22799,6 +22990,7 @@ export type BundlesUpdateWithoutSearchKeywordsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutSearchKeywordsInput = {
@@ -22912,6 +23104,7 @@ export type BundlesUncheckedUpdateWithoutSearchKeywordsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutStateTransitionsInput = {
@@ -23025,6 +23218,7 @@ export type BundlesCreateWithoutStateTransitionsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutStateTransitionsInput = {
@@ -23138,6 +23332,7 @@ export type BundlesUncheckedCreateWithoutStateTransitionsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutStateTransitionsInput = {
@@ -23267,6 +23462,7 @@ export type BundlesUpdateWithoutStateTransitionsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutStateTransitionsInput = {
@@ -23380,6 +23576,7 @@ export type BundlesUncheckedUpdateWithoutStateTransitionsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutStatsInput = {
@@ -23493,6 +23690,7 @@ export type BundlesCreateWithoutStatsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutStatsInput = {
@@ -23606,6 +23804,7 @@ export type BundlesUncheckedCreateWithoutStatsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutStatsInput = {
@@ -23735,6 +23934,7 @@ export type BundlesUpdateWithoutStatsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutStatsInput = {
@@ -23848,6 +24048,7 @@ export type BundlesUncheckedUpdateWithoutStatsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutStoreFlagsInput = {
@@ -23961,6 +24162,7 @@ export type BundlesCreateWithoutStoreFlagsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutStoreFlagsInput = {
@@ -24074,6 +24276,7 @@ export type BundlesUncheckedCreateWithoutStoreFlagsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutStoreFlagsInput = {
@@ -24203,6 +24406,7 @@ export type BundlesUpdateWithoutStoreFlagsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutStoreFlagsInput = {
@@ -24316,6 +24520,7 @@ export type BundlesUncheckedUpdateWithoutStoreFlagsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutStoreListingsInput = {
@@ -24429,6 +24634,7 @@ export type BundlesCreateWithoutStoreListingsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutStoreListingsInput = {
@@ -24542,6 +24748,7 @@ export type BundlesUncheckedCreateWithoutStoreListingsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutStoreListingsInput = {
@@ -24671,6 +24878,7 @@ export type BundlesUpdateWithoutStoreListingsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutStoreListingsInput = {
@@ -24784,6 +24992,7 @@ export type BundlesUncheckedUpdateWithoutStoreListingsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutSubscriptionPlansInput = {
@@ -24897,6 +25106,7 @@ export type BundlesCreateWithoutSubscriptionPlansInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutSubscriptionPlansInput = {
@@ -25010,6 +25220,7 @@ export type BundlesUncheckedCreateWithoutSubscriptionPlansInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutSubscriptionPlansInput = {
@@ -25139,6 +25350,7 @@ export type BundlesUpdateWithoutSubscriptionPlansInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutSubscriptionPlansInput = {
@@ -25252,6 +25464,7 @@ export type BundlesUncheckedUpdateWithoutSubscriptionPlansInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutTagsInput = {
@@ -25365,6 +25578,7 @@ export type BundlesCreateWithoutTagsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutTagsInput = {
@@ -25478,6 +25692,7 @@ export type BundlesUncheckedCreateWithoutTagsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutTagsInput = {
@@ -25607,6 +25822,7 @@ export type BundlesUpdateWithoutTagsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutTagsInput = {
@@ -25720,6 +25936,7 @@ export type BundlesUncheckedUpdateWithoutTagsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutTrendingSnapshotsInput = {
@@ -25833,6 +26050,7 @@ export type BundlesCreateWithoutTrendingSnapshotsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutTrendingSnapshotsInput = {
@@ -25946,6 +26164,7 @@ export type BundlesUncheckedCreateWithoutTrendingSnapshotsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutTrendingSnapshotsInput = {
@@ -26075,6 +26294,7 @@ export type BundlesUpdateWithoutTrendingSnapshotsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutTrendingSnapshotsInput = {
@@ -26188,6 +26408,7 @@ export type BundlesUncheckedUpdateWithoutTrendingSnapshotsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutUserReportsInput = {
@@ -26301,6 +26522,7 @@ export type BundlesCreateWithoutUserReportsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutUserReportsInput = {
@@ -26414,6 +26636,7 @@ export type BundlesUncheckedCreateWithoutUserReportsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutUserReportsInput = {
@@ -26543,6 +26766,7 @@ export type BundlesUpdateWithoutUserReportsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutUserReportsInput = {
@@ -26656,6 +26880,7 @@ export type BundlesUncheckedUpdateWithoutUserReportsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutVersionHistoriesInput = {
@@ -26769,6 +26994,7 @@ export type BundlesCreateWithoutVersionHistoriesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutVersionHistoriesInput = {
@@ -26882,6 +27108,7 @@ export type BundlesUncheckedCreateWithoutVersionHistoriesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutVersionHistoriesInput = {
@@ -27011,6 +27238,7 @@ export type BundlesUpdateWithoutVersionHistoriesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutVersionHistoriesInput = {
@@ -27124,6 +27352,7 @@ export type BundlesUncheckedUpdateWithoutVersionHistoriesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutWebhooksInput = {
@@ -27237,6 +27466,7 @@ export type BundlesCreateWithoutWebhooksInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutWebhooksInput = {
@@ -27350,6 +27580,7 @@ export type BundlesUncheckedCreateWithoutWebhooksInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutWebhooksInput = {
@@ -27479,6 +27710,7 @@ export type BundlesUpdateWithoutWebhooksInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutWebhooksInput = {
@@ -27592,6 +27824,7 @@ export type BundlesUncheckedUpdateWithoutWebhooksInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutUserEntitlementsInput = {
@@ -27705,6 +27938,7 @@ export type BundlesCreateWithoutUserEntitlementsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutUserEntitlementsInput = {
@@ -27818,6 +28052,7 @@ export type BundlesUncheckedCreateWithoutUserEntitlementsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutUserEntitlementsInput = {
@@ -27947,6 +28182,7 @@ export type BundlesUpdateWithoutUserEntitlementsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutUserEntitlementsInput = {
@@ -28060,6 +28296,7 @@ export type BundlesUncheckedUpdateWithoutUserEntitlementsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutLedgerAccountsInput = {
@@ -28173,6 +28410,7 @@ export type BundlesCreateWithoutLedgerAccountsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutLedgerAccountsInput = {
@@ -28286,6 +28524,7 @@ export type BundlesUncheckedCreateWithoutLedgerAccountsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutLedgerAccountsInput = {
@@ -28415,6 +28654,7 @@ export type BundlesUpdateWithoutLedgerAccountsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutLedgerAccountsInput = {
@@ -28528,6 +28768,7 @@ export type BundlesUncheckedUpdateWithoutLedgerAccountsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutLedgerTransactionsInput = {
@@ -28641,6 +28882,7 @@ export type BundlesCreateWithoutLedgerTransactionsInput = {
   ledgerAccounts?: Prisma.BundleLedgerAccountsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutLedgerTransactionsInput = {
@@ -28754,6 +28996,7 @@ export type BundlesUncheckedCreateWithoutLedgerTransactionsInput = {
   ledgerAccounts?: Prisma.BundleLedgerAccountsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutLedgerTransactionsInput = {
@@ -28883,6 +29126,7 @@ export type BundlesUpdateWithoutLedgerTransactionsInput = {
   ledgerAccounts?: Prisma.BundleLedgerAccountsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutLedgerTransactionsInput = {
@@ -28996,6 +29240,7 @@ export type BundlesUncheckedUpdateWithoutLedgerTransactionsInput = {
   ledgerAccounts?: Prisma.BundleLedgerAccountsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutStripeWebhookEventsInput = {
@@ -29109,6 +29354,7 @@ export type BundlesCreateWithoutStripeWebhookEventsInput = {
   ledgerAccounts?: Prisma.BundleLedgerAccountsCreateNestedManyWithoutBundleInput
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutStripeWebhookEventsInput = {
@@ -29222,6 +29468,7 @@ export type BundlesUncheckedCreateWithoutStripeWebhookEventsInput = {
   ledgerAccounts?: Prisma.BundleLedgerAccountsUncheckedCreateNestedManyWithoutBundleInput
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutStripeWebhookEventsInput = {
@@ -29351,6 +29598,7 @@ export type BundlesUpdateWithoutStripeWebhookEventsInput = {
   ledgerAccounts?: Prisma.BundleLedgerAccountsUpdateManyWithoutBundleNestedInput
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutStripeWebhookEventsInput = {
@@ -29464,6 +29712,7 @@ export type BundlesUncheckedUpdateWithoutStripeWebhookEventsInput = {
   ledgerAccounts?: Prisma.BundleLedgerAccountsUncheckedUpdateManyWithoutBundleNestedInput
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutRolloutsInput = {
@@ -29577,6 +29826,7 @@ export type BundlesCreateWithoutRolloutsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutRolloutsInput = {
@@ -29690,6 +29940,7 @@ export type BundlesUncheckedCreateWithoutRolloutsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutRolloutsInput = {
@@ -29819,6 +30070,7 @@ export type BundlesUpdateWithoutRolloutsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutRolloutsInput = {
@@ -29932,6 +30184,7 @@ export type BundlesUncheckedUpdateWithoutRolloutsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutSubscriptionHistoryInput = {
@@ -30045,6 +30298,7 @@ export type BundlesCreateWithoutSubscriptionHistoryInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutSubscriptionHistoryInput = {
@@ -30158,6 +30412,7 @@ export type BundlesUncheckedCreateWithoutSubscriptionHistoryInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutSubscriptionHistoryInput = {
@@ -30287,6 +30542,7 @@ export type BundlesUpdateWithoutSubscriptionHistoryInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutSubscriptionHistoryInput = {
@@ -30400,6 +30656,7 @@ export type BundlesUncheckedUpdateWithoutSubscriptionHistoryInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutCrashReportsInput = {
@@ -30513,6 +30770,7 @@ export type BundlesCreateWithoutCrashReportsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutCrashReportsInput = {
@@ -30626,6 +30884,7 @@ export type BundlesUncheckedCreateWithoutCrashReportsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutCrashReportsInput = {
@@ -30755,6 +31014,7 @@ export type BundlesUpdateWithoutCrashReportsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutCrashReportsInput = {
@@ -30868,6 +31128,7 @@ export type BundlesUncheckedUpdateWithoutCrashReportsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutCrashEventsInput = {
@@ -30981,6 +31242,7 @@ export type BundlesCreateWithoutCrashEventsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutCrashEventsInput = {
@@ -31094,6 +31356,7 @@ export type BundlesUncheckedCreateWithoutCrashEventsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutCrashEventsInput = {
@@ -31223,6 +31486,7 @@ export type BundlesUpdateWithoutCrashEventsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutCrashEventsInput = {
@@ -31336,6 +31600,7 @@ export type BundlesUncheckedUpdateWithoutCrashEventsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutReviewHistoryInput = {
@@ -31449,6 +31714,7 @@ export type BundlesCreateWithoutReviewHistoryInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutReviewHistoryInput = {
@@ -31562,6 +31828,7 @@ export type BundlesUncheckedCreateWithoutReviewHistoryInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutReviewHistoryInput = {
@@ -31691,6 +31958,7 @@ export type BundlesUpdateWithoutReviewHistoryInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutReviewHistoryInput = {
@@ -31804,6 +32072,7 @@ export type BundlesUncheckedUpdateWithoutReviewHistoryInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutReviewQueueInput = {
@@ -31917,6 +32186,7 @@ export type BundlesCreateWithoutReviewQueueInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutReviewQueueInput = {
@@ -32030,6 +32300,7 @@ export type BundlesUncheckedCreateWithoutReviewQueueInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutReviewQueueInput = {
@@ -32159,6 +32430,7 @@ export type BundlesUpdateWithoutReviewQueueInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutReviewQueueInput = {
@@ -32272,6 +32544,7 @@ export type BundlesUncheckedUpdateWithoutReviewQueueInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutSecurityScanResultsInput = {
@@ -32385,6 +32658,7 @@ export type BundlesCreateWithoutSecurityScanResultsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutSecurityScanResultsInput = {
@@ -32498,6 +32772,7 @@ export type BundlesUncheckedCreateWithoutSecurityScanResultsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutSecurityScanResultsInput = {
@@ -32627,6 +32902,7 @@ export type BundlesUpdateWithoutSecurityScanResultsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutSecurityScanResultsInput = {
@@ -32740,6 +33016,7 @@ export type BundlesUncheckedUpdateWithoutSecurityScanResultsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutArtifactManifestsInput = {
@@ -32853,6 +33130,7 @@ export type BundlesCreateWithoutArtifactManifestsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutArtifactManifestsInput = {
@@ -32966,6 +33244,7 @@ export type BundlesUncheckedCreateWithoutArtifactManifestsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutArtifactManifestsInput = {
@@ -33095,6 +33374,7 @@ export type BundlesUpdateWithoutArtifactManifestsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutArtifactManifestsInput = {
@@ -33208,6 +33488,7 @@ export type BundlesUncheckedUpdateWithoutArtifactManifestsInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutRolloutExposuresInput = {
@@ -33321,6 +33602,7 @@ export type BundlesCreateWithoutRolloutExposuresInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutRolloutExposuresInput = {
@@ -33434,6 +33716,7 @@ export type BundlesUncheckedCreateWithoutRolloutExposuresInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutRolloutExposuresInput = {
@@ -33563,6 +33846,7 @@ export type BundlesUpdateWithoutRolloutExposuresInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutRolloutExposuresInput = {
@@ -33665,6 +33949,479 @@ export type BundlesUncheckedUpdateWithoutRolloutExposuresInput = {
   securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedUpdateManyWithoutBundleNestedInput
   updatePhases?: Prisma.BundleUpdatePhasesUncheckedUpdateManyWithoutBundleNestedInput
   artifactManifests?: Prisma.BundleArtifactManifestsUncheckedUpdateManyWithoutBundleNestedInput
+  runtimeConfigEntries?: Prisma.BundleRuntimeConfigEntriesUncheckedUpdateManyWithoutBundleNestedInput
+  financialLedger?: Prisma.BundleFinancialLedgerEntriesUncheckedUpdateManyWithoutBundleNestedInput
+  channels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutBundleNestedInput
+  releases?: Prisma.BundleReleasesUncheckedUpdateManyWithoutBundleNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutBundleNestedInput
+  canonicalRollouts?: Prisma.BundleDeliveryRolloutsUncheckedUpdateManyWithoutBundleNestedInput
+  releaseOverridesV2?: Prisma.BundleReleaseOverridesV2UncheckedUpdateManyWithoutBundleNestedInput
+  ledgerAccounts?: Prisma.BundleLedgerAccountsUncheckedUpdateManyWithoutBundleNestedInput
+  ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
+  stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
+  sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
+}
+
+export type BundlesCreateWithoutVerificationRunsInput = {
+  id: string
+  bundleKey?: string | null
+  name: string
+  slug?: string | null
+  version?: string
+  buildNumber?: number
+  iconUrl?: string | null
+  bannerUrl?: string | null
+  shortDescription?: string | null
+  description?: string | null
+  privacyPolicyUrl?: string | null
+  supportUrl?: string | null
+  websiteUrl?: string | null
+  developerName?: string | null
+  developerId?: string | null
+  developerEmail?: string | null
+  category?: string | null
+  subCategory?: string | null
+  storagePath: string
+  bucket: string
+  fileSize?: bigint | number | null
+  checksum?: string | null
+  price?: number | null
+  currency?: string | null
+  isFree?: boolean
+  isOneTimePayment?: boolean
+  hasInAppPurchases?: boolean
+  hasSubscription?: boolean
+  status?: $Enums.BundleCatalogStatus
+  rejectionReason?: string | null
+  publishedAt?: Date | string | null
+  expiresAt?: Date | string | null
+  changelog?: string | null
+  releaseNotes?: string | null
+  ageRating?: string | null
+  contentAdvisory?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
+  activeDeliveryMode?: $Enums.BundleDeliveryMode
+  project?: Prisma.ProjectCreateNestedOneWithoutBundleInput
+  abTests?: Prisma.BundleAbTestsCreateNestedManyWithoutBundleInput
+  activeAbTest?: Prisma.BundleAbTestsCreateNestedOneWithoutActiveForBundleInput
+  activeRollout?: Prisma.BundleDeliveryRolloutsCreateNestedOneWithoutActiveForBundleInput
+  abuseSignals?: Prisma.BundleAbuseSignalsCreateNestedOneWithoutBundleInput
+  adConfigurations?: Prisma.BundleAdConfigurationsCreateNestedOneWithoutBundleInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsCreateNestedManyWithoutBundleInput
+  apiUsageStats?: Prisma.BundleApiUsageStatsCreateNestedManyWithoutBundleInput
+  auditLogs?: Prisma.BundleAuditLogCreateNestedManyWithoutBundleInput
+  betaTesters?: Prisma.BundleBetaTestersCreateNestedManyWithoutBundleInput
+  changeLogs?: Prisma.BundleChangeLogsCreateNestedManyWithoutBundleInput
+  collaborators?: Prisma.BundleCollaboratorsCreateNestedManyWithoutBundleInput
+  contentRatings?: Prisma.BundleContentRatingsCreateNestedManyWithoutBundleInput
+  countries?: Prisma.BundleCountriesCreateNestedManyWithoutBundleInput
+  dependencies?: Prisma.BundleDependenciesCreateNestedManyWithoutBundleInput
+  dependentBundles?: Prisma.BundleDependenciesCreateNestedManyWithoutDependencyBundleInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesCreateNestedManyWithoutBundleInput
+  deviceSupports?: Prisma.BundleDeviceSupportCreateNestedManyWithoutBundleInput
+  externalIntegrations?: Prisma.BundleExternalIntegrationsCreateNestedManyWithoutBundleInput
+  featuredSlots?: Prisma.BundleFeaturedSlotsCreateNestedManyWithoutBundleInput
+  inAppPurchases?: Prisma.BundleInAppPurchasesCreateNestedManyWithoutBundleInput
+  installEvents?: Prisma.BundleInstallEventsCreateNestedManyWithoutBundleInput
+  languages?: Prisma.BundleLanguagesCreateNestedManyWithoutBundleInput
+  localizations?: Prisma.BundleLocalizationsCreateNestedManyWithoutBundleInput
+  monetizationConfigs?: Prisma.BundleMonetizationConfigsCreateNestedOneWithoutBundleInput
+  orders?: Prisma.BundleOrdersCreateNestedManyWithoutBundleInput
+  permissions?: Prisma.BundlePermissionsCreateNestedManyWithoutBundleInput
+  privacyDeclarations?: Prisma.BundlePrivacyDeclarationsCreateNestedOneWithoutBundleInput
+  promotions?: Prisma.BundlePromotionsCreateNestedManyWithoutBundleInput
+  rankingScores?: Prisma.BundleRankingScoresCreateNestedOneWithoutBundleInput
+  releaseTracks?: Prisma.BundleReleaseTracksCreateNestedManyWithoutBundleInput
+  primaryReleaseTrack?: Prisma.BundleReleaseTracksCreateNestedOneWithoutPrimaryForBundleInput
+  retentionStats?: Prisma.BundleRetentionStatsCreateNestedManyWithoutBundleInput
+  reviews?: Prisma.BundleReviewsCreateNestedManyWithoutBundleInput
+  runtimeConfig?: Prisma.BundleRuntimeConfigCreateNestedOneWithoutBundleInput
+  screenshots?: Prisma.BundleScreenshotsCreateNestedManyWithoutBundleInput
+  searchKeywords?: Prisma.BundleSearchKeywordsCreateNestedManyWithoutBundleInput
+  stateTransitions?: Prisma.BundleStateTransitionsCreateNestedManyWithoutBundleInput
+  stats?: Prisma.BundleStatsCreateNestedOneWithoutBundleInput
+  storeFlags?: Prisma.BundleStoreFlagsCreateNestedOneWithoutBundleInput
+  storeListings?: Prisma.BundleStoreListingsCreateNestedManyWithoutBundleInput
+  subscriptionPlans?: Prisma.BundleSubscriptionPlansCreateNestedManyWithoutBundleInput
+  tags?: Prisma.BundleTagsCreateNestedManyWithoutBundleInput
+  trendingSnapshots?: Prisma.BundleTrendingSnapshotsCreateNestedManyWithoutBundleInput
+  userReports?: Prisma.BundleUserReportsCreateNestedManyWithoutBundleInput
+  versionHistories?: Prisma.BundleVersionHistoryCreateNestedManyWithoutBundleInput
+  webhooks?: Prisma.BundleWebhooksCreateNestedManyWithoutBundleInput
+  userEntitlements?: Prisma.BundleUserEntitlementsCreateNestedManyWithoutBundleInput
+  rollouts?: Prisma.BundleRolloutsCreateNestedManyWithoutBundleInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryCreateNestedManyWithoutBundleInput
+  crashReports?: Prisma.BundleCrashReportsCreateNestedManyWithoutBundleInput
+  crashEvents?: Prisma.BundleCrashEventsCreateNestedManyWithoutBundleInput
+  reviewHistory?: Prisma.BundleReviewHistoryCreateNestedManyWithoutBundleInput
+  reviewQueue?: Prisma.BundleReviewQueueCreateNestedManyWithoutBundleInput
+  securityScanResults?: Prisma.BundleSecurityScanResultsCreateNestedManyWithoutBundleInput
+  updatePhases?: Prisma.BundleUpdatePhasesCreateNestedManyWithoutBundleInput
+  artifactManifests?: Prisma.BundleArtifactManifestsCreateNestedManyWithoutBundleInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresCreateNestedManyWithoutBundleInput
+  runtimeConfigEntries?: Prisma.BundleRuntimeConfigEntriesCreateNestedManyWithoutBundleInput
+  financialLedger?: Prisma.BundleFinancialLedgerEntriesCreateNestedManyWithoutBundleInput
+  channels?: Prisma.BundleChannelsCreateNestedManyWithoutBundleInput
+  releases?: Prisma.BundleReleasesCreateNestedManyWithoutBundleInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutBundleInput
+  canonicalRollouts?: Prisma.BundleDeliveryRolloutsCreateNestedManyWithoutBundleInput
+  releaseOverridesV2?: Prisma.BundleReleaseOverridesV2CreateNestedManyWithoutBundleInput
+  ledgerAccounts?: Prisma.BundleLedgerAccountsCreateNestedManyWithoutBundleInput
+  ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
+  stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
+  sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+}
+
+export type BundlesUncheckedCreateWithoutVerificationRunsInput = {
+  id: string
+  bundleKey?: string | null
+  name: string
+  slug?: string | null
+  version?: string
+  buildNumber?: number
+  iconUrl?: string | null
+  bannerUrl?: string | null
+  shortDescription?: string | null
+  description?: string | null
+  privacyPolicyUrl?: string | null
+  supportUrl?: string | null
+  websiteUrl?: string | null
+  developerName?: string | null
+  developerId?: string | null
+  developerEmail?: string | null
+  category?: string | null
+  subCategory?: string | null
+  storagePath: string
+  bucket: string
+  fileSize?: bigint | number | null
+  checksum?: string | null
+  price?: number | null
+  currency?: string | null
+  isFree?: boolean
+  isOneTimePayment?: boolean
+  hasInAppPurchases?: boolean
+  hasSubscription?: boolean
+  status?: $Enums.BundleCatalogStatus
+  rejectionReason?: string | null
+  publishedAt?: Date | string | null
+  expiresAt?: Date | string | null
+  changelog?: string | null
+  releaseNotes?: string | null
+  ageRating?: string | null
+  contentAdvisory?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  projectId?: string | null
+  vercelDeploymentId?: string | null
+  vercelDeploymentUrl?: string | null
+  primaryReleaseTrackId?: string | null
+  activeAbTestId?: string | null
+  activeRolloutId?: string | null
+  activeDeliveryMode?: $Enums.BundleDeliveryMode
+  abTests?: Prisma.BundleAbTestsUncheckedCreateNestedManyWithoutBundleInput
+  abuseSignals?: Prisma.BundleAbuseSignalsUncheckedCreateNestedOneWithoutBundleInput
+  adConfigurations?: Prisma.BundleAdConfigurationsUncheckedCreateNestedOneWithoutBundleInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedCreateNestedManyWithoutBundleInput
+  apiUsageStats?: Prisma.BundleApiUsageStatsUncheckedCreateNestedManyWithoutBundleInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedCreateNestedManyWithoutBundleInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedCreateNestedManyWithoutBundleInput
+  changeLogs?: Prisma.BundleChangeLogsUncheckedCreateNestedManyWithoutBundleInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedCreateNestedManyWithoutBundleInput
+  contentRatings?: Prisma.BundleContentRatingsUncheckedCreateNestedManyWithoutBundleInput
+  countries?: Prisma.BundleCountriesUncheckedCreateNestedManyWithoutBundleInput
+  dependencies?: Prisma.BundleDependenciesUncheckedCreateNestedManyWithoutBundleInput
+  dependentBundles?: Prisma.BundleDependenciesUncheckedCreateNestedManyWithoutDependencyBundleInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedCreateNestedManyWithoutBundleInput
+  deviceSupports?: Prisma.BundleDeviceSupportUncheckedCreateNestedManyWithoutBundleInput
+  externalIntegrations?: Prisma.BundleExternalIntegrationsUncheckedCreateNestedManyWithoutBundleInput
+  featuredSlots?: Prisma.BundleFeaturedSlotsUncheckedCreateNestedManyWithoutBundleInput
+  inAppPurchases?: Prisma.BundleInAppPurchasesUncheckedCreateNestedManyWithoutBundleInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedCreateNestedManyWithoutBundleInput
+  languages?: Prisma.BundleLanguagesUncheckedCreateNestedManyWithoutBundleInput
+  localizations?: Prisma.BundleLocalizationsUncheckedCreateNestedManyWithoutBundleInput
+  monetizationConfigs?: Prisma.BundleMonetizationConfigsUncheckedCreateNestedOneWithoutBundleInput
+  orders?: Prisma.BundleOrdersUncheckedCreateNestedManyWithoutBundleInput
+  permissions?: Prisma.BundlePermissionsUncheckedCreateNestedManyWithoutBundleInput
+  privacyDeclarations?: Prisma.BundlePrivacyDeclarationsUncheckedCreateNestedOneWithoutBundleInput
+  promotions?: Prisma.BundlePromotionsUncheckedCreateNestedManyWithoutBundleInput
+  rankingScores?: Prisma.BundleRankingScoresUncheckedCreateNestedOneWithoutBundleInput
+  releaseTracks?: Prisma.BundleReleaseTracksUncheckedCreateNestedManyWithoutBundleInput
+  retentionStats?: Prisma.BundleRetentionStatsUncheckedCreateNestedManyWithoutBundleInput
+  reviews?: Prisma.BundleReviewsUncheckedCreateNestedManyWithoutBundleInput
+  runtimeConfig?: Prisma.BundleRuntimeConfigUncheckedCreateNestedOneWithoutBundleInput
+  screenshots?: Prisma.BundleScreenshotsUncheckedCreateNestedManyWithoutBundleInput
+  searchKeywords?: Prisma.BundleSearchKeywordsUncheckedCreateNestedManyWithoutBundleInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedCreateNestedManyWithoutBundleInput
+  stats?: Prisma.BundleStatsUncheckedCreateNestedOneWithoutBundleInput
+  storeFlags?: Prisma.BundleStoreFlagsUncheckedCreateNestedOneWithoutBundleInput
+  storeListings?: Prisma.BundleStoreListingsUncheckedCreateNestedManyWithoutBundleInput
+  subscriptionPlans?: Prisma.BundleSubscriptionPlansUncheckedCreateNestedManyWithoutBundleInput
+  tags?: Prisma.BundleTagsUncheckedCreateNestedManyWithoutBundleInput
+  trendingSnapshots?: Prisma.BundleTrendingSnapshotsUncheckedCreateNestedManyWithoutBundleInput
+  userReports?: Prisma.BundleUserReportsUncheckedCreateNestedManyWithoutBundleInput
+  versionHistories?: Prisma.BundleVersionHistoryUncheckedCreateNestedManyWithoutBundleInput
+  webhooks?: Prisma.BundleWebhooksUncheckedCreateNestedManyWithoutBundleInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedCreateNestedManyWithoutBundleInput
+  rollouts?: Prisma.BundleRolloutsUncheckedCreateNestedManyWithoutBundleInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedCreateNestedManyWithoutBundleInput
+  crashReports?: Prisma.BundleCrashReportsUncheckedCreateNestedManyWithoutBundleInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedCreateNestedManyWithoutBundleInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedCreateNestedManyWithoutBundleInput
+  reviewQueue?: Prisma.BundleReviewQueueUncheckedCreateNestedManyWithoutBundleInput
+  securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedCreateNestedManyWithoutBundleInput
+  updatePhases?: Prisma.BundleUpdatePhasesUncheckedCreateNestedManyWithoutBundleInput
+  artifactManifests?: Prisma.BundleArtifactManifestsUncheckedCreateNestedManyWithoutBundleInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedCreateNestedManyWithoutBundleInput
+  runtimeConfigEntries?: Prisma.BundleRuntimeConfigEntriesUncheckedCreateNestedManyWithoutBundleInput
+  financialLedger?: Prisma.BundleFinancialLedgerEntriesUncheckedCreateNestedManyWithoutBundleInput
+  channels?: Prisma.BundleChannelsUncheckedCreateNestedManyWithoutBundleInput
+  releases?: Prisma.BundleReleasesUncheckedCreateNestedManyWithoutBundleInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutBundleInput
+  canonicalRollouts?: Prisma.BundleDeliveryRolloutsUncheckedCreateNestedManyWithoutBundleInput
+  releaseOverridesV2?: Prisma.BundleReleaseOverridesV2UncheckedCreateNestedManyWithoutBundleInput
+  ledgerAccounts?: Prisma.BundleLedgerAccountsUncheckedCreateNestedManyWithoutBundleInput
+  ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
+  stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
+  sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+}
+
+export type BundlesCreateOrConnectWithoutVerificationRunsInput = {
+  where: Prisma.BundlesWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundlesCreateWithoutVerificationRunsInput, Prisma.BundlesUncheckedCreateWithoutVerificationRunsInput>
+}
+
+export type BundlesUpsertWithoutVerificationRunsInput = {
+  update: Prisma.XOR<Prisma.BundlesUpdateWithoutVerificationRunsInput, Prisma.BundlesUncheckedUpdateWithoutVerificationRunsInput>
+  create: Prisma.XOR<Prisma.BundlesCreateWithoutVerificationRunsInput, Prisma.BundlesUncheckedCreateWithoutVerificationRunsInput>
+  where?: Prisma.BundlesWhereInput
+}
+
+export type BundlesUpdateToOneWithWhereWithoutVerificationRunsInput = {
+  where?: Prisma.BundlesWhereInput
+  data: Prisma.XOR<Prisma.BundlesUpdateWithoutVerificationRunsInput, Prisma.BundlesUncheckedUpdateWithoutVerificationRunsInput>
+}
+
+export type BundlesUpdateWithoutVerificationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  iconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPolicyUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  bucket?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOneTimePayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasInAppPurchases?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSubscription?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumBundleCatalogStatusFieldUpdateOperationsInput | $Enums.BundleCatalogStatus
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ageRating?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentAdvisory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeDeliveryMode?: Prisma.EnumBundleDeliveryModeFieldUpdateOperationsInput | $Enums.BundleDeliveryMode
+  project?: Prisma.ProjectUpdateOneWithoutBundleNestedInput
+  abTests?: Prisma.BundleAbTestsUpdateManyWithoutBundleNestedInput
+  activeAbTest?: Prisma.BundleAbTestsUpdateOneWithoutActiveForBundleNestedInput
+  activeRollout?: Prisma.BundleDeliveryRolloutsUpdateOneWithoutActiveForBundleNestedInput
+  abuseSignals?: Prisma.BundleAbuseSignalsUpdateOneWithoutBundleNestedInput
+  adConfigurations?: Prisma.BundleAdConfigurationsUpdateOneWithoutBundleNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUpdateManyWithoutBundleNestedInput
+  apiUsageStats?: Prisma.BundleApiUsageStatsUpdateManyWithoutBundleNestedInput
+  auditLogs?: Prisma.BundleAuditLogUpdateManyWithoutBundleNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUpdateManyWithoutBundleNestedInput
+  changeLogs?: Prisma.BundleChangeLogsUpdateManyWithoutBundleNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUpdateManyWithoutBundleNestedInput
+  contentRatings?: Prisma.BundleContentRatingsUpdateManyWithoutBundleNestedInput
+  countries?: Prisma.BundleCountriesUpdateManyWithoutBundleNestedInput
+  dependencies?: Prisma.BundleDependenciesUpdateManyWithoutBundleNestedInput
+  dependentBundles?: Prisma.BundleDependenciesUpdateManyWithoutDependencyBundleNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUpdateManyWithoutBundleNestedInput
+  deviceSupports?: Prisma.BundleDeviceSupportUpdateManyWithoutBundleNestedInput
+  externalIntegrations?: Prisma.BundleExternalIntegrationsUpdateManyWithoutBundleNestedInput
+  featuredSlots?: Prisma.BundleFeaturedSlotsUpdateManyWithoutBundleNestedInput
+  inAppPurchases?: Prisma.BundleInAppPurchasesUpdateManyWithoutBundleNestedInput
+  installEvents?: Prisma.BundleInstallEventsUpdateManyWithoutBundleNestedInput
+  languages?: Prisma.BundleLanguagesUpdateManyWithoutBundleNestedInput
+  localizations?: Prisma.BundleLocalizationsUpdateManyWithoutBundleNestedInput
+  monetizationConfigs?: Prisma.BundleMonetizationConfigsUpdateOneWithoutBundleNestedInput
+  orders?: Prisma.BundleOrdersUpdateManyWithoutBundleNestedInput
+  permissions?: Prisma.BundlePermissionsUpdateManyWithoutBundleNestedInput
+  privacyDeclarations?: Prisma.BundlePrivacyDeclarationsUpdateOneWithoutBundleNestedInput
+  promotions?: Prisma.BundlePromotionsUpdateManyWithoutBundleNestedInput
+  rankingScores?: Prisma.BundleRankingScoresUpdateOneWithoutBundleNestedInput
+  releaseTracks?: Prisma.BundleReleaseTracksUpdateManyWithoutBundleNestedInput
+  primaryReleaseTrack?: Prisma.BundleReleaseTracksUpdateOneWithoutPrimaryForBundleNestedInput
+  retentionStats?: Prisma.BundleRetentionStatsUpdateManyWithoutBundleNestedInput
+  reviews?: Prisma.BundleReviewsUpdateManyWithoutBundleNestedInput
+  runtimeConfig?: Prisma.BundleRuntimeConfigUpdateOneWithoutBundleNestedInput
+  screenshots?: Prisma.BundleScreenshotsUpdateManyWithoutBundleNestedInput
+  searchKeywords?: Prisma.BundleSearchKeywordsUpdateManyWithoutBundleNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUpdateManyWithoutBundleNestedInput
+  stats?: Prisma.BundleStatsUpdateOneWithoutBundleNestedInput
+  storeFlags?: Prisma.BundleStoreFlagsUpdateOneWithoutBundleNestedInput
+  storeListings?: Prisma.BundleStoreListingsUpdateManyWithoutBundleNestedInput
+  subscriptionPlans?: Prisma.BundleSubscriptionPlansUpdateManyWithoutBundleNestedInput
+  tags?: Prisma.BundleTagsUpdateManyWithoutBundleNestedInput
+  trendingSnapshots?: Prisma.BundleTrendingSnapshotsUpdateManyWithoutBundleNestedInput
+  userReports?: Prisma.BundleUserReportsUpdateManyWithoutBundleNestedInput
+  versionHistories?: Prisma.BundleVersionHistoryUpdateManyWithoutBundleNestedInput
+  webhooks?: Prisma.BundleWebhooksUpdateManyWithoutBundleNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUpdateManyWithoutBundleNestedInput
+  rollouts?: Prisma.BundleRolloutsUpdateManyWithoutBundleNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUpdateManyWithoutBundleNestedInput
+  crashReports?: Prisma.BundleCrashReportsUpdateManyWithoutBundleNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUpdateManyWithoutBundleNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUpdateManyWithoutBundleNestedInput
+  reviewQueue?: Prisma.BundleReviewQueueUpdateManyWithoutBundleNestedInput
+  securityScanResults?: Prisma.BundleSecurityScanResultsUpdateManyWithoutBundleNestedInput
+  updatePhases?: Prisma.BundleUpdatePhasesUpdateManyWithoutBundleNestedInput
+  artifactManifests?: Prisma.BundleArtifactManifestsUpdateManyWithoutBundleNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUpdateManyWithoutBundleNestedInput
+  runtimeConfigEntries?: Prisma.BundleRuntimeConfigEntriesUpdateManyWithoutBundleNestedInput
+  financialLedger?: Prisma.BundleFinancialLedgerEntriesUpdateManyWithoutBundleNestedInput
+  channels?: Prisma.BundleChannelsUpdateManyWithoutBundleNestedInput
+  releases?: Prisma.BundleReleasesUpdateManyWithoutBundleNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutBundleNestedInput
+  canonicalRollouts?: Prisma.BundleDeliveryRolloutsUpdateManyWithoutBundleNestedInput
+  releaseOverridesV2?: Prisma.BundleReleaseOverridesV2UpdateManyWithoutBundleNestedInput
+  ledgerAccounts?: Prisma.BundleLedgerAccountsUpdateManyWithoutBundleNestedInput
+  ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
+  stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
+  sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+}
+
+export type BundlesUncheckedUpdateWithoutVerificationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bundleKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.StringFieldUpdateOperationsInput | string
+  buildNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  iconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  privacyPolicyUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string
+  bucket?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isOneTimePayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasInAppPurchases?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasSubscription?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumBundleCatalogStatusFieldUpdateOperationsInput | $Enums.BundleCatalogStatus
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  changelog?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  releaseNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ageRating?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contentAdvisory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelDeploymentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryReleaseTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeAbTestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeRolloutId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeDeliveryMode?: Prisma.EnumBundleDeliveryModeFieldUpdateOperationsInput | $Enums.BundleDeliveryMode
+  abTests?: Prisma.BundleAbTestsUncheckedUpdateManyWithoutBundleNestedInput
+  abuseSignals?: Prisma.BundleAbuseSignalsUncheckedUpdateOneWithoutBundleNestedInput
+  adConfigurations?: Prisma.BundleAdConfigurationsUncheckedUpdateOneWithoutBundleNestedInput
+  analyticsEvents?: Prisma.BundleAnalyticsEventsUncheckedUpdateManyWithoutBundleNestedInput
+  apiUsageStats?: Prisma.BundleApiUsageStatsUncheckedUpdateManyWithoutBundleNestedInput
+  auditLogs?: Prisma.BundleAuditLogUncheckedUpdateManyWithoutBundleNestedInput
+  betaTesters?: Prisma.BundleBetaTestersUncheckedUpdateManyWithoutBundleNestedInput
+  changeLogs?: Prisma.BundleChangeLogsUncheckedUpdateManyWithoutBundleNestedInput
+  collaborators?: Prisma.BundleCollaboratorsUncheckedUpdateManyWithoutBundleNestedInput
+  contentRatings?: Prisma.BundleContentRatingsUncheckedUpdateManyWithoutBundleNestedInput
+  countries?: Prisma.BundleCountriesUncheckedUpdateManyWithoutBundleNestedInput
+  dependencies?: Prisma.BundleDependenciesUncheckedUpdateManyWithoutBundleNestedInput
+  dependentBundles?: Prisma.BundleDependenciesUncheckedUpdateManyWithoutDependencyBundleNestedInput
+  developerStrikes?: Prisma.BundleDeveloperStrikesUncheckedUpdateManyWithoutBundleNestedInput
+  deviceSupports?: Prisma.BundleDeviceSupportUncheckedUpdateManyWithoutBundleNestedInput
+  externalIntegrations?: Prisma.BundleExternalIntegrationsUncheckedUpdateManyWithoutBundleNestedInput
+  featuredSlots?: Prisma.BundleFeaturedSlotsUncheckedUpdateManyWithoutBundleNestedInput
+  inAppPurchases?: Prisma.BundleInAppPurchasesUncheckedUpdateManyWithoutBundleNestedInput
+  installEvents?: Prisma.BundleInstallEventsUncheckedUpdateManyWithoutBundleNestedInput
+  languages?: Prisma.BundleLanguagesUncheckedUpdateManyWithoutBundleNestedInput
+  localizations?: Prisma.BundleLocalizationsUncheckedUpdateManyWithoutBundleNestedInput
+  monetizationConfigs?: Prisma.BundleMonetizationConfigsUncheckedUpdateOneWithoutBundleNestedInput
+  orders?: Prisma.BundleOrdersUncheckedUpdateManyWithoutBundleNestedInput
+  permissions?: Prisma.BundlePermissionsUncheckedUpdateManyWithoutBundleNestedInput
+  privacyDeclarations?: Prisma.BundlePrivacyDeclarationsUncheckedUpdateOneWithoutBundleNestedInput
+  promotions?: Prisma.BundlePromotionsUncheckedUpdateManyWithoutBundleNestedInput
+  rankingScores?: Prisma.BundleRankingScoresUncheckedUpdateOneWithoutBundleNestedInput
+  releaseTracks?: Prisma.BundleReleaseTracksUncheckedUpdateManyWithoutBundleNestedInput
+  retentionStats?: Prisma.BundleRetentionStatsUncheckedUpdateManyWithoutBundleNestedInput
+  reviews?: Prisma.BundleReviewsUncheckedUpdateManyWithoutBundleNestedInput
+  runtimeConfig?: Prisma.BundleRuntimeConfigUncheckedUpdateOneWithoutBundleNestedInput
+  screenshots?: Prisma.BundleScreenshotsUncheckedUpdateManyWithoutBundleNestedInput
+  searchKeywords?: Prisma.BundleSearchKeywordsUncheckedUpdateManyWithoutBundleNestedInput
+  stateTransitions?: Prisma.BundleStateTransitionsUncheckedUpdateManyWithoutBundleNestedInput
+  stats?: Prisma.BundleStatsUncheckedUpdateOneWithoutBundleNestedInput
+  storeFlags?: Prisma.BundleStoreFlagsUncheckedUpdateOneWithoutBundleNestedInput
+  storeListings?: Prisma.BundleStoreListingsUncheckedUpdateManyWithoutBundleNestedInput
+  subscriptionPlans?: Prisma.BundleSubscriptionPlansUncheckedUpdateManyWithoutBundleNestedInput
+  tags?: Prisma.BundleTagsUncheckedUpdateManyWithoutBundleNestedInput
+  trendingSnapshots?: Prisma.BundleTrendingSnapshotsUncheckedUpdateManyWithoutBundleNestedInput
+  userReports?: Prisma.BundleUserReportsUncheckedUpdateManyWithoutBundleNestedInput
+  versionHistories?: Prisma.BundleVersionHistoryUncheckedUpdateManyWithoutBundleNestedInput
+  webhooks?: Prisma.BundleWebhooksUncheckedUpdateManyWithoutBundleNestedInput
+  userEntitlements?: Prisma.BundleUserEntitlementsUncheckedUpdateManyWithoutBundleNestedInput
+  rollouts?: Prisma.BundleRolloutsUncheckedUpdateManyWithoutBundleNestedInput
+  subscriptionHistory?: Prisma.BundleSubscriptionHistoryUncheckedUpdateManyWithoutBundleNestedInput
+  crashReports?: Prisma.BundleCrashReportsUncheckedUpdateManyWithoutBundleNestedInput
+  crashEvents?: Prisma.BundleCrashEventsUncheckedUpdateManyWithoutBundleNestedInput
+  reviewHistory?: Prisma.BundleReviewHistoryUncheckedUpdateManyWithoutBundleNestedInput
+  reviewQueue?: Prisma.BundleReviewQueueUncheckedUpdateManyWithoutBundleNestedInput
+  securityScanResults?: Prisma.BundleSecurityScanResultsUncheckedUpdateManyWithoutBundleNestedInput
+  updatePhases?: Prisma.BundleUpdatePhasesUncheckedUpdateManyWithoutBundleNestedInput
+  artifactManifests?: Prisma.BundleArtifactManifestsUncheckedUpdateManyWithoutBundleNestedInput
+  rolloutExposures?: Prisma.BundleRolloutExposuresUncheckedUpdateManyWithoutBundleNestedInput
   runtimeConfigEntries?: Prisma.BundleRuntimeConfigEntriesUncheckedUpdateManyWithoutBundleNestedInput
   financialLedger?: Prisma.BundleFinancialLedgerEntriesUncheckedUpdateManyWithoutBundleNestedInput
   channels?: Prisma.BundleChannelsUncheckedUpdateManyWithoutBundleNestedInput
@@ -33789,6 +34546,7 @@ export type BundlesCreateWithoutFinancialLedgerInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutFinancialLedgerInput = {
@@ -33902,6 +34660,7 @@ export type BundlesUncheckedCreateWithoutFinancialLedgerInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutFinancialLedgerInput = {
@@ -34031,6 +34790,7 @@ export type BundlesUpdateWithoutFinancialLedgerInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutFinancialLedgerInput = {
@@ -34144,6 +34904,7 @@ export type BundlesUncheckedUpdateWithoutFinancialLedgerInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutUpdatePhasesInput = {
@@ -34257,6 +35018,7 @@ export type BundlesCreateWithoutUpdatePhasesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutUpdatePhasesInput = {
@@ -34370,6 +35132,7 @@ export type BundlesUncheckedCreateWithoutUpdatePhasesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutUpdatePhasesInput = {
@@ -34499,6 +35262,7 @@ export type BundlesUpdateWithoutUpdatePhasesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutUpdatePhasesInput = {
@@ -34612,6 +35376,7 @@ export type BundlesUncheckedUpdateWithoutUpdatePhasesInput = {
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
   sdkTokens?: Prisma.BundleSdkTokensUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesCreateWithoutSdkTokensInput = {
@@ -34725,6 +35490,7 @@ export type BundlesCreateWithoutSdkTokensInput = {
   ledgerAccounts?: Prisma.BundleLedgerAccountsCreateNestedManyWithoutBundleInput
   ledgerTransactions?: Prisma.BundleLedgerTransactionsCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesUncheckedCreateWithoutSdkTokensInput = {
@@ -34838,6 +35604,7 @@ export type BundlesUncheckedCreateWithoutSdkTokensInput = {
   ledgerAccounts?: Prisma.BundleLedgerAccountsUncheckedCreateNestedManyWithoutBundleInput
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedCreateNestedManyWithoutBundleInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedCreateNestedManyWithoutBundleInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutBundleInput
 }
 
 export type BundlesCreateOrConnectWithoutSdkTokensInput = {
@@ -34967,6 +35734,7 @@ export type BundlesUpdateWithoutSdkTokensInput = {
   ledgerAccounts?: Prisma.BundleLedgerAccountsUpdateManyWithoutBundleNestedInput
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutBundleNestedInput
 }
 
 export type BundlesUncheckedUpdateWithoutSdkTokensInput = {
@@ -35080,6 +35848,7 @@ export type BundlesUncheckedUpdateWithoutSdkTokensInput = {
   ledgerAccounts?: Prisma.BundleLedgerAccountsUncheckedUpdateManyWithoutBundleNestedInput
   ledgerTransactions?: Prisma.BundleLedgerTransactionsUncheckedUpdateManyWithoutBundleNestedInput
   stripeWebhookEvents?: Prisma.BundleStripeWebhookEventsUncheckedUpdateManyWithoutBundleNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutBundleNestedInput
 }
 
 
@@ -35145,6 +35914,7 @@ export type BundlesCountOutputType = {
   ledgerTransactions: number
   stripeWebhookEvents: number
   sdkTokens: number
+  verificationRuns: number
 }
 
 export type BundlesCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -35205,6 +35975,7 @@ export type BundlesCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   ledgerTransactions?: boolean | BundlesCountOutputTypeCountLedgerTransactionsArgs
   stripeWebhookEvents?: boolean | BundlesCountOutputTypeCountStripeWebhookEventsArgs
   sdkTokens?: boolean | BundlesCountOutputTypeCountSdkTokensArgs
+  verificationRuns?: boolean | BundlesCountOutputTypeCountVerificationRunsArgs
 }
 
 /**
@@ -35616,6 +36387,13 @@ export type BundlesCountOutputTypeCountSdkTokensArgs<ExtArgs extends runtime.Typ
   where?: Prisma.BundleSdkTokensWhereInput
 }
 
+/**
+ * BundlesCountOutputType without action
+ */
+export type BundlesCountOutputTypeCountVerificationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VerificationRunsWhereInput
+}
+
 
 export type BundlesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -35733,6 +36511,7 @@ export type BundlesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   ledgerTransactions?: boolean | Prisma.Bundles$ledgerTransactionsArgs<ExtArgs>
   stripeWebhookEvents?: boolean | Prisma.Bundles$stripeWebhookEventsArgs<ExtArgs>
   sdkTokens?: boolean | Prisma.Bundles$sdkTokensArgs<ExtArgs>
+  verificationRuns?: boolean | Prisma.Bundles$verificationRunsArgs<ExtArgs>
   _count?: boolean | Prisma.BundlesCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundles"]>
 
@@ -35962,6 +36741,7 @@ export type BundlesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   ledgerTransactions?: boolean | Prisma.Bundles$ledgerTransactionsArgs<ExtArgs>
   stripeWebhookEvents?: boolean | Prisma.Bundles$stripeWebhookEventsArgs<ExtArgs>
   sdkTokens?: boolean | Prisma.Bundles$sdkTokensArgs<ExtArgs>
+  verificationRuns?: boolean | Prisma.Bundles$verificationRunsArgs<ExtArgs>
   _count?: boolean | Prisma.BundlesCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BundlesIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -36049,6 +36829,7 @@ export type $BundlesPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     ledgerTransactions: Prisma.$BundleLedgerTransactionsPayload<ExtArgs>[]
     stripeWebhookEvents: Prisma.$BundleStripeWebhookEventsPayload<ExtArgs>[]
     sdkTokens: Prisma.$BundleSdkTokensPayload<ExtArgs>[]
+    verificationRuns: Prisma.$VerificationRunsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -36560,6 +37341,7 @@ export interface Prisma__BundlesClient<T, Null = never, ExtArgs extends runtime.
   ledgerTransactions<T extends Prisma.Bundles$ledgerTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bundles$ledgerTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleLedgerTransactionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   stripeWebhookEvents<T extends Prisma.Bundles$stripeWebhookEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bundles$stripeWebhookEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleStripeWebhookEventsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sdkTokens<T extends Prisma.Bundles$sdkTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bundles$sdkTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleSdkTokensPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  verificationRuns<T extends Prisma.Bundles$verificationRunsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Bundles$verificationRunsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationRunsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -38629,6 +39411,30 @@ export type Bundles$sdkTokensArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.BundleSdkTokensScalarFieldEnum | Prisma.BundleSdkTokensScalarFieldEnum[]
+}
+
+/**
+ * Bundles.verificationRuns
+ */
+export type Bundles$verificationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the VerificationRuns
+   */
+  select?: Prisma.VerificationRunsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the VerificationRuns
+   */
+  omit?: Prisma.VerificationRunsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VerificationRunsInclude<ExtArgs> | null
+  where?: Prisma.VerificationRunsWhereInput
+  orderBy?: Prisma.VerificationRunsOrderByWithRelationInput | Prisma.VerificationRunsOrderByWithRelationInput[]
+  cursor?: Prisma.VerificationRunsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VerificationRunsScalarFieldEnum | Prisma.VerificationRunsScalarFieldEnum[]
 }
 
 /**

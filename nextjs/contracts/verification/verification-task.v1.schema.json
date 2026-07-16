@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lepos.dev/contracts/verification-task.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["attemptId", "taskId", "runId", "nodeId", "leaseOwner", "deadlineAt", "engine", "engineDigest", "configuration", "artifact"],
+  "properties": {
+    "attemptId": { "type": "string", "format": "uuid" },
+    "taskId": { "type": "string", "format": "uuid" },
+    "runId": { "type": "string", "format": "uuid" },
+    "nodeId": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "leaseOwner": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "deadlineAt": { "type": "string", "format": "date-time" },
+    "engine": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "engineDigest": { "type": "string", "minLength": 16, "maxLength": 128 },
+    "configuration": { "type": "object" },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "provider", "bucket", "key", "checksumSha256", "sizeBytes", "contentType"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "provider": { "type": "string" },
+        "bucket": { "type": "string" },
+        "key": { "type": "string" },
+        "checksumSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "sizeBytes": { "type": "integer", "minimum": 1 },
+        "contentType": { "type": "string" }
+      }
+    }
+  }
+}

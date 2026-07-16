@@ -695,6 +695,29 @@ func HasReleaseWith(preds ...predicate.BundleReleases) predicate.BundleArtifacts
 	})
 }
 
+// HasVerificationRuns applies the HasEdge predicate on the "verificationRuns" edge.
+func HasVerificationRuns() predicate.BundleArtifacts {
+	return predicate.BundleArtifacts(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, VerificationRunsTable, VerificationRunsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasVerificationRunsWith applies the HasEdge predicate on the "verificationRuns" edge with a given conditions (other predicates).
+func HasVerificationRunsWith(preds ...predicate.VerificationRuns) predicate.BundleArtifacts {
+	return predicate.BundleArtifacts(func(s *sql.Selector) {
+		step := newVerificationRunsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.BundleArtifacts) predicate.BundleArtifacts {
 	return predicate.BundleArtifacts(sql.AndPredicates(predicates...))

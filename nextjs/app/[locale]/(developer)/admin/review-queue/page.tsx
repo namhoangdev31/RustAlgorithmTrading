@@ -33,7 +33,7 @@ export default async function ReviewQueuePage() {
         },
       },
       release: {
-        select: { id: true, version: true, buildNumber: true, status: true },
+        select: { id: true, version: true, buildNumber: true, status: true, verificationRuns: { orderBy: { createdAt: "desc" }, take: 1, select: { id: true, status: true, decision: true, overallScore: true, confidence: true } } },
       },
       reviewer: {
         select: { id: true, fullName: true, email: true },
@@ -76,6 +76,7 @@ export default async function ReviewQueuePage() {
           {queueItems.map((item) => {
             const scans = scansByBundle.get(item.bundleId) || [];
             const latestScan = scans[0];
+            const verification = item.release?.verificationRuns[0];
 
             return (
               <Card key={item.id} className="border-hairline">
@@ -117,6 +118,12 @@ export default async function ReviewQueuePage() {
                   )}
 
                   {/* Security scan summary */}
+                  {item.release && <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <span className="text-muted-foreground">Verification:</span>
+                    <Badge variant={verification?.decision === "reject" ? "destructive" : "outline"}>
+                      {verification ? `${verification.status}${verification.decision ? ` · ${verification.decision}` : ""}${verification.overallScore == null ? "" : ` · score ${verification.overallScore.toFixed(0)}`}${verification.confidence == null ? "" : ` · confidence ${verification.confidence.toFixed(0)}%`}` : "waiting"}
+                    </Badge>
+                  </div>}
                   {latestScan && (
                     <div className="flex items-center gap-2 text-xs">
                       <span className="text-muted-foreground">Security:</span>

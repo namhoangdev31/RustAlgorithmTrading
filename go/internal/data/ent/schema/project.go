@@ -33,7 +33,6 @@ func (Project) Fields() []ent.Field {
 		field.String("activeNativeDeploymentId").StorageKey("active_native_deployment_id").Optional().Nillable(),
 		field.Time("createdAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("created_at"),
 		field.Time("updatedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("updated_at"),
-		field.Time("deletedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("deleted_at").Optional().Nillable(),
 	}
 }
 
@@ -75,6 +74,10 @@ func (Project) Edges() []ent.Edge {
 		edge.To("providerBindings", ProjectProviderBinding.Type),
 		edge.To("leposhipBuilds", LepoShipBuild.Type),
 		edge.To("canonicalBuildJobs", BundleBuildJobs.Type),
+		edge.To("verificationRuns", VerificationRuns.Type),
+		edge.To("verificationTelemetry", VerificationTelemetryEvents.Type),
+		edge.To("verificationRollups", VerificationMetricRollups.Type),
+		edge.To("verificationAlerts", VerificationAlerts.Type),
 	}
 }
 

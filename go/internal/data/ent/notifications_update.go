@@ -31,6 +31,26 @@ func (_u *NotificationsUpdate) Where(ps ...predicate.Notifications) *Notificatio
 	return _u
 }
 
+// SetDeletedAt sets the "deletedAt" field.
+func (_u *NotificationsUpdate) SetDeletedAt(v time.Time) *NotificationsUpdate {
+	_u.mutation.SetDeletedAt(v)
+	return _u
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_u *NotificationsUpdate) SetNillableDeletedAt(v *time.Time) *NotificationsUpdate {
+	if v != nil {
+		_u.SetDeletedAt(*v)
+	}
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (_u *NotificationsUpdate) ClearDeletedAt() *NotificationsUpdate {
+	_u.mutation.ClearDeletedAt()
+	return _u
+}
+
 // SetTitle sets the "title" field.
 func (_u *NotificationsUpdate) SetTitle(v string) *NotificationsUpdate {
 	_u.mutation.SetTitle(v)
@@ -235,26 +255,6 @@ func (_u *NotificationsUpdate) SetNillableUpdatedAt(v *time.Time) *Notifications
 	return _u
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (_u *NotificationsUpdate) SetDeletedAt(v time.Time) *NotificationsUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_u *NotificationsUpdate) SetNillableDeletedAt(v *time.Time) *NotificationsUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (_u *NotificationsUpdate) ClearDeletedAt() *NotificationsUpdate {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetActorID sets the "actor" edge to the User entity by ID.
 func (_u *NotificationsUpdate) SetActorID(id uuid.UUID) *NotificationsUpdate {
 	_u.mutation.SetActorID(id)
@@ -355,6 +355,12 @@ func (_u *NotificationsUpdate) sqlSave(ctx context.Context) (_node int, err erro
 			}
 		}
 	}
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(notifications.FieldDeletedAt, field.TypeTime, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(notifications.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(notifications.FieldTitle, field.TypeString, value)
 	}
@@ -399,12 +405,6 @@ func (_u *NotificationsUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(notifications.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(notifications.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(notifications.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.ActorCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -484,6 +484,26 @@ type NotificationsUpdateOne struct {
 	hooks     []Hook
 	mutation  *NotificationsMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_u *NotificationsUpdateOne) SetDeletedAt(v time.Time) *NotificationsUpdateOne {
+	_u.mutation.SetDeletedAt(v)
+	return _u
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_u *NotificationsUpdateOne) SetNillableDeletedAt(v *time.Time) *NotificationsUpdateOne {
+	if v != nil {
+		_u.SetDeletedAt(*v)
+	}
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (_u *NotificationsUpdateOne) ClearDeletedAt() *NotificationsUpdateOne {
+	_u.mutation.ClearDeletedAt()
+	return _u
 }
 
 // SetTitle sets the "title" field.
@@ -690,26 +710,6 @@ func (_u *NotificationsUpdateOne) SetNillableUpdatedAt(v *time.Time) *Notificati
 	return _u
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (_u *NotificationsUpdateOne) SetDeletedAt(v time.Time) *NotificationsUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_u *NotificationsUpdateOne) SetNillableDeletedAt(v *time.Time) *NotificationsUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (_u *NotificationsUpdateOne) ClearDeletedAt() *NotificationsUpdateOne {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetActorID sets the "actor" edge to the User entity by ID.
 func (_u *NotificationsUpdateOne) SetActorID(id uuid.UUID) *NotificationsUpdateOne {
 	_u.mutation.SetActorID(id)
@@ -840,6 +840,12 @@ func (_u *NotificationsUpdateOne) sqlSave(ctx context.Context) (_node *Notificat
 			}
 		}
 	}
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(notifications.FieldDeletedAt, field.TypeTime, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(notifications.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(notifications.FieldTitle, field.TypeString, value)
 	}
@@ -884,12 +890,6 @@ func (_u *NotificationsUpdateOne) sqlSave(ctx context.Context) (_node *Notificat
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(notifications.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(notifications.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(notifications.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.ActorCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -74,6 +74,7 @@ import (
 	"trading/control-gateway/internal/data/ent/bundlewebhooks"
 	"trading/control-gateway/internal/data/ent/predicate"
 	"trading/control-gateway/internal/data/ent/project"
+	"trading/control-gateway/internal/data/ent/verificationruns"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -159,6 +160,7 @@ type BundlesQuery struct {
 	withLedgerTransactions     *BundleLedgerTransactionsQuery
 	withStripeWebhookEvents    *BundleStripeWebhookEventsQuery
 	withSdkTokens              *BundleSDKTokensQuery
+	withVerificationRuns       *VerificationRunsQuery
 	modifiers                  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -1714,6 +1716,28 @@ func (_q *BundlesQuery) QuerySdkTokens() *BundleSDKTokensQuery {
 	return query
 }
 
+// QueryVerificationRuns chains the current query on the "verificationRuns" edge.
+func (_q *BundlesQuery) QueryVerificationRuns() *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bundles.Table, bundles.FieldID, selector),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, bundles.VerificationRunsTable, bundles.VerificationRunsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Bundles entity from the query.
 // Returns a *NotFoundError when no Bundles was found.
 func (_q *BundlesQuery) First(ctx context.Context) (*Bundles, error) {
@@ -1975,6 +1999,7 @@ func (_q *BundlesQuery) Clone() *BundlesQuery {
 		withLedgerTransactions:     _q.withLedgerTransactions.Clone(),
 		withStripeWebhookEvents:    _q.withStripeWebhookEvents.Clone(),
 		withSdkTokens:              _q.withSdkTokens.Clone(),
+		withVerificationRuns:       _q.withVerificationRuns.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
@@ -2741,18 +2766,29 @@ func (_q *BundlesQuery) WithSdkTokens(opts ...func(*BundleSDKTokensQuery)) *Bund
 	return _q
 }
 
+// WithVerificationRuns tells the query-builder to eager-load the nodes that are connected to
+// the "verificationRuns" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *BundlesQuery) WithVerificationRuns(opts ...func(*VerificationRunsQuery)) *BundlesQuery {
+	query := (&VerificationRunsClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withVerificationRuns = query
+	return _q
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
 // Example:
 //
 //	var v []struct {
-//		BundleKey string `json:"bundleKey,omitempty"`
+//		DeletedAt time.Time `json:"deletedAt,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Bundles.Query().
-//		GroupBy(bundles.FieldBundleKey).
+//		GroupBy(bundles.FieldDeletedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *BundlesQuery) GroupBy(field string, fields ...string) *BundlesGroupBy {
@@ -2770,11 +2806,11 @@ func (_q *BundlesQuery) GroupBy(field string, fields ...string) *BundlesGroupBy 
 // Example:
 //
 //	var v []struct {
-//		BundleKey string `json:"bundleKey,omitempty"`
+//		DeletedAt time.Time `json:"deletedAt,omitempty"`
 //	}
 //
 //	client.Bundles.Query().
-//		Select(bundles.FieldBundleKey).
+//		Select(bundles.FieldDeletedAt).
 //		Scan(ctx, &v)
 func (_q *BundlesQuery) Select(fields ...string) *BundlesSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -2819,7 +2855,7 @@ func (_q *BundlesQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bund
 	var (
 		nodes       = []*Bundles{}
 		_spec       = _q.querySpec()
-		loadedTypes = [69]bool{
+		loadedTypes = [70]bool{
 			_q.withProject != nil,
 			_q.withAbTests != nil,
 			_q.withActiveAbTest != nil,
@@ -2889,6 +2925,7 @@ func (_q *BundlesQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bund
 			_q.withLedgerTransactions != nil,
 			_q.withStripeWebhookEvents != nil,
 			_q.withSdkTokens != nil,
+			_q.withVerificationRuns != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -3422,6 +3459,13 @@ func (_q *BundlesQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bund
 		if err := _q.loadSdkTokens(ctx, query, nodes,
 			func(n *Bundles) { n.Edges.SdkTokens = []*BundleSDKTokens{} },
 			func(n *Bundles, e *BundleSDKTokens) { n.Edges.SdkTokens = append(n.Edges.SdkTokens, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withVerificationRuns; query != nil {
+		if err := _q.loadVerificationRuns(ctx, query, nodes,
+			func(n *Bundles) { n.Edges.VerificationRuns = []*VerificationRuns{} },
+			func(n *Bundles, e *VerificationRuns) { n.Edges.VerificationRuns = append(n.Edges.VerificationRuns, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -5473,6 +5517,36 @@ func (_q *BundlesQuery) loadSdkTokens(ctx context.Context, query *BundleSDKToken
 	}
 	query.Where(predicate.BundleSDKTokens(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(bundles.SdkTokensColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.BundleId
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "bundleId" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *BundlesQuery) loadVerificationRuns(ctx context.Context, query *VerificationRunsQuery, nodes []*Bundles, init func(*Bundles), assign func(*Bundles, *VerificationRuns)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Bundles)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(verificationruns.FieldBundleId)
+	}
+	query.Where(predicate.VerificationRuns(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(bundles.VerificationRunsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

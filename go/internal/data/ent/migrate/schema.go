@@ -2360,6 +2360,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "channel_id", Type: field.TypeUUID},
 		{Name: "bundle_id", Type: field.TypeUUID},
+		{Name: "eligible_verification_run_id", Type: field.TypeUUID, Unique: true, Nullable: true},
 	}
 	// BundleReleasesTable holds the schema information for the "bundle_releases" table.
 	BundleReleasesTable = &schema.Table{
@@ -2378,6 +2379,12 @@ var (
 				Columns:    []*schema.Column{BundleReleasesColumns[14]},
 				RefColumns: []*schema.Column{BundlesColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "bundle_releases_verification_runs_eligibleForRelease",
+				Columns:    []*schema.Column{BundleReleasesColumns[15]},
+				RefColumns: []*schema.Column{VerificationRunsColumns[0]},
+				OnDelete:   schema.SetNull,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -3617,6 +3624,7 @@ var (
 	// BundlesColumns holds the columns for the "bundles" table.
 	BundlesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "bundle_key", Type: field.TypeString, Unique: true, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "slug", Type: field.TypeString, Unique: true, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
@@ -3657,7 +3665,6 @@ var (
 		{Name: "vercel_deployment_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "vercel_deployment_url", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "active_delivery_mode", Type: field.TypeEnum, Enums: []string{"none", "rollout", "experiment"}, Default: "none"},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "active_ab_test_id", Type: field.TypeUUID, Unique: true, Nullable: true},
 		{Name: "active_rollout_id", Type: field.TypeUUID, Unique: true, Nullable: true},
 		{Name: "primary_release_track_id", Type: field.TypeUUID, Unique: true, Nullable: true},
@@ -3698,17 +3705,17 @@ var (
 			{
 				Name:    "bundles_category_status",
 				Unique:  false,
-				Columns: []*schema.Column{BundlesColumns[16], BundlesColumns[28]},
+				Columns: []*schema.Column{BundlesColumns[17], BundlesColumns[29]},
 			},
 			{
 				Name:    "bundles_created_at",
 				Unique:  false,
-				Columns: []*schema.Column{BundlesColumns[36]},
+				Columns: []*schema.Column{BundlesColumns[37]},
 			},
 			{
 				Name:    "bundles_status",
 				Unique:  false,
-				Columns: []*schema.Column{BundlesColumns[28]},
+				Columns: []*schema.Column{BundlesColumns[29]},
 			},
 		},
 	}
@@ -5117,6 +5124,7 @@ var (
 	// NotificationsColumns holds the columns for the "notifications" table.
 	NotificationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "title", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "body", Type: field.TypeString, Nullable: true},
 		{Name: "type", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(50)"}},
@@ -5127,7 +5135,6 @@ var (
 		{Name: "metadata", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
-		{Name: "deletedAt", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "actor_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "recipient_id", Type: field.TypeUUID},
 	}
@@ -5172,11 +5179,11 @@ var (
 	// OrganizationsColumns holds the columns for the "organizations" table.
 	OrganizationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"personal", "corporate"}},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "user_id", Type: field.TypeUUID},
 	}
 	// OrganizationsTable holds the schema information for the "organizations" table.
@@ -5196,7 +5203,7 @@ var (
 			{
 				Name:    "organization_user_id_type",
 				Unique:  true,
-				Columns: []*schema.Column{OrganizationsColumns[6], OrganizationsColumns[2]},
+				Columns: []*schema.Column{OrganizationsColumns[6], OrganizationsColumns[3]},
 			},
 		},
 	}
@@ -5298,13 +5305,13 @@ var (
 	// ProjectsColumns holds the columns for the "projects" table.
 	ProjectsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "vercel_project_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "vercel_project_name", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "active_native_deployment_id", Type: field.TypeString, Nullable: true},
 		{Name: "organization_id", Type: field.TypeUUID},
 	}
@@ -5401,6 +5408,761 @@ var (
 			},
 		},
 	}
+	// QuantAlertsColumns holds the columns for the "quant_alerts" table.
+	QuantAlertsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "account_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "severity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(16)"}},
+		{Name: "type", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "title", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "message", Type: field.TypeString, SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "aggregate_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "payload", Type: field.TypeJSON},
+		{Name: "acknowledged_by", Type: field.TypeUUID, Nullable: true},
+		{Name: "acknowledged_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "resolved_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+	}
+	// QuantAlertsTable holds the schema information for the "quant_alerts" table.
+	QuantAlertsTable = &schema.Table{
+		Name:       "quant_alerts",
+		Columns:    QuantAlertsColumns,
+		PrimaryKey: []*schema.Column{QuantAlertsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantalert_account_id_acknowledged_at_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{QuantAlertsColumns[1], QuantAlertsColumns[9], QuantAlertsColumns[11]},
+				Annotation: &entsql.IndexAnnotation{
+					DescColumns: map[string]bool{},
+				},
+			},
+		},
+	}
+	// QuantAuditEventsColumns holds the columns for the "quant_audit_events" table.
+	QuantAuditEventsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "sequence", Type: field.TypeInt64, Unique: true},
+		{Name: "operator_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "device_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "account_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "mode", Type: field.TypeEnum, Nullable: true, Enums: []string{"paper", "live"}},
+		{Name: "action", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "aggregate_type", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "aggregate_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "correlation_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "step_up", Type: field.TypeBool, Default: false},
+		{Name: "request_hash", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "before", Type: field.TypeJSON, Nullable: true},
+		{Name: "after", Type: field.TypeJSON, Nullable: true},
+		{Name: "occurred_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+	}
+	// QuantAuditEventsTable holds the schema information for the "quant_audit_events" table.
+	QuantAuditEventsTable = &schema.Table{
+		Name:       "quant_audit_events",
+		Columns:    QuantAuditEventsColumns,
+		PrimaryKey: []*schema.Column{QuantAuditEventsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantauditevent_account_id_occurred_at",
+				Unique:  false,
+				Columns: []*schema.Column{QuantAuditEventsColumns[4], QuantAuditEventsColumns[14]},
+				Annotation: &entsql.IndexAnnotation{
+					DescColumns: map[string]bool{},
+				},
+			},
+			{
+				Name:    "quantauditevent_correlation_id",
+				Unique:  false,
+				Columns: []*schema.Column{QuantAuditEventsColumns[9]},
+			},
+		},
+	}
+	// QuantBacktestRunsColumns holds the columns for the "quant_backtest_runs" table.
+	QuantBacktestRunsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "status", Type: field.TypeString, Default: "queued", SchemaType: map[string]string{"postgres": "varchar(24)"}},
+		{Name: "dataset_hash", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "seed", Type: field.TypeInt64},
+		{Name: "setup", Type: field.TypeJSON},
+		{Name: "progress_percent", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "numeric(5,2)"}},
+		{Name: "result", Type: field.TypeJSON, Nullable: true},
+		{Name: "error", Type: field.TypeJSON, Nullable: true},
+		{Name: "started_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "finished_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "strategy_version_id", Type: field.TypeUUID},
+	}
+	// QuantBacktestRunsTable holds the schema information for the "quant_backtest_runs" table.
+	QuantBacktestRunsTable = &schema.Table{
+		Name:       "quant_backtest_runs",
+		Columns:    QuantBacktestRunsColumns,
+		PrimaryKey: []*schema.Column{QuantBacktestRunsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "quant_backtest_runs_quant_strategy_versions_backtests",
+				Columns:    []*schema.Column{QuantBacktestRunsColumns[11]},
+				RefColumns: []*schema.Column{QuantStrategyVersionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantbacktestrun_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{QuantBacktestRunsColumns[1], QuantBacktestRunsColumns[10]},
+			},
+		},
+	}
+	// QuantBrokerAccountsColumns holds the columns for the "quant_broker_accounts" table.
+	QuantBrokerAccountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "provider", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(32)"}},
+		{Name: "external_account_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "display_name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "base_currency", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(12)"}},
+		{Name: "support_by_asset", Type: field.TypeJSON},
+		{Name: "is_enabled", Type: field.TypeBool, Default: false},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+	}
+	// QuantBrokerAccountsTable holds the schema information for the "quant_broker_accounts" table.
+	QuantBrokerAccountsTable = &schema.Table{
+		Name:       "quant_broker_accounts",
+		Columns:    QuantBrokerAccountsColumns,
+		PrimaryKey: []*schema.Column{QuantBrokerAccountsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantbrokeraccount_provider_external_account_id",
+				Unique:  true,
+				Columns: []*schema.Column{QuantBrokerAccountsColumns[1], QuantBrokerAccountsColumns[2]},
+			},
+		},
+	}
+	// QuantDeploymentsColumns holds the columns for the "quant_deployments" table.
+	QuantDeploymentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "mode", Type: field.TypeEnum, Enums: []string{"paper", "live"}},
+		{Name: "status", Type: field.TypeString, Default: "pending", SchemaType: map[string]string{"postgres": "varchar(24)"}},
+		{Name: "desired_state", Type: field.TypeString, Default: "running", SchemaType: map[string]string{"postgres": "varchar(24)"}},
+		{Name: "actual_state", Type: field.TypeString, Default: "pending", SchemaType: map[string]string{"postgres": "varchar(24)"}},
+		{Name: "runtime_identity", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "version", Type: field.TypeInt, Default: 1},
+		{Name: "last_heartbeat_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_by", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "account_id", Type: field.TypeUUID},
+		{Name: "strategy_id", Type: field.TypeUUID},
+		{Name: "strategy_version_id", Type: field.TypeUUID},
+	}
+	// QuantDeploymentsTable holds the schema information for the "quant_deployments" table.
+	QuantDeploymentsTable = &schema.Table{
+		Name:       "quant_deployments",
+		Columns:    QuantDeploymentsColumns,
+		PrimaryKey: []*schema.Column{QuantDeploymentsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "quant_deployments_quant_broker_accounts_deployments",
+				Columns:    []*schema.Column{QuantDeploymentsColumns[11]},
+				RefColumns: []*schema.Column{QuantBrokerAccountsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "quant_deployments_quant_strategies_deployments",
+				Columns:    []*schema.Column{QuantDeploymentsColumns[12]},
+				RefColumns: []*schema.Column{QuantStrategiesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "quant_deployments_quant_strategy_versions_deployments",
+				Columns:    []*schema.Column{QuantDeploymentsColumns[13]},
+				RefColumns: []*schema.Column{QuantStrategyVersionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantdeployment_account_id_mode_status",
+				Unique:  false,
+				Columns: []*schema.Column{QuantDeploymentsColumns[11], QuantDeploymentsColumns[1], QuantDeploymentsColumns[2]},
+			},
+		},
+	}
+	// QuantDevicesColumns holds the columns for the "quant_devices" table.
+	QuantDevicesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "operator_id", Type: field.TypeUUID},
+		{Name: "device_identifier", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "display_name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "public_key_jwk", Type: field.TypeJSON},
+		{Name: "app_attest_key_id", Type: field.TypeString, Unique: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "status", Type: field.TypeString, Default: "pending_attestation", SchemaType: map[string]string{"postgres": "varchar(32)"}},
+		{Name: "last_attested_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "revoked_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+	}
+	// QuantDevicesTable holds the schema information for the "quant_devices" table.
+	QuantDevicesTable = &schema.Table{
+		Name:       "quant_devices",
+		Columns:    QuantDevicesColumns,
+		PrimaryKey: []*schema.Column{QuantDevicesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantdevice_operator_id_device_identifier",
+				Unique:  true,
+				Columns: []*schema.Column{QuantDevicesColumns[1], QuantDevicesColumns[2]},
+			},
+			{
+				Name:    "quantdevice_app_attest_key_id",
+				Unique:  true,
+				Columns: []*schema.Column{QuantDevicesColumns[5]},
+			},
+		},
+	}
+	// QuantFillsColumns holds the columns for the "quant_fills" table.
+	QuantFillsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "broker_fill_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "quantity", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "numeric(38,18)"}},
+		{Name: "price", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "numeric(38,18)"}},
+		{Name: "commission", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "numeric(38,18)"}},
+		{Name: "liquidity", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(16)"}},
+		{Name: "occurred_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "account_id", Type: field.TypeUUID},
+		{Name: "instrument_id", Type: field.TypeUUID},
+		{Name: "order_id", Type: field.TypeUUID},
+	}
+	// QuantFillsTable holds the schema information for the "quant_fills" table.
+	QuantFillsTable = &schema.Table{
+		Name:       "quant_fills",
+		Columns:    QuantFillsColumns,
+		PrimaryKey: []*schema.Column{QuantFillsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "quant_fills_quant_broker_accounts_fills",
+				Columns:    []*schema.Column{QuantFillsColumns[8]},
+				RefColumns: []*schema.Column{QuantBrokerAccountsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "quant_fills_quant_instruments_fills",
+				Columns:    []*schema.Column{QuantFillsColumns[9]},
+				RefColumns: []*schema.Column{QuantInstrumentsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "quant_fills_quant_orders_fills",
+				Columns:    []*schema.Column{QuantFillsColumns[10]},
+				RefColumns: []*schema.Column{QuantOrdersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantfill_account_id_broker_fill_id",
+				Unique:  true,
+				Columns: []*schema.Column{QuantFillsColumns[8], QuantFillsColumns[1]},
+			},
+			{
+				Name:    "quantfill_account_id_occurred_at",
+				Unique:  false,
+				Columns: []*schema.Column{QuantFillsColumns[8], QuantFillsColumns[6]},
+				Annotation: &entsql.IndexAnnotation{
+					DescColumns: map[string]bool{},
+				},
+			},
+		},
+	}
+	// QuantIdempotencyKeysColumns holds the columns for the "quant_idempotency_keys" table.
+	QuantIdempotencyKeysColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "operator_id", Type: field.TypeUUID},
+		{Name: "key", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "request_hash", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "status_code", Type: field.TypeInt, Nullable: true},
+		{Name: "response", Type: field.TypeJSON, Nullable: true},
+		{Name: "locked_until", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "expires_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+	}
+	// QuantIdempotencyKeysTable holds the schema information for the "quant_idempotency_keys" table.
+	QuantIdempotencyKeysTable = &schema.Table{
+		Name:       "quant_idempotency_keys",
+		Columns:    QuantIdempotencyKeysColumns,
+		PrimaryKey: []*schema.Column{QuantIdempotencyKeysColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantidempotencykey_operator_id_key",
+				Unique:  true,
+				Columns: []*schema.Column{QuantIdempotencyKeysColumns[1], QuantIdempotencyKeysColumns[2]},
+			},
+			{
+				Name:    "quantidempotencykey_expires_at",
+				Unique:  false,
+				Columns: []*schema.Column{QuantIdempotencyKeysColumns[7]},
+			},
+		},
+	}
+	// QuantInstrumentsColumns holds the columns for the "quant_instruments" table.
+	QuantInstrumentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "provider", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(32)"}},
+		{Name: "provider_symbol", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(96)"}},
+		{Name: "canonical_symbol", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(96)"}},
+		{Name: "display_name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "asset_class", Type: field.TypeEnum, Enums: []string{"equity", "crypto", "forex", "index", "commodity_future"}},
+		{Name: "exchange", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "currency", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(12)"}},
+		{Name: "timezone", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "price_scale", Type: field.TypeInt, Default: 4},
+		{Name: "quantity_scale", Type: field.TypeInt, Default: 8},
+		{Name: "market_data_level", Type: field.TypeEnum, Enums: []string{"unavailable", "view_only", "paper", "live"}, Default: "view_only"},
+		{Name: "execution_level", Type: field.TypeEnum, Enums: []string{"unavailable", "view_only", "paper", "live"}, Default: "unavailable"},
+		{Name: "capabilities", Type: field.TypeJSON},
+		{Name: "is_active", Type: field.TypeBool, Default: true},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+	}
+	// QuantInstrumentsTable holds the schema information for the "quant_instruments" table.
+	QuantInstrumentsTable = &schema.Table{
+		Name:       "quant_instruments",
+		Columns:    QuantInstrumentsColumns,
+		PrimaryKey: []*schema.Column{QuantInstrumentsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantinstrument_provider_provider_symbol",
+				Unique:  true,
+				Columns: []*schema.Column{QuantInstrumentsColumns[1], QuantInstrumentsColumns[2]},
+			},
+			{
+				Name:    "quantinstrument_canonical_symbol_asset_class",
+				Unique:  true,
+				Columns: []*schema.Column{QuantInstrumentsColumns[3], QuantInstrumentsColumns[5]},
+			},
+			{
+				Name:    "quantinstrument_asset_class_is_active",
+				Unique:  false,
+				Columns: []*schema.Column{QuantInstrumentsColumns[5], QuantInstrumentsColumns[14]},
+			},
+		},
+	}
+	// QuantLiveChallengesColumns holds the columns for the "quant_live_challenges" table.
+	QuantLiveChallengesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "operator_id", Type: field.TypeUUID},
+		{Name: "account_id", Type: field.TypeUUID},
+		{Name: "device_identifier", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "challenge_hash", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "expires_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "consumed_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+	}
+	// QuantLiveChallengesTable holds the schema information for the "quant_live_challenges" table.
+	QuantLiveChallengesTable = &schema.Table{
+		Name:       "quant_live_challenges",
+		Columns:    QuantLiveChallengesColumns,
+		PrimaryKey: []*schema.Column{QuantLiveChallengesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantlivechallenge_operator_id_device_identifier_expires_at",
+				Unique:  false,
+				Columns: []*schema.Column{QuantLiveChallengesColumns[1], QuantLiveChallengesColumns[3], QuantLiveChallengesColumns[5]},
+			},
+		},
+	}
+	// QuantLiveSessionsColumns holds the columns for the "quant_live_sessions" table.
+	QuantLiveSessionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "operator_id", Type: field.TypeUUID},
+		{Name: "device_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "challenge_hash", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "session_token_hash", Type: field.TypeString, Unique: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "public_key_thumbprint", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "expires_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "revoked_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "account_id", Type: field.TypeUUID},
+	}
+	// QuantLiveSessionsTable holds the schema information for the "quant_live_sessions" table.
+	QuantLiveSessionsTable = &schema.Table{
+		Name:       "quant_live_sessions",
+		Columns:    QuantLiveSessionsColumns,
+		PrimaryKey: []*schema.Column{QuantLiveSessionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "quant_live_sessions_quant_broker_accounts_liveSessions",
+				Columns:    []*schema.Column{QuantLiveSessionsColumns[9]},
+				RefColumns: []*schema.Column{QuantBrokerAccountsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantlivesession_operator_id_device_id_expires_at",
+				Unique:  false,
+				Columns: []*schema.Column{QuantLiveSessionsColumns[1], QuantLiveSessionsColumns[2], QuantLiveSessionsColumns[6]},
+			},
+		},
+	}
+	// QuantOperatorGrantsColumns holds the columns for the "quant_operator_grants" table.
+	QuantOperatorGrantsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "operator_id", Type: field.TypeUUID},
+		{Name: "scopes", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "text[]"}},
+		{Name: "device_bound_only", Type: field.TypeBool, Default: true},
+		{Name: "revoked_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "account_id", Type: field.TypeUUID},
+	}
+	// QuantOperatorGrantsTable holds the schema information for the "quant_operator_grants" table.
+	QuantOperatorGrantsTable = &schema.Table{
+		Name:       "quant_operator_grants",
+		Columns:    QuantOperatorGrantsColumns,
+		PrimaryKey: []*schema.Column{QuantOperatorGrantsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "quant_operator_grants_quant_broker_accounts_grants",
+				Columns:    []*schema.Column{QuantOperatorGrantsColumns[6]},
+				RefColumns: []*schema.Column{QuantBrokerAccountsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantoperatorgrant_account_id_operator_id",
+				Unique:  true,
+				Columns: []*schema.Column{QuantOperatorGrantsColumns[6], QuantOperatorGrantsColumns[1]},
+			},
+			{
+				Name:    "quantoperatorgrant_operator_id_revoked_at",
+				Unique:  false,
+				Columns: []*schema.Column{QuantOperatorGrantsColumns[1], QuantOperatorGrantsColumns[4]},
+			},
+		},
+	}
+	// QuantOrdersColumns holds the columns for the "quant_orders" table.
+	QuantOrdersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "deployment_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "client_order_id", Type: field.TypeString, Unique: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "broker_order_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "idempotency_key", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "mode", Type: field.TypeEnum, Enums: []string{"paper", "live"}},
+		{Name: "side", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(8)"}},
+		{Name: "order_type", Type: field.TypeEnum, Enums: []string{"market", "limit", "stop", "stop_limit", "bracket", "trailing_stop"}},
+		{Name: "time_in_force", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(16)"}},
+		{Name: "quantity", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "numeric(38,18)"}},
+		{Name: "limit_price", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"postgres": "numeric(38,18)"}},
+		{Name: "stop_price", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"postgres": "numeric(38,18)"}},
+		{Name: "trail_value", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"postgres": "numeric(38,18)"}},
+		{Name: "take_profit_price", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"postgres": "numeric(38,18)"}},
+		{Name: "stop_loss_price", Type: field.TypeOther, Nullable: true, SchemaType: map[string]string{"postgres": "numeric(38,18)"}},
+		{Name: "status", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(32)"}},
+		{Name: "version", Type: field.TypeInt, Default: 1},
+		{Name: "strategy_version_hash", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "risk_snapshot", Type: field.TypeJSON},
+		{Name: "submitted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "account_id", Type: field.TypeUUID},
+		{Name: "instrument_id", Type: field.TypeUUID},
+	}
+	// QuantOrdersTable holds the schema information for the "quant_orders" table.
+	QuantOrdersTable = &schema.Table{
+		Name:       "quant_orders",
+		Columns:    QuantOrdersColumns,
+		PrimaryKey: []*schema.Column{QuantOrdersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "quant_orders_quant_broker_accounts_orders",
+				Columns:    []*schema.Column{QuantOrdersColumns[22]},
+				RefColumns: []*schema.Column{QuantBrokerAccountsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "quant_orders_quant_instruments_orders",
+				Columns:    []*schema.Column{QuantOrdersColumns[23]},
+				RefColumns: []*schema.Column{QuantInstrumentsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantorder_account_id_idempotency_key",
+				Unique:  true,
+				Columns: []*schema.Column{QuantOrdersColumns[22], QuantOrdersColumns[4]},
+			},
+			{
+				Name:    "quantorder_account_id_status_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{QuantOrdersColumns[22], QuantOrdersColumns[15], QuantOrdersColumns[20]},
+				Annotation: &entsql.IndexAnnotation{
+					DescColumns: map[string]bool{},
+				},
+			},
+			{
+				Name:    "quantorder_broker_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{QuantOrdersColumns[3]},
+			},
+		},
+	}
+	// QuantOutboxEventsColumns holds the columns for the "quant_outbox_events" table.
+	QuantOutboxEventsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "aggregate_type", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "aggregate_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "sequence", Type: field.TypeInt64},
+		{Name: "type", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "schema_version", Type: field.TypeInt, Default: 1},
+		{Name: "payload", Type: field.TypeJSON},
+		{Name: "occurred_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "published_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "attempts", Type: field.TypeInt, Default: 0},
+		{Name: "last_error", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "text"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+	}
+	// QuantOutboxEventsTable holds the schema information for the "quant_outbox_events" table.
+	QuantOutboxEventsTable = &schema.Table{
+		Name:       "quant_outbox_events",
+		Columns:    QuantOutboxEventsColumns,
+		PrimaryKey: []*schema.Column{QuantOutboxEventsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantoutboxevent_aggregate_type_aggregate_id_sequence",
+				Unique:  true,
+				Columns: []*schema.Column{QuantOutboxEventsColumns[1], QuantOutboxEventsColumns[2], QuantOutboxEventsColumns[3]},
+			},
+			{
+				Name:    "quantoutboxevent_published_at_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{QuantOutboxEventsColumns[8], QuantOutboxEventsColumns[11]},
+			},
+		},
+	}
+	// QuantPositionsColumns holds the columns for the "quant_positions" table.
+	QuantPositionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "mode", Type: field.TypeEnum, Enums: []string{"paper", "live"}},
+		{Name: "quantity", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "numeric(38,18)"}},
+		{Name: "average_price", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "numeric(38,18)"}},
+		{Name: "realized_pnl", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "numeric(38,18)"}},
+		{Name: "version", Type: field.TypeInt, Default: 1},
+		{Name: "reconciled_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "account_id", Type: field.TypeUUID},
+		{Name: "instrument_id", Type: field.TypeUUID},
+	}
+	// QuantPositionsTable holds the schema information for the "quant_positions" table.
+	QuantPositionsTable = &schema.Table{
+		Name:       "quant_positions",
+		Columns:    QuantPositionsColumns,
+		PrimaryKey: []*schema.Column{QuantPositionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "quant_positions_quant_broker_accounts_positions",
+				Columns:    []*schema.Column{QuantPositionsColumns[8]},
+				RefColumns: []*schema.Column{QuantBrokerAccountsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "quant_positions_quant_instruments_positions",
+				Columns:    []*schema.Column{QuantPositionsColumns[9]},
+				RefColumns: []*schema.Column{QuantInstrumentsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantposition_account_id_instrument_id_mode",
+				Unique:  true,
+				Columns: []*schema.Column{QuantPositionsColumns[8], QuantPositionsColumns[9], QuantPositionsColumns[1]},
+			},
+		},
+	}
+	// QuantRiskPolicyVersionsColumns holds the columns for the "quant_risk_policy_versions" table.
+	QuantRiskPolicyVersionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "version", Type: field.TypeInt},
+		{Name: "policy", Type: field.TypeJSON},
+		{Name: "policy_hash", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "status", Type: field.TypeString, Default: "draft", SchemaType: map[string]string{"postgres": "varchar(24)"}},
+		{Name: "effective_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_by", Type: field.TypeUUID},
+		{Name: "step_up_session_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "account_id", Type: field.TypeUUID},
+	}
+	// QuantRiskPolicyVersionsTable holds the schema information for the "quant_risk_policy_versions" table.
+	QuantRiskPolicyVersionsTable = &schema.Table{
+		Name:       "quant_risk_policy_versions",
+		Columns:    QuantRiskPolicyVersionsColumns,
+		PrimaryKey: []*schema.Column{QuantRiskPolicyVersionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "quant_risk_policy_versions_quant_broker_accounts_riskPolicies",
+				Columns:    []*schema.Column{QuantRiskPolicyVersionsColumns[9]},
+				RefColumns: []*schema.Column{QuantBrokerAccountsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantriskpolicyversion_account_id_version",
+				Unique:  true,
+				Columns: []*schema.Column{QuantRiskPolicyVersionsColumns[9], QuantRiskPolicyVersionsColumns[1]},
+			},
+			{
+				Name:    "quantriskpolicyversion_account_id_policy_hash",
+				Unique:  true,
+				Columns: []*schema.Column{QuantRiskPolicyVersionsColumns[9], QuantRiskPolicyVersionsColumns[3]},
+			},
+		},
+	}
+	// QuantStrategiesColumns holds the columns for the "quant_strategies" table.
+	QuantStrategiesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "template_key", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(120)"}},
+		{Name: "lifecycle", Type: field.TypeEnum, Enums: []string{"draft", "backtesting", "paper_ready", "paper_active", "live_ready", "live_active", "paused", "failed", "archived"}, Default: "draft"},
+		{Name: "archived_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "account_id", Type: field.TypeUUID},
+		{Name: "current_version_id", Type: field.TypeUUID, Unique: true, Nullable: true},
+	}
+	// QuantStrategiesTable holds the schema information for the "quant_strategies" table.
+	QuantStrategiesTable = &schema.Table{
+		Name:       "quant_strategies",
+		Columns:    QuantStrategiesColumns,
+		PrimaryKey: []*schema.Column{QuantStrategiesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "quant_strategies_quant_broker_accounts_strategies",
+				Columns:    []*schema.Column{QuantStrategiesColumns[7]},
+				RefColumns: []*schema.Column{QuantBrokerAccountsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "quant_strategies_quant_strategy_versions_currentFor",
+				Columns:    []*schema.Column{QuantStrategiesColumns[8]},
+				RefColumns: []*schema.Column{QuantStrategyVersionsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantstrategy_account_id_lifecycle",
+				Unique:  false,
+				Columns: []*schema.Column{QuantStrategiesColumns[7], QuantStrategiesColumns[3]},
+			},
+		},
+	}
+	// QuantStrategyVersionsColumns holds the columns for the "quant_strategy_versions" table.
+	QuantStrategyVersionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "version", Type: field.TypeInt},
+		{Name: "version_hash", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "schema_version", Type: field.TypeInt, Default: 1},
+		{Name: "parameters", Type: field.TypeJSON},
+		{Name: "risk_snapshot", Type: field.TypeJSON},
+		{Name: "created_by", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "strategy_id", Type: field.TypeUUID},
+	}
+	// QuantStrategyVersionsTable holds the schema information for the "quant_strategy_versions" table.
+	QuantStrategyVersionsTable = &schema.Table{
+		Name:       "quant_strategy_versions",
+		Columns:    QuantStrategyVersionsColumns,
+		PrimaryKey: []*schema.Column{QuantStrategyVersionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "quant_strategy_versions_quant_strategies_versions",
+				Columns:    []*schema.Column{QuantStrategyVersionsColumns[8]},
+				RefColumns: []*schema.Column{QuantStrategiesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantstrategyversion_strategy_id_version",
+				Unique:  true,
+				Columns: []*schema.Column{QuantStrategyVersionsColumns[8], QuantStrategyVersionsColumns[1]},
+			},
+			{
+				Name:    "quantstrategyversion_strategy_id_version_hash",
+				Unique:  true,
+				Columns: []*schema.Column{QuantStrategyVersionsColumns[8], QuantStrategyVersionsColumns[2]},
+			},
+		},
+	}
+	// QuantWatchlistsColumns holds the columns for the "quant_watchlists" table.
+	QuantWatchlistsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "operator_id", Type: field.TypeUUID},
+		{Name: "name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(80)"}},
+		{Name: "sort_order", Type: field.TypeInt, Default: 0},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+	}
+	// QuantWatchlistsTable holds the schema information for the "quant_watchlists" table.
+	QuantWatchlistsTable = &schema.Table{
+		Name:       "quant_watchlists",
+		Columns:    QuantWatchlistsColumns,
+		PrimaryKey: []*schema.Column{QuantWatchlistsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantwatchlist_operator_id_name",
+				Unique:  true,
+				Columns: []*schema.Column{QuantWatchlistsColumns[1], QuantWatchlistsColumns[2]},
+			},
+		},
+	}
+	// QuantWatchlistItemsColumns holds the columns for the "quant_watchlist_items" table.
+	QuantWatchlistItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "sort_order", Type: field.TypeInt, Default: 0},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz(6)"}},
+		{Name: "instrument_id", Type: field.TypeUUID},
+		{Name: "watchlist_id", Type: field.TypeUUID},
+	}
+	// QuantWatchlistItemsTable holds the schema information for the "quant_watchlist_items" table.
+	QuantWatchlistItemsTable = &schema.Table{
+		Name:       "quant_watchlist_items",
+		Columns:    QuantWatchlistItemsColumns,
+		PrimaryKey: []*schema.Column{QuantWatchlistItemsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "quant_watchlist_items_quant_instruments_watchlistItems",
+				Columns:    []*schema.Column{QuantWatchlistItemsColumns[3]},
+				RefColumns: []*schema.Column{QuantInstrumentsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "quant_watchlist_items_quant_watchlists_items",
+				Columns:    []*schema.Column{QuantWatchlistItemsColumns[4]},
+				RefColumns: []*schema.Column{QuantWatchlistsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quantwatchlistitem_watchlist_id_instrument_id",
+				Unique:  true,
+				Columns: []*schema.Column{QuantWatchlistItemsColumns[4], QuantWatchlistItemsColumns[3]},
+			},
+			{
+				Name:    "quantwatchlistitem_watchlist_id_sort_order",
+				Unique:  false,
+				Columns: []*schema.Column{QuantWatchlistItemsColumns[4], QuantWatchlistItemsColumns[1]},
+			},
+		},
+	}
 	// RiskEventsColumns holds the columns for the "risk_events" table.
 	RiskEventsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -5480,10 +6242,10 @@ var (
 	// SessionsColumns holds the columns for the "sessions" table.
 	SessionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "hash", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
-		{Name: "deletedAt", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "user_id", Type: field.TypeUUID},
 	}
 	// SessionsTable holds the schema information for the "sessions" table.
@@ -5530,22 +6292,22 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "password", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "provider", Type: field.TypeString, Default: "email", SchemaType: map[string]string{"postgres": "varchar(255)"}},
-		{Name: "socialId", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
-		{Name: "firstName", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
-		{Name: "lastName", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
-		{Name: "fullName", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "social_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "first_name", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "last_name", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "full_name", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "phone", Type: field.TypeString, Unique: true, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
-		{Name: "dateOfBirth", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "date_of_birth", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "gender", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(50)"}},
-		{Name: "userType", Type: field.TypeString, Default: "individual", SchemaType: map[string]string{"postgres": "varchar(50)"}},
-		{Name: "registerType", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(50)"}},
-		{Name: "createdAt", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
-		{Name: "updatedAt", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
-		{Name: "deletedAt", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
-		{Name: "photoId", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_type", Type: field.TypeString, Default: "individual", SchemaType: map[string]string{"postgres": "varchar(50)"}},
+		{Name: "register_type", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(50)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "photo_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -5614,6 +6376,670 @@ var (
 				Name:    "usersecrets_user_id_provider",
 				Unique:  true,
 				Columns: []*schema.Column{UserSecretsColumns[5], UserSecretsColumns[1]},
+			},
+		},
+	}
+	// VerificationAlertsColumns holds the columns for the "verification_alerts" table.
+	VerificationAlertsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "rule_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "scope", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "status", Type: field.TypeString, Default: "open", SchemaType: map[string]string{"postgres": "varchar(30)"}},
+		{Name: "severity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(20)"}},
+		{Name: "first_seen_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "last_seen_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "acknowledged_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "acknowledged_by", Type: field.TypeUUID, Nullable: true},
+		{Name: "resolved_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "details", Type: field.TypeJSON, Nullable: true},
+		{Name: "project_id", Type: field.TypeUUID},
+	}
+	// VerificationAlertsTable holds the schema information for the "verification_alerts" table.
+	VerificationAlertsTable = &schema.Table{
+		Name:       "verification_alerts",
+		Columns:    VerificationAlertsColumns,
+		PrimaryKey: []*schema.Column{VerificationAlertsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "verification_alerts_projects_verificationAlerts",
+				Columns:    []*schema.Column{VerificationAlertsColumns[11]},
+				RefColumns: []*schema.Column{ProjectsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verificationalerts_project_id_rule_id_scope_status",
+				Unique:  true,
+				Columns: []*schema.Column{VerificationAlertsColumns[11], VerificationAlertsColumns[1], VerificationAlertsColumns[2], VerificationAlertsColumns[3]},
+			},
+			{
+				Name:    "verification_alerts_project_status",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationAlertsColumns[11], VerificationAlertsColumns[3], VerificationAlertsColumns[6]},
+			},
+		},
+	}
+	// VerificationAttemptsColumns holds the columns for the "verification_attempts" table.
+	VerificationAttemptsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "attempt_no", Type: field.TypeInt},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"dispatched", "running", "succeeded", "failed", "timed_out", "cancelled"}, Default: "dispatched"},
+		{Name: "worker_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "lease_owner", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "leased_until", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "heartbeat_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "deadline_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "started_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "completed_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "error_code", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "error_message", Type: field.TypeString, Nullable: true},
+		{Name: "result_digest", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "metrics", Type: field.TypeJSON, Nullable: true},
+		{Name: "coverage", Type: field.TypeFloat64, Nullable: true},
+		{Name: "completeness", Type: field.TypeFloat64, Nullable: true},
+		{Name: "reproducibility", Type: field.TypeFloat64, Nullable: true},
+		{Name: "engine_health", Type: field.TypeFloat64, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "task_id", Type: field.TypeUUID},
+	}
+	// VerificationAttemptsTable holds the schema information for the "verification_attempts" table.
+	VerificationAttemptsTable = &schema.Table{
+		Name:       "verification_attempts",
+		Columns:    VerificationAttemptsColumns,
+		PrimaryKey: []*schema.Column{VerificationAttemptsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "verification_attempts_verification_tasks_attempts",
+				Columns:    []*schema.Column{VerificationAttemptsColumns[20]},
+				RefColumns: []*schema.Column{VerificationTasksColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verificationattempts_task_id_attempt_no",
+				Unique:  true,
+				Columns: []*schema.Column{VerificationAttemptsColumns[20], VerificationAttemptsColumns[1]},
+			},
+			{
+				Name:    "verification_attempts_recovery",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationAttemptsColumns[2], VerificationAttemptsColumns[5]},
+			},
+		},
+	}
+	// VerificationEngineVersionsColumns holds the columns for the "verification_engine_versions" table.
+	VerificationEngineVersionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "version", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(50)"}},
+		{Name: "image_digest", Type: field.TypeString, Unique: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "manifest", Type: field.TypeJSON},
+		{Name: "configuration_schema", Type: field.TypeJSON, Nullable: true},
+		{Name: "result_schema_version", Type: field.TypeString, Default: "verification-result.v1", SchemaType: map[string]string{"postgres": "varchar(50)"}},
+		{Name: "is_active", Type: field.TypeBool, Default: false},
+		{Name: "approved_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "revoked_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+	}
+	// VerificationEngineVersionsTable holds the schema information for the "verification_engine_versions" table.
+	VerificationEngineVersionsTable = &schema.Table{
+		Name:       "verification_engine_versions",
+		Columns:    VerificationEngineVersionsColumns,
+		PrimaryKey: []*schema.Column{VerificationEngineVersionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verificationengineversions_name_version",
+				Unique:  true,
+				Columns: []*schema.Column{VerificationEngineVersionsColumns[1], VerificationEngineVersionsColumns[2]},
+			},
+			{
+				Name:    "verification_engine_versions_active",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationEngineVersionsColumns[1], VerificationEngineVersionsColumns[7]},
+			},
+		},
+	}
+	// VerificationEvidenceColumns holds the columns for the "verification_evidence" table.
+	VerificationEvidenceColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "kind", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(50)"}},
+		{Name: "storage_provider", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(30)"}},
+		{Name: "storage_bucket", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "storage_key", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(500)"}},
+		{Name: "checksum_sha256", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "file_size", Type: field.TypeInt64},
+		{Name: "content_type", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "sensitivity", Type: field.TypeString, Default: "restricted", SchemaType: map[string]string{"postgres": "varchar(30)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "attempt_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "run_id", Type: field.TypeUUID},
+		{Name: "task_id", Type: field.TypeUUID},
+	}
+	// VerificationEvidenceTable holds the schema information for the "verification_evidence" table.
+	VerificationEvidenceTable = &schema.Table{
+		Name:       "verification_evidence",
+		Columns:    VerificationEvidenceColumns,
+		PrimaryKey: []*schema.Column{VerificationEvidenceColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "verification_evidence_verification_attempts_evidence",
+				Columns:    []*schema.Column{VerificationEvidenceColumns[10]},
+				RefColumns: []*schema.Column{VerificationAttemptsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "verification_evidence_verification_runs_evidence",
+				Columns:    []*schema.Column{VerificationEvidenceColumns[11]},
+				RefColumns: []*schema.Column{VerificationRunsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "verification_evidence_verification_tasks_evidence",
+				Columns:    []*schema.Column{VerificationEvidenceColumns[12]},
+				RefColumns: []*schema.Column{VerificationTasksColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verificationevidence_storage_provider_storage_bucket_storage_key",
+				Unique:  true,
+				Columns: []*schema.Column{VerificationEvidenceColumns[2], VerificationEvidenceColumns[3], VerificationEvidenceColumns[4]},
+			},
+			{
+				Name:    "verification_evidence_run_kind",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationEvidenceColumns[11], VerificationEvidenceColumns[1]},
+			},
+		},
+	}
+	// VerificationFindingsColumns holds the columns for the "verification_findings" table.
+	VerificationFindingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "fingerprint", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "dimension", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(40)"}},
+		{Name: "severity", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(20)"}},
+		{Name: "confidence", Type: field.TypeFloat64},
+		{Name: "rule_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(150)"}},
+		{Name: "title", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "location", Type: field.TypeJSON, Nullable: true},
+		{Name: "remediation", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "attempt_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "run_id", Type: field.TypeUUID},
+		{Name: "task_id", Type: field.TypeUUID},
+	}
+	// VerificationFindingsTable holds the schema information for the "verification_findings" table.
+	VerificationFindingsTable = &schema.Table{
+		Name:       "verification_findings",
+		Columns:    VerificationFindingsColumns,
+		PrimaryKey: []*schema.Column{VerificationFindingsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "verification_findings_verification_attempts_findings",
+				Columns:    []*schema.Column{VerificationFindingsColumns[11]},
+				RefColumns: []*schema.Column{VerificationAttemptsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "verification_findings_verification_runs_findings",
+				Columns:    []*schema.Column{VerificationFindingsColumns[12]},
+				RefColumns: []*schema.Column{VerificationRunsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "verification_findings_verification_tasks_findings",
+				Columns:    []*schema.Column{VerificationFindingsColumns[13]},
+				RefColumns: []*schema.Column{VerificationTasksColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verificationfindings_run_id_task_id_fingerprint",
+				Unique:  true,
+				Columns: []*schema.Column{VerificationFindingsColumns[12], VerificationFindingsColumns[13], VerificationFindingsColumns[1]},
+			},
+			{
+				Name:    "verification_findings_run_severity",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationFindingsColumns[12], VerificationFindingsColumns[3]},
+			},
+		},
+	}
+	// VerificationInboxColumns holds the columns for the "verification_inbox" table.
+	VerificationInboxColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "consumer", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "message_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "outcome", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(50)"}},
+		{Name: "processed_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+	}
+	// VerificationInboxTable holds the schema information for the "verification_inbox" table.
+	VerificationInboxTable = &schema.Table{
+		Name:       "verification_inbox",
+		Columns:    VerificationInboxColumns,
+		PrimaryKey: []*schema.Column{VerificationInboxColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verificationinbox_consumer_message_id",
+				Unique:  true,
+				Columns: []*schema.Column{VerificationInboxColumns[1], VerificationInboxColumns[2]},
+			},
+			{
+				Name:    "verification_inbox_processed",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationInboxColumns[4]},
+			},
+		},
+	}
+	// VerificationMetricRollupsColumns holds the columns for the "verification_metric_rollups" table.
+	VerificationMetricRollupsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "metric", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "scope", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "window_start", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "window_end", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "count", Type: field.TypeInt},
+		{Name: "sum", Type: field.TypeFloat64},
+		{Name: "min", Type: field.TypeFloat64},
+		{Name: "max", Type: field.TypeFloat64},
+		{Name: "p95", Type: field.TypeFloat64, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "project_id", Type: field.TypeUUID},
+	}
+	// VerificationMetricRollupsTable holds the schema information for the "verification_metric_rollups" table.
+	VerificationMetricRollupsTable = &schema.Table{
+		Name:       "verification_metric_rollups",
+		Columns:    VerificationMetricRollupsColumns,
+		PrimaryKey: []*schema.Column{VerificationMetricRollupsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "verification_metric_rollups_projects_verificationRollups",
+				Columns:    []*schema.Column{VerificationMetricRollupsColumns[11]},
+				RefColumns: []*schema.Column{ProjectsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verificationmetricrollups_project_id_metric_scope_window_start",
+				Unique:  true,
+				Columns: []*schema.Column{VerificationMetricRollupsColumns[11], VerificationMetricRollupsColumns[1], VerificationMetricRollupsColumns[2], VerificationMetricRollupsColumns[3]},
+			},
+			{
+				Name:    "verification_rollups_project_time",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationMetricRollupsColumns[11], VerificationMetricRollupsColumns[3]},
+			},
+		},
+	}
+	// VerificationPipelineVersionsColumns holds the columns for the "verification_pipeline_versions" table.
+	VerificationPipelineVersionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "version", Type: field.TypeInt},
+		{Name: "definition", Type: field.TypeJSON},
+		{Name: "definition_hash", Type: field.TypeString, Unique: true, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "enforcement_mode", Type: field.TypeEnum, Enums: []string{"legacy", "shadow", "enforce"}, Default: "shadow"},
+		{Name: "is_active", Type: field.TypeBool, Default: false},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+	}
+	// VerificationPipelineVersionsTable holds the schema information for the "verification_pipeline_versions" table.
+	VerificationPipelineVersionsTable = &schema.Table{
+		Name:       "verification_pipeline_versions",
+		Columns:    VerificationPipelineVersionsColumns,
+		PrimaryKey: []*schema.Column{VerificationPipelineVersionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verificationpipelineversions_name_version",
+				Unique:  true,
+				Columns: []*schema.Column{VerificationPipelineVersionsColumns[1], VerificationPipelineVersionsColumns[2]},
+			},
+			{
+				Name:    "verification_pipeline_versions_active",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationPipelineVersionsColumns[6], VerificationPipelineVersionsColumns[5]},
+			},
+		},
+	}
+	// VerificationPolicyEvaluationsColumns holds the columns for the "verification_policy_evaluations" table.
+	VerificationPolicyEvaluationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "input_digest", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "decision", Type: field.TypeEnum, Enums: []string{"allow", "warn", "review", "reject"}},
+		{Name: "results", Type: field.TypeJSON},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "policy_version_id", Type: field.TypeUUID},
+		{Name: "run_id", Type: field.TypeUUID, Unique: true},
+	}
+	// VerificationPolicyEvaluationsTable holds the schema information for the "verification_policy_evaluations" table.
+	VerificationPolicyEvaluationsTable = &schema.Table{
+		Name:       "verification_policy_evaluations",
+		Columns:    VerificationPolicyEvaluationsColumns,
+		PrimaryKey: []*schema.Column{VerificationPolicyEvaluationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "verification_policy_evaluations_verification_policy_versions_evaluations",
+				Columns:    []*schema.Column{VerificationPolicyEvaluationsColumns[5]},
+				RefColumns: []*schema.Column{VerificationPolicyVersionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "verification_policy_evaluations_verification_runs_evaluation",
+				Columns:    []*schema.Column{VerificationPolicyEvaluationsColumns[6]},
+				RefColumns: []*schema.Column{VerificationRunsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// VerificationPolicyVersionsColumns holds the columns for the "verification_policy_versions" table.
+	VerificationPolicyVersionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "version", Type: field.TypeInt},
+		{Name: "definition", Type: field.TypeJSON},
+		{Name: "definition_hash", Type: field.TypeString, Unique: true, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "is_active", Type: field.TypeBool, Default: false},
+		{Name: "effective_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+	}
+	// VerificationPolicyVersionsTable holds the schema information for the "verification_policy_versions" table.
+	VerificationPolicyVersionsTable = &schema.Table{
+		Name:       "verification_policy_versions",
+		Columns:    VerificationPolicyVersionsColumns,
+		PrimaryKey: []*schema.Column{VerificationPolicyVersionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verificationpolicyversions_name_version",
+				Unique:  true,
+				Columns: []*schema.Column{VerificationPolicyVersionsColumns[1], VerificationPolicyVersionsColumns[2]},
+			},
+			{
+				Name:    "verification_policy_versions_active",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationPolicyVersionsColumns[5], VerificationPolicyVersionsColumns[6]},
+			},
+		},
+	}
+	// VerificationReportsColumns holds the columns for the "verification_reports" table.
+	VerificationReportsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "schema_version", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(30)"}},
+		{Name: "storage_provider", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(30)"}},
+		{Name: "storage_bucket", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "storage_key", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(500)"}},
+		{Name: "checksum_sha256", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "run_id", Type: field.TypeUUID, Unique: true},
+	}
+	// VerificationReportsTable holds the schema information for the "verification_reports" table.
+	VerificationReportsTable = &schema.Table{
+		Name:       "verification_reports",
+		Columns:    VerificationReportsColumns,
+		PrimaryKey: []*schema.Column{VerificationReportsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "verification_reports_verification_runs_report",
+				Columns:    []*schema.Column{VerificationReportsColumns[7]},
+				RefColumns: []*schema.Column{VerificationRunsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verificationreports_storage_provider_storage_bucket_storage_key",
+				Unique:  true,
+				Columns: []*schema.Column{VerificationReportsColumns[2], VerificationReportsColumns[3], VerificationReportsColumns[4]},
+			},
+		},
+	}
+	// VerificationRunsColumns holds the columns for the "verification_runs" table.
+	VerificationRunsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "artifact_checksum", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(64)"}},
+		{Name: "trigger_event_key", Type: field.TypeString, Unique: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "scoring_version", Type: field.TypeString, Default: "v1", SchemaType: map[string]string{"postgres": "varchar(30)"}},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"queued", "running", "scoring", "evaluating", "completed", "incomplete", "cancelled"}, Default: "queued"},
+		{Name: "decision", Type: field.TypeEnum, Nullable: true, Enums: []string{"allow", "warn", "review", "reject"}},
+		{Name: "overall_score", Type: field.TypeFloat64, Nullable: true},
+		{Name: "confidence", Type: field.TypeFloat64, Nullable: true},
+		{Name: "completeness", Type: field.TypeFloat64, Nullable: true},
+		{Name: "error_code", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "error_message", Type: field.TypeString, Nullable: true},
+		{Name: "started_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "completed_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "artifact_id", Type: field.TypeUUID},
+		{Name: "release_id", Type: field.TypeUUID},
+		{Name: "bundle_id", Type: field.TypeUUID},
+		{Name: "project_id", Type: field.TypeUUID},
+		{Name: "pipeline_version_id", Type: field.TypeUUID},
+		{Name: "policy_version_id", Type: field.TypeUUID},
+	}
+	// VerificationRunsTable holds the schema information for the "verification_runs" table.
+	VerificationRunsTable = &schema.Table{
+		Name:       "verification_runs",
+		Columns:    VerificationRunsColumns,
+		PrimaryKey: []*schema.Column{VerificationRunsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "verification_runs_bundle_artifacts_verificationRuns",
+				Columns:    []*schema.Column{VerificationRunsColumns[15]},
+				RefColumns: []*schema.Column{BundleArtifactsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "verification_runs_bundle_releases_verificationRuns",
+				Columns:    []*schema.Column{VerificationRunsColumns[16]},
+				RefColumns: []*schema.Column{BundleReleasesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "verification_runs_bundles_verificationRuns",
+				Columns:    []*schema.Column{VerificationRunsColumns[17]},
+				RefColumns: []*schema.Column{BundlesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "verification_runs_projects_verificationRuns",
+				Columns:    []*schema.Column{VerificationRunsColumns[18]},
+				RefColumns: []*schema.Column{ProjectsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "verification_runs_verification_pipeline_versions_runs",
+				Columns:    []*schema.Column{VerificationRunsColumns[19]},
+				RefColumns: []*schema.Column{VerificationPipelineVersionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "verification_runs_verification_policy_versions_runs",
+				Columns:    []*schema.Column{VerificationRunsColumns[20]},
+				RefColumns: []*schema.Column{VerificationPolicyVersionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verification_runs_release_time",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationRunsColumns[16], VerificationRunsColumns[13]},
+			},
+			{
+				Name:    "verification_runs_status_time",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationRunsColumns[4], VerificationRunsColumns[13]},
+			},
+			{
+				Name:    "verification_runs_project_time",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationRunsColumns[18], VerificationRunsColumns[13]},
+			},
+		},
+	}
+	// VerificationScoresColumns holds the columns for the "verification_scores" table.
+	VerificationScoresColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "version", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(30)"}},
+		{Name: "dimensions", Type: field.TypeJSON},
+		{Name: "overall", Type: field.TypeFloat64},
+		{Name: "confidence", Type: field.TypeFloat64},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "run_id", Type: field.TypeUUID, Unique: true},
+	}
+	// VerificationScoresTable holds the schema information for the "verification_scores" table.
+	VerificationScoresTable = &schema.Table{
+		Name:       "verification_scores",
+		Columns:    VerificationScoresColumns,
+		PrimaryKey: []*schema.Column{VerificationScoresColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "verification_scores_verification_runs_score",
+				Columns:    []*schema.Column{VerificationScoresColumns[6]},
+				RefColumns: []*schema.Column{VerificationRunsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// VerificationTaskDependenciesColumns holds the columns for the "verification_task_dependencies" table.
+	VerificationTaskDependenciesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "task_id", Type: field.TypeUUID},
+		{Name: "prerequisite_id", Type: field.TypeUUID},
+	}
+	// VerificationTaskDependenciesTable holds the schema information for the "verification_task_dependencies" table.
+	VerificationTaskDependenciesTable = &schema.Table{
+		Name:       "verification_task_dependencies",
+		Columns:    VerificationTaskDependenciesColumns,
+		PrimaryKey: []*schema.Column{VerificationTaskDependenciesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "verification_task_dependencies_verification_tasks_prerequisites",
+				Columns:    []*schema.Column{VerificationTaskDependenciesColumns[1]},
+				RefColumns: []*schema.Column{VerificationTasksColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "verification_task_dependencies_verification_tasks_dependents",
+				Columns:    []*schema.Column{VerificationTaskDependenciesColumns[2]},
+				RefColumns: []*schema.Column{VerificationTasksColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verificationtaskdependencies_task_id_prerequisite_id",
+				Unique:  true,
+				Columns: []*schema.Column{VerificationTaskDependenciesColumns[1], VerificationTaskDependenciesColumns[2]},
+			},
+		},
+	}
+	// VerificationTasksColumns holds the columns for the "verification_tasks" table.
+	VerificationTasksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "node_id", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "resource_class", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(30)"}},
+		{Name: "required", Type: field.TypeBool, Default: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"queued", "ready", "dispatched", "running", "succeeded", "bundle_failed", "infrastructure_failed", "timed_out", "cancelled", "dead_lettered"}, Default: "queued"},
+		{Name: "configuration", Type: field.TypeJSON, Nullable: true},
+		{Name: "attempt", Type: field.TypeInt, Default: 0},
+		{Name: "max_attempts", Type: field.TypeInt, Default: 2},
+		{Name: "timeout_seconds", Type: field.TypeInt, Default: 900},
+		{Name: "next_attempt_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "accepted_attempt_id", Type: field.TypeUUID, Unique: true, Nullable: true},
+		{Name: "engine_version_id", Type: field.TypeUUID},
+		{Name: "run_id", Type: field.TypeUUID},
+	}
+	// VerificationTasksTable holds the schema information for the "verification_tasks" table.
+	VerificationTasksTable = &schema.Table{
+		Name:       "verification_tasks",
+		Columns:    VerificationTasksColumns,
+		PrimaryKey: []*schema.Column{VerificationTasksColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "verification_tasks_verification_attempts_acceptedForTask",
+				Columns:    []*schema.Column{VerificationTasksColumns[12]},
+				RefColumns: []*schema.Column{VerificationAttemptsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "verification_tasks_verification_engine_versions_tasks",
+				Columns:    []*schema.Column{VerificationTasksColumns[13]},
+				RefColumns: []*schema.Column{VerificationEngineVersionsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "verification_tasks_verification_runs_tasks",
+				Columns:    []*schema.Column{VerificationTasksColumns[14]},
+				RefColumns: []*schema.Column{VerificationRunsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verificationtasks_run_id_node_id",
+				Unique:  true,
+				Columns: []*schema.Column{VerificationTasksColumns[14], VerificationTasksColumns[1]},
+			},
+			{
+				Name:    "verification_tasks_ready",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationTasksColumns[4], VerificationTasksColumns[9], VerificationTasksColumns[2]},
+			},
+		},
+	}
+	// VerificationTelemetryEventsColumns holds the columns for the "verification_telemetry_events" table.
+	VerificationTelemetryEventsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "event_id", Type: field.TypeString, Unique: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "kind", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(100)"}},
+		{Name: "correlation_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(128)"}},
+		{Name: "payload", Type: field.TypeJSON},
+		{Name: "occurred_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "project_id", Type: field.TypeUUID},
+		{Name: "run_id", Type: field.TypeUUID, Nullable: true},
+	}
+	// VerificationTelemetryEventsTable holds the schema information for the "verification_telemetry_events" table.
+	VerificationTelemetryEventsTable = &schema.Table{
+		Name:       "verification_telemetry_events",
+		Columns:    VerificationTelemetryEventsColumns,
+		PrimaryKey: []*schema.Column{VerificationTelemetryEventsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "verification_telemetry_events_projects_verificationTelemetry",
+				Columns:    []*schema.Column{VerificationTelemetryEventsColumns[7]},
+				RefColumns: []*schema.Column{ProjectsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "verification_telemetry_events_verification_runs_telemetry",
+				Columns:    []*schema.Column{VerificationTelemetryEventsColumns[8]},
+				RefColumns: []*schema.Column{VerificationRunsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "verification_telemetry_project_time",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationTelemetryEventsColumns[7], VerificationTelemetryEventsColumns[5]},
+			},
+			{
+				Name:    "verification_telemetry_run_time",
+				Unique:  false,
+				Columns: []*schema.Column{VerificationTelemetryEventsColumns[8], VerificationTelemetryEventsColumns[5]},
 			},
 		},
 	}
@@ -5799,6 +7225,26 @@ var (
 		ProjectsTable,
 		ProjectMembershipsTable,
 		ProjectProviderBindingsTable,
+		QuantAlertsTable,
+		QuantAuditEventsTable,
+		QuantBacktestRunsTable,
+		QuantBrokerAccountsTable,
+		QuantDeploymentsTable,
+		QuantDevicesTable,
+		QuantFillsTable,
+		QuantIdempotencyKeysTable,
+		QuantInstrumentsTable,
+		QuantLiveChallengesTable,
+		QuantLiveSessionsTable,
+		QuantOperatorGrantsTable,
+		QuantOrdersTable,
+		QuantOutboxEventsTable,
+		QuantPositionsTable,
+		QuantRiskPolicyVersionsTable,
+		QuantStrategiesTable,
+		QuantStrategyVersionsTable,
+		QuantWatchlistsTable,
+		QuantWatchlistItemsTable,
 		RiskEventsTable,
 		RiskLimitsTable,
 		SessionsTable,
@@ -5806,6 +7252,22 @@ var (
 		UsersTable,
 		UserDeviceTokenTable,
 		UserSecretsTable,
+		VerificationAlertsTable,
+		VerificationAttemptsTable,
+		VerificationEngineVersionsTable,
+		VerificationEvidenceTable,
+		VerificationFindingsTable,
+		VerificationInboxTable,
+		VerificationMetricRollupsTable,
+		VerificationPipelineVersionsTable,
+		VerificationPolicyEvaluationsTable,
+		VerificationPolicyVersionsTable,
+		VerificationReportsTable,
+		VerificationRunsTable,
+		VerificationScoresTable,
+		VerificationTaskDependenciesTable,
+		VerificationTasksTable,
+		VerificationTelemetryEventsTable,
 		WorkspaceAuditEventsTable,
 		WorkspaceProviderConnectionsTable,
 	}
@@ -6064,6 +7526,7 @@ func init() {
 	}
 	BundleReleasesTable.ForeignKeys[0].RefTable = BundleChannelsTable
 	BundleReleasesTable.ForeignKeys[1].RefTable = BundlesTable
+	BundleReleasesTable.ForeignKeys[2].RefTable = VerificationRunsTable
 	BundleReleasesTable.Annotation = &entsql.Annotation{
 		Table: "bundle_releases",
 	}
@@ -6407,6 +7870,85 @@ func init() {
 	ProjectProviderBindingsTable.Annotation = &entsql.Annotation{
 		Table: "project_provider_bindings",
 	}
+	QuantAlertsTable.Annotation = &entsql.Annotation{
+		Table: "quant_alerts",
+	}
+	QuantAuditEventsTable.Annotation = &entsql.Annotation{
+		Table: "quant_audit_events",
+	}
+	QuantBacktestRunsTable.ForeignKeys[0].RefTable = QuantStrategyVersionsTable
+	QuantBacktestRunsTable.Annotation = &entsql.Annotation{
+		Table: "quant_backtest_runs",
+	}
+	QuantBrokerAccountsTable.Annotation = &entsql.Annotation{
+		Table: "quant_broker_accounts",
+	}
+	QuantDeploymentsTable.ForeignKeys[0].RefTable = QuantBrokerAccountsTable
+	QuantDeploymentsTable.ForeignKeys[1].RefTable = QuantStrategiesTable
+	QuantDeploymentsTable.ForeignKeys[2].RefTable = QuantStrategyVersionsTable
+	QuantDeploymentsTable.Annotation = &entsql.Annotation{
+		Table: "quant_deployments",
+	}
+	QuantDevicesTable.Annotation = &entsql.Annotation{
+		Table: "quant_devices",
+	}
+	QuantFillsTable.ForeignKeys[0].RefTable = QuantBrokerAccountsTable
+	QuantFillsTable.ForeignKeys[1].RefTable = QuantInstrumentsTable
+	QuantFillsTable.ForeignKeys[2].RefTable = QuantOrdersTable
+	QuantFillsTable.Annotation = &entsql.Annotation{
+		Table: "quant_fills",
+	}
+	QuantIdempotencyKeysTable.Annotation = &entsql.Annotation{
+		Table: "quant_idempotency_keys",
+	}
+	QuantInstrumentsTable.Annotation = &entsql.Annotation{
+		Table: "quant_instruments",
+	}
+	QuantLiveChallengesTable.Annotation = &entsql.Annotation{
+		Table: "quant_live_challenges",
+	}
+	QuantLiveSessionsTable.ForeignKeys[0].RefTable = QuantBrokerAccountsTable
+	QuantLiveSessionsTable.Annotation = &entsql.Annotation{
+		Table: "quant_live_sessions",
+	}
+	QuantOperatorGrantsTable.ForeignKeys[0].RefTable = QuantBrokerAccountsTable
+	QuantOperatorGrantsTable.Annotation = &entsql.Annotation{
+		Table: "quant_operator_grants",
+	}
+	QuantOrdersTable.ForeignKeys[0].RefTable = QuantBrokerAccountsTable
+	QuantOrdersTable.ForeignKeys[1].RefTable = QuantInstrumentsTable
+	QuantOrdersTable.Annotation = &entsql.Annotation{
+		Table: "quant_orders",
+	}
+	QuantOutboxEventsTable.Annotation = &entsql.Annotation{
+		Table: "quant_outbox_events",
+	}
+	QuantPositionsTable.ForeignKeys[0].RefTable = QuantBrokerAccountsTable
+	QuantPositionsTable.ForeignKeys[1].RefTable = QuantInstrumentsTable
+	QuantPositionsTable.Annotation = &entsql.Annotation{
+		Table: "quant_positions",
+	}
+	QuantRiskPolicyVersionsTable.ForeignKeys[0].RefTable = QuantBrokerAccountsTable
+	QuantRiskPolicyVersionsTable.Annotation = &entsql.Annotation{
+		Table: "quant_risk_policy_versions",
+	}
+	QuantStrategiesTable.ForeignKeys[0].RefTable = QuantBrokerAccountsTable
+	QuantStrategiesTable.ForeignKeys[1].RefTable = QuantStrategyVersionsTable
+	QuantStrategiesTable.Annotation = &entsql.Annotation{
+		Table: "quant_strategies",
+	}
+	QuantStrategyVersionsTable.ForeignKeys[0].RefTable = QuantStrategiesTable
+	QuantStrategyVersionsTable.Annotation = &entsql.Annotation{
+		Table: "quant_strategy_versions",
+	}
+	QuantWatchlistsTable.Annotation = &entsql.Annotation{
+		Table: "quant_watchlists",
+	}
+	QuantWatchlistItemsTable.ForeignKeys[0].RefTable = QuantInstrumentsTable
+	QuantWatchlistItemsTable.ForeignKeys[1].RefTable = QuantWatchlistsTable
+	QuantWatchlistItemsTable.Annotation = &entsql.Annotation{
+		Table: "quant_watchlist_items",
+	}
 	RiskEventsTable.Annotation = &entsql.Annotation{
 		Table: "risk_events",
 	}
@@ -6432,6 +7974,80 @@ func init() {
 	UserSecretsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSecretsTable.Annotation = &entsql.Annotation{
 		Table: "user_secrets",
+	}
+	VerificationAlertsTable.ForeignKeys[0].RefTable = ProjectsTable
+	VerificationAlertsTable.Annotation = &entsql.Annotation{
+		Table: "verification_alerts",
+	}
+	VerificationAttemptsTable.ForeignKeys[0].RefTable = VerificationTasksTable
+	VerificationAttemptsTable.Annotation = &entsql.Annotation{
+		Table: "verification_attempts",
+	}
+	VerificationEngineVersionsTable.Annotation = &entsql.Annotation{
+		Table: "verification_engine_versions",
+	}
+	VerificationEvidenceTable.ForeignKeys[0].RefTable = VerificationAttemptsTable
+	VerificationEvidenceTable.ForeignKeys[1].RefTable = VerificationRunsTable
+	VerificationEvidenceTable.ForeignKeys[2].RefTable = VerificationTasksTable
+	VerificationEvidenceTable.Annotation = &entsql.Annotation{
+		Table: "verification_evidence",
+	}
+	VerificationFindingsTable.ForeignKeys[0].RefTable = VerificationAttemptsTable
+	VerificationFindingsTable.ForeignKeys[1].RefTable = VerificationRunsTable
+	VerificationFindingsTable.ForeignKeys[2].RefTable = VerificationTasksTable
+	VerificationFindingsTable.Annotation = &entsql.Annotation{
+		Table: "verification_findings",
+	}
+	VerificationInboxTable.Annotation = &entsql.Annotation{
+		Table: "verification_inbox",
+	}
+	VerificationMetricRollupsTable.ForeignKeys[0].RefTable = ProjectsTable
+	VerificationMetricRollupsTable.Annotation = &entsql.Annotation{
+		Table: "verification_metric_rollups",
+	}
+	VerificationPipelineVersionsTable.Annotation = &entsql.Annotation{
+		Table: "verification_pipeline_versions",
+	}
+	VerificationPolicyEvaluationsTable.ForeignKeys[0].RefTable = VerificationPolicyVersionsTable
+	VerificationPolicyEvaluationsTable.ForeignKeys[1].RefTable = VerificationRunsTable
+	VerificationPolicyEvaluationsTable.Annotation = &entsql.Annotation{
+		Table: "verification_policy_evaluations",
+	}
+	VerificationPolicyVersionsTable.Annotation = &entsql.Annotation{
+		Table: "verification_policy_versions",
+	}
+	VerificationReportsTable.ForeignKeys[0].RefTable = VerificationRunsTable
+	VerificationReportsTable.Annotation = &entsql.Annotation{
+		Table: "verification_reports",
+	}
+	VerificationRunsTable.ForeignKeys[0].RefTable = BundleArtifactsTable
+	VerificationRunsTable.ForeignKeys[1].RefTable = BundleReleasesTable
+	VerificationRunsTable.ForeignKeys[2].RefTable = BundlesTable
+	VerificationRunsTable.ForeignKeys[3].RefTable = ProjectsTable
+	VerificationRunsTable.ForeignKeys[4].RefTable = VerificationPipelineVersionsTable
+	VerificationRunsTable.ForeignKeys[5].RefTable = VerificationPolicyVersionsTable
+	VerificationRunsTable.Annotation = &entsql.Annotation{
+		Table: "verification_runs",
+	}
+	VerificationScoresTable.ForeignKeys[0].RefTable = VerificationRunsTable
+	VerificationScoresTable.Annotation = &entsql.Annotation{
+		Table: "verification_scores",
+	}
+	VerificationTaskDependenciesTable.ForeignKeys[0].RefTable = VerificationTasksTable
+	VerificationTaskDependenciesTable.ForeignKeys[1].RefTable = VerificationTasksTable
+	VerificationTaskDependenciesTable.Annotation = &entsql.Annotation{
+		Table: "verification_task_dependencies",
+	}
+	VerificationTasksTable.ForeignKeys[0].RefTable = VerificationAttemptsTable
+	VerificationTasksTable.ForeignKeys[1].RefTable = VerificationEngineVersionsTable
+	VerificationTasksTable.ForeignKeys[2].RefTable = VerificationRunsTable
+	VerificationTasksTable.Annotation = &entsql.Annotation{
+		Table: "verification_tasks",
+	}
+	VerificationTelemetryEventsTable.ForeignKeys[0].RefTable = ProjectsTable
+	VerificationTelemetryEventsTable.ForeignKeys[1].RefTable = VerificationRunsTable
+	VerificationTelemetryEventsTable.Annotation = &entsql.Annotation{
+		Table: "verification_telemetry_events",
 	}
 	WorkspaceAuditEventsTable.Annotation = &entsql.Annotation{
 		Table: "workspace_audit_events",

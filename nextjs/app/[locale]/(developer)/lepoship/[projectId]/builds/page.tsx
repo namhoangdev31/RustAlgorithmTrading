@@ -4,7 +4,7 @@ import { getLepoShipProjectDetail } from "@/lib/server/admin-data";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Download } from "lucide-react";
+import { Clock, Download, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type PageProps = {
@@ -29,6 +29,7 @@ export default async function LepoShipBuildsPage({ params }: PageProps) {
         include: {
           artifacts: { where: { kind: "full" }, take: 1 },
           approvals: { select: { kind: true, status: true } },
+          verificationRuns: { orderBy: { createdAt: "desc" }, take: 1, select: { id: true, status: true, decision: true, overallScore: true, confidence: true } },
         },
       },
     },
@@ -69,6 +70,7 @@ export default async function LepoShipBuildsPage({ params }: PageProps) {
               <tbody>
                 {builds.map((build) => {
                   const artifact = build.release.artifacts[0];
+                  const verification = build.release.verificationRuns[0];
                   const artifactUrl = artifact && publicBase ? `${publicBase}/${artifact.storageKey.split("/").map(encodeURIComponent).join("/")}` : null;
                   return (
                   <tr key={build.id} className="border-b border-hairline last:border-0 hover:bg-secondary/20">
@@ -80,6 +82,9 @@ export default async function LepoShipBuildsPage({ params }: PageProps) {
                       <div className="flex flex-wrap gap-1">
                         <Badge variant={build.status === "failed" ? "destructive" : build.status === "succeeded" ? "default" : "secondary"}>{build.status}</Badge>
                         <Badge variant="outline">release: {build.release.status}</Badge>
+                        {verification ? <Badge variant={verification.decision === "reject" ? "destructive" : "outline"}>
+                          verify: {verification.status}{verification.overallScore == null ? "" : ` · ${verification.overallScore.toFixed(0)}`}{verification.confidence == null ? "" : ` · ${verification.confidence.toFixed(0)}% confidence`}
+                        </Badge> : <Badge variant="secondary">verify: waiting</Badge>}
                         {build.release.approvals.map((approval) => <Badge key={approval.kind} variant="outline">{approval.kind}: {approval.status}</Badge>)}
                       </div>
                     </td>
@@ -88,7 +93,11 @@ export default async function LepoShipBuildsPage({ params }: PageProps) {
                         <a href={artifactUrl}>
                           <Download className="size-3.5" />
                         </a>
-                      </Button> : <span className="text-muted-foreground">—</span>}
+                      </Button> : null}
+                      {verification ? <Button asChild size="icon" variant="ghost" className="h-7 w-7 rounded cursor-pointer" title="Verification details">
+                        <a href={`/${locale}/lepoship/${projectId}/verification/${verification.id}`}><ShieldCheck className="size-3.5" /></a>
+                      </Button> : null}
+                      {!artifactUrl && !verification ? <span className="text-muted-foreground">—</span> : null}
                     </td>
                   </tr>
                 )})}

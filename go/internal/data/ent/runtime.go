@@ -109,16 +109,45 @@ import (
 	"trading/control-gateway/internal/data/ent/previewcomment"
 	"trading/control-gateway/internal/data/ent/projectmembership"
 	"trading/control-gateway/internal/data/ent/projectproviderbinding"
+	"trading/control-gateway/internal/data/ent/quantalert"
+	"trading/control-gateway/internal/data/ent/quantauditevent"
+	"trading/control-gateway/internal/data/ent/quantbacktestrun"
+	"trading/control-gateway/internal/data/ent/quantbrokeraccount"
+	"trading/control-gateway/internal/data/ent/quantdeployment"
+	"trading/control-gateway/internal/data/ent/quantdevice"
+	"trading/control-gateway/internal/data/ent/quantfill"
+	"trading/control-gateway/internal/data/ent/quantidempotencykey"
+	"trading/control-gateway/internal/data/ent/quantinstrument"
+	"trading/control-gateway/internal/data/ent/quantlivechallenge"
+	"trading/control-gateway/internal/data/ent/quantlivesession"
+	"trading/control-gateway/internal/data/ent/quantoperatorgrant"
+	"trading/control-gateway/internal/data/ent/quantorder"
+	"trading/control-gateway/internal/data/ent/quantoutboxevent"
+	"trading/control-gateway/internal/data/ent/quantposition"
+	"trading/control-gateway/internal/data/ent/quantriskpolicyversion"
+	"trading/control-gateway/internal/data/ent/quantstrategy"
+	"trading/control-gateway/internal/data/ent/quantstrategyversion"
+	"trading/control-gateway/internal/data/ent/quantwatchlist"
+	"trading/control-gateway/internal/data/ent/quantwatchlistitem"
 	"trading/control-gateway/internal/data/ent/risklimits"
 	"trading/control-gateway/internal/data/ent/schema"
 	"trading/control-gateway/internal/data/ent/ssoconfig"
 	"trading/control-gateway/internal/data/ent/user"
 	"trading/control-gateway/internal/data/ent/userdevicetoken"
 	"trading/control-gateway/internal/data/ent/usersecrets"
+	"trading/control-gateway/internal/data/ent/verificationalerts"
+	"trading/control-gateway/internal/data/ent/verificationengineversions"
+	"trading/control-gateway/internal/data/ent/verificationevidence"
+	"trading/control-gateway/internal/data/ent/verificationpipelineversions"
+	"trading/control-gateway/internal/data/ent/verificationpolicyversions"
+	"trading/control-gateway/internal/data/ent/verificationruns"
+	"trading/control-gateway/internal/data/ent/verificationtasks"
 	"trading/control-gateway/internal/data/ent/workspaceauditevent"
 	"trading/control-gateway/internal/data/ent/workspaceproviderconnection"
 
+	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"github.com/shopspring/decimal"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -1719,6 +1748,342 @@ func init() {
 	projectproviderbindingDescID := projectproviderbindingFields[0].Descriptor()
 	// projectproviderbinding.DefaultID holds the default value on creation for the id field.
 	projectproviderbinding.DefaultID = projectproviderbindingDescID.Default.(func() string)
+	quantalertFields := schema.QuantAlert{}.Fields()
+	_ = quantalertFields
+	// quantalertDescPayload is the schema descriptor for payload field.
+	quantalertDescPayload := quantalertFields[7].Descriptor()
+	// quantalert.DefaultPayload holds the default value on creation for the payload field.
+	quantalert.DefaultPayload = quantalertDescPayload.Default.(func() json.RawMessage)
+	// quantalertDescCreatedAt is the schema descriptor for createdAt field.
+	quantalertDescCreatedAt := quantalertFields[11].Descriptor()
+	// quantalert.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantalert.DefaultCreatedAt = quantalertDescCreatedAt.Default.(func() time.Time)
+	// quantalertDescID is the schema descriptor for id field.
+	quantalertDescID := quantalertFields[0].Descriptor()
+	// quantalert.DefaultID holds the default value on creation for the id field.
+	quantalert.DefaultID = quantalertDescID.Default.(func() uuid.UUID)
+	quantauditeventFields := schema.QuantAuditEvent{}.Fields()
+	_ = quantauditeventFields
+	// quantauditeventDescStepUp is the schema descriptor for stepUp field.
+	quantauditeventDescStepUp := quantauditeventFields[10].Descriptor()
+	// quantauditevent.DefaultStepUp holds the default value on creation for the stepUp field.
+	quantauditevent.DefaultStepUp = quantauditeventDescStepUp.Default.(bool)
+	// quantauditeventDescCreatedAt is the schema descriptor for createdAt field.
+	quantauditeventDescCreatedAt := quantauditeventFields[15].Descriptor()
+	// quantauditevent.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantauditevent.DefaultCreatedAt = quantauditeventDescCreatedAt.Default.(func() time.Time)
+	// quantauditeventDescID is the schema descriptor for id field.
+	quantauditeventDescID := quantauditeventFields[0].Descriptor()
+	// quantauditevent.DefaultID holds the default value on creation for the id field.
+	quantauditevent.DefaultID = quantauditeventDescID.Default.(func() uuid.UUID)
+	quantbacktestrunFields := schema.QuantBacktestRun{}.Fields()
+	_ = quantbacktestrunFields
+	// quantbacktestrunDescStatus is the schema descriptor for status field.
+	quantbacktestrunDescStatus := quantbacktestrunFields[2].Descriptor()
+	// quantbacktestrun.DefaultStatus holds the default value on creation for the status field.
+	quantbacktestrun.DefaultStatus = quantbacktestrunDescStatus.Default.(string)
+	// quantbacktestrunDescProgressPercent is the schema descriptor for progressPercent field.
+	quantbacktestrunDescProgressPercent := quantbacktestrunFields[6].Descriptor()
+	// quantbacktestrun.DefaultProgressPercent holds the default value on creation for the progressPercent field.
+	quantbacktestrun.DefaultProgressPercent = quantbacktestrunDescProgressPercent.Default.(decimal.Decimal)
+	// quantbacktestrunDescCreatedAt is the schema descriptor for createdAt field.
+	quantbacktestrunDescCreatedAt := quantbacktestrunFields[11].Descriptor()
+	// quantbacktestrun.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantbacktestrun.DefaultCreatedAt = quantbacktestrunDescCreatedAt.Default.(func() time.Time)
+	// quantbacktestrunDescID is the schema descriptor for id field.
+	quantbacktestrunDescID := quantbacktestrunFields[0].Descriptor()
+	// quantbacktestrun.DefaultID holds the default value on creation for the id field.
+	quantbacktestrun.DefaultID = quantbacktestrunDescID.Default.(func() uuid.UUID)
+	quantbrokeraccountFields := schema.QuantBrokerAccount{}.Fields()
+	_ = quantbrokeraccountFields
+	// quantbrokeraccountDescIsEnabled is the schema descriptor for isEnabled field.
+	quantbrokeraccountDescIsEnabled := quantbrokeraccountFields[6].Descriptor()
+	// quantbrokeraccount.DefaultIsEnabled holds the default value on creation for the isEnabled field.
+	quantbrokeraccount.DefaultIsEnabled = quantbrokeraccountDescIsEnabled.Default.(bool)
+	// quantbrokeraccountDescCreatedAt is the schema descriptor for createdAt field.
+	quantbrokeraccountDescCreatedAt := quantbrokeraccountFields[7].Descriptor()
+	// quantbrokeraccount.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantbrokeraccount.DefaultCreatedAt = quantbrokeraccountDescCreatedAt.Default.(func() time.Time)
+	// quantbrokeraccountDescUpdatedAt is the schema descriptor for updatedAt field.
+	quantbrokeraccountDescUpdatedAt := quantbrokeraccountFields[8].Descriptor()
+	// quantbrokeraccount.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
+	quantbrokeraccount.UpdateDefaultUpdatedAt = quantbrokeraccountDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// quantbrokeraccountDescID is the schema descriptor for id field.
+	quantbrokeraccountDescID := quantbrokeraccountFields[0].Descriptor()
+	// quantbrokeraccount.DefaultID holds the default value on creation for the id field.
+	quantbrokeraccount.DefaultID = quantbrokeraccountDescID.Default.(func() uuid.UUID)
+	quantdeploymentFields := schema.QuantDeployment{}.Fields()
+	_ = quantdeploymentFields
+	// quantdeploymentDescStatus is the schema descriptor for status field.
+	quantdeploymentDescStatus := quantdeploymentFields[5].Descriptor()
+	// quantdeployment.DefaultStatus holds the default value on creation for the status field.
+	quantdeployment.DefaultStatus = quantdeploymentDescStatus.Default.(string)
+	// quantdeploymentDescDesiredState is the schema descriptor for desiredState field.
+	quantdeploymentDescDesiredState := quantdeploymentFields[6].Descriptor()
+	// quantdeployment.DefaultDesiredState holds the default value on creation for the desiredState field.
+	quantdeployment.DefaultDesiredState = quantdeploymentDescDesiredState.Default.(string)
+	// quantdeploymentDescActualState is the schema descriptor for actualState field.
+	quantdeploymentDescActualState := quantdeploymentFields[7].Descriptor()
+	// quantdeployment.DefaultActualState holds the default value on creation for the actualState field.
+	quantdeployment.DefaultActualState = quantdeploymentDescActualState.Default.(string)
+	// quantdeploymentDescVersion is the schema descriptor for version field.
+	quantdeploymentDescVersion := quantdeploymentFields[9].Descriptor()
+	// quantdeployment.DefaultVersion holds the default value on creation for the version field.
+	quantdeployment.DefaultVersion = quantdeploymentDescVersion.Default.(int)
+	// quantdeploymentDescCreatedAt is the schema descriptor for createdAt field.
+	quantdeploymentDescCreatedAt := quantdeploymentFields[12].Descriptor()
+	// quantdeployment.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantdeployment.DefaultCreatedAt = quantdeploymentDescCreatedAt.Default.(func() time.Time)
+	// quantdeploymentDescUpdatedAt is the schema descriptor for updatedAt field.
+	quantdeploymentDescUpdatedAt := quantdeploymentFields[13].Descriptor()
+	// quantdeployment.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
+	quantdeployment.UpdateDefaultUpdatedAt = quantdeploymentDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// quantdeploymentDescID is the schema descriptor for id field.
+	quantdeploymentDescID := quantdeploymentFields[0].Descriptor()
+	// quantdeployment.DefaultID holds the default value on creation for the id field.
+	quantdeployment.DefaultID = quantdeploymentDescID.Default.(func() uuid.UUID)
+	quantdeviceFields := schema.QuantDevice{}.Fields()
+	_ = quantdeviceFields
+	// quantdeviceDescStatus is the schema descriptor for status field.
+	quantdeviceDescStatus := quantdeviceFields[6].Descriptor()
+	// quantdevice.DefaultStatus holds the default value on creation for the status field.
+	quantdevice.DefaultStatus = quantdeviceDescStatus.Default.(string)
+	// quantdeviceDescCreatedAt is the schema descriptor for createdAt field.
+	quantdeviceDescCreatedAt := quantdeviceFields[9].Descriptor()
+	// quantdevice.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantdevice.DefaultCreatedAt = quantdeviceDescCreatedAt.Default.(func() time.Time)
+	// quantdeviceDescUpdatedAt is the schema descriptor for updatedAt field.
+	quantdeviceDescUpdatedAt := quantdeviceFields[10].Descriptor()
+	// quantdevice.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
+	quantdevice.UpdateDefaultUpdatedAt = quantdeviceDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// quantdeviceDescID is the schema descriptor for id field.
+	quantdeviceDescID := quantdeviceFields[0].Descriptor()
+	// quantdevice.DefaultID holds the default value on creation for the id field.
+	quantdevice.DefaultID = quantdeviceDescID.Default.(func() uuid.UUID)
+	quantfillFields := schema.QuantFill{}.Fields()
+	_ = quantfillFields
+	// quantfillDescCommission is the schema descriptor for commission field.
+	quantfillDescCommission := quantfillFields[7].Descriptor()
+	// quantfill.DefaultCommission holds the default value on creation for the commission field.
+	quantfill.DefaultCommission = quantfillDescCommission.Default.(decimal.Decimal)
+	// quantfillDescCreatedAt is the schema descriptor for createdAt field.
+	quantfillDescCreatedAt := quantfillFields[10].Descriptor()
+	// quantfill.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantfill.DefaultCreatedAt = quantfillDescCreatedAt.Default.(func() time.Time)
+	// quantfillDescID is the schema descriptor for id field.
+	quantfillDescID := quantfillFields[0].Descriptor()
+	// quantfill.DefaultID holds the default value on creation for the id field.
+	quantfill.DefaultID = quantfillDescID.Default.(func() uuid.UUID)
+	quantidempotencykeyFields := schema.QuantIdempotencyKey{}.Fields()
+	_ = quantidempotencykeyFields
+	// quantidempotencykeyDescCreatedAt is the schema descriptor for createdAt field.
+	quantidempotencykeyDescCreatedAt := quantidempotencykeyFields[8].Descriptor()
+	// quantidempotencykey.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantidempotencykey.DefaultCreatedAt = quantidempotencykeyDescCreatedAt.Default.(func() time.Time)
+	// quantidempotencykeyDescUpdatedAt is the schema descriptor for updatedAt field.
+	quantidempotencykeyDescUpdatedAt := quantidempotencykeyFields[9].Descriptor()
+	// quantidempotencykey.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
+	quantidempotencykey.UpdateDefaultUpdatedAt = quantidempotencykeyDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// quantidempotencykeyDescID is the schema descriptor for id field.
+	quantidempotencykeyDescID := quantidempotencykeyFields[0].Descriptor()
+	// quantidempotencykey.DefaultID holds the default value on creation for the id field.
+	quantidempotencykey.DefaultID = quantidempotencykeyDescID.Default.(func() uuid.UUID)
+	quantinstrumentFields := schema.QuantInstrument{}.Fields()
+	_ = quantinstrumentFields
+	// quantinstrumentDescPriceScale is the schema descriptor for priceScale field.
+	quantinstrumentDescPriceScale := quantinstrumentFields[9].Descriptor()
+	// quantinstrument.DefaultPriceScale holds the default value on creation for the priceScale field.
+	quantinstrument.DefaultPriceScale = quantinstrumentDescPriceScale.Default.(int)
+	// quantinstrumentDescQuantityScale is the schema descriptor for quantityScale field.
+	quantinstrumentDescQuantityScale := quantinstrumentFields[10].Descriptor()
+	// quantinstrument.DefaultQuantityScale holds the default value on creation for the quantityScale field.
+	quantinstrument.DefaultQuantityScale = quantinstrumentDescQuantityScale.Default.(int)
+	// quantinstrumentDescCapabilities is the schema descriptor for capabilities field.
+	quantinstrumentDescCapabilities := quantinstrumentFields[13].Descriptor()
+	// quantinstrument.DefaultCapabilities holds the default value on creation for the capabilities field.
+	quantinstrument.DefaultCapabilities = quantinstrumentDescCapabilities.Default.(func() json.RawMessage)
+	// quantinstrumentDescIsActive is the schema descriptor for isActive field.
+	quantinstrumentDescIsActive := quantinstrumentFields[14].Descriptor()
+	// quantinstrument.DefaultIsActive holds the default value on creation for the isActive field.
+	quantinstrument.DefaultIsActive = quantinstrumentDescIsActive.Default.(bool)
+	// quantinstrumentDescCreatedAt is the schema descriptor for createdAt field.
+	quantinstrumentDescCreatedAt := quantinstrumentFields[15].Descriptor()
+	// quantinstrument.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantinstrument.DefaultCreatedAt = quantinstrumentDescCreatedAt.Default.(func() time.Time)
+	// quantinstrumentDescUpdatedAt is the schema descriptor for updatedAt field.
+	quantinstrumentDescUpdatedAt := quantinstrumentFields[16].Descriptor()
+	// quantinstrument.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
+	quantinstrument.UpdateDefaultUpdatedAt = quantinstrumentDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// quantinstrumentDescID is the schema descriptor for id field.
+	quantinstrumentDescID := quantinstrumentFields[0].Descriptor()
+	// quantinstrument.DefaultID holds the default value on creation for the id field.
+	quantinstrument.DefaultID = quantinstrumentDescID.Default.(func() uuid.UUID)
+	quantlivechallengeFields := schema.QuantLiveChallenge{}.Fields()
+	_ = quantlivechallengeFields
+	// quantlivechallengeDescCreatedAt is the schema descriptor for createdAt field.
+	quantlivechallengeDescCreatedAt := quantlivechallengeFields[7].Descriptor()
+	// quantlivechallenge.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantlivechallenge.DefaultCreatedAt = quantlivechallengeDescCreatedAt.Default.(func() time.Time)
+	// quantlivechallengeDescID is the schema descriptor for id field.
+	quantlivechallengeDescID := quantlivechallengeFields[0].Descriptor()
+	// quantlivechallenge.DefaultID holds the default value on creation for the id field.
+	quantlivechallenge.DefaultID = quantlivechallengeDescID.Default.(func() uuid.UUID)
+	quantlivesessionFields := schema.QuantLiveSession{}.Fields()
+	_ = quantlivesessionFields
+	// quantlivesessionDescCreatedAt is the schema descriptor for createdAt field.
+	quantlivesessionDescCreatedAt := quantlivesessionFields[9].Descriptor()
+	// quantlivesession.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantlivesession.DefaultCreatedAt = quantlivesessionDescCreatedAt.Default.(func() time.Time)
+	// quantlivesessionDescID is the schema descriptor for id field.
+	quantlivesessionDescID := quantlivesessionFields[0].Descriptor()
+	// quantlivesession.DefaultID holds the default value on creation for the id field.
+	quantlivesession.DefaultID = quantlivesessionDescID.Default.(func() uuid.UUID)
+	quantoperatorgrantFields := schema.QuantOperatorGrant{}.Fields()
+	_ = quantoperatorgrantFields
+	// quantoperatorgrantDescScopes is the schema descriptor for scopes field.
+	quantoperatorgrantDescScopes := quantoperatorgrantFields[3].Descriptor()
+	// quantoperatorgrant.DefaultScopes holds the default value on creation for the scopes field.
+	quantoperatorgrant.DefaultScopes = quantoperatorgrantDescScopes.Default.(func() pq.StringArray)
+	// quantoperatorgrantDescDeviceBoundOnly is the schema descriptor for deviceBoundOnly field.
+	quantoperatorgrantDescDeviceBoundOnly := quantoperatorgrantFields[4].Descriptor()
+	// quantoperatorgrant.DefaultDeviceBoundOnly holds the default value on creation for the deviceBoundOnly field.
+	quantoperatorgrant.DefaultDeviceBoundOnly = quantoperatorgrantDescDeviceBoundOnly.Default.(bool)
+	// quantoperatorgrantDescCreatedAt is the schema descriptor for createdAt field.
+	quantoperatorgrantDescCreatedAt := quantoperatorgrantFields[6].Descriptor()
+	// quantoperatorgrant.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantoperatorgrant.DefaultCreatedAt = quantoperatorgrantDescCreatedAt.Default.(func() time.Time)
+	// quantoperatorgrantDescID is the schema descriptor for id field.
+	quantoperatorgrantDescID := quantoperatorgrantFields[0].Descriptor()
+	// quantoperatorgrant.DefaultID holds the default value on creation for the id field.
+	quantoperatorgrant.DefaultID = quantoperatorgrantDescID.Default.(func() uuid.UUID)
+	quantorderFields := schema.QuantOrder{}.Fields()
+	_ = quantorderFields
+	// quantorderDescVersion is the schema descriptor for version field.
+	quantorderDescVersion := quantorderFields[18].Descriptor()
+	// quantorder.DefaultVersion holds the default value on creation for the version field.
+	quantorder.DefaultVersion = quantorderDescVersion.Default.(int)
+	// quantorderDescCreatedAt is the schema descriptor for createdAt field.
+	quantorderDescCreatedAt := quantorderFields[22].Descriptor()
+	// quantorder.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantorder.DefaultCreatedAt = quantorderDescCreatedAt.Default.(func() time.Time)
+	// quantorderDescUpdatedAt is the schema descriptor for updatedAt field.
+	quantorderDescUpdatedAt := quantorderFields[23].Descriptor()
+	// quantorder.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
+	quantorder.UpdateDefaultUpdatedAt = quantorderDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// quantorderDescID is the schema descriptor for id field.
+	quantorderDescID := quantorderFields[0].Descriptor()
+	// quantorder.DefaultID holds the default value on creation for the id field.
+	quantorder.DefaultID = quantorderDescID.Default.(func() uuid.UUID)
+	quantoutboxeventFields := schema.QuantOutboxEvent{}.Fields()
+	_ = quantoutboxeventFields
+	// quantoutboxeventDescSchemaVersion is the schema descriptor for schemaVersion field.
+	quantoutboxeventDescSchemaVersion := quantoutboxeventFields[5].Descriptor()
+	// quantoutboxevent.DefaultSchemaVersion holds the default value on creation for the schemaVersion field.
+	quantoutboxevent.DefaultSchemaVersion = quantoutboxeventDescSchemaVersion.Default.(int)
+	// quantoutboxeventDescAttempts is the schema descriptor for attempts field.
+	quantoutboxeventDescAttempts := quantoutboxeventFields[9].Descriptor()
+	// quantoutboxevent.DefaultAttempts holds the default value on creation for the attempts field.
+	quantoutboxevent.DefaultAttempts = quantoutboxeventDescAttempts.Default.(int)
+	// quantoutboxeventDescCreatedAt is the schema descriptor for createdAt field.
+	quantoutboxeventDescCreatedAt := quantoutboxeventFields[11].Descriptor()
+	// quantoutboxevent.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantoutboxevent.DefaultCreatedAt = quantoutboxeventDescCreatedAt.Default.(func() time.Time)
+	// quantoutboxeventDescID is the schema descriptor for id field.
+	quantoutboxeventDescID := quantoutboxeventFields[0].Descriptor()
+	// quantoutboxevent.DefaultID holds the default value on creation for the id field.
+	quantoutboxevent.DefaultID = quantoutboxeventDescID.Default.(func() uuid.UUID)
+	quantpositionFields := schema.QuantPosition{}.Fields()
+	_ = quantpositionFields
+	// quantpositionDescRealizedPnl is the schema descriptor for realizedPnl field.
+	quantpositionDescRealizedPnl := quantpositionFields[6].Descriptor()
+	// quantposition.DefaultRealizedPnl holds the default value on creation for the realizedPnl field.
+	quantposition.DefaultRealizedPnl = quantpositionDescRealizedPnl.Default.(decimal.Decimal)
+	// quantpositionDescVersion is the schema descriptor for version field.
+	quantpositionDescVersion := quantpositionFields[7].Descriptor()
+	// quantposition.DefaultVersion holds the default value on creation for the version field.
+	quantposition.DefaultVersion = quantpositionDescVersion.Default.(int)
+	// quantpositionDescUpdatedAt is the schema descriptor for updatedAt field.
+	quantpositionDescUpdatedAt := quantpositionFields[9].Descriptor()
+	// quantposition.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
+	quantposition.UpdateDefaultUpdatedAt = quantpositionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// quantpositionDescID is the schema descriptor for id field.
+	quantpositionDescID := quantpositionFields[0].Descriptor()
+	// quantposition.DefaultID holds the default value on creation for the id field.
+	quantposition.DefaultID = quantpositionDescID.Default.(func() uuid.UUID)
+	quantriskpolicyversionFields := schema.QuantRiskPolicyVersion{}.Fields()
+	_ = quantriskpolicyversionFields
+	// quantriskpolicyversionDescStatus is the schema descriptor for status field.
+	quantriskpolicyversionDescStatus := quantriskpolicyversionFields[5].Descriptor()
+	// quantriskpolicyversion.DefaultStatus holds the default value on creation for the status field.
+	quantriskpolicyversion.DefaultStatus = quantriskpolicyversionDescStatus.Default.(string)
+	// quantriskpolicyversionDescCreatedAt is the schema descriptor for createdAt field.
+	quantriskpolicyversionDescCreatedAt := quantriskpolicyversionFields[9].Descriptor()
+	// quantriskpolicyversion.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantriskpolicyversion.DefaultCreatedAt = quantriskpolicyversionDescCreatedAt.Default.(func() time.Time)
+	// quantriskpolicyversionDescID is the schema descriptor for id field.
+	quantriskpolicyversionDescID := quantriskpolicyversionFields[0].Descriptor()
+	// quantriskpolicyversion.DefaultID holds the default value on creation for the id field.
+	quantriskpolicyversion.DefaultID = quantriskpolicyversionDescID.Default.(func() uuid.UUID)
+	quantstrategyFields := schema.QuantStrategy{}.Fields()
+	_ = quantstrategyFields
+	// quantstrategyDescCreatedAt is the schema descriptor for createdAt field.
+	quantstrategyDescCreatedAt := quantstrategyFields[7].Descriptor()
+	// quantstrategy.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantstrategy.DefaultCreatedAt = quantstrategyDescCreatedAt.Default.(func() time.Time)
+	// quantstrategyDescUpdatedAt is the schema descriptor for updatedAt field.
+	quantstrategyDescUpdatedAt := quantstrategyFields[8].Descriptor()
+	// quantstrategy.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
+	quantstrategy.UpdateDefaultUpdatedAt = quantstrategyDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// quantstrategyDescID is the schema descriptor for id field.
+	quantstrategyDescID := quantstrategyFields[0].Descriptor()
+	// quantstrategy.DefaultID holds the default value on creation for the id field.
+	quantstrategy.DefaultID = quantstrategyDescID.Default.(func() uuid.UUID)
+	quantstrategyversionFields := schema.QuantStrategyVersion{}.Fields()
+	_ = quantstrategyversionFields
+	// quantstrategyversionDescSchemaVersion is the schema descriptor for schemaVersion field.
+	quantstrategyversionDescSchemaVersion := quantstrategyversionFields[4].Descriptor()
+	// quantstrategyversion.DefaultSchemaVersion holds the default value on creation for the schemaVersion field.
+	quantstrategyversion.DefaultSchemaVersion = quantstrategyversionDescSchemaVersion.Default.(int)
+	// quantstrategyversionDescCreatedAt is the schema descriptor for createdAt field.
+	quantstrategyversionDescCreatedAt := quantstrategyversionFields[8].Descriptor()
+	// quantstrategyversion.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantstrategyversion.DefaultCreatedAt = quantstrategyversionDescCreatedAt.Default.(func() time.Time)
+	// quantstrategyversionDescID is the schema descriptor for id field.
+	quantstrategyversionDescID := quantstrategyversionFields[0].Descriptor()
+	// quantstrategyversion.DefaultID holds the default value on creation for the id field.
+	quantstrategyversion.DefaultID = quantstrategyversionDescID.Default.(func() uuid.UUID)
+	quantwatchlistFields := schema.QuantWatchlist{}.Fields()
+	_ = quantwatchlistFields
+	// quantwatchlistDescSortOrder is the schema descriptor for sortOrder field.
+	quantwatchlistDescSortOrder := quantwatchlistFields[3].Descriptor()
+	// quantwatchlist.DefaultSortOrder holds the default value on creation for the sortOrder field.
+	quantwatchlist.DefaultSortOrder = quantwatchlistDescSortOrder.Default.(int)
+	// quantwatchlistDescCreatedAt is the schema descriptor for createdAt field.
+	quantwatchlistDescCreatedAt := quantwatchlistFields[4].Descriptor()
+	// quantwatchlist.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantwatchlist.DefaultCreatedAt = quantwatchlistDescCreatedAt.Default.(func() time.Time)
+	// quantwatchlistDescUpdatedAt is the schema descriptor for updatedAt field.
+	quantwatchlistDescUpdatedAt := quantwatchlistFields[5].Descriptor()
+	// quantwatchlist.UpdateDefaultUpdatedAt holds the default value on update for the updatedAt field.
+	quantwatchlist.UpdateDefaultUpdatedAt = quantwatchlistDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// quantwatchlistDescID is the schema descriptor for id field.
+	quantwatchlistDescID := quantwatchlistFields[0].Descriptor()
+	// quantwatchlist.DefaultID holds the default value on creation for the id field.
+	quantwatchlist.DefaultID = quantwatchlistDescID.Default.(func() uuid.UUID)
+	quantwatchlistitemFields := schema.QuantWatchlistItem{}.Fields()
+	_ = quantwatchlistitemFields
+	// quantwatchlistitemDescSortOrder is the schema descriptor for sortOrder field.
+	quantwatchlistitemDescSortOrder := quantwatchlistitemFields[3].Descriptor()
+	// quantwatchlistitem.DefaultSortOrder holds the default value on creation for the sortOrder field.
+	quantwatchlistitem.DefaultSortOrder = quantwatchlistitemDescSortOrder.Default.(int)
+	// quantwatchlistitemDescCreatedAt is the schema descriptor for createdAt field.
+	quantwatchlistitemDescCreatedAt := quantwatchlistitemFields[4].Descriptor()
+	// quantwatchlistitem.DefaultCreatedAt holds the default value on creation for the createdAt field.
+	quantwatchlistitem.DefaultCreatedAt = quantwatchlistitemDescCreatedAt.Default.(func() time.Time)
+	// quantwatchlistitemDescID is the schema descriptor for id field.
+	quantwatchlistitemDescID := quantwatchlistitemFields[0].Descriptor()
+	// quantwatchlistitem.DefaultID holds the default value on creation for the id field.
+	quantwatchlistitem.DefaultID = quantwatchlistitemDescID.Default.(func() uuid.UUID)
 	risklimitsFields := schema.RiskLimits{}.Fields()
 	_ = risklimitsFields
 	// risklimitsDescMaxShares is the schema descriptor for maxShares field.
@@ -1947,6 +2312,66 @@ func init() {
 	usersecretsDescUpdatedAt := usersecretsFields[5].Descriptor()
 	// usersecrets.DefaultUpdatedAt holds the default value on creation for the updatedAt field.
 	usersecrets.DefaultUpdatedAt = usersecretsDescUpdatedAt.Default.(func() time.Time)
+	verificationalertsFields := schema.VerificationAlerts{}.Fields()
+	_ = verificationalertsFields
+	// verificationalertsDescStatus is the schema descriptor for status field.
+	verificationalertsDescStatus := verificationalertsFields[4].Descriptor()
+	// verificationalerts.DefaultStatus holds the default value on creation for the status field.
+	verificationalerts.DefaultStatus = verificationalertsDescStatus.Default.(string)
+	verificationattemptsFields := schema.VerificationAttempts{}.Fields()
+	_ = verificationattemptsFields
+	verificationengineversionsFields := schema.VerificationEngineVersions{}.Fields()
+	_ = verificationengineversionsFields
+	// verificationengineversionsDescResultSchemaVersion is the schema descriptor for resultSchemaVersion field.
+	verificationengineversionsDescResultSchemaVersion := verificationengineversionsFields[6].Descriptor()
+	// verificationengineversions.DefaultResultSchemaVersion holds the default value on creation for the resultSchemaVersion field.
+	verificationengineversions.DefaultResultSchemaVersion = verificationengineversionsDescResultSchemaVersion.Default.(string)
+	// verificationengineversionsDescIsActive is the schema descriptor for isActive field.
+	verificationengineversionsDescIsActive := verificationengineversionsFields[7].Descriptor()
+	// verificationengineversions.DefaultIsActive holds the default value on creation for the isActive field.
+	verificationengineversions.DefaultIsActive = verificationengineversionsDescIsActive.Default.(bool)
+	verificationevidenceFields := schema.VerificationEvidence{}.Fields()
+	_ = verificationevidenceFields
+	// verificationevidenceDescSensitivity is the schema descriptor for sensitivity field.
+	verificationevidenceDescSensitivity := verificationevidenceFields[11].Descriptor()
+	// verificationevidence.DefaultSensitivity holds the default value on creation for the sensitivity field.
+	verificationevidence.DefaultSensitivity = verificationevidenceDescSensitivity.Default.(string)
+	verificationpipelineversionsFields := schema.VerificationPipelineVersions{}.Fields()
+	_ = verificationpipelineversionsFields
+	// verificationpipelineversionsDescIsActive is the schema descriptor for isActive field.
+	verificationpipelineversionsDescIsActive := verificationpipelineversionsFields[6].Descriptor()
+	// verificationpipelineversions.DefaultIsActive holds the default value on creation for the isActive field.
+	verificationpipelineversions.DefaultIsActive = verificationpipelineversionsDescIsActive.Default.(bool)
+	verificationpolicyversionsFields := schema.VerificationPolicyVersions{}.Fields()
+	_ = verificationpolicyversionsFields
+	// verificationpolicyversionsDescIsActive is the schema descriptor for isActive field.
+	verificationpolicyversionsDescIsActive := verificationpolicyversionsFields[5].Descriptor()
+	// verificationpolicyversions.DefaultIsActive holds the default value on creation for the isActive field.
+	verificationpolicyversions.DefaultIsActive = verificationpolicyversionsDescIsActive.Default.(bool)
+	verificationrunsFields := schema.VerificationRuns{}.Fields()
+	_ = verificationrunsFields
+	// verificationrunsDescScoringVersion is the schema descriptor for scoringVersion field.
+	verificationrunsDescScoringVersion := verificationrunsFields[9].Descriptor()
+	// verificationruns.DefaultScoringVersion holds the default value on creation for the scoringVersion field.
+	verificationruns.DefaultScoringVersion = verificationrunsDescScoringVersion.Default.(string)
+	verificationtasksFields := schema.VerificationTasks{}.Fields()
+	_ = verificationtasksFields
+	// verificationtasksDescRequired is the schema descriptor for required field.
+	verificationtasksDescRequired := verificationtasksFields[5].Descriptor()
+	// verificationtasks.DefaultRequired holds the default value on creation for the required field.
+	verificationtasks.DefaultRequired = verificationtasksDescRequired.Default.(bool)
+	// verificationtasksDescAttempt is the schema descriptor for attempt field.
+	verificationtasksDescAttempt := verificationtasksFields[8].Descriptor()
+	// verificationtasks.DefaultAttempt holds the default value on creation for the attempt field.
+	verificationtasks.DefaultAttempt = verificationtasksDescAttempt.Default.(int)
+	// verificationtasksDescMaxAttempts is the schema descriptor for maxAttempts field.
+	verificationtasksDescMaxAttempts := verificationtasksFields[9].Descriptor()
+	// verificationtasks.DefaultMaxAttempts holds the default value on creation for the maxAttempts field.
+	verificationtasks.DefaultMaxAttempts = verificationtasksDescMaxAttempts.Default.(int)
+	// verificationtasksDescTimeoutSeconds is the schema descriptor for timeoutSeconds field.
+	verificationtasksDescTimeoutSeconds := verificationtasksFields[10].Descriptor()
+	// verificationtasks.DefaultTimeoutSeconds holds the default value on creation for the timeoutSeconds field.
+	verificationtasks.DefaultTimeoutSeconds = verificationtasksDescTimeoutSeconds.Default.(int)
 	workspaceauditeventFields := schema.WorkspaceAuditEvent{}.Fields()
 	_ = workspaceauditeventFields
 	// workspaceauditeventDescMetadata is the schema descriptor for metadata field.

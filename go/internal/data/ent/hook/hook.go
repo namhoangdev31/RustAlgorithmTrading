@@ -1580,6 +1580,246 @@ func (f ProjectProviderBindingFunc) Mutate(ctx context.Context, m ent.Mutation) 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProjectProviderBindingMutation", m)
 }
 
+// The QuantAlertFunc type is an adapter to allow the use of ordinary
+// function as QuantAlert mutator.
+type QuantAlertFunc func(context.Context, *ent.QuantAlertMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantAlertFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantAlertMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantAlertMutation", m)
+}
+
+// The QuantAuditEventFunc type is an adapter to allow the use of ordinary
+// function as QuantAuditEvent mutator.
+type QuantAuditEventFunc func(context.Context, *ent.QuantAuditEventMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantAuditEventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantAuditEventMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantAuditEventMutation", m)
+}
+
+// The QuantBacktestRunFunc type is an adapter to allow the use of ordinary
+// function as QuantBacktestRun mutator.
+type QuantBacktestRunFunc func(context.Context, *ent.QuantBacktestRunMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantBacktestRunFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantBacktestRunMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantBacktestRunMutation", m)
+}
+
+// The QuantBrokerAccountFunc type is an adapter to allow the use of ordinary
+// function as QuantBrokerAccount mutator.
+type QuantBrokerAccountFunc func(context.Context, *ent.QuantBrokerAccountMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantBrokerAccountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantBrokerAccountMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantBrokerAccountMutation", m)
+}
+
+// The QuantDeploymentFunc type is an adapter to allow the use of ordinary
+// function as QuantDeployment mutator.
+type QuantDeploymentFunc func(context.Context, *ent.QuantDeploymentMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantDeploymentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantDeploymentMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantDeploymentMutation", m)
+}
+
+// The QuantDeviceFunc type is an adapter to allow the use of ordinary
+// function as QuantDevice mutator.
+type QuantDeviceFunc func(context.Context, *ent.QuantDeviceMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantDeviceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantDeviceMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantDeviceMutation", m)
+}
+
+// The QuantFillFunc type is an adapter to allow the use of ordinary
+// function as QuantFill mutator.
+type QuantFillFunc func(context.Context, *ent.QuantFillMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantFillFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantFillMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantFillMutation", m)
+}
+
+// The QuantIdempotencyKeyFunc type is an adapter to allow the use of ordinary
+// function as QuantIdempotencyKey mutator.
+type QuantIdempotencyKeyFunc func(context.Context, *ent.QuantIdempotencyKeyMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantIdempotencyKeyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantIdempotencyKeyMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantIdempotencyKeyMutation", m)
+}
+
+// The QuantInstrumentFunc type is an adapter to allow the use of ordinary
+// function as QuantInstrument mutator.
+type QuantInstrumentFunc func(context.Context, *ent.QuantInstrumentMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantInstrumentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantInstrumentMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantInstrumentMutation", m)
+}
+
+// The QuantLiveChallengeFunc type is an adapter to allow the use of ordinary
+// function as QuantLiveChallenge mutator.
+type QuantLiveChallengeFunc func(context.Context, *ent.QuantLiveChallengeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantLiveChallengeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantLiveChallengeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantLiveChallengeMutation", m)
+}
+
+// The QuantLiveSessionFunc type is an adapter to allow the use of ordinary
+// function as QuantLiveSession mutator.
+type QuantLiveSessionFunc func(context.Context, *ent.QuantLiveSessionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantLiveSessionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantLiveSessionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantLiveSessionMutation", m)
+}
+
+// The QuantOperatorGrantFunc type is an adapter to allow the use of ordinary
+// function as QuantOperatorGrant mutator.
+type QuantOperatorGrantFunc func(context.Context, *ent.QuantOperatorGrantMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantOperatorGrantFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantOperatorGrantMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantOperatorGrantMutation", m)
+}
+
+// The QuantOrderFunc type is an adapter to allow the use of ordinary
+// function as QuantOrder mutator.
+type QuantOrderFunc func(context.Context, *ent.QuantOrderMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantOrderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantOrderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantOrderMutation", m)
+}
+
+// The QuantOutboxEventFunc type is an adapter to allow the use of ordinary
+// function as QuantOutboxEvent mutator.
+type QuantOutboxEventFunc func(context.Context, *ent.QuantOutboxEventMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantOutboxEventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantOutboxEventMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantOutboxEventMutation", m)
+}
+
+// The QuantPositionFunc type is an adapter to allow the use of ordinary
+// function as QuantPosition mutator.
+type QuantPositionFunc func(context.Context, *ent.QuantPositionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantPositionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantPositionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantPositionMutation", m)
+}
+
+// The QuantRiskPolicyVersionFunc type is an adapter to allow the use of ordinary
+// function as QuantRiskPolicyVersion mutator.
+type QuantRiskPolicyVersionFunc func(context.Context, *ent.QuantRiskPolicyVersionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantRiskPolicyVersionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantRiskPolicyVersionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantRiskPolicyVersionMutation", m)
+}
+
+// The QuantStrategyFunc type is an adapter to allow the use of ordinary
+// function as QuantStrategy mutator.
+type QuantStrategyFunc func(context.Context, *ent.QuantStrategyMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantStrategyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantStrategyMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantStrategyMutation", m)
+}
+
+// The QuantStrategyVersionFunc type is an adapter to allow the use of ordinary
+// function as QuantStrategyVersion mutator.
+type QuantStrategyVersionFunc func(context.Context, *ent.QuantStrategyVersionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantStrategyVersionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantStrategyVersionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantStrategyVersionMutation", m)
+}
+
+// The QuantWatchlistFunc type is an adapter to allow the use of ordinary
+// function as QuantWatchlist mutator.
+type QuantWatchlistFunc func(context.Context, *ent.QuantWatchlistMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantWatchlistFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantWatchlistMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantWatchlistMutation", m)
+}
+
+// The QuantWatchlistItemFunc type is an adapter to allow the use of ordinary
+// function as QuantWatchlistItem mutator.
+type QuantWatchlistItemFunc func(context.Context, *ent.QuantWatchlistItemMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuantWatchlistItemFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.QuantWatchlistItemMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuantWatchlistItemMutation", m)
+}
+
 // The RiskEventFunc type is an adapter to allow the use of ordinary
 // function as RiskEvent mutator.
 type RiskEventFunc func(context.Context, *ent.RiskEventMutation) (ent.Value, error)
@@ -1662,6 +1902,198 @@ func (f UserSecretsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserSecretsMutation", m)
+}
+
+// The VerificationAlertsFunc type is an adapter to allow the use of ordinary
+// function as VerificationAlerts mutator.
+type VerificationAlertsFunc func(context.Context, *ent.VerificationAlertsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationAlertsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationAlertsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationAlertsMutation", m)
+}
+
+// The VerificationAttemptsFunc type is an adapter to allow the use of ordinary
+// function as VerificationAttempts mutator.
+type VerificationAttemptsFunc func(context.Context, *ent.VerificationAttemptsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationAttemptsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationAttemptsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationAttemptsMutation", m)
+}
+
+// The VerificationEngineVersionsFunc type is an adapter to allow the use of ordinary
+// function as VerificationEngineVersions mutator.
+type VerificationEngineVersionsFunc func(context.Context, *ent.VerificationEngineVersionsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationEngineVersionsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationEngineVersionsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationEngineVersionsMutation", m)
+}
+
+// The VerificationEvidenceFunc type is an adapter to allow the use of ordinary
+// function as VerificationEvidence mutator.
+type VerificationEvidenceFunc func(context.Context, *ent.VerificationEvidenceMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationEvidenceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationEvidenceMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationEvidenceMutation", m)
+}
+
+// The VerificationFindingsFunc type is an adapter to allow the use of ordinary
+// function as VerificationFindings mutator.
+type VerificationFindingsFunc func(context.Context, *ent.VerificationFindingsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationFindingsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationFindingsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationFindingsMutation", m)
+}
+
+// The VerificationInboxFunc type is an adapter to allow the use of ordinary
+// function as VerificationInbox mutator.
+type VerificationInboxFunc func(context.Context, *ent.VerificationInboxMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationInboxFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationInboxMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationInboxMutation", m)
+}
+
+// The VerificationMetricRollupsFunc type is an adapter to allow the use of ordinary
+// function as VerificationMetricRollups mutator.
+type VerificationMetricRollupsFunc func(context.Context, *ent.VerificationMetricRollupsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationMetricRollupsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationMetricRollupsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationMetricRollupsMutation", m)
+}
+
+// The VerificationPipelineVersionsFunc type is an adapter to allow the use of ordinary
+// function as VerificationPipelineVersions mutator.
+type VerificationPipelineVersionsFunc func(context.Context, *ent.VerificationPipelineVersionsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationPipelineVersionsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationPipelineVersionsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationPipelineVersionsMutation", m)
+}
+
+// The VerificationPolicyEvaluationsFunc type is an adapter to allow the use of ordinary
+// function as VerificationPolicyEvaluations mutator.
+type VerificationPolicyEvaluationsFunc func(context.Context, *ent.VerificationPolicyEvaluationsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationPolicyEvaluationsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationPolicyEvaluationsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationPolicyEvaluationsMutation", m)
+}
+
+// The VerificationPolicyVersionsFunc type is an adapter to allow the use of ordinary
+// function as VerificationPolicyVersions mutator.
+type VerificationPolicyVersionsFunc func(context.Context, *ent.VerificationPolicyVersionsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationPolicyVersionsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationPolicyVersionsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationPolicyVersionsMutation", m)
+}
+
+// The VerificationReportsFunc type is an adapter to allow the use of ordinary
+// function as VerificationReports mutator.
+type VerificationReportsFunc func(context.Context, *ent.VerificationReportsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationReportsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationReportsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationReportsMutation", m)
+}
+
+// The VerificationRunsFunc type is an adapter to allow the use of ordinary
+// function as VerificationRuns mutator.
+type VerificationRunsFunc func(context.Context, *ent.VerificationRunsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationRunsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationRunsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationRunsMutation", m)
+}
+
+// The VerificationScoresFunc type is an adapter to allow the use of ordinary
+// function as VerificationScores mutator.
+type VerificationScoresFunc func(context.Context, *ent.VerificationScoresMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationScoresFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationScoresMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationScoresMutation", m)
+}
+
+// The VerificationTaskDependenciesFunc type is an adapter to allow the use of ordinary
+// function as VerificationTaskDependencies mutator.
+type VerificationTaskDependenciesFunc func(context.Context, *ent.VerificationTaskDependenciesMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationTaskDependenciesFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationTaskDependenciesMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationTaskDependenciesMutation", m)
+}
+
+// The VerificationTasksFunc type is an adapter to allow the use of ordinary
+// function as VerificationTasks mutator.
+type VerificationTasksFunc func(context.Context, *ent.VerificationTasksMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationTasksFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationTasksMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationTasksMutation", m)
+}
+
+// The VerificationTelemetryEventsFunc type is an adapter to allow the use of ordinary
+// function as VerificationTelemetryEvents mutator.
+type VerificationTelemetryEventsFunc func(context.Context, *ent.VerificationTelemetryEventsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f VerificationTelemetryEventsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.VerificationTelemetryEventsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.VerificationTelemetryEventsMutation", m)
 }
 
 // The WorkspaceAuditEventFunc type is an adapter to allow the use of ordinary

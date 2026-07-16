@@ -24,6 +24,8 @@ type Project struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
+	// DeletedAt holds the value of the "deletedAt" field.
+	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
@@ -40,8 +42,6 @@ type Project struct {
 	CreatedAt time.Time `json:"createdAt,omitempty"`
 	// UpdatedAt holds the value of the "updatedAt" field.
 	UpdatedAt time.Time `json:"updatedAt,omitempty"`
-	// DeletedAt holds the value of the "deletedAt" field.
-	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProjectQuery when eager-loading is set.
 	Edges        ProjectEdges `json:"edges"`
@@ -122,9 +122,17 @@ type ProjectEdges struct {
 	LeposhipBuilds []*LepoShipBuild `json:"leposhipBuilds,omitempty"`
 	// CanonicalBuildJobs holds the value of the canonicalBuildJobs edge.
 	CanonicalBuildJobs []*BundleBuildJobs `json:"canonicalBuildJobs,omitempty"`
+	// VerificationRuns holds the value of the verificationRuns edge.
+	VerificationRuns []*VerificationRuns `json:"verificationRuns,omitempty"`
+	// VerificationTelemetry holds the value of the verificationTelemetry edge.
+	VerificationTelemetry []*VerificationTelemetryEvents `json:"verificationTelemetry,omitempty"`
+	// VerificationRollups holds the value of the verificationRollups edge.
+	VerificationRollups []*VerificationMetricRollups `json:"verificationRollups,omitempty"`
+	// VerificationAlerts holds the value of the verificationAlerts edge.
+	VerificationAlerts []*VerificationAlerts `json:"verificationAlerts,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [36]bool
+	loadedTypes [40]bool
 }
 
 // OrganizationOrErr returns the Organization value or an error if the edge
@@ -463,6 +471,42 @@ func (e ProjectEdges) CanonicalBuildJobsOrErr() ([]*BundleBuildJobs, error) {
 	return nil, &NotLoadedError{edge: "canonicalBuildJobs"}
 }
 
+// VerificationRunsOrErr returns the VerificationRuns value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProjectEdges) VerificationRunsOrErr() ([]*VerificationRuns, error) {
+	if e.loadedTypes[36] {
+		return e.VerificationRuns, nil
+	}
+	return nil, &NotLoadedError{edge: "verificationRuns"}
+}
+
+// VerificationTelemetryOrErr returns the VerificationTelemetry value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProjectEdges) VerificationTelemetryOrErr() ([]*VerificationTelemetryEvents, error) {
+	if e.loadedTypes[37] {
+		return e.VerificationTelemetry, nil
+	}
+	return nil, &NotLoadedError{edge: "verificationTelemetry"}
+}
+
+// VerificationRollupsOrErr returns the VerificationRollups value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProjectEdges) VerificationRollupsOrErr() ([]*VerificationMetricRollups, error) {
+	if e.loadedTypes[38] {
+		return e.VerificationRollups, nil
+	}
+	return nil, &NotLoadedError{edge: "verificationRollups"}
+}
+
+// VerificationAlertsOrErr returns the VerificationAlerts value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProjectEdges) VerificationAlertsOrErr() ([]*VerificationAlerts, error) {
+	if e.loadedTypes[39] {
+		return e.VerificationAlerts, nil
+	}
+	return nil, &NotLoadedError{edge: "verificationAlerts"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Project) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -470,7 +514,7 @@ func (*Project) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case project.FieldName, project.FieldDescription, project.FieldVercelProjectId, project.FieldVercelProjectName, project.FieldActiveNativeDeploymentId:
 			values[i] = new(sql.NullString)
-		case project.FieldCreatedAt, project.FieldUpdatedAt, project.FieldDeletedAt:
+		case project.FieldDeletedAt, project.FieldCreatedAt, project.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case project.FieldID, project.FieldOrganizationId:
 			values[i] = new(uuid.UUID)
@@ -494,6 +538,13 @@ func (_m *Project) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
 				_m.ID = *value
+			}
+		case project.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deletedAt", values[i])
+			} else if value.Valid {
+				_m.DeletedAt = new(time.Time)
+				*_m.DeletedAt = value.Time
 			}
 		case project.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -546,13 +597,6 @@ func (_m *Project) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updatedAt", values[i])
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
-			}
-		case project.FieldDeletedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field deletedAt", values[i])
-			} else if value.Valid {
-				_m.DeletedAt = new(time.Time)
-				*_m.DeletedAt = value.Time
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -747,6 +791,26 @@ func (_m *Project) QueryCanonicalBuildJobs() *BundleBuildJobsQuery {
 	return NewProjectClient(_m.config).QueryCanonicalBuildJobs(_m)
 }
 
+// QueryVerificationRuns queries the "verificationRuns" edge of the Project entity.
+func (_m *Project) QueryVerificationRuns() *VerificationRunsQuery {
+	return NewProjectClient(_m.config).QueryVerificationRuns(_m)
+}
+
+// QueryVerificationTelemetry queries the "verificationTelemetry" edge of the Project entity.
+func (_m *Project) QueryVerificationTelemetry() *VerificationTelemetryEventsQuery {
+	return NewProjectClient(_m.config).QueryVerificationTelemetry(_m)
+}
+
+// QueryVerificationRollups queries the "verificationRollups" edge of the Project entity.
+func (_m *Project) QueryVerificationRollups() *VerificationMetricRollupsQuery {
+	return NewProjectClient(_m.config).QueryVerificationRollups(_m)
+}
+
+// QueryVerificationAlerts queries the "verificationAlerts" edge of the Project entity.
+func (_m *Project) QueryVerificationAlerts() *VerificationAlertsQuery {
+	return NewProjectClient(_m.config).QueryVerificationAlerts(_m)
+}
+
 // Update returns a builder for updating this Project.
 // Note that you need to call Project.Unwrap() before calling this method if this Project
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -770,6 +834,11 @@ func (_m *Project) String() string {
 	var builder strings.Builder
 	builder.WriteString("Project(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.DeletedAt; v != nil {
+		builder.WriteString("deletedAt=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
@@ -801,11 +870,6 @@ func (_m *Project) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updatedAt=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := _m.DeletedAt; v != nil {
-		builder.WriteString("deletedAt=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
 	builder.WriteByte(')')
 	return builder.String()
 }

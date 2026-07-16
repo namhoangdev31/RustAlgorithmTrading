@@ -112,6 +112,11 @@ func ActivatedAt(v time.Time) predicate.BundleReleases {
 	return predicate.BundleReleases(sql.FieldEQ(FieldActivatedAt, v))
 }
 
+// EligibleVerificationRunId applies equality check predicate on the "eligibleVerificationRunId" field. It's identical to EligibleVerificationRunIdEQ.
+func EligibleVerificationRunId(v uuid.UUID) predicate.BundleReleases {
+	return predicate.BundleReleases(sql.FieldEQ(FieldEligibleVerificationRunId, v))
+}
+
 // CreatedAt applies equality check predicate on the "createdAt" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.BundleReleases {
 	return predicate.BundleReleases(sql.FieldEQ(FieldCreatedAt, v))
@@ -712,6 +717,36 @@ func ActivatedAtNotNil() predicate.BundleReleases {
 	return predicate.BundleReleases(sql.FieldNotNull(FieldActivatedAt))
 }
 
+// EligibleVerificationRunIdEQ applies the EQ predicate on the "eligibleVerificationRunId" field.
+func EligibleVerificationRunIdEQ(v uuid.UUID) predicate.BundleReleases {
+	return predicate.BundleReleases(sql.FieldEQ(FieldEligibleVerificationRunId, v))
+}
+
+// EligibleVerificationRunIdNEQ applies the NEQ predicate on the "eligibleVerificationRunId" field.
+func EligibleVerificationRunIdNEQ(v uuid.UUID) predicate.BundleReleases {
+	return predicate.BundleReleases(sql.FieldNEQ(FieldEligibleVerificationRunId, v))
+}
+
+// EligibleVerificationRunIdIn applies the In predicate on the "eligibleVerificationRunId" field.
+func EligibleVerificationRunIdIn(vs ...uuid.UUID) predicate.BundleReleases {
+	return predicate.BundleReleases(sql.FieldIn(FieldEligibleVerificationRunId, vs...))
+}
+
+// EligibleVerificationRunIdNotIn applies the NotIn predicate on the "eligibleVerificationRunId" field.
+func EligibleVerificationRunIdNotIn(vs ...uuid.UUID) predicate.BundleReleases {
+	return predicate.BundleReleases(sql.FieldNotIn(FieldEligibleVerificationRunId, vs...))
+}
+
+// EligibleVerificationRunIdIsNil applies the IsNil predicate on the "eligibleVerificationRunId" field.
+func EligibleVerificationRunIdIsNil() predicate.BundleReleases {
+	return predicate.BundleReleases(sql.FieldIsNull(FieldEligibleVerificationRunId))
+}
+
+// EligibleVerificationRunIdNotNil applies the NotNil predicate on the "eligibleVerificationRunId" field.
+func EligibleVerificationRunIdNotNil() predicate.BundleReleases {
+	return predicate.BundleReleases(sql.FieldNotNull(FieldEligibleVerificationRunId))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "createdAt" field.
 func CreatedAtEQ(v time.Time) predicate.BundleReleases {
 	return predicate.BundleReleases(sql.FieldEQ(FieldCreatedAt, v))
@@ -1129,6 +1164,52 @@ func HasBundleAbTestExposures() predicate.BundleReleases {
 func HasBundleAbTestExposuresWith(preds ...predicate.BundleAbTestExposures) predicate.BundleReleases {
 	return predicate.BundleReleases(func(s *sql.Selector) {
 		step := newBundleAbTestExposuresStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasVerificationRuns applies the HasEdge predicate on the "verificationRuns" edge.
+func HasVerificationRuns() predicate.BundleReleases {
+	return predicate.BundleReleases(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, VerificationRunsTable, VerificationRunsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasVerificationRunsWith applies the HasEdge predicate on the "verificationRuns" edge with a given conditions (other predicates).
+func HasVerificationRunsWith(preds ...predicate.VerificationRuns) predicate.BundleReleases {
+	return predicate.BundleReleases(func(s *sql.Selector) {
+		step := newVerificationRunsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasEligibleVerificationRun applies the HasEdge predicate on the "eligibleVerificationRun" edge.
+func HasEligibleVerificationRun() predicate.BundleReleases {
+	return predicate.BundleReleases(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, EligibleVerificationRunTable, EligibleVerificationRunColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEligibleVerificationRunWith applies the HasEdge predicate on the "eligibleVerificationRun" edge with a given conditions (other predicates).
+func HasEligibleVerificationRunWith(preds ...predicate.VerificationRuns) predicate.BundleReleases {
+	return predicate.BundleReleases(func(s *sql.Selector) {
+		step := newEligibleVerificationRunStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

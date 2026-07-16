@@ -37,7 +37,6 @@ func (Notifications) Fields() []ent.Field {
 		field.String("metadata").Optional().Nillable(),
 		field.Time("createdAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}),
 		field.Time("updatedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}),
-		field.Time("deletedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("deletedAt").Optional().Nillable(),
 	}
 }
 

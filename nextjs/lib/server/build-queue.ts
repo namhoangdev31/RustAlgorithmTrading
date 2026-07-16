@@ -1,6 +1,7 @@
-import { Queue } from "bullmq";
 import { getNativeRedis } from "./native-platform/redis";
 import { getSchedulingRecommendation } from "./native-platform/finops";
+import { enqueueOutboxEvent } from "./lepoship/outbox";
+import { Prisma } from "@/prisma/generated/client";
 
 import { prisma } from "./prisma";
 
@@ -13,28 +14,6 @@ export interface BuildJob {
   trackId: string;
   releaseId?: string;
   buildJobId?: string;
-}
-
-let buildQueue: Queue | null = null;
-
-export function getBuildQueue() {
-  if (buildQueue) return buildQueue;
-
-  const redis = getNativeRedis();
-  if (!redis) return null;
-
-  const redisOptions = {
-    host: redis.options.host || "127.0.0.1",
-    port: redis.options.port || 6379,
-    password: redis.options.password,
-    username: redis.options.username,
-  };
-
-  buildQueue = new Queue("lepos-build-queue", {
-    connection: redisOptions,
-  });
-
-  return buildQueue;
 }
 
 async function checkBuildRateLimit(
@@ -152,18 +131,18 @@ export async function enqueueBuild(job: BuildJob) {
     }
   }
 
-  const queue = getBuildQueue();
-  if (!queue) {
-    throw new Error("REDIS_REQUIRED: LepoShip build queue is unavailable");
-  }
-
-  await queue.add(`build-${job.projectId}-${job.buildNumber}`, job, {
-    jobId: job.buildJobId ?? `${job.projectId}:${job.buildNumber}`,
-    priority,
-    delay: schedulingDelayMs,
-    attempts: 3,
-    backoff: { type: "exponential", delay: 5_000 },
-    removeOnComplete: 1_000,
-    removeOnFail: 5_000,
+  const buildIdentity = job.buildJobId ?? `${job.projectId}:${job.buildNumber}`;
+  const notBefore = new Date(Date.now() + schedulingDelayMs);
+  await prisma.$transaction(async (tx) => {
+    const event = await enqueueOutboxEvent(tx, {
+      eventKey: `bundle.build_requested.v1:${buildIdentity}`,
+      aggregateType: "bundle_build_job",
+      aggregateId: buildIdentity,
+      eventType: "bundle.build_requested.v1",
+      payload: JSON.parse(JSON.stringify({ schemaVersion: 1, job, priority, notBefore: notBefore.toISOString(), schedulingReason })) as Prisma.InputJsonValue,
+    });
+    if (schedulingDelayMs > 0 && event.status === "pending") {
+      await tx.bundleOutboxEvents.update({ where: { id: event.id }, data: { nextAttemptAt: notBefore } });
+    }
   });
 }

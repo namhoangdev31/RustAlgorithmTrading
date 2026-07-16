@@ -4,11 +4,13 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 	"trading/control-gateway/internal/data/ent/bundleartifacts"
 	"trading/control-gateway/internal/data/ent/bundlereleases"
 	"trading/control-gateway/internal/data/ent/predicate"
+	"trading/control-gateway/internal/data/ent/verificationruns"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -21,12 +23,13 @@ import (
 // BundleArtifactsQuery is the builder for querying BundleArtifacts entities.
 type BundleArtifactsQuery struct {
 	config
-	ctx         *QueryContext
-	order       []bundleartifacts.OrderOption
-	inters      []Interceptor
-	predicates  []predicate.BundleArtifacts
-	withRelease *BundleReleasesQuery
-	modifiers   []func(*sql.Selector)
+	ctx                  *QueryContext
+	order                []bundleartifacts.OrderOption
+	inters               []Interceptor
+	predicates           []predicate.BundleArtifacts
+	withRelease          *BundleReleasesQuery
+	withVerificationRuns *VerificationRunsQuery
+	modifiers            []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -78,6 +81,28 @@ func (_q *BundleArtifactsQuery) QueryRelease() *BundleReleasesQuery {
 			sqlgraph.From(bundleartifacts.Table, bundleartifacts.FieldID, selector),
 			sqlgraph.To(bundlereleases.Table, bundlereleases.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, bundleartifacts.ReleaseTable, bundleartifacts.ReleaseColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryVerificationRuns chains the current query on the "verificationRuns" edge.
+func (_q *BundleArtifactsQuery) QueryVerificationRuns() *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bundleartifacts.Table, bundleartifacts.FieldID, selector),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, bundleartifacts.VerificationRunsTable, bundleartifacts.VerificationRunsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -272,12 +297,13 @@ func (_q *BundleArtifactsQuery) Clone() *BundleArtifactsQuery {
 		return nil
 	}
 	return &BundleArtifactsQuery{
-		config:      _q.config,
-		ctx:         _q.ctx.Clone(),
-		order:       append([]bundleartifacts.OrderOption{}, _q.order...),
-		inters:      append([]Interceptor{}, _q.inters...),
-		predicates:  append([]predicate.BundleArtifacts{}, _q.predicates...),
-		withRelease: _q.withRelease.Clone(),
+		config:               _q.config,
+		ctx:                  _q.ctx.Clone(),
+		order:                append([]bundleartifacts.OrderOption{}, _q.order...),
+		inters:               append([]Interceptor{}, _q.inters...),
+		predicates:           append([]predicate.BundleArtifacts{}, _q.predicates...),
+		withRelease:          _q.withRelease.Clone(),
+		withVerificationRuns: _q.withVerificationRuns.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
@@ -293,6 +319,17 @@ func (_q *BundleArtifactsQuery) WithRelease(opts ...func(*BundleReleasesQuery)) 
 		opt(query)
 	}
 	_q.withRelease = query
+	return _q
+}
+
+// WithVerificationRuns tells the query-builder to eager-load the nodes that are connected to
+// the "verificationRuns" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *BundleArtifactsQuery) WithVerificationRuns(opts ...func(*VerificationRunsQuery)) *BundleArtifactsQuery {
+	query := (&VerificationRunsClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withVerificationRuns = query
 	return _q
 }
 
@@ -374,8 +411,9 @@ func (_q *BundleArtifactsQuery) sqlAll(ctx context.Context, hooks ...queryHook) 
 	var (
 		nodes       = []*BundleArtifacts{}
 		_spec       = _q.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			_q.withRelease != nil,
+			_q.withVerificationRuns != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -402,6 +440,15 @@ func (_q *BundleArtifactsQuery) sqlAll(ctx context.Context, hooks ...queryHook) 
 	if query := _q.withRelease; query != nil {
 		if err := _q.loadRelease(ctx, query, nodes, nil,
 			func(n *BundleArtifacts, e *BundleReleases) { n.Edges.Release = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withVerificationRuns; query != nil {
+		if err := _q.loadVerificationRuns(ctx, query, nodes,
+			func(n *BundleArtifacts) { n.Edges.VerificationRuns = []*VerificationRuns{} },
+			func(n *BundleArtifacts, e *VerificationRuns) {
+				n.Edges.VerificationRuns = append(n.Edges.VerificationRuns, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -434,6 +481,36 @@ func (_q *BundleArtifactsQuery) loadRelease(ctx context.Context, query *BundleRe
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (_q *BundleArtifactsQuery) loadVerificationRuns(ctx context.Context, query *VerificationRunsQuery, nodes []*BundleArtifacts, init func(*BundleArtifacts), assign func(*BundleArtifacts, *VerificationRuns)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*BundleArtifacts)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(verificationruns.FieldArtifactId)
+	}
+	query.Where(predicate.VerificationRuns(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(bundleartifacts.VerificationRunsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ArtifactId
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "artifactId" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

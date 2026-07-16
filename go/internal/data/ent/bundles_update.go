@@ -75,6 +75,7 @@ import (
 	"trading/control-gateway/internal/data/ent/predicate"
 	"trading/control-gateway/internal/data/ent/project"
 	"trading/control-gateway/internal/data/ent/schema"
+	"trading/control-gateway/internal/data/ent/verificationruns"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -93,6 +94,26 @@ type BundlesUpdate struct {
 // Where appends a list predicates to the BundlesUpdate builder.
 func (_u *BundlesUpdate) Where(ps ...predicate.Bundles) *BundlesUpdate {
 	_u.mutation.Where(ps...)
+	return _u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_u *BundlesUpdate) SetDeletedAt(v time.Time) *BundlesUpdate {
+	_u.mutation.SetDeletedAt(v)
+	return _u
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_u *BundlesUpdate) SetNillableDeletedAt(v *time.Time) *BundlesUpdate {
+	if v != nil {
+		_u.SetDeletedAt(*v)
+	}
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (_u *BundlesUpdate) ClearDeletedAt() *BundlesUpdate {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -916,26 +937,6 @@ func (_u *BundlesUpdate) SetNillableActiveDeliveryMode(v *schema.BundleDeliveryM
 	if v != nil {
 		_u.SetActiveDeliveryMode(*v)
 	}
-	return _u
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (_u *BundlesUpdate) SetDeletedAt(v time.Time) *BundlesUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_u *BundlesUpdate) SetNillableDeletedAt(v *time.Time) *BundlesUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (_u *BundlesUpdate) ClearDeletedAt() *BundlesUpdate {
-	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -2020,6 +2021,21 @@ func (_u *BundlesUpdate) AddSdkTokens(v ...*BundleSDKTokens) *BundlesUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.AddSdkTokenIDs(ids...)
+}
+
+// AddVerificationRunIDs adds the "verificationRuns" edge to the VerificationRuns entity by IDs.
+func (_u *BundlesUpdate) AddVerificationRunIDs(ids ...uuid.UUID) *BundlesUpdate {
+	_u.mutation.AddVerificationRunIDs(ids...)
+	return _u
+}
+
+// AddVerificationRuns adds the "verificationRuns" edges to the VerificationRuns entity.
+func (_u *BundlesUpdate) AddVerificationRuns(v ...*VerificationRuns) *BundlesUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationRunIDs(ids...)
 }
 
 // Mutation returns the BundlesMutation object of the builder.
@@ -3296,6 +3312,27 @@ func (_u *BundlesUpdate) RemoveSdkTokens(v ...*BundleSDKTokens) *BundlesUpdate {
 	return _u.RemoveSdkTokenIDs(ids...)
 }
 
+// ClearVerificationRuns clears all "verificationRuns" edges to the VerificationRuns entity.
+func (_u *BundlesUpdate) ClearVerificationRuns() *BundlesUpdate {
+	_u.mutation.ClearVerificationRuns()
+	return _u
+}
+
+// RemoveVerificationRunIDs removes the "verificationRuns" edge to VerificationRuns entities by IDs.
+func (_u *BundlesUpdate) RemoveVerificationRunIDs(ids ...uuid.UUID) *BundlesUpdate {
+	_u.mutation.RemoveVerificationRunIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationRuns removes "verificationRuns" edges to VerificationRuns entities.
+func (_u *BundlesUpdate) RemoveVerificationRuns(v ...*VerificationRuns) *BundlesUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationRunIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *BundlesUpdate) Save(ctx context.Context) (int, error) {
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
@@ -3355,6 +3392,12 @@ func (_u *BundlesUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(bundles.FieldDeletedAt, field.TypeTime, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(bundles.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.BundleKey(); ok {
 		_spec.SetField(bundles.FieldBundleKey, field.TypeString, value)
@@ -3565,12 +3608,6 @@ func (_u *BundlesUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.ActiveDeliveryMode(); ok {
 		_spec.SetField(bundles.FieldActiveDeliveryMode, field.TypeEnum, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(bundles.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(bundles.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.ProjectCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -6485,6 +6522,51 @@ func (_u *BundlesUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundles.VerificationRunsTable,
+			Columns: []string{bundles.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationRunsIDs(); len(nodes) > 0 && !_u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundles.VerificationRunsTable,
+			Columns: []string{bundles.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationRunsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundles.VerificationRunsTable,
+			Columns: []string{bundles.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -6505,6 +6587,26 @@ type BundlesUpdateOne struct {
 	hooks     []Hook
 	mutation  *BundlesMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_u *BundlesUpdateOne) SetDeletedAt(v time.Time) *BundlesUpdateOne {
+	_u.mutation.SetDeletedAt(v)
+	return _u
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_u *BundlesUpdateOne) SetNillableDeletedAt(v *time.Time) *BundlesUpdateOne {
+	if v != nil {
+		_u.SetDeletedAt(*v)
+	}
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (_u *BundlesUpdateOne) ClearDeletedAt() *BundlesUpdateOne {
+	_u.mutation.ClearDeletedAt()
+	return _u
 }
 
 // SetBundleKey sets the "bundleKey" field.
@@ -7327,26 +7429,6 @@ func (_u *BundlesUpdateOne) SetNillableActiveDeliveryMode(v *schema.BundleDelive
 	if v != nil {
 		_u.SetActiveDeliveryMode(*v)
 	}
-	return _u
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (_u *BundlesUpdateOne) SetDeletedAt(v time.Time) *BundlesUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_u *BundlesUpdateOne) SetNillableDeletedAt(v *time.Time) *BundlesUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (_u *BundlesUpdateOne) ClearDeletedAt() *BundlesUpdateOne {
-	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -8431,6 +8513,21 @@ func (_u *BundlesUpdateOne) AddSdkTokens(v ...*BundleSDKTokens) *BundlesUpdateOn
 		ids[i] = v[i].ID
 	}
 	return _u.AddSdkTokenIDs(ids...)
+}
+
+// AddVerificationRunIDs adds the "verificationRuns" edge to the VerificationRuns entity by IDs.
+func (_u *BundlesUpdateOne) AddVerificationRunIDs(ids ...uuid.UUID) *BundlesUpdateOne {
+	_u.mutation.AddVerificationRunIDs(ids...)
+	return _u
+}
+
+// AddVerificationRuns adds the "verificationRuns" edges to the VerificationRuns entity.
+func (_u *BundlesUpdateOne) AddVerificationRuns(v ...*VerificationRuns) *BundlesUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationRunIDs(ids...)
 }
 
 // Mutation returns the BundlesMutation object of the builder.
@@ -9707,6 +9804,27 @@ func (_u *BundlesUpdateOne) RemoveSdkTokens(v ...*BundleSDKTokens) *BundlesUpdat
 	return _u.RemoveSdkTokenIDs(ids...)
 }
 
+// ClearVerificationRuns clears all "verificationRuns" edges to the VerificationRuns entity.
+func (_u *BundlesUpdateOne) ClearVerificationRuns() *BundlesUpdateOne {
+	_u.mutation.ClearVerificationRuns()
+	return _u
+}
+
+// RemoveVerificationRunIDs removes the "verificationRuns" edge to VerificationRuns entities by IDs.
+func (_u *BundlesUpdateOne) RemoveVerificationRunIDs(ids ...uuid.UUID) *BundlesUpdateOne {
+	_u.mutation.RemoveVerificationRunIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationRuns removes "verificationRuns" edges to VerificationRuns entities.
+func (_u *BundlesUpdateOne) RemoveVerificationRuns(v ...*VerificationRuns) *BundlesUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationRunIDs(ids...)
+}
+
 // Where appends a list predicates to the BundlesUpdate builder.
 func (_u *BundlesUpdateOne) Where(ps ...predicate.Bundles) *BundlesUpdateOne {
 	_u.mutation.Where(ps...)
@@ -9796,6 +9914,12 @@ func (_u *BundlesUpdateOne) sqlSave(ctx context.Context) (_node *Bundles, err er
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(bundles.FieldDeletedAt, field.TypeTime, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(bundles.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.BundleKey(); ok {
 		_spec.SetField(bundles.FieldBundleKey, field.TypeString, value)
@@ -10006,12 +10130,6 @@ func (_u *BundlesUpdateOne) sqlSave(ctx context.Context) (_node *Bundles, err er
 	}
 	if value, ok := _u.mutation.ActiveDeliveryMode(); ok {
 		_spec.SetField(bundles.FieldActiveDeliveryMode, field.TypeEnum, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(bundles.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(bundles.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.ProjectCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -12919,6 +13037,51 @@ func (_u *BundlesUpdateOne) sqlSave(ctx context.Context) (_node *Bundles, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(bundlesdktokens.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundles.VerificationRunsTable,
+			Columns: []string{bundles.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationRunsIDs(); len(nodes) > 0 && !_u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundles.VerificationRunsTable,
+			Columns: []string{bundles.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationRunsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundles.VerificationRunsTable,
+			Columns: []string{bundles.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

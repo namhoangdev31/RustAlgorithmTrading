@@ -68,6 +68,51 @@ enum BundleDeliveryMode {
   experiment
 }
 
+enum VerificationRunStatus {
+  queued
+  running
+  scoring
+  evaluating
+  completed
+  incomplete
+  cancelled
+}
+
+enum VerificationDecision {
+  allow
+  warn
+  review
+  reject
+}
+
+enum VerificationTaskStatus {
+  queued
+  ready
+  dispatched
+  running
+  succeeded
+  bundle_failed
+  infrastructure_failed
+  timed_out
+  cancelled
+  dead_lettered
+}
+
+enum VerificationAttemptStatus {
+  dispatched
+  running
+  succeeded
+  failed
+  timed_out
+  cancelled
+}
+
+enum VerificationEnforcementMode {
+  legacy
+  shadow
+  enforce
+}
+
 enum LedgerEntryDirection {
   debit
   credit
@@ -250,6 +295,10 @@ model Project {
   providerBindings           ProjectProviderBinding[]
   leposhipBuilds             LepoShipBuild[]
   canonicalBuildJobs         BundleBuildJobs[]
+  verificationRuns           VerificationRuns[]
+  verificationTelemetry      VerificationTelemetryEvents[]
+  verificationRollups        VerificationMetricRollups[]
+  verificationAlerts         VerificationAlerts[]
 
   @@map("projects")
 }
@@ -395,6 +444,7 @@ model Bundles {
   ledgerTransactions   BundleLedgerTransactions[]
   stripeWebhookEvents  BundleStripeWebhookEvents[]
   sdkTokens            BundleSdkTokens[]
+  verificationRuns     VerificationRuns[]
 
   @@index([category, status], map: "bundles_category_status")
   @@index([createdAt], map: "bundles_created_at")
@@ -435,6 +485,7 @@ model BundleReleases {
   submittedAt  DateTime?           @map("submitted_at") @db.Timestamp(6)
   approvedAt   DateTime?           @map("approved_at") @db.Timestamp(6)
   activatedAt  DateTime?           @map("activated_at") @db.Timestamp(6)
+  eligibleVerificationRunId String? @unique @map("eligible_verification_run_id") @db.Uuid
   createdAt    DateTime            @map("created_at") @db.Timestamp(6)
   updatedAt    DateTime            @map("updated_at") @db.Timestamp(6)
 
@@ -453,6 +504,8 @@ model BundleReleases {
   reviewQueue           BundleReviewQueue[]
   crashEvents           BundleCrashEvents[]
   bundleAbTestExposures BundleAbTestExposures[]
+  verificationRuns     VerificationRuns[] @relation("ReleaseVerificationRuns")
+  eligibleVerificationRun VerificationRuns? @relation("EligibleVerificationRun", fields: [eligibleVerificationRunId], references: [id], onDelete: SetNull, onUpdate: Restrict)
 
   @@unique([bundleId, buildNumber])
   @@unique([bundleId, version, buildNumber])
@@ -475,7 +528,8 @@ model BundleArtifacts {
   metadata          Json?
   createdAt         DateTime           @map("created_at") @db.Timestamp(6)
 
-  release BundleReleases @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  release          BundleReleases      @relation(fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  verificationRuns VerificationRuns[]
 
   @@unique([storageProvider, storageBucket, storageKey])
   @@unique([releaseId, kind, baseBuildNumber, targetBuildNumber])
@@ -2069,6 +2123,351 @@ model LepoShipIdempotencyKeys {
   @@unique([scope, key])
   @@index([expiresAt], map: "lepoship_idempotency_keys_expires_at")
   @@map("lepoship_idempotency_keys")
+}
+
+model VerificationPipelineVersions {
+  id              String                      @id @db.Uuid
+  name            String                      @db.VarChar(100)
+  version         Int
+  definition      Json
+  definitionHash  String                      @unique @map("definition_hash") @db.VarChar(64)
+  enforcementMode VerificationEnforcementMode @default(shadow) @map("enforcement_mode")
+  isActive        Boolean                     @default(false) @map("is_active")
+  createdAt       DateTime                    @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime                    @map("updated_at") @db.Timestamp(6)
+
+  runs VerificationRuns[]
+
+  @@unique([name, version])
+  @@index([isActive, enforcementMode], map: "verification_pipeline_versions_active")
+  @@map("verification_pipeline_versions")
+}
+
+model VerificationEngineVersions {
+  id                    String   @id @db.Uuid
+  name                  String   @db.VarChar(100)
+  version               String   @db.VarChar(50)
+  imageDigest           String   @unique @map("image_digest") @db.VarChar(128)
+  manifest              Json
+  configurationSchema   Json?    @map("configuration_schema")
+  resultSchemaVersion   String   @default("verification-result.v1") @map("result_schema_version") @db.VarChar(50)
+  isActive              Boolean  @default(false) @map("is_active")
+  approvedAt            DateTime? @map("approved_at") @db.Timestamp(6)
+  revokedAt             DateTime? @map("revoked_at") @db.Timestamp(6)
+  createdAt             DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt             DateTime @map("updated_at") @db.Timestamp(6)
+
+  tasks VerificationTasks[]
+
+  @@unique([name, version])
+  @@index([name, isActive], map: "verification_engine_versions_active")
+  @@map("verification_engine_versions")
+}
+
+model VerificationPolicyVersions {
+  id             String   @id @db.Uuid
+  name           String   @db.VarChar(100)
+  version        Int
+  definition     Json
+  definitionHash String   @unique @map("definition_hash") @db.VarChar(64)
+  isActive       Boolean  @default(false) @map("is_active")
+  effectiveAt    DateTime @map("effective_at") @db.Timestamp(6)
+  createdAt      DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime @map("updated_at") @db.Timestamp(6)
+
+  runs        VerificationRuns[]
+  evaluations VerificationPolicyEvaluations[]
+
+  @@unique([name, version])
+  @@index([isActive, effectiveAt], map: "verification_policy_versions_active")
+  @@map("verification_policy_versions")
+}
+
+model VerificationRuns {
+  id                String                 @id @db.Uuid
+  projectId         String                 @map("project_id") @db.Uuid
+  bundleId          String                 @map("bundle_id") @db.Uuid
+  releaseId         String                 @map("release_id") @db.Uuid
+  artifactId        String                 @map("artifact_id") @db.Uuid
+  artifactChecksum  String                 @map("artifact_checksum") @db.VarChar(64)
+  triggerEventKey   String                 @unique @map("trigger_event_key") @db.VarChar(255)
+  pipelineVersionId String                 @map("pipeline_version_id") @db.Uuid
+  policyVersionId   String                 @map("policy_version_id") @db.Uuid
+  scoringVersion    String                 @default("v1") @map("scoring_version") @db.VarChar(30)
+  status            VerificationRunStatus @default(queued)
+  decision          VerificationDecision?
+  overallScore      Float?                 @map("overall_score")
+  confidence        Float?
+  completeness      Float?
+  errorCode         String?                @map("error_code") @db.VarChar(100)
+  errorMessage      String?                @map("error_message")
+  startedAt         DateTime?              @map("started_at") @db.Timestamp(6)
+  completedAt       DateTime?              @map("completed_at") @db.Timestamp(6)
+  createdAt         DateTime               @map("created_at") @db.Timestamp(6)
+  updatedAt         DateTime               @map("updated_at") @db.Timestamp(6)
+
+  project            Project                      @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  bundle             Bundles                      @relation(fields: [bundleId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  release            BundleReleases               @relation("ReleaseVerificationRuns", fields: [releaseId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  artifact           BundleArtifacts              @relation(fields: [artifactId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  pipelineVersion    VerificationPipelineVersions @relation(fields: [pipelineVersionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  policyVersion      VerificationPolicyVersions   @relation(fields: [policyVersionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  eligibleForRelease BundleReleases?              @relation("EligibleVerificationRun")
+  tasks              VerificationTasks[]
+  findings           VerificationFindings[]
+  evidence           VerificationEvidence[]
+  score              VerificationScores?
+  evaluation         VerificationPolicyEvaluations?
+  report             VerificationReports?
+  telemetry          VerificationTelemetryEvents[]
+
+  @@index([releaseId, createdAt], map: "verification_runs_release_time")
+  @@index([status, createdAt], map: "verification_runs_status_time")
+  @@index([projectId, createdAt], map: "verification_runs_project_time")
+  @@map("verification_runs")
+}
+
+model VerificationTasks {
+  id               String                 @id @db.Uuid
+  runId            String                 @map("run_id") @db.Uuid
+  engineVersionId  String                 @map("engine_version_id") @db.Uuid
+  nodeId           String                 @map("node_id") @db.VarChar(100)
+  resourceClass    String                 @map("resource_class") @db.VarChar(30)
+  required         Boolean                @default(true)
+  status           VerificationTaskStatus @default(queued)
+  configuration    Json?
+  attempt          Int                    @default(0)
+  maxAttempts      Int                    @default(2) @map("max_attempts")
+  timeoutSeconds   Int                    @default(900) @map("timeout_seconds")
+  nextAttemptAt    DateTime?              @map("next_attempt_at") @db.Timestamp(6)
+  acceptedAttemptId String?               @unique @map("accepted_attempt_id") @db.Uuid
+  createdAt        DateTime               @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime               @map("updated_at") @db.Timestamp(6)
+
+  run             VerificationRuns          @relation(fields: [runId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  engineVersion   VerificationEngineVersions @relation(fields: [engineVersionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  attempts        VerificationAttempts[]     @relation("TaskAttempts")
+  acceptedAttempt VerificationAttempts?      @relation("AcceptedTaskAttempt", fields: [acceptedAttemptId], references: [id], onDelete: SetNull, onUpdate: Restrict)
+  prerequisites   VerificationTaskDependencies[] @relation("TaskDependencies")
+  dependents      VerificationTaskDependencies[] @relation("TaskPrerequisites")
+  findings        VerificationFindings[]
+  evidence        VerificationEvidence[]
+
+  @@unique([runId, nodeId])
+  @@index([status, nextAttemptAt, resourceClass], map: "verification_tasks_ready")
+  @@map("verification_tasks")
+}
+
+model VerificationTaskDependencies {
+  id            String @id @db.Uuid
+  taskId        String @map("task_id") @db.Uuid
+  prerequisiteId String @map("prerequisite_id") @db.Uuid
+
+  task         VerificationTasks @relation("TaskDependencies", fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  prerequisite VerificationTasks @relation("TaskPrerequisites", fields: [prerequisiteId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([taskId, prerequisiteId])
+  @@map("verification_task_dependencies")
+}
+
+model VerificationAttempts {
+  id             String                    @id @db.Uuid
+  taskId         String                    @map("task_id") @db.Uuid
+  attemptNo      Int                       @map("attempt_no")
+  status         VerificationAttemptStatus @default(dispatched)
+  workerId       String?                   @map("worker_id") @db.VarChar(128)
+  leaseOwner     String?                   @map("lease_owner") @db.VarChar(128)
+  leasedUntil    DateTime?                 @map("leased_until") @db.Timestamp(6)
+  heartbeatAt    DateTime?                 @map("heartbeat_at") @db.Timestamp(6)
+  deadlineAt     DateTime                  @map("deadline_at") @db.Timestamp(6)
+  startedAt      DateTime?                 @map("started_at") @db.Timestamp(6)
+  completedAt    DateTime?                 @map("completed_at") @db.Timestamp(6)
+  errorCode      String?                   @map("error_code") @db.VarChar(100)
+  errorMessage   String?                   @map("error_message")
+  resultDigest   String?                   @map("result_digest") @db.VarChar(64)
+  metrics        Json?
+  coverage       Float?
+  completeness   Float?
+  reproducibility Float?
+  engineHealth   Float?                    @map("engine_health")
+  createdAt      DateTime                  @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime                  @map("updated_at") @db.Timestamp(6)
+
+  task            VerificationTasks  @relation("TaskAttempts", fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  acceptedForTask VerificationTasks? @relation("AcceptedTaskAttempt")
+  findings        VerificationFindings[]
+  evidence        VerificationEvidence[]
+
+  @@unique([taskId, attemptNo])
+  @@index([status, leasedUntil], map: "verification_attempts_recovery")
+  @@map("verification_attempts")
+}
+
+model VerificationFindings {
+  id          String   @id @db.Uuid
+  runId       String   @map("run_id") @db.Uuid
+  taskId      String   @map("task_id") @db.Uuid
+  attemptId   String?  @map("attempt_id") @db.Uuid
+  fingerprint String   @db.VarChar(128)
+  dimension   String   @db.VarChar(40)
+  severity    String   @db.VarChar(20)
+  confidence  Float
+  ruleId      String   @map("rule_id") @db.VarChar(150)
+  title       String   @db.VarChar(255)
+  description String?
+  location    Json?
+  remediation String?
+  createdAt   DateTime @map("created_at") @db.Timestamp(6)
+
+  run     VerificationRuns     @relation(fields: [runId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  task    VerificationTasks    @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  attempt VerificationAttempts? @relation(fields: [attemptId], references: [id], onDelete: SetNull, onUpdate: Restrict)
+
+  @@unique([runId, taskId, fingerprint])
+  @@index([runId, severity], map: "verification_findings_run_severity")
+  @@map("verification_findings")
+}
+
+model VerificationEvidence {
+  id              String   @id @db.Uuid
+  runId           String   @map("run_id") @db.Uuid
+  taskId          String   @map("task_id") @db.Uuid
+  attemptId       String?  @map("attempt_id") @db.Uuid
+  kind            String   @db.VarChar(50)
+  storageProvider String   @map("storage_provider") @db.VarChar(30)
+  storageBucket   String   @map("storage_bucket") @db.VarChar(100)
+  storageKey      String   @map("storage_key") @db.VarChar(500)
+  checksumSha256  String   @map("checksum_sha256") @db.VarChar(64)
+  fileSize        BigInt   @map("file_size")
+  contentType     String   @map("content_type") @db.VarChar(100)
+  sensitivity     String   @default("restricted") @db.VarChar(30)
+  createdAt       DateTime @map("created_at") @db.Timestamp(6)
+
+  run     VerificationRuns      @relation(fields: [runId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  task    VerificationTasks     @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  attempt VerificationAttempts? @relation(fields: [attemptId], references: [id], onDelete: SetNull, onUpdate: Restrict)
+
+  @@unique([storageProvider, storageBucket, storageKey])
+  @@index([runId, kind], map: "verification_evidence_run_kind")
+  @@map("verification_evidence")
+}
+
+model VerificationScores {
+  id         String   @id @db.Uuid
+  runId      String   @unique @map("run_id") @db.Uuid
+  version    String   @db.VarChar(30)
+  dimensions Json
+  overall    Float
+  confidence Float
+  createdAt  DateTime @map("created_at") @db.Timestamp(6)
+
+  run VerificationRuns @relation(fields: [runId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@map("verification_scores")
+}
+
+model VerificationPolicyEvaluations {
+  id              String               @id @db.Uuid
+  runId           String               @unique @map("run_id") @db.Uuid
+  policyVersionId String               @map("policy_version_id") @db.Uuid
+  inputDigest     String               @map("input_digest") @db.VarChar(64)
+  decision        VerificationDecision
+  results         Json
+  createdAt       DateTime             @map("created_at") @db.Timestamp(6)
+
+  run           VerificationRuns          @relation(fields: [runId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  policyVersion VerificationPolicyVersions @relation(fields: [policyVersionId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@map("verification_policy_evaluations")
+}
+
+model VerificationReports {
+  id              String   @id @db.Uuid
+  runId           String   @unique @map("run_id") @db.Uuid
+  schemaVersion   String   @map("schema_version") @db.VarChar(30)
+  storageProvider String   @map("storage_provider") @db.VarChar(30)
+  storageBucket   String   @map("storage_bucket") @db.VarChar(100)
+  storageKey      String   @map("storage_key") @db.VarChar(500)
+  checksumSha256  String   @map("checksum_sha256") @db.VarChar(64)
+  createdAt       DateTime @map("created_at") @db.Timestamp(6)
+
+  run VerificationRuns @relation(fields: [runId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([storageProvider, storageBucket, storageKey])
+  @@map("verification_reports")
+}
+
+model VerificationInbox {
+  id          String   @id @db.Uuid
+  consumer    String   @db.VarChar(100)
+  messageId   String   @map("message_id") @db.VarChar(255)
+  outcome     String?  @db.VarChar(50)
+  processedAt DateTime @map("processed_at") @db.Timestamp(6)
+
+  @@unique([consumer, messageId])
+  @@index([processedAt], map: "verification_inbox_processed")
+  @@map("verification_inbox")
+}
+
+model VerificationTelemetryEvents {
+  id            String   @id @db.Uuid
+  eventId       String   @unique @map("event_id") @db.VarChar(255)
+  projectId     String   @map("project_id") @db.Uuid
+  runId         String?  @map("run_id") @db.Uuid
+  kind          String   @db.VarChar(100)
+  correlationId String?  @map("correlation_id") @db.VarChar(128)
+  payload       Json
+  occurredAt    DateTime @map("occurred_at") @db.Timestamp(6)
+  createdAt     DateTime @map("created_at") @db.Timestamp(6)
+
+  project Project           @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+  run     VerificationRuns? @relation(fields: [runId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@index([projectId, occurredAt], map: "verification_telemetry_project_time")
+  @@index([runId, occurredAt], map: "verification_telemetry_run_time")
+  @@map("verification_telemetry_events")
+}
+
+model VerificationMetricRollups {
+  id          String   @id @db.Uuid
+  projectId   String   @map("project_id") @db.Uuid
+  metric      String   @db.VarChar(100)
+  scope       String   @db.VarChar(100)
+  windowStart DateTime @map("window_start") @db.Timestamp(6)
+  windowEnd   DateTime @map("window_end") @db.Timestamp(6)
+  count       Int
+  sum         Float
+  min         Float
+  max         Float
+  p95         Float?
+  updatedAt   DateTime @map("updated_at") @db.Timestamp(6)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([projectId, metric, scope, windowStart])
+  @@index([projectId, windowStart], map: "verification_rollups_project_time")
+  @@map("verification_metric_rollups")
+}
+
+model VerificationAlerts {
+  id             String   @id @db.Uuid
+  projectId      String   @map("project_id") @db.Uuid
+  ruleId         String   @map("rule_id") @db.VarChar(100)
+  scope          String   @db.VarChar(100)
+  status         String   @default("open") @db.VarChar(30)
+  severity       String   @db.VarChar(20)
+  firstSeenAt    DateTime @map("first_seen_at") @db.Timestamp(6)
+  lastSeenAt     DateTime @map("last_seen_at") @db.Timestamp(6)
+  acknowledgedAt DateTime? @map("acknowledged_at") @db.Timestamp(6)
+  acknowledgedBy String?   @map("acknowledged_by") @db.Uuid
+  resolvedAt     DateTime? @map("resolved_at") @db.Timestamp(6)
+  details        Json?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Restrict)
+
+  @@unique([projectId, ruleId, scope, status])
+  @@index([projectId, status, lastSeenAt], map: "verification_alerts_project_status")
+  @@map("verification_alerts")
 }
 
 model BundleReleaseOverrides {

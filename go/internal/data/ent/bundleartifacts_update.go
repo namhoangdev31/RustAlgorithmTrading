@@ -12,6 +12,7 @@ import (
 	"trading/control-gateway/internal/data/ent/bundlereleases"
 	"trading/control-gateway/internal/data/ent/predicate"
 	"trading/control-gateway/internal/data/ent/schema"
+	"trading/control-gateway/internal/data/ent/verificationruns"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -250,6 +251,21 @@ func (_u *BundleArtifactsUpdate) SetRelease(v *BundleReleases) *BundleArtifactsU
 	return _u.SetReleaseID(v.ID)
 }
 
+// AddVerificationRunIDs adds the "verificationRuns" edge to the VerificationRuns entity by IDs.
+func (_u *BundleArtifactsUpdate) AddVerificationRunIDs(ids ...uuid.UUID) *BundleArtifactsUpdate {
+	_u.mutation.AddVerificationRunIDs(ids...)
+	return _u
+}
+
+// AddVerificationRuns adds the "verificationRuns" edges to the VerificationRuns entity.
+func (_u *BundleArtifactsUpdate) AddVerificationRuns(v ...*VerificationRuns) *BundleArtifactsUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationRunIDs(ids...)
+}
+
 // Mutation returns the BundleArtifactsMutation object of the builder.
 func (_u *BundleArtifactsUpdate) Mutation() *BundleArtifactsMutation {
 	return _u.mutation
@@ -259,6 +275,27 @@ func (_u *BundleArtifactsUpdate) Mutation() *BundleArtifactsMutation {
 func (_u *BundleArtifactsUpdate) ClearRelease() *BundleArtifactsUpdate {
 	_u.mutation.ClearRelease()
 	return _u
+}
+
+// ClearVerificationRuns clears all "verificationRuns" edges to the VerificationRuns entity.
+func (_u *BundleArtifactsUpdate) ClearVerificationRuns() *BundleArtifactsUpdate {
+	_u.mutation.ClearVerificationRuns()
+	return _u
+}
+
+// RemoveVerificationRunIDs removes the "verificationRuns" edge to VerificationRuns entities by IDs.
+func (_u *BundleArtifactsUpdate) RemoveVerificationRunIDs(ids ...uuid.UUID) *BundleArtifactsUpdate {
+	_u.mutation.RemoveVerificationRunIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationRuns removes "verificationRuns" edges to VerificationRuns entities.
+func (_u *BundleArtifactsUpdate) RemoveVerificationRuns(v ...*VerificationRuns) *BundleArtifactsUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationRunIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -397,6 +434,51 @@ func (_u *BundleArtifactsUpdate) sqlSave(ctx context.Context) (_node int, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(bundlereleases.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundleartifacts.VerificationRunsTable,
+			Columns: []string{bundleartifacts.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationRunsIDs(); len(nodes) > 0 && !_u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundleartifacts.VerificationRunsTable,
+			Columns: []string{bundleartifacts.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationRunsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundleartifacts.VerificationRunsTable,
+			Columns: []string{bundleartifacts.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -642,6 +724,21 @@ func (_u *BundleArtifactsUpdateOne) SetRelease(v *BundleReleases) *BundleArtifac
 	return _u.SetReleaseID(v.ID)
 }
 
+// AddVerificationRunIDs adds the "verificationRuns" edge to the VerificationRuns entity by IDs.
+func (_u *BundleArtifactsUpdateOne) AddVerificationRunIDs(ids ...uuid.UUID) *BundleArtifactsUpdateOne {
+	_u.mutation.AddVerificationRunIDs(ids...)
+	return _u
+}
+
+// AddVerificationRuns adds the "verificationRuns" edges to the VerificationRuns entity.
+func (_u *BundleArtifactsUpdateOne) AddVerificationRuns(v ...*VerificationRuns) *BundleArtifactsUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationRunIDs(ids...)
+}
+
 // Mutation returns the BundleArtifactsMutation object of the builder.
 func (_u *BundleArtifactsUpdateOne) Mutation() *BundleArtifactsMutation {
 	return _u.mutation
@@ -651,6 +748,27 @@ func (_u *BundleArtifactsUpdateOne) Mutation() *BundleArtifactsMutation {
 func (_u *BundleArtifactsUpdateOne) ClearRelease() *BundleArtifactsUpdateOne {
 	_u.mutation.ClearRelease()
 	return _u
+}
+
+// ClearVerificationRuns clears all "verificationRuns" edges to the VerificationRuns entity.
+func (_u *BundleArtifactsUpdateOne) ClearVerificationRuns() *BundleArtifactsUpdateOne {
+	_u.mutation.ClearVerificationRuns()
+	return _u
+}
+
+// RemoveVerificationRunIDs removes the "verificationRuns" edge to VerificationRuns entities by IDs.
+func (_u *BundleArtifactsUpdateOne) RemoveVerificationRunIDs(ids ...uuid.UUID) *BundleArtifactsUpdateOne {
+	_u.mutation.RemoveVerificationRunIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationRuns removes "verificationRuns" edges to VerificationRuns entities.
+func (_u *BundleArtifactsUpdateOne) RemoveVerificationRuns(v ...*VerificationRuns) *BundleArtifactsUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationRunIDs(ids...)
 }
 
 // Where appends a list predicates to the BundleArtifactsUpdate builder.
@@ -819,6 +937,51 @@ func (_u *BundleArtifactsUpdateOne) sqlSave(ctx context.Context) (_node *BundleA
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(bundlereleases.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundleartifacts.VerificationRunsTable,
+			Columns: []string{bundleartifacts.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationRunsIDs(); len(nodes) > 0 && !_u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundleartifacts.VerificationRunsTable,
+			Columns: []string{bundleartifacts.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationRunsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundleartifacts.VerificationRunsTable,
+			Columns: []string{bundleartifacts.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -11,6 +11,9 @@ func (c *Component) RegisterRoutes(router *gin.Engine) {
 		c.distribution.MapPublicRoutes(router)
 		c.distribution.MapInternalRoutes(router)
 	}
+	if c.verification != nil {
+		c.verification.MapRoutes(router)
+	}
 	if c.identity == nil || c.catalog == nil || c.identityService == nil {
 		return
 	}

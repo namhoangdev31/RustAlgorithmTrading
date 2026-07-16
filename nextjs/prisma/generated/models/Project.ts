@@ -258,6 +258,10 @@ export type ProjectWhereInput = {
   providerBindings?: Prisma.ProjectProviderBindingListRelationFilter
   leposhipBuilds?: Prisma.LepoShipBuildListRelationFilter
   canonicalBuildJobs?: Prisma.BundleBuildJobsListRelationFilter
+  verificationRuns?: Prisma.VerificationRunsListRelationFilter
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsListRelationFilter
+  verificationRollups?: Prisma.VerificationMetricRollupsListRelationFilter
+  verificationAlerts?: Prisma.VerificationAlertsListRelationFilter
 }
 
 export type ProjectOrderByWithRelationInput = {
@@ -307,6 +311,10 @@ export type ProjectOrderByWithRelationInput = {
   providerBindings?: Prisma.ProjectProviderBindingOrderByRelationAggregateInput
   leposhipBuilds?: Prisma.LepoShipBuildOrderByRelationAggregateInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsOrderByRelationAggregateInput
+  verificationRuns?: Prisma.VerificationRunsOrderByRelationAggregateInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsOrderByRelationAggregateInput
+  verificationRollups?: Prisma.VerificationMetricRollupsOrderByRelationAggregateInput
+  verificationAlerts?: Prisma.VerificationAlertsOrderByRelationAggregateInput
 }
 
 export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -359,6 +367,10 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   providerBindings?: Prisma.ProjectProviderBindingListRelationFilter
   leposhipBuilds?: Prisma.LepoShipBuildListRelationFilter
   canonicalBuildJobs?: Prisma.BundleBuildJobsListRelationFilter
+  verificationRuns?: Prisma.VerificationRunsListRelationFilter
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsListRelationFilter
+  verificationRollups?: Prisma.VerificationMetricRollupsListRelationFilter
+  verificationAlerts?: Prisma.VerificationAlertsListRelationFilter
 }, "id">
 
 export type ProjectOrderByWithAggregationInput = {
@@ -438,6 +450,10 @@ export type ProjectCreateInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateInput = {
@@ -485,6 +501,10 @@ export type ProjectUncheckedCreateInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUpdateInput = {
@@ -532,6 +552,10 @@ export type ProjectUpdateInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateInput = {
@@ -579,6 +603,10 @@ export type ProjectUncheckedUpdateInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyInput = {
@@ -747,6 +775,62 @@ export type ProjectUpdateOneRequiredWithoutCanonicalBuildJobsNestedInput = {
   upsert?: Prisma.ProjectUpsertWithoutCanonicalBuildJobsInput
   connect?: Prisma.ProjectWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutCanonicalBuildJobsInput, Prisma.ProjectUpdateWithoutCanonicalBuildJobsInput>, Prisma.ProjectUncheckedUpdateWithoutCanonicalBuildJobsInput>
+}
+
+export type ProjectCreateNestedOneWithoutVerificationRunsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationRunsInput, Prisma.ProjectUncheckedCreateWithoutVerificationRunsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutVerificationRunsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutVerificationRunsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationRunsInput, Prisma.ProjectUncheckedCreateWithoutVerificationRunsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutVerificationRunsInput
+  upsert?: Prisma.ProjectUpsertWithoutVerificationRunsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutVerificationRunsInput, Prisma.ProjectUpdateWithoutVerificationRunsInput>, Prisma.ProjectUncheckedUpdateWithoutVerificationRunsInput>
+}
+
+export type ProjectCreateNestedOneWithoutVerificationTelemetryInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationTelemetryInput, Prisma.ProjectUncheckedCreateWithoutVerificationTelemetryInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutVerificationTelemetryInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutVerificationTelemetryNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationTelemetryInput, Prisma.ProjectUncheckedCreateWithoutVerificationTelemetryInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutVerificationTelemetryInput
+  upsert?: Prisma.ProjectUpsertWithoutVerificationTelemetryInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutVerificationTelemetryInput, Prisma.ProjectUpdateWithoutVerificationTelemetryInput>, Prisma.ProjectUncheckedUpdateWithoutVerificationTelemetryInput>
+}
+
+export type ProjectCreateNestedOneWithoutVerificationRollupsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationRollupsInput, Prisma.ProjectUncheckedCreateWithoutVerificationRollupsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutVerificationRollupsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutVerificationRollupsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationRollupsInput, Prisma.ProjectUncheckedCreateWithoutVerificationRollupsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutVerificationRollupsInput
+  upsert?: Prisma.ProjectUpsertWithoutVerificationRollupsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutVerificationRollupsInput, Prisma.ProjectUpdateWithoutVerificationRollupsInput>, Prisma.ProjectUncheckedUpdateWithoutVerificationRollupsInput>
+}
+
+export type ProjectCreateNestedOneWithoutVerificationAlertsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationAlertsInput, Prisma.ProjectUncheckedCreateWithoutVerificationAlertsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutVerificationAlertsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutVerificationAlertsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationAlertsInput, Prisma.ProjectUncheckedCreateWithoutVerificationAlertsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutVerificationAlertsInput
+  upsert?: Prisma.ProjectUpsertWithoutVerificationAlertsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutVerificationAlertsInput, Prisma.ProjectUpdateWithoutVerificationAlertsInput>, Prisma.ProjectUncheckedUpdateWithoutVerificationAlertsInput>
 }
 
 export type ProjectCreateNestedOneWithoutDeployHooksInput = {
@@ -1283,6 +1367,10 @@ export type ProjectCreateWithoutOrganizationInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutOrganizationInput = {
@@ -1329,6 +1417,10 @@ export type ProjectUncheckedCreateWithoutOrganizationInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutOrganizationInput = {
@@ -1417,6 +1509,10 @@ export type ProjectCreateWithoutBundleInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutBundleInput = {
@@ -1463,6 +1559,10 @@ export type ProjectUncheckedCreateWithoutBundleInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutBundleInput = {
@@ -1525,6 +1625,10 @@ export type ProjectUpdateWithoutBundleInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutBundleInput = {
@@ -1571,6 +1675,10 @@ export type ProjectUncheckedUpdateWithoutBundleInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutCanonicalBuildJobsInput = {
@@ -1617,6 +1725,10 @@ export type ProjectCreateWithoutCanonicalBuildJobsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutCanonicalBuildJobsInput = {
@@ -1663,6 +1775,10 @@ export type ProjectUncheckedCreateWithoutCanonicalBuildJobsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutCanonicalBuildJobsInput = {
@@ -1725,6 +1841,10 @@ export type ProjectUpdateWithoutCanonicalBuildJobsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutCanonicalBuildJobsInput = {
@@ -1771,6 +1891,874 @@ export type ProjectUncheckedUpdateWithoutCanonicalBuildJobsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutVerificationRunsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyCreateNestedOneWithoutProjectInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaCreateNestedManyWithoutProjectInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunCreateNestedManyWithoutProjectInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyCreateNestedOneWithoutProjectInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalCreateNestedManyWithoutProjectInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityCreateNestedManyWithoutProjectInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyCreateNestedManyWithoutProjectInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
+  providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutVerificationRunsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUncheckedCreateNestedOneWithoutProjectInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUncheckedCreateNestedManyWithoutProjectInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUncheckedCreateNestedManyWithoutProjectInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUncheckedCreateNestedOneWithoutProjectInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUncheckedCreateNestedManyWithoutProjectInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUncheckedCreateNestedManyWithoutProjectInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUncheckedCreateNestedManyWithoutProjectInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
+  providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutVerificationRunsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationRunsInput, Prisma.ProjectUncheckedCreateWithoutVerificationRunsInput>
+}
+
+export type ProjectUpsertWithoutVerificationRunsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutVerificationRunsInput, Prisma.ProjectUncheckedUpdateWithoutVerificationRunsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationRunsInput, Prisma.ProjectUncheckedCreateWithoutVerificationRunsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutVerificationRunsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutVerificationRunsInput, Prisma.ProjectUncheckedUpdateWithoutVerificationRunsInput>
+}
+
+export type ProjectUpdateWithoutVerificationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUpdateOneWithoutProjectNestedInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUpdateManyWithoutProjectNestedInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUpdateManyWithoutProjectNestedInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUpdateOneWithoutProjectNestedInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUpdateManyWithoutProjectNestedInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUpdateManyWithoutProjectNestedInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUpdateManyWithoutProjectNestedInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
+  providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutVerificationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUncheckedUpdateOneWithoutProjectNestedInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUncheckedUpdateManyWithoutProjectNestedInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUncheckedUpdateOneWithoutProjectNestedInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUncheckedUpdateManyWithoutProjectNestedInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUncheckedUpdateManyWithoutProjectNestedInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUncheckedUpdateManyWithoutProjectNestedInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
+  providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutVerificationTelemetryInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyCreateNestedOneWithoutProjectInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaCreateNestedManyWithoutProjectInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunCreateNestedManyWithoutProjectInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyCreateNestedOneWithoutProjectInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalCreateNestedManyWithoutProjectInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityCreateNestedManyWithoutProjectInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyCreateNestedManyWithoutProjectInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
+  providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutVerificationTelemetryInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUncheckedCreateNestedOneWithoutProjectInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUncheckedCreateNestedManyWithoutProjectInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUncheckedCreateNestedManyWithoutProjectInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUncheckedCreateNestedOneWithoutProjectInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUncheckedCreateNestedManyWithoutProjectInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUncheckedCreateNestedManyWithoutProjectInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUncheckedCreateNestedManyWithoutProjectInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
+  providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutVerificationTelemetryInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationTelemetryInput, Prisma.ProjectUncheckedCreateWithoutVerificationTelemetryInput>
+}
+
+export type ProjectUpsertWithoutVerificationTelemetryInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutVerificationTelemetryInput, Prisma.ProjectUncheckedUpdateWithoutVerificationTelemetryInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationTelemetryInput, Prisma.ProjectUncheckedCreateWithoutVerificationTelemetryInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutVerificationTelemetryInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutVerificationTelemetryInput, Prisma.ProjectUncheckedUpdateWithoutVerificationTelemetryInput>
+}
+
+export type ProjectUpdateWithoutVerificationTelemetryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUpdateOneWithoutProjectNestedInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUpdateManyWithoutProjectNestedInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUpdateManyWithoutProjectNestedInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUpdateOneWithoutProjectNestedInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUpdateManyWithoutProjectNestedInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUpdateManyWithoutProjectNestedInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUpdateManyWithoutProjectNestedInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
+  providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutVerificationTelemetryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUncheckedUpdateOneWithoutProjectNestedInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUncheckedUpdateManyWithoutProjectNestedInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUncheckedUpdateOneWithoutProjectNestedInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUncheckedUpdateManyWithoutProjectNestedInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUncheckedUpdateManyWithoutProjectNestedInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUncheckedUpdateManyWithoutProjectNestedInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
+  providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutVerificationRollupsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyCreateNestedOneWithoutProjectInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaCreateNestedManyWithoutProjectInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunCreateNestedManyWithoutProjectInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyCreateNestedOneWithoutProjectInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalCreateNestedManyWithoutProjectInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityCreateNestedManyWithoutProjectInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyCreateNestedManyWithoutProjectInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
+  providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutVerificationRollupsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUncheckedCreateNestedOneWithoutProjectInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUncheckedCreateNestedManyWithoutProjectInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUncheckedCreateNestedManyWithoutProjectInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUncheckedCreateNestedOneWithoutProjectInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUncheckedCreateNestedManyWithoutProjectInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUncheckedCreateNestedManyWithoutProjectInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUncheckedCreateNestedManyWithoutProjectInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
+  providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutVerificationRollupsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationRollupsInput, Prisma.ProjectUncheckedCreateWithoutVerificationRollupsInput>
+}
+
+export type ProjectUpsertWithoutVerificationRollupsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutVerificationRollupsInput, Prisma.ProjectUncheckedUpdateWithoutVerificationRollupsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationRollupsInput, Prisma.ProjectUncheckedCreateWithoutVerificationRollupsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutVerificationRollupsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutVerificationRollupsInput, Prisma.ProjectUncheckedUpdateWithoutVerificationRollupsInput>
+}
+
+export type ProjectUpdateWithoutVerificationRollupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUpdateOneWithoutProjectNestedInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUpdateManyWithoutProjectNestedInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUpdateManyWithoutProjectNestedInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUpdateOneWithoutProjectNestedInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUpdateManyWithoutProjectNestedInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUpdateManyWithoutProjectNestedInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUpdateManyWithoutProjectNestedInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
+  providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutVerificationRollupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUncheckedUpdateOneWithoutProjectNestedInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUncheckedUpdateManyWithoutProjectNestedInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUncheckedUpdateOneWithoutProjectNestedInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUncheckedUpdateManyWithoutProjectNestedInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUncheckedUpdateManyWithoutProjectNestedInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUncheckedUpdateManyWithoutProjectNestedInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
+  providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutVerificationAlertsInput = {
+  id: string
+  name: string
+  description?: string | null
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutProjectsInput
+  activeNativeDeployment?: Prisma.NativeDeploymentCreateNestedOneWithoutActiveProjectsInput
+  bundle?: Prisma.BundlesCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionCreateNestedManyWithoutProjectInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetCreateNestedManyWithoutProjectInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyCreateNestedOneWithoutProjectInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaCreateNestedManyWithoutProjectInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticCreateNestedManyWithoutProjectInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunCreateNestedManyWithoutProjectInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyCreateNestedOneWithoutProjectInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalCreateNestedManyWithoutProjectInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityCreateNestedManyWithoutProjectInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyCreateNestedManyWithoutProjectInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
+  providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
+  leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutVerificationAlertsInput = {
+  id: string
+  name: string
+  description?: string | null
+  organizationId: string
+  vercelProjectId?: string | null
+  vercelProjectName?: string | null
+  activeNativeDeploymentId?: string | null
+  createdAt: Date | string
+  updatedAt: Date | string
+  deletedAt?: Date | string | null
+  bundle?: Prisma.BundlesUncheckedCreateNestedOneWithoutProjectInput
+  deployHooks?: Prisma.DeployHookUncheckedCreateNestedManyWithoutProjectInput
+  firewallRules?: Prisma.FirewallRuleUncheckedCreateNestedManyWithoutProjectInput
+  cronJobs?: Prisma.CronJobUncheckedCreateNestedManyWithoutProjectInput
+  forms?: Prisma.FormUncheckedCreateNestedManyWithoutProjectInput
+  previewComments?: Prisma.PreviewCommentUncheckedCreateNestedManyWithoutProjectInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedCreateNestedOneWithoutProjectInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedCreateNestedManyWithoutProjectInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedCreateNestedManyWithoutProjectInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedCreateNestedManyWithoutProjectInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedCreateNestedManyWithoutProjectInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedCreateNestedManyWithoutProjectInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedCreateNestedManyWithoutProjectInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedCreateNestedManyWithoutProjectInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedCreateNestedManyWithoutProjectInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedCreateNestedManyWithoutProjectInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUncheckedCreateNestedManyWithoutProjectInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedCreateNestedManyWithoutProjectInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUncheckedCreateNestedOneWithoutProjectInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUncheckedCreateNestedManyWithoutProjectInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedCreateNestedManyWithoutProjectInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedCreateNestedManyWithoutProjectInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedCreateNestedManyWithoutProjectInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUncheckedCreateNestedManyWithoutProjectInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUncheckedCreateNestedOneWithoutProjectInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUncheckedCreateNestedManyWithoutProjectInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUncheckedCreateNestedManyWithoutProjectInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUncheckedCreateNestedManyWithoutProjectInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedCreateNestedManyWithoutProjectInput
+  members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
+  providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutVerificationAlertsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationAlertsInput, Prisma.ProjectUncheckedCreateWithoutVerificationAlertsInput>
+}
+
+export type ProjectUpsertWithoutVerificationAlertsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutVerificationAlertsInput, Prisma.ProjectUncheckedUpdateWithoutVerificationAlertsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutVerificationAlertsInput, Prisma.ProjectUncheckedCreateWithoutVerificationAlertsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutVerificationAlertsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutVerificationAlertsInput, Prisma.ProjectUncheckedUpdateWithoutVerificationAlertsInput>
+}
+
+export type ProjectUpdateWithoutVerificationAlertsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutProjectsNestedInput
+  activeNativeDeployment?: Prisma.NativeDeploymentUpdateOneWithoutActiveProjectsNestedInput
+  bundle?: Prisma.BundlesUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUpdateManyWithoutProjectNestedInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUpdateManyWithoutProjectNestedInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUpdateOneWithoutProjectNestedInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUpdateManyWithoutProjectNestedInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUpdateManyWithoutProjectNestedInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUpdateManyWithoutProjectNestedInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUpdateOneWithoutProjectNestedInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUpdateManyWithoutProjectNestedInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUpdateManyWithoutProjectNestedInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUpdateManyWithoutProjectNestedInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
+  providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutVerificationAlertsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  vercelProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vercelProjectName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activeNativeDeploymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bundle?: Prisma.BundlesUncheckedUpdateOneWithoutProjectNestedInput
+  deployHooks?: Prisma.DeployHookUncheckedUpdateManyWithoutProjectNestedInput
+  firewallRules?: Prisma.FirewallRuleUncheckedUpdateManyWithoutProjectNestedInput
+  cronJobs?: Prisma.CronJobUncheckedUpdateManyWithoutProjectNestedInput
+  forms?: Prisma.FormUncheckedUpdateManyWithoutProjectNestedInput
+  previewComments?: Prisma.PreviewCommentUncheckedUpdateManyWithoutProjectNestedInput
+  lepoShipLocalConfig?: Prisma.LepoShipLocalConfigUncheckedUpdateOneWithoutProjectNestedInput
+  nativeDeployments?: Prisma.NativeDeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDomainConfigs?: Prisma.NativeDomainConfigUncheckedUpdateManyWithoutProjectNestedInput
+  nativeEdgeFunctions?: Prisma.NativeEdgeFunctionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCacheEntries?: Prisma.NativeCacheEntryUncheckedUpdateManyWithoutProjectNestedInput
+  nativeReplaySessions?: Prisma.NativeAnalyticsReplayUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCrashReports?: Prisma.NativeCrashReportUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSourceMaps?: Prisma.NativeSourceMapUncheckedUpdateManyWithoutProjectNestedInput
+  nativePluginInstalls?: Prisma.NativePluginInstallationUncheckedUpdateManyWithoutProjectNestedInput
+  nativeDebugSessions?: Prisma.NativeDebugSessionUncheckedUpdateManyWithoutProjectNestedInput
+  nativeConnectedDevices?: Prisma.NativeConnectedDeviceUncheckedUpdateManyWithoutProjectNestedInput
+  nativeCloudTargets?: Prisma.NativeCloudTargetUncheckedUpdateManyWithoutProjectNestedInput
+  nativeRoutingPolicy?: Prisma.NativeRoutingPolicyUncheckedUpdateOneWithoutProjectNestedInput
+  nativeRegionReplicas?: Prisma.NativeRegionReplicaUncheckedUpdateManyWithoutProjectNestedInput
+  nativeArtifactMirrors?: Prisma.NativeArtifactMirrorUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafEvents?: Prisma.NativeWafEventUncheckedUpdateManyWithoutProjectNestedInput
+  nativeWafRules?: Prisma.NativeWafRuleUncheckedUpdateManyWithoutProjectNestedInput
+  nativeAiDiagnostics?: Prisma.NativeAiDiagnosticUncheckedUpdateManyWithoutProjectNestedInput
+  nativeRemediationRuns?: Prisma.NativeRemediationRunUncheckedUpdateManyWithoutProjectNestedInput
+  nativeSchedulingPolicy?: Prisma.NativeSchedulingPolicyUncheckedUpdateOneWithoutProjectNestedInput
+  nativeSchedulingSignals?: Prisma.NativeSchedulingSignalUncheckedUpdateManyWithoutProjectNestedInput
+  nativeServiceIdentities?: Prisma.NativeServiceIdentityUncheckedUpdateManyWithoutProjectNestedInput
+  nativeServiceTrustPolicies?: Prisma.NativeServiceTrustPolicyUncheckedUpdateManyWithoutProjectNestedInput
+  nativeTelemetryEnvelopes?: Prisma.NativeTelemetryEnvelopeUncheckedUpdateManyWithoutProjectNestedInput
+  members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
+  providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
+  leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
+  canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutDeployHooksInput = {
@@ -1817,6 +2805,10 @@ export type ProjectCreateWithoutDeployHooksInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutDeployHooksInput = {
@@ -1863,6 +2855,10 @@ export type ProjectUncheckedCreateWithoutDeployHooksInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutDeployHooksInput = {
@@ -1925,6 +2921,10 @@ export type ProjectUpdateWithoutDeployHooksInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutDeployHooksInput = {
@@ -1971,6 +2971,10 @@ export type ProjectUncheckedUpdateWithoutDeployHooksInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutFirewallRulesInput = {
@@ -2017,6 +3021,10 @@ export type ProjectCreateWithoutFirewallRulesInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutFirewallRulesInput = {
@@ -2063,6 +3071,10 @@ export type ProjectUncheckedCreateWithoutFirewallRulesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutFirewallRulesInput = {
@@ -2125,6 +3137,10 @@ export type ProjectUpdateWithoutFirewallRulesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutFirewallRulesInput = {
@@ -2171,6 +3187,10 @@ export type ProjectUncheckedUpdateWithoutFirewallRulesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeDeploymentsInput = {
@@ -2217,6 +3237,10 @@ export type ProjectCreateWithoutNativeDeploymentsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeDeploymentsInput = {
@@ -2263,6 +3287,10 @@ export type ProjectUncheckedCreateWithoutNativeDeploymentsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeDeploymentsInput = {
@@ -2314,6 +3342,10 @@ export type ProjectCreateWithoutActiveNativeDeploymentInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutActiveNativeDeploymentInput = {
@@ -2360,6 +3392,10 @@ export type ProjectUncheckedCreateWithoutActiveNativeDeploymentInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutActiveNativeDeploymentInput = {
@@ -2427,6 +3463,10 @@ export type ProjectUpdateWithoutNativeDeploymentsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeDeploymentsInput = {
@@ -2473,6 +3513,10 @@ export type ProjectUncheckedUpdateWithoutNativeDeploymentsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUpsertWithWhereUniqueWithoutActiveNativeDeploymentInput = {
@@ -2535,6 +3579,10 @@ export type ProjectCreateWithoutNativeDomainConfigsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeDomainConfigsInput = {
@@ -2581,6 +3629,10 @@ export type ProjectUncheckedCreateWithoutNativeDomainConfigsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeDomainConfigsInput = {
@@ -2643,6 +3695,10 @@ export type ProjectUpdateWithoutNativeDomainConfigsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeDomainConfigsInput = {
@@ -2689,6 +3745,10 @@ export type ProjectUncheckedUpdateWithoutNativeDomainConfigsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeEdgeFunctionsInput = {
@@ -2735,6 +3795,10 @@ export type ProjectCreateWithoutNativeEdgeFunctionsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeEdgeFunctionsInput = {
@@ -2781,6 +3845,10 @@ export type ProjectUncheckedCreateWithoutNativeEdgeFunctionsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeEdgeFunctionsInput = {
@@ -2843,6 +3911,10 @@ export type ProjectUpdateWithoutNativeEdgeFunctionsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeEdgeFunctionsInput = {
@@ -2889,6 +3961,10 @@ export type ProjectUncheckedUpdateWithoutNativeEdgeFunctionsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeCacheEntriesInput = {
@@ -2935,6 +4011,10 @@ export type ProjectCreateWithoutNativeCacheEntriesInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeCacheEntriesInput = {
@@ -2981,6 +4061,10 @@ export type ProjectUncheckedCreateWithoutNativeCacheEntriesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeCacheEntriesInput = {
@@ -3043,6 +4127,10 @@ export type ProjectUpdateWithoutNativeCacheEntriesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeCacheEntriesInput = {
@@ -3089,6 +4177,10 @@ export type ProjectUncheckedUpdateWithoutNativeCacheEntriesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeReplaySessionsInput = {
@@ -3135,6 +4227,10 @@ export type ProjectCreateWithoutNativeReplaySessionsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeReplaySessionsInput = {
@@ -3181,6 +4277,10 @@ export type ProjectUncheckedCreateWithoutNativeReplaySessionsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeReplaySessionsInput = {
@@ -3243,6 +4343,10 @@ export type ProjectUpdateWithoutNativeReplaySessionsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeReplaySessionsInput = {
@@ -3289,6 +4393,10 @@ export type ProjectUncheckedUpdateWithoutNativeReplaySessionsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeCrashReportsInput = {
@@ -3335,6 +4443,10 @@ export type ProjectCreateWithoutNativeCrashReportsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeCrashReportsInput = {
@@ -3381,6 +4493,10 @@ export type ProjectUncheckedCreateWithoutNativeCrashReportsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeCrashReportsInput = {
@@ -3443,6 +4559,10 @@ export type ProjectUpdateWithoutNativeCrashReportsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeCrashReportsInput = {
@@ -3489,6 +4609,10 @@ export type ProjectUncheckedUpdateWithoutNativeCrashReportsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeSourceMapsInput = {
@@ -3535,6 +4659,10 @@ export type ProjectCreateWithoutNativeSourceMapsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeSourceMapsInput = {
@@ -3581,6 +4709,10 @@ export type ProjectUncheckedCreateWithoutNativeSourceMapsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeSourceMapsInput = {
@@ -3643,6 +4775,10 @@ export type ProjectUpdateWithoutNativeSourceMapsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeSourceMapsInput = {
@@ -3689,6 +4825,10 @@ export type ProjectUncheckedUpdateWithoutNativeSourceMapsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativePluginInstallsInput = {
@@ -3735,6 +4875,10 @@ export type ProjectCreateWithoutNativePluginInstallsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativePluginInstallsInput = {
@@ -3781,6 +4925,10 @@ export type ProjectUncheckedCreateWithoutNativePluginInstallsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativePluginInstallsInput = {
@@ -3843,6 +4991,10 @@ export type ProjectUpdateWithoutNativePluginInstallsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativePluginInstallsInput = {
@@ -3889,6 +5041,10 @@ export type ProjectUncheckedUpdateWithoutNativePluginInstallsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeDebugSessionsInput = {
@@ -3935,6 +5091,10 @@ export type ProjectCreateWithoutNativeDebugSessionsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeDebugSessionsInput = {
@@ -3981,6 +5141,10 @@ export type ProjectUncheckedCreateWithoutNativeDebugSessionsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeDebugSessionsInput = {
@@ -4043,6 +5207,10 @@ export type ProjectUpdateWithoutNativeDebugSessionsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeDebugSessionsInput = {
@@ -4089,6 +5257,10 @@ export type ProjectUncheckedUpdateWithoutNativeDebugSessionsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeConnectedDevicesInput = {
@@ -4135,6 +5307,10 @@ export type ProjectCreateWithoutNativeConnectedDevicesInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeConnectedDevicesInput = {
@@ -4181,6 +5357,10 @@ export type ProjectUncheckedCreateWithoutNativeConnectedDevicesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeConnectedDevicesInput = {
@@ -4243,6 +5423,10 @@ export type ProjectUpdateWithoutNativeConnectedDevicesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeConnectedDevicesInput = {
@@ -4289,6 +5473,10 @@ export type ProjectUncheckedUpdateWithoutNativeConnectedDevicesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeCloudTargetsInput = {
@@ -4335,6 +5523,10 @@ export type ProjectCreateWithoutNativeCloudTargetsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeCloudTargetsInput = {
@@ -4381,6 +5573,10 @@ export type ProjectUncheckedCreateWithoutNativeCloudTargetsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeCloudTargetsInput = {
@@ -4443,6 +5639,10 @@ export type ProjectUpdateWithoutNativeCloudTargetsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeCloudTargetsInput = {
@@ -4489,6 +5689,10 @@ export type ProjectUncheckedUpdateWithoutNativeCloudTargetsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeRoutingPolicyInput = {
@@ -4535,6 +5739,10 @@ export type ProjectCreateWithoutNativeRoutingPolicyInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeRoutingPolicyInput = {
@@ -4581,6 +5789,10 @@ export type ProjectUncheckedCreateWithoutNativeRoutingPolicyInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeRoutingPolicyInput = {
@@ -4643,6 +5855,10 @@ export type ProjectUpdateWithoutNativeRoutingPolicyInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeRoutingPolicyInput = {
@@ -4689,6 +5905,10 @@ export type ProjectUncheckedUpdateWithoutNativeRoutingPolicyInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeRegionReplicasInput = {
@@ -4735,6 +5955,10 @@ export type ProjectCreateWithoutNativeRegionReplicasInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeRegionReplicasInput = {
@@ -4781,6 +6005,10 @@ export type ProjectUncheckedCreateWithoutNativeRegionReplicasInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeRegionReplicasInput = {
@@ -4843,6 +6071,10 @@ export type ProjectUpdateWithoutNativeRegionReplicasInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeRegionReplicasInput = {
@@ -4889,6 +6121,10 @@ export type ProjectUncheckedUpdateWithoutNativeRegionReplicasInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeArtifactMirrorsInput = {
@@ -4935,6 +6171,10 @@ export type ProjectCreateWithoutNativeArtifactMirrorsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeArtifactMirrorsInput = {
@@ -4981,6 +6221,10 @@ export type ProjectUncheckedCreateWithoutNativeArtifactMirrorsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeArtifactMirrorsInput = {
@@ -5043,6 +6287,10 @@ export type ProjectUpdateWithoutNativeArtifactMirrorsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeArtifactMirrorsInput = {
@@ -5089,6 +6337,10 @@ export type ProjectUncheckedUpdateWithoutNativeArtifactMirrorsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeWafEventsInput = {
@@ -5135,6 +6387,10 @@ export type ProjectCreateWithoutNativeWafEventsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeWafEventsInput = {
@@ -5181,6 +6437,10 @@ export type ProjectUncheckedCreateWithoutNativeWafEventsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeWafEventsInput = {
@@ -5243,6 +6503,10 @@ export type ProjectUpdateWithoutNativeWafEventsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeWafEventsInput = {
@@ -5289,6 +6553,10 @@ export type ProjectUncheckedUpdateWithoutNativeWafEventsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeWafRulesInput = {
@@ -5335,6 +6603,10 @@ export type ProjectCreateWithoutNativeWafRulesInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeWafRulesInput = {
@@ -5381,6 +6653,10 @@ export type ProjectUncheckedCreateWithoutNativeWafRulesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeWafRulesInput = {
@@ -5443,6 +6719,10 @@ export type ProjectUpdateWithoutNativeWafRulesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeWafRulesInput = {
@@ -5489,6 +6769,10 @@ export type ProjectUncheckedUpdateWithoutNativeWafRulesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeAiDiagnosticsInput = {
@@ -5535,6 +6819,10 @@ export type ProjectCreateWithoutNativeAiDiagnosticsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeAiDiagnosticsInput = {
@@ -5581,6 +6869,10 @@ export type ProjectUncheckedCreateWithoutNativeAiDiagnosticsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeAiDiagnosticsInput = {
@@ -5643,6 +6935,10 @@ export type ProjectUpdateWithoutNativeAiDiagnosticsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeAiDiagnosticsInput = {
@@ -5689,6 +6985,10 @@ export type ProjectUncheckedUpdateWithoutNativeAiDiagnosticsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeRemediationRunsInput = {
@@ -5735,6 +7035,10 @@ export type ProjectCreateWithoutNativeRemediationRunsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeRemediationRunsInput = {
@@ -5781,6 +7085,10 @@ export type ProjectUncheckedCreateWithoutNativeRemediationRunsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeRemediationRunsInput = {
@@ -5843,6 +7151,10 @@ export type ProjectUpdateWithoutNativeRemediationRunsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeRemediationRunsInput = {
@@ -5889,6 +7201,10 @@ export type ProjectUncheckedUpdateWithoutNativeRemediationRunsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeSchedulingPolicyInput = {
@@ -5935,6 +7251,10 @@ export type ProjectCreateWithoutNativeSchedulingPolicyInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeSchedulingPolicyInput = {
@@ -5981,6 +7301,10 @@ export type ProjectUncheckedCreateWithoutNativeSchedulingPolicyInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeSchedulingPolicyInput = {
@@ -6043,6 +7367,10 @@ export type ProjectUpdateWithoutNativeSchedulingPolicyInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeSchedulingPolicyInput = {
@@ -6089,6 +7417,10 @@ export type ProjectUncheckedUpdateWithoutNativeSchedulingPolicyInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeSchedulingSignalsInput = {
@@ -6135,6 +7467,10 @@ export type ProjectCreateWithoutNativeSchedulingSignalsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeSchedulingSignalsInput = {
@@ -6181,6 +7517,10 @@ export type ProjectUncheckedCreateWithoutNativeSchedulingSignalsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeSchedulingSignalsInput = {
@@ -6243,6 +7583,10 @@ export type ProjectUpdateWithoutNativeSchedulingSignalsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeSchedulingSignalsInput = {
@@ -6289,6 +7633,10 @@ export type ProjectUncheckedUpdateWithoutNativeSchedulingSignalsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeServiceIdentitiesInput = {
@@ -6335,6 +7683,10 @@ export type ProjectCreateWithoutNativeServiceIdentitiesInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeServiceIdentitiesInput = {
@@ -6381,6 +7733,10 @@ export type ProjectUncheckedCreateWithoutNativeServiceIdentitiesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeServiceIdentitiesInput = {
@@ -6443,6 +7799,10 @@ export type ProjectUpdateWithoutNativeServiceIdentitiesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeServiceIdentitiesInput = {
@@ -6489,6 +7849,10 @@ export type ProjectUncheckedUpdateWithoutNativeServiceIdentitiesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeServiceTrustPoliciesInput = {
@@ -6535,6 +7899,10 @@ export type ProjectCreateWithoutNativeServiceTrustPoliciesInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeServiceTrustPoliciesInput = {
@@ -6581,6 +7949,10 @@ export type ProjectUncheckedCreateWithoutNativeServiceTrustPoliciesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeServiceTrustPoliciesInput = {
@@ -6643,6 +8015,10 @@ export type ProjectUpdateWithoutNativeServiceTrustPoliciesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeServiceTrustPoliciesInput = {
@@ -6689,6 +8065,10 @@ export type ProjectUncheckedUpdateWithoutNativeServiceTrustPoliciesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNativeTelemetryEnvelopesInput = {
@@ -6735,6 +8115,10 @@ export type ProjectCreateWithoutNativeTelemetryEnvelopesInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNativeTelemetryEnvelopesInput = {
@@ -6781,6 +8165,10 @@ export type ProjectUncheckedCreateWithoutNativeTelemetryEnvelopesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNativeTelemetryEnvelopesInput = {
@@ -6843,6 +8231,10 @@ export type ProjectUpdateWithoutNativeTelemetryEnvelopesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNativeTelemetryEnvelopesInput = {
@@ -6889,6 +8281,10 @@ export type ProjectUncheckedUpdateWithoutNativeTelemetryEnvelopesInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutCronJobsInput = {
@@ -6935,6 +8331,10 @@ export type ProjectCreateWithoutCronJobsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutCronJobsInput = {
@@ -6981,6 +8381,10 @@ export type ProjectUncheckedCreateWithoutCronJobsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutCronJobsInput = {
@@ -7043,6 +8447,10 @@ export type ProjectUpdateWithoutCronJobsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutCronJobsInput = {
@@ -7089,6 +8497,10 @@ export type ProjectUncheckedUpdateWithoutCronJobsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutFormsInput = {
@@ -7135,6 +8547,10 @@ export type ProjectCreateWithoutFormsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutFormsInput = {
@@ -7181,6 +8597,10 @@ export type ProjectUncheckedCreateWithoutFormsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutFormsInput = {
@@ -7243,6 +8663,10 @@ export type ProjectUpdateWithoutFormsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutFormsInput = {
@@ -7289,6 +8713,10 @@ export type ProjectUncheckedUpdateWithoutFormsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutPreviewCommentsInput = {
@@ -7335,6 +8763,10 @@ export type ProjectCreateWithoutPreviewCommentsInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutPreviewCommentsInput = {
@@ -7381,6 +8813,10 @@ export type ProjectUncheckedCreateWithoutPreviewCommentsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutPreviewCommentsInput = {
@@ -7443,6 +8879,10 @@ export type ProjectUpdateWithoutPreviewCommentsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutPreviewCommentsInput = {
@@ -7489,6 +8929,10 @@ export type ProjectUncheckedUpdateWithoutPreviewCommentsInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutLepoShipLocalConfigInput = {
@@ -7535,6 +8979,10 @@ export type ProjectCreateWithoutLepoShipLocalConfigInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutLepoShipLocalConfigInput = {
@@ -7581,6 +9029,10 @@ export type ProjectUncheckedCreateWithoutLepoShipLocalConfigInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutLepoShipLocalConfigInput = {
@@ -7643,6 +9095,10 @@ export type ProjectUpdateWithoutLepoShipLocalConfigInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutLepoShipLocalConfigInput = {
@@ -7689,6 +9145,10 @@ export type ProjectUncheckedUpdateWithoutLepoShipLocalConfigInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutMembersInput = {
@@ -7735,6 +9195,10 @@ export type ProjectCreateWithoutMembersInput = {
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutMembersInput = {
@@ -7781,6 +9245,10 @@ export type ProjectUncheckedCreateWithoutMembersInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutMembersInput = {
@@ -7843,6 +9311,10 @@ export type ProjectUpdateWithoutMembersInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutMembersInput = {
@@ -7889,6 +9361,10 @@ export type ProjectUncheckedUpdateWithoutMembersInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutProviderBindingsInput = {
@@ -7935,6 +9411,10 @@ export type ProjectCreateWithoutProviderBindingsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutProviderBindingsInput = {
@@ -7981,6 +9461,10 @@ export type ProjectUncheckedCreateWithoutProviderBindingsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutProviderBindingsInput = {
@@ -8043,6 +9527,10 @@ export type ProjectUpdateWithoutProviderBindingsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutProviderBindingsInput = {
@@ -8089,6 +9577,10 @@ export type ProjectUncheckedUpdateWithoutProviderBindingsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutLeposhipBuildsInput = {
@@ -8135,6 +9627,10 @@ export type ProjectCreateWithoutLeposhipBuildsInput = {
   members?: Prisma.ProjectMembershipCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutLeposhipBuildsInput = {
@@ -8181,6 +9677,10 @@ export type ProjectUncheckedCreateWithoutLeposhipBuildsInput = {
   members?: Prisma.ProjectMembershipUncheckedCreateNestedManyWithoutProjectInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedCreateNestedManyWithoutProjectInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutProjectInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedCreateNestedManyWithoutProjectInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedCreateNestedManyWithoutProjectInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutLeposhipBuildsInput = {
@@ -8243,6 +9743,10 @@ export type ProjectUpdateWithoutLeposhipBuildsInput = {
   members?: Prisma.ProjectMembershipUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutLeposhipBuildsInput = {
@@ -8289,6 +9793,10 @@ export type ProjectUncheckedUpdateWithoutLeposhipBuildsInput = {
   members?: Prisma.ProjectMembershipUncheckedUpdateManyWithoutProjectNestedInput
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyOrganizationInput = {
@@ -8347,6 +9855,10 @@ export type ProjectUpdateWithoutOrganizationInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutOrganizationInput = {
@@ -8393,6 +9905,10 @@ export type ProjectUncheckedUpdateWithoutOrganizationInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutOrganizationInput = {
@@ -8463,6 +9979,10 @@ export type ProjectUpdateWithoutActiveNativeDeploymentInput = {
   providerBindings?: Prisma.ProjectProviderBindingUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutActiveNativeDeploymentInput = {
@@ -8509,6 +10029,10 @@ export type ProjectUncheckedUpdateWithoutActiveNativeDeploymentInput = {
   providerBindings?: Prisma.ProjectProviderBindingUncheckedUpdateManyWithoutProjectNestedInput
   leposhipBuilds?: Prisma.LepoShipBuildUncheckedUpdateManyWithoutProjectNestedInput
   canonicalBuildJobs?: Prisma.BundleBuildJobsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationTelemetry?: Prisma.VerificationTelemetryEventsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationRollups?: Prisma.VerificationMetricRollupsUncheckedUpdateManyWithoutProjectNestedInput
+  verificationAlerts?: Prisma.VerificationAlertsUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutActiveNativeDeploymentInput = {
@@ -8559,6 +10083,10 @@ export type ProjectCountOutputType = {
   providerBindings: number
   leposhipBuilds: number
   canonicalBuildJobs: number
+  verificationRuns: number
+  verificationTelemetry: number
+  verificationRollups: number
+  verificationAlerts: number
 }
 
 export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -8592,6 +10120,10 @@ export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   providerBindings?: boolean | ProjectCountOutputTypeCountProviderBindingsArgs
   leposhipBuilds?: boolean | ProjectCountOutputTypeCountLeposhipBuildsArgs
   canonicalBuildJobs?: boolean | ProjectCountOutputTypeCountCanonicalBuildJobsArgs
+  verificationRuns?: boolean | ProjectCountOutputTypeCountVerificationRunsArgs
+  verificationTelemetry?: boolean | ProjectCountOutputTypeCountVerificationTelemetryArgs
+  verificationRollups?: boolean | ProjectCountOutputTypeCountVerificationRollupsArgs
+  verificationAlerts?: boolean | ProjectCountOutputTypeCountVerificationAlertsArgs
 }
 
 /**
@@ -8814,6 +10346,34 @@ export type ProjectCountOutputTypeCountCanonicalBuildJobsArgs<ExtArgs extends ru
   where?: Prisma.BundleBuildJobsWhereInput
 }
 
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountVerificationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VerificationRunsWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountVerificationTelemetryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VerificationTelemetryEventsWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountVerificationRollupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VerificationMetricRollupsWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountVerificationAlertsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VerificationAlertsWhereInput
+}
+
 
 export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -8862,6 +10422,10 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   providerBindings?: boolean | Prisma.Project$providerBindingsArgs<ExtArgs>
   leposhipBuilds?: boolean | Prisma.Project$leposhipBuildsArgs<ExtArgs>
   canonicalBuildJobs?: boolean | Prisma.Project$canonicalBuildJobsArgs<ExtArgs>
+  verificationRuns?: boolean | Prisma.Project$verificationRunsArgs<ExtArgs>
+  verificationTelemetry?: boolean | Prisma.Project$verificationTelemetryArgs<ExtArgs>
+  verificationRollups?: boolean | Prisma.Project$verificationRollupsArgs<ExtArgs>
+  verificationAlerts?: boolean | Prisma.Project$verificationAlertsArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
@@ -8946,6 +10510,10 @@ export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   providerBindings?: boolean | Prisma.Project$providerBindingsArgs<ExtArgs>
   leposhipBuilds?: boolean | Prisma.Project$leposhipBuildsArgs<ExtArgs>
   canonicalBuildJobs?: boolean | Prisma.Project$canonicalBuildJobsArgs<ExtArgs>
+  verificationRuns?: boolean | Prisma.Project$verificationRunsArgs<ExtArgs>
+  verificationTelemetry?: boolean | Prisma.Project$verificationTelemetryArgs<ExtArgs>
+  verificationRollups?: boolean | Prisma.Project$verificationRollupsArgs<ExtArgs>
+  verificationAlerts?: boolean | Prisma.Project$verificationAlertsArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -8996,6 +10564,10 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     providerBindings: Prisma.$ProjectProviderBindingPayload<ExtArgs>[]
     leposhipBuilds: Prisma.$LepoShipBuildPayload<ExtArgs>[]
     canonicalBuildJobs: Prisma.$BundleBuildJobsPayload<ExtArgs>[]
+    verificationRuns: Prisma.$VerificationRunsPayload<ExtArgs>[]
+    verificationTelemetry: Prisma.$VerificationTelemetryEventsPayload<ExtArgs>[]
+    verificationRollups: Prisma.$VerificationMetricRollupsPayload<ExtArgs>[]
+    verificationAlerts: Prisma.$VerificationAlertsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -9438,6 +11010,10 @@ export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.
   providerBindings<T extends Prisma.Project$providerBindingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$providerBindingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectProviderBindingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   leposhipBuilds<T extends Prisma.Project$leposhipBuildsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$leposhipBuildsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LepoShipBuildPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   canonicalBuildJobs<T extends Prisma.Project$canonicalBuildJobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$canonicalBuildJobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BundleBuildJobsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  verificationRuns<T extends Prisma.Project$verificationRunsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$verificationRunsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationRunsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  verificationTelemetry<T extends Prisma.Project$verificationTelemetryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$verificationTelemetryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationTelemetryEventsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  verificationRollups<T extends Prisma.Project$verificationRollupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$verificationRollupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationMetricRollupsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  verificationAlerts<T extends Prisma.Project$verificationAlertsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$verificationAlertsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationAlertsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10690,6 +12266,102 @@ export type Project$canonicalBuildJobsArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.BundleBuildJobsScalarFieldEnum | Prisma.BundleBuildJobsScalarFieldEnum[]
+}
+
+/**
+ * Project.verificationRuns
+ */
+export type Project$verificationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the VerificationRuns
+   */
+  select?: Prisma.VerificationRunsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the VerificationRuns
+   */
+  omit?: Prisma.VerificationRunsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VerificationRunsInclude<ExtArgs> | null
+  where?: Prisma.VerificationRunsWhereInput
+  orderBy?: Prisma.VerificationRunsOrderByWithRelationInput | Prisma.VerificationRunsOrderByWithRelationInput[]
+  cursor?: Prisma.VerificationRunsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VerificationRunsScalarFieldEnum | Prisma.VerificationRunsScalarFieldEnum[]
+}
+
+/**
+ * Project.verificationTelemetry
+ */
+export type Project$verificationTelemetryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the VerificationTelemetryEvents
+   */
+  select?: Prisma.VerificationTelemetryEventsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the VerificationTelemetryEvents
+   */
+  omit?: Prisma.VerificationTelemetryEventsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VerificationTelemetryEventsInclude<ExtArgs> | null
+  where?: Prisma.VerificationTelemetryEventsWhereInput
+  orderBy?: Prisma.VerificationTelemetryEventsOrderByWithRelationInput | Prisma.VerificationTelemetryEventsOrderByWithRelationInput[]
+  cursor?: Prisma.VerificationTelemetryEventsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VerificationTelemetryEventsScalarFieldEnum | Prisma.VerificationTelemetryEventsScalarFieldEnum[]
+}
+
+/**
+ * Project.verificationRollups
+ */
+export type Project$verificationRollupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the VerificationMetricRollups
+   */
+  select?: Prisma.VerificationMetricRollupsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the VerificationMetricRollups
+   */
+  omit?: Prisma.VerificationMetricRollupsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VerificationMetricRollupsInclude<ExtArgs> | null
+  where?: Prisma.VerificationMetricRollupsWhereInput
+  orderBy?: Prisma.VerificationMetricRollupsOrderByWithRelationInput | Prisma.VerificationMetricRollupsOrderByWithRelationInput[]
+  cursor?: Prisma.VerificationMetricRollupsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VerificationMetricRollupsScalarFieldEnum | Prisma.VerificationMetricRollupsScalarFieldEnum[]
+}
+
+/**
+ * Project.verificationAlerts
+ */
+export type Project$verificationAlertsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the VerificationAlerts
+   */
+  select?: Prisma.VerificationAlertsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the VerificationAlerts
+   */
+  omit?: Prisma.VerificationAlertsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VerificationAlertsInclude<ExtArgs> | null
+  where?: Prisma.VerificationAlertsWhereInput
+  orderBy?: Prisma.VerificationAlertsOrderByWithRelationInput | Prisma.VerificationAlertsOrderByWithRelationInput[]
+  cursor?: Prisma.VerificationAlertsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VerificationAlertsScalarFieldEnum | Prisma.VerificationAlertsScalarFieldEnum[]
 }
 
 /**

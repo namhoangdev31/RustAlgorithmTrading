@@ -95,9 +95,6 @@ type Scheduler struct {
 }
 
 type Events struct {
-	NATSURL        string
-	StreamName     string
-	SubjectPrefix  string
 	OutboxInterval time.Duration
 	OutboxLeaseTTL time.Duration
 	OutboxBatch    int
@@ -161,7 +158,6 @@ func Load() (*Config, error) {
 			Schedules:     schedulerSchedules(v),
 		},
 		Events: Events{
-			NATSURL: v.GetString("NATS_URL"), StreamName: v.GetString("NATS_STREAM_NAME"), SubjectPrefix: v.GetString("NATS_SUBJECT_PREFIX"),
 			OutboxInterval: v.GetDuration("OUTBOX_POLL_INTERVAL"), OutboxLeaseTTL: v.GetDuration("OUTBOX_LEASE_TTL"),
 			OutboxBatch: v.GetInt("OUTBOX_BATCH_SIZE"), MaxAttempts: v.GetInt("OUTBOX_MAX_ATTEMPTS"),
 		},
@@ -192,12 +188,15 @@ func firstNonEmpty(values ...string) string {
 
 func (c *Config) Validate() error {
 	switch c.RunMode {
-	case "both", "control-plane", "edge-gateway":
+	case "both", "control-plane", "edge-gateway", "lepoship-worker":
 	default:
 		return fmt.Errorf("invalid GATEWAY_RUN_MODE %q", c.RunMode)
 	}
 	if c.Storefront.MockPaymentsEnabled && !c.Storefront.Enabled {
 		return errors.New("STOREFRONT_MOCK_PAYMENTS_ENABLED requires STOREFRONT_API_ENABLED")
+	}
+	if c.RunMode == "lepoship-worker" {
+		return c.ValidateLepoShipWorker()
 	}
 	controlPlane := c.RunMode == "both" || c.RunMode == "control-plane"
 	if controlPlane {
@@ -210,6 +209,22 @@ func (c *Config) Validate() error {
 	}
 	if err := c.ValidateEdge(); err != nil {
 		return err
+	}
+	return nil
+}
+
+func (c *Config) ValidateLepoShipWorker() error {
+	if strings.TrimSpace(c.Storage.DatabaseURL) == "" || strings.TrimSpace(c.Storage.RedisURL) == "" {
+		return errors.New("lepoship-worker requires DATABASE_URL and REDIS_URL")
+	}
+	if strings.TrimSpace(c.Storefront.ArtifactEndpoint) == "" || strings.TrimSpace(c.Storefront.ArtifactBucket) == "" || strings.TrimSpace(c.Storefront.ArtifactAccessKeyID) == "" || strings.TrimSpace(c.Storefront.ArtifactSecretKey) == "" {
+		return errors.New("lepoship-worker requires the existing LepoShip artifact storage configuration")
+	}
+	if strings.EqualFold(strings.TrimSpace(c.Storefront.ArtifactProvider), "minio") {
+		endpoint, err := url.ParseRequestURI(strings.TrimSpace(c.Storefront.ArtifactEndpoint))
+		if err != nil || (endpoint.Scheme != "http" && endpoint.Scheme != "https") || endpoint.Host == "" || !c.Storefront.ArtifactForcePathStyle {
+			return errors.New("lepoship-worker MinIO endpoint/path-style configuration is invalid")
+		}
 	}
 	return nil
 }
@@ -300,8 +315,8 @@ func setDefaults(v *viper.Viper) {
 		"STOREFRONT_REFRESH_TTL": "720h", "LEPOS_ARTIFACT_REGION": "auto", "LEPOS_ARTIFACT_BUCKET": "lepoship-artifacts",
 		"LEPOS_ARTIFACT_PROVIDER": "s3", "LEPOS_STORAGE_ROOT": ".", "LEPOS_CONTROL_PLANE_URL": "http://127.0.0.1:3000",
 		"LEPOS_SERVICE_ID": "edge-gateway", "LEPOS_IPFS_GATEWAY_URL": "https://ipfs.io/ipfs",
-		"LEPOS_ARWEAVE_GATEWAY_URL": "https://arweave.net", "NATS_SUBJECT_PREFIX": "control-gateway", "NATS_STREAM_NAME": "CONTROL_GATEWAY_EVENTS",
-		"OUTBOX_POLL_INTERVAL": "2s", "OUTBOX_LEASE_TTL": "30s", "OUTBOX_BATCH_SIZE": 100,
+		"LEPOS_ARWEAVE_GATEWAY_URL": "https://arweave.net",
+		"OUTBOX_POLL_INTERVAL":      "2s", "OUTBOX_LEASE_TTL": "30s", "OUTBOX_BATCH_SIZE": 100,
 		"OUTBOX_MAX_ATTEMPTS": 10, "OTEL_SERVICE_NAME": "control-gateway", "TRACING_ENABLED": true, "METRICS_ENABLED": true,
 		"QUANTANT_ENABLED": false, "QUANTANT_LIVE_ENABLED": false, "QUANTANT_STRATEGY_LIVE_ENABLED": false,
 		"QUANTANT_LIVE_SESSION_TTL": "5m", "QUANTANT_EXECUTION_SUBJECT": "quantant.execution.commands", "QUANTANT_COMMAND_STREAM": "QUANTANT_COMMANDS",

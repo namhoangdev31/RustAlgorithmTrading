@@ -10,6 +10,7 @@ import (
 	"trading/control-gateway/internal/data/ent/bundlereleases"
 	"trading/control-gateway/internal/data/ent/bundles"
 	"trading/control-gateway/internal/data/ent/schema"
+	"trading/control-gateway/internal/data/ent/verificationruns"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -45,6 +46,8 @@ type BundleReleases struct {
 	ApprovedAt *time.Time `json:"approvedAt,omitempty"`
 	// ActivatedAt holds the value of the "activatedAt" field.
 	ActivatedAt *time.Time `json:"activatedAt,omitempty"`
+	// EligibleVerificationRunId holds the value of the "eligibleVerificationRunId" field.
+	EligibleVerificationRunId *uuid.UUID `json:"eligibleVerificationRunId,omitempty"`
 	// CreatedAt holds the value of the "createdAt" field.
 	CreatedAt time.Time `json:"createdAt,omitempty"`
 	// UpdatedAt holds the value of the "updatedAt" field.
@@ -87,9 +90,13 @@ type BundleReleasesEdges struct {
 	CrashEvents []*BundleCrashEvents `json:"crashEvents,omitempty"`
 	// BundleAbTestExposures holds the value of the bundleAbTestExposures edge.
 	BundleAbTestExposures []*BundleAbTestExposures `json:"bundleAbTestExposures,omitempty"`
+	// VerificationRuns holds the value of the verificationRuns edge.
+	VerificationRuns []*VerificationRuns `json:"verificationRuns,omitempty"`
+	// EligibleVerificationRun holds the value of the eligibleVerificationRun edge.
+	EligibleVerificationRun *VerificationRuns `json:"eligibleVerificationRun,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [15]bool
+	loadedTypes [17]bool
 }
 
 // BundleOrErr returns the Bundle value or an error if the edge
@@ -231,12 +238,32 @@ func (e BundleReleasesEdges) BundleAbTestExposuresOrErr() ([]*BundleAbTestExposu
 	return nil, &NotLoadedError{edge: "bundleAbTestExposures"}
 }
 
+// VerificationRunsOrErr returns the VerificationRuns value or an error if the edge
+// was not loaded in eager-loading.
+func (e BundleReleasesEdges) VerificationRunsOrErr() ([]*VerificationRuns, error) {
+	if e.loadedTypes[15] {
+		return e.VerificationRuns, nil
+	}
+	return nil, &NotLoadedError{edge: "verificationRuns"}
+}
+
+// EligibleVerificationRunOrErr returns the EligibleVerificationRun value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e BundleReleasesEdges) EligibleVerificationRunOrErr() (*VerificationRuns, error) {
+	if e.EligibleVerificationRun != nil {
+		return e.EligibleVerificationRun, nil
+	} else if e.loadedTypes[16] {
+		return nil, &NotFoundError{label: verificationruns.Label}
+	}
+	return nil, &NotLoadedError{edge: "eligibleVerificationRun"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*BundleReleases) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case bundlereleases.FieldCreatedById:
+		case bundlereleases.FieldCreatedById, bundlereleases.FieldEligibleVerificationRunId:
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		case bundlereleases.FieldBuildNumber:
 			values[i] = new(sql.NullInt64)
@@ -345,6 +372,13 @@ func (_m *BundleReleases) assignValues(columns []string, values []any) error {
 				_m.ActivatedAt = new(time.Time)
 				*_m.ActivatedAt = value.Time
 			}
+		case bundlereleases.FieldEligibleVerificationRunId:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field eligibleVerificationRunId", values[i])
+			} else if value.Valid {
+				_m.EligibleVerificationRunId = new(uuid.UUID)
+				*_m.EligibleVerificationRunId = *value.S.(*uuid.UUID)
+			}
 		case bundlereleases.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field createdAt", values[i])
@@ -445,6 +479,16 @@ func (_m *BundleReleases) QueryBundleAbTestExposures() *BundleAbTestExposuresQue
 	return NewBundleReleasesClient(_m.config).QueryBundleAbTestExposures(_m)
 }
 
+// QueryVerificationRuns queries the "verificationRuns" edge of the BundleReleases entity.
+func (_m *BundleReleases) QueryVerificationRuns() *VerificationRunsQuery {
+	return NewBundleReleasesClient(_m.config).QueryVerificationRuns(_m)
+}
+
+// QueryEligibleVerificationRun queries the "eligibleVerificationRun" edge of the BundleReleases entity.
+func (_m *BundleReleases) QueryEligibleVerificationRun() *VerificationRunsQuery {
+	return NewBundleReleasesClient(_m.config).QueryEligibleVerificationRun(_m)
+}
+
 // Update returns a builder for updating this BundleReleases.
 // Note that you need to call BundleReleases.Unwrap() before calling this method if this BundleReleases
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -514,6 +558,11 @@ func (_m *BundleReleases) String() string {
 	if v := _m.ActivatedAt; v != nil {
 		builder.WriteString("activatedAt=")
 		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := _m.EligibleVerificationRunId; v != nil {
+		builder.WriteString("eligibleVerificationRunId=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
 	builder.WriteString("createdAt=")

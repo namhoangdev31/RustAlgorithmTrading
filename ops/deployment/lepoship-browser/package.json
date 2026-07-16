@@ -1,0 +1,10 @@
+{
+  "name": "lepoship-browser-runner",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "lighthouse": "13.4.0",
+    "playwright": "1.61.1"
+  }
+}

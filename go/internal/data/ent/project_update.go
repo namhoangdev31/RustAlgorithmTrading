@@ -44,6 +44,10 @@ import (
 	"trading/control-gateway/internal/data/ent/project"
 	"trading/control-gateway/internal/data/ent/projectmembership"
 	"trading/control-gateway/internal/data/ent/projectproviderbinding"
+	"trading/control-gateway/internal/data/ent/verificationalerts"
+	"trading/control-gateway/internal/data/ent/verificationmetricrollups"
+	"trading/control-gateway/internal/data/ent/verificationruns"
+	"trading/control-gateway/internal/data/ent/verificationtelemetryevents"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -62,6 +66,26 @@ type ProjectUpdate struct {
 // Where appends a list predicates to the ProjectUpdate builder.
 func (_u *ProjectUpdate) Where(ps ...predicate.Project) *ProjectUpdate {
 	_u.mutation.Where(ps...)
+	return _u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_u *ProjectUpdate) SetDeletedAt(v time.Time) *ProjectUpdate {
+	_u.mutation.SetDeletedAt(v)
+	return _u
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_u *ProjectUpdate) SetNillableDeletedAt(v *time.Time) *ProjectUpdate {
+	if v != nil {
+		_u.SetDeletedAt(*v)
+	}
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (_u *ProjectUpdate) ClearDeletedAt() *ProjectUpdate {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -198,26 +222,6 @@ func (_u *ProjectUpdate) SetNillableUpdatedAt(v *time.Time) *ProjectUpdate {
 	if v != nil {
 		_u.SetUpdatedAt(*v)
 	}
-	return _u
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (_u *ProjectUpdate) SetDeletedAt(v time.Time) *ProjectUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_u *ProjectUpdate) SetNillableDeletedAt(v *time.Time) *ProjectUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (_u *ProjectUpdate) ClearDeletedAt() *ProjectUpdate {
-	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -775,6 +779,66 @@ func (_u *ProjectUpdate) AddCanonicalBuildJobs(v ...*BundleBuildJobs) *ProjectUp
 		ids[i] = v[i].ID
 	}
 	return _u.AddCanonicalBuildJobIDs(ids...)
+}
+
+// AddVerificationRunIDs adds the "verificationRuns" edge to the VerificationRuns entity by IDs.
+func (_u *ProjectUpdate) AddVerificationRunIDs(ids ...uuid.UUID) *ProjectUpdate {
+	_u.mutation.AddVerificationRunIDs(ids...)
+	return _u
+}
+
+// AddVerificationRuns adds the "verificationRuns" edges to the VerificationRuns entity.
+func (_u *ProjectUpdate) AddVerificationRuns(v ...*VerificationRuns) *ProjectUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationRunIDs(ids...)
+}
+
+// AddVerificationTelemetryIDs adds the "verificationTelemetry" edge to the VerificationTelemetryEvents entity by IDs.
+func (_u *ProjectUpdate) AddVerificationTelemetryIDs(ids ...uuid.UUID) *ProjectUpdate {
+	_u.mutation.AddVerificationTelemetryIDs(ids...)
+	return _u
+}
+
+// AddVerificationTelemetry adds the "verificationTelemetry" edges to the VerificationTelemetryEvents entity.
+func (_u *ProjectUpdate) AddVerificationTelemetry(v ...*VerificationTelemetryEvents) *ProjectUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationTelemetryIDs(ids...)
+}
+
+// AddVerificationRollupIDs adds the "verificationRollups" edge to the VerificationMetricRollups entity by IDs.
+func (_u *ProjectUpdate) AddVerificationRollupIDs(ids ...uuid.UUID) *ProjectUpdate {
+	_u.mutation.AddVerificationRollupIDs(ids...)
+	return _u
+}
+
+// AddVerificationRollups adds the "verificationRollups" edges to the VerificationMetricRollups entity.
+func (_u *ProjectUpdate) AddVerificationRollups(v ...*VerificationMetricRollups) *ProjectUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationRollupIDs(ids...)
+}
+
+// AddVerificationAlertIDs adds the "verificationAlerts" edge to the VerificationAlerts entity by IDs.
+func (_u *ProjectUpdate) AddVerificationAlertIDs(ids ...uuid.UUID) *ProjectUpdate {
+	_u.mutation.AddVerificationAlertIDs(ids...)
+	return _u
+}
+
+// AddVerificationAlerts adds the "verificationAlerts" edges to the VerificationAlerts entity.
+func (_u *ProjectUpdate) AddVerificationAlerts(v ...*VerificationAlerts) *ProjectUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationAlertIDs(ids...)
 }
 
 // Mutation returns the ProjectMutation object of the builder.
@@ -1448,6 +1512,90 @@ func (_u *ProjectUpdate) RemoveCanonicalBuildJobs(v ...*BundleBuildJobs) *Projec
 	return _u.RemoveCanonicalBuildJobIDs(ids...)
 }
 
+// ClearVerificationRuns clears all "verificationRuns" edges to the VerificationRuns entity.
+func (_u *ProjectUpdate) ClearVerificationRuns() *ProjectUpdate {
+	_u.mutation.ClearVerificationRuns()
+	return _u
+}
+
+// RemoveVerificationRunIDs removes the "verificationRuns" edge to VerificationRuns entities by IDs.
+func (_u *ProjectUpdate) RemoveVerificationRunIDs(ids ...uuid.UUID) *ProjectUpdate {
+	_u.mutation.RemoveVerificationRunIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationRuns removes "verificationRuns" edges to VerificationRuns entities.
+func (_u *ProjectUpdate) RemoveVerificationRuns(v ...*VerificationRuns) *ProjectUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationRunIDs(ids...)
+}
+
+// ClearVerificationTelemetry clears all "verificationTelemetry" edges to the VerificationTelemetryEvents entity.
+func (_u *ProjectUpdate) ClearVerificationTelemetry() *ProjectUpdate {
+	_u.mutation.ClearVerificationTelemetry()
+	return _u
+}
+
+// RemoveVerificationTelemetryIDs removes the "verificationTelemetry" edge to VerificationTelemetryEvents entities by IDs.
+func (_u *ProjectUpdate) RemoveVerificationTelemetryIDs(ids ...uuid.UUID) *ProjectUpdate {
+	_u.mutation.RemoveVerificationTelemetryIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationTelemetry removes "verificationTelemetry" edges to VerificationTelemetryEvents entities.
+func (_u *ProjectUpdate) RemoveVerificationTelemetry(v ...*VerificationTelemetryEvents) *ProjectUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationTelemetryIDs(ids...)
+}
+
+// ClearVerificationRollups clears all "verificationRollups" edges to the VerificationMetricRollups entity.
+func (_u *ProjectUpdate) ClearVerificationRollups() *ProjectUpdate {
+	_u.mutation.ClearVerificationRollups()
+	return _u
+}
+
+// RemoveVerificationRollupIDs removes the "verificationRollups" edge to VerificationMetricRollups entities by IDs.
+func (_u *ProjectUpdate) RemoveVerificationRollupIDs(ids ...uuid.UUID) *ProjectUpdate {
+	_u.mutation.RemoveVerificationRollupIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationRollups removes "verificationRollups" edges to VerificationMetricRollups entities.
+func (_u *ProjectUpdate) RemoveVerificationRollups(v ...*VerificationMetricRollups) *ProjectUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationRollupIDs(ids...)
+}
+
+// ClearVerificationAlerts clears all "verificationAlerts" edges to the VerificationAlerts entity.
+func (_u *ProjectUpdate) ClearVerificationAlerts() *ProjectUpdate {
+	_u.mutation.ClearVerificationAlerts()
+	return _u
+}
+
+// RemoveVerificationAlertIDs removes the "verificationAlerts" edge to VerificationAlerts entities by IDs.
+func (_u *ProjectUpdate) RemoveVerificationAlertIDs(ids ...uuid.UUID) *ProjectUpdate {
+	_u.mutation.RemoveVerificationAlertIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationAlerts removes "verificationAlerts" edges to VerificationAlerts entities.
+func (_u *ProjectUpdate) RemoveVerificationAlerts(v ...*VerificationAlerts) *ProjectUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationAlertIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *ProjectUpdate) Save(ctx context.Context) (int, error) {
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
@@ -1501,6 +1649,12 @@ func (_u *ProjectUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(project.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(project.FieldName, field.TypeString, value)
 	}
@@ -1527,12 +1681,6 @@ func (_u *ProjectUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(project.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -3058,6 +3206,186 @@ func (_u *ProjectUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRunsTable,
+			Columns: []string{project.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationRunsIDs(); len(nodes) > 0 && !_u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRunsTable,
+			Columns: []string{project.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationRunsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRunsTable,
+			Columns: []string{project.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.VerificationTelemetryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationTelemetryTable,
+			Columns: []string{project.VerificationTelemetryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationtelemetryevents.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationTelemetryIDs(); len(nodes) > 0 && !_u.mutation.VerificationTelemetryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationTelemetryTable,
+			Columns: []string{project.VerificationTelemetryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationtelemetryevents.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationTelemetryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationTelemetryTable,
+			Columns: []string{project.VerificationTelemetryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationtelemetryevents.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.VerificationRollupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRollupsTable,
+			Columns: []string{project.VerificationRollupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationmetricrollups.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationRollupsIDs(); len(nodes) > 0 && !_u.mutation.VerificationRollupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRollupsTable,
+			Columns: []string{project.VerificationRollupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationmetricrollups.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationRollupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRollupsTable,
+			Columns: []string{project.VerificationRollupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationmetricrollups.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.VerificationAlertsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationAlertsTable,
+			Columns: []string{project.VerificationAlertsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationalerts.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationAlertsIDs(); len(nodes) > 0 && !_u.mutation.VerificationAlertsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationAlertsTable,
+			Columns: []string{project.VerificationAlertsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationalerts.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationAlertsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationAlertsTable,
+			Columns: []string{project.VerificationAlertsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationalerts.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -3078,6 +3406,26 @@ type ProjectUpdateOne struct {
 	hooks     []Hook
 	mutation  *ProjectMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_u *ProjectUpdateOne) SetDeletedAt(v time.Time) *ProjectUpdateOne {
+	_u.mutation.SetDeletedAt(v)
+	return _u
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_u *ProjectUpdateOne) SetNillableDeletedAt(v *time.Time) *ProjectUpdateOne {
+	if v != nil {
+		_u.SetDeletedAt(*v)
+	}
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (_u *ProjectUpdateOne) ClearDeletedAt() *ProjectUpdateOne {
+	_u.mutation.ClearDeletedAt()
+	return _u
 }
 
 // SetName sets the "name" field.
@@ -3213,26 +3561,6 @@ func (_u *ProjectUpdateOne) SetNillableUpdatedAt(v *time.Time) *ProjectUpdateOne
 	if v != nil {
 		_u.SetUpdatedAt(*v)
 	}
-	return _u
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (_u *ProjectUpdateOne) SetDeletedAt(v time.Time) *ProjectUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_u *ProjectUpdateOne) SetNillableDeletedAt(v *time.Time) *ProjectUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (_u *ProjectUpdateOne) ClearDeletedAt() *ProjectUpdateOne {
-	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -3790,6 +4118,66 @@ func (_u *ProjectUpdateOne) AddCanonicalBuildJobs(v ...*BundleBuildJobs) *Projec
 		ids[i] = v[i].ID
 	}
 	return _u.AddCanonicalBuildJobIDs(ids...)
+}
+
+// AddVerificationRunIDs adds the "verificationRuns" edge to the VerificationRuns entity by IDs.
+func (_u *ProjectUpdateOne) AddVerificationRunIDs(ids ...uuid.UUID) *ProjectUpdateOne {
+	_u.mutation.AddVerificationRunIDs(ids...)
+	return _u
+}
+
+// AddVerificationRuns adds the "verificationRuns" edges to the VerificationRuns entity.
+func (_u *ProjectUpdateOne) AddVerificationRuns(v ...*VerificationRuns) *ProjectUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationRunIDs(ids...)
+}
+
+// AddVerificationTelemetryIDs adds the "verificationTelemetry" edge to the VerificationTelemetryEvents entity by IDs.
+func (_u *ProjectUpdateOne) AddVerificationTelemetryIDs(ids ...uuid.UUID) *ProjectUpdateOne {
+	_u.mutation.AddVerificationTelemetryIDs(ids...)
+	return _u
+}
+
+// AddVerificationTelemetry adds the "verificationTelemetry" edges to the VerificationTelemetryEvents entity.
+func (_u *ProjectUpdateOne) AddVerificationTelemetry(v ...*VerificationTelemetryEvents) *ProjectUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationTelemetryIDs(ids...)
+}
+
+// AddVerificationRollupIDs adds the "verificationRollups" edge to the VerificationMetricRollups entity by IDs.
+func (_u *ProjectUpdateOne) AddVerificationRollupIDs(ids ...uuid.UUID) *ProjectUpdateOne {
+	_u.mutation.AddVerificationRollupIDs(ids...)
+	return _u
+}
+
+// AddVerificationRollups adds the "verificationRollups" edges to the VerificationMetricRollups entity.
+func (_u *ProjectUpdateOne) AddVerificationRollups(v ...*VerificationMetricRollups) *ProjectUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationRollupIDs(ids...)
+}
+
+// AddVerificationAlertIDs adds the "verificationAlerts" edge to the VerificationAlerts entity by IDs.
+func (_u *ProjectUpdateOne) AddVerificationAlertIDs(ids ...uuid.UUID) *ProjectUpdateOne {
+	_u.mutation.AddVerificationAlertIDs(ids...)
+	return _u
+}
+
+// AddVerificationAlerts adds the "verificationAlerts" edges to the VerificationAlerts entity.
+func (_u *ProjectUpdateOne) AddVerificationAlerts(v ...*VerificationAlerts) *ProjectUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddVerificationAlertIDs(ids...)
 }
 
 // Mutation returns the ProjectMutation object of the builder.
@@ -4463,6 +4851,90 @@ func (_u *ProjectUpdateOne) RemoveCanonicalBuildJobs(v ...*BundleBuildJobs) *Pro
 	return _u.RemoveCanonicalBuildJobIDs(ids...)
 }
 
+// ClearVerificationRuns clears all "verificationRuns" edges to the VerificationRuns entity.
+func (_u *ProjectUpdateOne) ClearVerificationRuns() *ProjectUpdateOne {
+	_u.mutation.ClearVerificationRuns()
+	return _u
+}
+
+// RemoveVerificationRunIDs removes the "verificationRuns" edge to VerificationRuns entities by IDs.
+func (_u *ProjectUpdateOne) RemoveVerificationRunIDs(ids ...uuid.UUID) *ProjectUpdateOne {
+	_u.mutation.RemoveVerificationRunIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationRuns removes "verificationRuns" edges to VerificationRuns entities.
+func (_u *ProjectUpdateOne) RemoveVerificationRuns(v ...*VerificationRuns) *ProjectUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationRunIDs(ids...)
+}
+
+// ClearVerificationTelemetry clears all "verificationTelemetry" edges to the VerificationTelemetryEvents entity.
+func (_u *ProjectUpdateOne) ClearVerificationTelemetry() *ProjectUpdateOne {
+	_u.mutation.ClearVerificationTelemetry()
+	return _u
+}
+
+// RemoveVerificationTelemetryIDs removes the "verificationTelemetry" edge to VerificationTelemetryEvents entities by IDs.
+func (_u *ProjectUpdateOne) RemoveVerificationTelemetryIDs(ids ...uuid.UUID) *ProjectUpdateOne {
+	_u.mutation.RemoveVerificationTelemetryIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationTelemetry removes "verificationTelemetry" edges to VerificationTelemetryEvents entities.
+func (_u *ProjectUpdateOne) RemoveVerificationTelemetry(v ...*VerificationTelemetryEvents) *ProjectUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationTelemetryIDs(ids...)
+}
+
+// ClearVerificationRollups clears all "verificationRollups" edges to the VerificationMetricRollups entity.
+func (_u *ProjectUpdateOne) ClearVerificationRollups() *ProjectUpdateOne {
+	_u.mutation.ClearVerificationRollups()
+	return _u
+}
+
+// RemoveVerificationRollupIDs removes the "verificationRollups" edge to VerificationMetricRollups entities by IDs.
+func (_u *ProjectUpdateOne) RemoveVerificationRollupIDs(ids ...uuid.UUID) *ProjectUpdateOne {
+	_u.mutation.RemoveVerificationRollupIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationRollups removes "verificationRollups" edges to VerificationMetricRollups entities.
+func (_u *ProjectUpdateOne) RemoveVerificationRollups(v ...*VerificationMetricRollups) *ProjectUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationRollupIDs(ids...)
+}
+
+// ClearVerificationAlerts clears all "verificationAlerts" edges to the VerificationAlerts entity.
+func (_u *ProjectUpdateOne) ClearVerificationAlerts() *ProjectUpdateOne {
+	_u.mutation.ClearVerificationAlerts()
+	return _u
+}
+
+// RemoveVerificationAlertIDs removes the "verificationAlerts" edge to VerificationAlerts entities by IDs.
+func (_u *ProjectUpdateOne) RemoveVerificationAlertIDs(ids ...uuid.UUID) *ProjectUpdateOne {
+	_u.mutation.RemoveVerificationAlertIDs(ids...)
+	return _u
+}
+
+// RemoveVerificationAlerts removes "verificationAlerts" edges to VerificationAlerts entities.
+func (_u *ProjectUpdateOne) RemoveVerificationAlerts(v ...*VerificationAlerts) *ProjectUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveVerificationAlertIDs(ids...)
+}
+
 // Where appends a list predicates to the ProjectUpdate builder.
 func (_u *ProjectUpdateOne) Where(ps ...predicate.Project) *ProjectUpdateOne {
 	_u.mutation.Where(ps...)
@@ -4546,6 +5018,12 @@ func (_u *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err er
 			}
 		}
 	}
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(project.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(project.FieldName, field.TypeString, value)
 	}
@@ -4572,12 +5050,6 @@ func (_u *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err er
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(project.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -6096,6 +6568,186 @@ func (_u *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(bundlebuildjobs.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRunsTable,
+			Columns: []string{project.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationRunsIDs(); len(nodes) > 0 && !_u.mutation.VerificationRunsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRunsTable,
+			Columns: []string{project.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationRunsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRunsTable,
+			Columns: []string{project.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.VerificationTelemetryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationTelemetryTable,
+			Columns: []string{project.VerificationTelemetryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationtelemetryevents.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationTelemetryIDs(); len(nodes) > 0 && !_u.mutation.VerificationTelemetryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationTelemetryTable,
+			Columns: []string{project.VerificationTelemetryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationtelemetryevents.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationTelemetryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationTelemetryTable,
+			Columns: []string{project.VerificationTelemetryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationtelemetryevents.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.VerificationRollupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRollupsTable,
+			Columns: []string{project.VerificationRollupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationmetricrollups.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationRollupsIDs(); len(nodes) > 0 && !_u.mutation.VerificationRollupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRollupsTable,
+			Columns: []string{project.VerificationRollupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationmetricrollups.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationRollupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationRollupsTable,
+			Columns: []string{project.VerificationRollupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationmetricrollups.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.VerificationAlertsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationAlertsTable,
+			Columns: []string{project.VerificationAlertsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationalerts.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedVerificationAlertsIDs(); len(nodes) > 0 && !_u.mutation.VerificationAlertsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationAlertsTable,
+			Columns: []string{project.VerificationAlertsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationalerts.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.VerificationAlertsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   project.VerificationAlertsTable,
+			Columns: []string{project.VerificationAlertsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationalerts.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

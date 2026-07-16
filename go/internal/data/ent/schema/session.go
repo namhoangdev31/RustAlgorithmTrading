@@ -29,7 +29,6 @@ func (Session) Fields() []ent.Field {
 		field.String("hash").SchemaType(map[string]string{dialect.Postgres: "varchar(255)"}),
 		field.Time("createdAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}),
 		field.Time("updatedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}),
-		field.Time("deletedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("deletedAt").Optional().Nillable(),
 	}
 }
 

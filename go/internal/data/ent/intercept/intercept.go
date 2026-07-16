@@ -139,6 +139,26 @@ import (
 	"trading/control-gateway/internal/data/ent/project"
 	"trading/control-gateway/internal/data/ent/projectmembership"
 	"trading/control-gateway/internal/data/ent/projectproviderbinding"
+	"trading/control-gateway/internal/data/ent/quantalert"
+	"trading/control-gateway/internal/data/ent/quantauditevent"
+	"trading/control-gateway/internal/data/ent/quantbacktestrun"
+	"trading/control-gateway/internal/data/ent/quantbrokeraccount"
+	"trading/control-gateway/internal/data/ent/quantdeployment"
+	"trading/control-gateway/internal/data/ent/quantdevice"
+	"trading/control-gateway/internal/data/ent/quantfill"
+	"trading/control-gateway/internal/data/ent/quantidempotencykey"
+	"trading/control-gateway/internal/data/ent/quantinstrument"
+	"trading/control-gateway/internal/data/ent/quantlivechallenge"
+	"trading/control-gateway/internal/data/ent/quantlivesession"
+	"trading/control-gateway/internal/data/ent/quantoperatorgrant"
+	"trading/control-gateway/internal/data/ent/quantorder"
+	"trading/control-gateway/internal/data/ent/quantoutboxevent"
+	"trading/control-gateway/internal/data/ent/quantposition"
+	"trading/control-gateway/internal/data/ent/quantriskpolicyversion"
+	"trading/control-gateway/internal/data/ent/quantstrategy"
+	"trading/control-gateway/internal/data/ent/quantstrategyversion"
+	"trading/control-gateway/internal/data/ent/quantwatchlist"
+	"trading/control-gateway/internal/data/ent/quantwatchlistitem"
 	"trading/control-gateway/internal/data/ent/riskevent"
 	"trading/control-gateway/internal/data/ent/risklimits"
 	"trading/control-gateway/internal/data/ent/session"
@@ -146,6 +166,22 @@ import (
 	"trading/control-gateway/internal/data/ent/user"
 	"trading/control-gateway/internal/data/ent/userdevicetoken"
 	"trading/control-gateway/internal/data/ent/usersecrets"
+	"trading/control-gateway/internal/data/ent/verificationalerts"
+	"trading/control-gateway/internal/data/ent/verificationattempts"
+	"trading/control-gateway/internal/data/ent/verificationengineversions"
+	"trading/control-gateway/internal/data/ent/verificationevidence"
+	"trading/control-gateway/internal/data/ent/verificationfindings"
+	"trading/control-gateway/internal/data/ent/verificationinbox"
+	"trading/control-gateway/internal/data/ent/verificationmetricrollups"
+	"trading/control-gateway/internal/data/ent/verificationpipelineversions"
+	"trading/control-gateway/internal/data/ent/verificationpolicyevaluations"
+	"trading/control-gateway/internal/data/ent/verificationpolicyversions"
+	"trading/control-gateway/internal/data/ent/verificationreports"
+	"trading/control-gateway/internal/data/ent/verificationruns"
+	"trading/control-gateway/internal/data/ent/verificationscores"
+	"trading/control-gateway/internal/data/ent/verificationtaskdependencies"
+	"trading/control-gateway/internal/data/ent/verificationtasks"
+	"trading/control-gateway/internal/data/ent/verificationtelemetryevents"
 	"trading/control-gateway/internal/data/ent/workspaceauditevent"
 	"trading/control-gateway/internal/data/ent/workspaceproviderconnection"
 
@@ -3745,6 +3781,546 @@ func (f TraverseProjectProviderBinding) Traverse(ctx context.Context, q ent.Quer
 	return fmt.Errorf("unexpected query type %T. expect *ent.ProjectProviderBindingQuery", q)
 }
 
+// The QuantAlertFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantAlertFunc func(context.Context, *ent.QuantAlertQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantAlertFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantAlertQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantAlertQuery", q)
+}
+
+// The TraverseQuantAlert type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantAlert func(context.Context, *ent.QuantAlertQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantAlert) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantAlert) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantAlertQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantAlertQuery", q)
+}
+
+// The QuantAuditEventFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantAuditEventFunc func(context.Context, *ent.QuantAuditEventQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantAuditEventFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantAuditEventQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantAuditEventQuery", q)
+}
+
+// The TraverseQuantAuditEvent type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantAuditEvent func(context.Context, *ent.QuantAuditEventQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantAuditEvent) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantAuditEvent) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantAuditEventQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantAuditEventQuery", q)
+}
+
+// The QuantBacktestRunFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantBacktestRunFunc func(context.Context, *ent.QuantBacktestRunQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantBacktestRunFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantBacktestRunQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantBacktestRunQuery", q)
+}
+
+// The TraverseQuantBacktestRun type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantBacktestRun func(context.Context, *ent.QuantBacktestRunQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantBacktestRun) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantBacktestRun) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantBacktestRunQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantBacktestRunQuery", q)
+}
+
+// The QuantBrokerAccountFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantBrokerAccountFunc func(context.Context, *ent.QuantBrokerAccountQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantBrokerAccountFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantBrokerAccountQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantBrokerAccountQuery", q)
+}
+
+// The TraverseQuantBrokerAccount type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantBrokerAccount func(context.Context, *ent.QuantBrokerAccountQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantBrokerAccount) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantBrokerAccount) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantBrokerAccountQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantBrokerAccountQuery", q)
+}
+
+// The QuantDeploymentFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantDeploymentFunc func(context.Context, *ent.QuantDeploymentQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantDeploymentFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantDeploymentQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantDeploymentQuery", q)
+}
+
+// The TraverseQuantDeployment type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantDeployment func(context.Context, *ent.QuantDeploymentQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantDeployment) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantDeployment) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantDeploymentQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantDeploymentQuery", q)
+}
+
+// The QuantDeviceFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantDeviceFunc func(context.Context, *ent.QuantDeviceQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantDeviceFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantDeviceQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantDeviceQuery", q)
+}
+
+// The TraverseQuantDevice type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantDevice func(context.Context, *ent.QuantDeviceQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantDevice) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantDevice) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantDeviceQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantDeviceQuery", q)
+}
+
+// The QuantFillFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantFillFunc func(context.Context, *ent.QuantFillQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantFillFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantFillQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantFillQuery", q)
+}
+
+// The TraverseQuantFill type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantFill func(context.Context, *ent.QuantFillQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantFill) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantFill) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantFillQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantFillQuery", q)
+}
+
+// The QuantIdempotencyKeyFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantIdempotencyKeyFunc func(context.Context, *ent.QuantIdempotencyKeyQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantIdempotencyKeyFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantIdempotencyKeyQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantIdempotencyKeyQuery", q)
+}
+
+// The TraverseQuantIdempotencyKey type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantIdempotencyKey func(context.Context, *ent.QuantIdempotencyKeyQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantIdempotencyKey) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantIdempotencyKey) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantIdempotencyKeyQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantIdempotencyKeyQuery", q)
+}
+
+// The QuantInstrumentFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantInstrumentFunc func(context.Context, *ent.QuantInstrumentQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantInstrumentFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantInstrumentQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantInstrumentQuery", q)
+}
+
+// The TraverseQuantInstrument type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantInstrument func(context.Context, *ent.QuantInstrumentQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantInstrument) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantInstrument) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantInstrumentQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantInstrumentQuery", q)
+}
+
+// The QuantLiveChallengeFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantLiveChallengeFunc func(context.Context, *ent.QuantLiveChallengeQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantLiveChallengeFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantLiveChallengeQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantLiveChallengeQuery", q)
+}
+
+// The TraverseQuantLiveChallenge type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantLiveChallenge func(context.Context, *ent.QuantLiveChallengeQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantLiveChallenge) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantLiveChallenge) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantLiveChallengeQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantLiveChallengeQuery", q)
+}
+
+// The QuantLiveSessionFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantLiveSessionFunc func(context.Context, *ent.QuantLiveSessionQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantLiveSessionFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantLiveSessionQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantLiveSessionQuery", q)
+}
+
+// The TraverseQuantLiveSession type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantLiveSession func(context.Context, *ent.QuantLiveSessionQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantLiveSession) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantLiveSession) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantLiveSessionQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantLiveSessionQuery", q)
+}
+
+// The QuantOperatorGrantFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantOperatorGrantFunc func(context.Context, *ent.QuantOperatorGrantQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantOperatorGrantFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantOperatorGrantQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantOperatorGrantQuery", q)
+}
+
+// The TraverseQuantOperatorGrant type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantOperatorGrant func(context.Context, *ent.QuantOperatorGrantQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantOperatorGrant) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantOperatorGrant) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantOperatorGrantQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantOperatorGrantQuery", q)
+}
+
+// The QuantOrderFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantOrderFunc func(context.Context, *ent.QuantOrderQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantOrderFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantOrderQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantOrderQuery", q)
+}
+
+// The TraverseQuantOrder type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantOrder func(context.Context, *ent.QuantOrderQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantOrder) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantOrder) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantOrderQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantOrderQuery", q)
+}
+
+// The QuantOutboxEventFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantOutboxEventFunc func(context.Context, *ent.QuantOutboxEventQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantOutboxEventFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantOutboxEventQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantOutboxEventQuery", q)
+}
+
+// The TraverseQuantOutboxEvent type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantOutboxEvent func(context.Context, *ent.QuantOutboxEventQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantOutboxEvent) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantOutboxEvent) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantOutboxEventQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantOutboxEventQuery", q)
+}
+
+// The QuantPositionFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantPositionFunc func(context.Context, *ent.QuantPositionQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantPositionFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantPositionQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantPositionQuery", q)
+}
+
+// The TraverseQuantPosition type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantPosition func(context.Context, *ent.QuantPositionQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantPosition) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantPosition) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantPositionQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantPositionQuery", q)
+}
+
+// The QuantRiskPolicyVersionFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantRiskPolicyVersionFunc func(context.Context, *ent.QuantRiskPolicyVersionQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantRiskPolicyVersionFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantRiskPolicyVersionQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantRiskPolicyVersionQuery", q)
+}
+
+// The TraverseQuantRiskPolicyVersion type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantRiskPolicyVersion func(context.Context, *ent.QuantRiskPolicyVersionQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantRiskPolicyVersion) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantRiskPolicyVersion) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantRiskPolicyVersionQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantRiskPolicyVersionQuery", q)
+}
+
+// The QuantStrategyFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantStrategyFunc func(context.Context, *ent.QuantStrategyQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantStrategyFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantStrategyQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantStrategyQuery", q)
+}
+
+// The TraverseQuantStrategy type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantStrategy func(context.Context, *ent.QuantStrategyQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantStrategy) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantStrategy) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantStrategyQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantStrategyQuery", q)
+}
+
+// The QuantStrategyVersionFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantStrategyVersionFunc func(context.Context, *ent.QuantStrategyVersionQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantStrategyVersionFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantStrategyVersionQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantStrategyVersionQuery", q)
+}
+
+// The TraverseQuantStrategyVersion type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantStrategyVersion func(context.Context, *ent.QuantStrategyVersionQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantStrategyVersion) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantStrategyVersion) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantStrategyVersionQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantStrategyVersionQuery", q)
+}
+
+// The QuantWatchlistFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantWatchlistFunc func(context.Context, *ent.QuantWatchlistQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantWatchlistFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantWatchlistQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantWatchlistQuery", q)
+}
+
+// The TraverseQuantWatchlist type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantWatchlist func(context.Context, *ent.QuantWatchlistQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantWatchlist) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantWatchlist) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantWatchlistQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantWatchlistQuery", q)
+}
+
+// The QuantWatchlistItemFunc type is an adapter to allow the use of ordinary function as a Querier.
+type QuantWatchlistItemFunc func(context.Context, *ent.QuantWatchlistItemQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f QuantWatchlistItemFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.QuantWatchlistItemQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.QuantWatchlistItemQuery", q)
+}
+
+// The TraverseQuantWatchlistItem type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseQuantWatchlistItem func(context.Context, *ent.QuantWatchlistItemQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseQuantWatchlistItem) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseQuantWatchlistItem) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuantWatchlistItemQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.QuantWatchlistItemQuery", q)
+}
+
 // The RiskEventFunc type is an adapter to allow the use of ordinary function as a Querier.
 type RiskEventFunc func(context.Context, *ent.RiskEventQuery) (ent.Value, error)
 
@@ -3932,6 +4508,438 @@ func (f TraverseUserSecrets) Traverse(ctx context.Context, q ent.Query) error {
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *ent.UserSecretsQuery", q)
+}
+
+// The VerificationAlertsFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationAlertsFunc func(context.Context, *ent.VerificationAlertsQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationAlertsFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationAlertsQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationAlertsQuery", q)
+}
+
+// The TraverseVerificationAlerts type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationAlerts func(context.Context, *ent.VerificationAlertsQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationAlerts) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationAlerts) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationAlertsQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationAlertsQuery", q)
+}
+
+// The VerificationAttemptsFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationAttemptsFunc func(context.Context, *ent.VerificationAttemptsQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationAttemptsFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationAttemptsQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationAttemptsQuery", q)
+}
+
+// The TraverseVerificationAttempts type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationAttempts func(context.Context, *ent.VerificationAttemptsQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationAttempts) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationAttempts) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationAttemptsQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationAttemptsQuery", q)
+}
+
+// The VerificationEngineVersionsFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationEngineVersionsFunc func(context.Context, *ent.VerificationEngineVersionsQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationEngineVersionsFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationEngineVersionsQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationEngineVersionsQuery", q)
+}
+
+// The TraverseVerificationEngineVersions type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationEngineVersions func(context.Context, *ent.VerificationEngineVersionsQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationEngineVersions) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationEngineVersions) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationEngineVersionsQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationEngineVersionsQuery", q)
+}
+
+// The VerificationEvidenceFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationEvidenceFunc func(context.Context, *ent.VerificationEvidenceQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationEvidenceFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationEvidenceQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationEvidenceQuery", q)
+}
+
+// The TraverseVerificationEvidence type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationEvidence func(context.Context, *ent.VerificationEvidenceQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationEvidence) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationEvidence) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationEvidenceQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationEvidenceQuery", q)
+}
+
+// The VerificationFindingsFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationFindingsFunc func(context.Context, *ent.VerificationFindingsQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationFindingsFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationFindingsQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationFindingsQuery", q)
+}
+
+// The TraverseVerificationFindings type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationFindings func(context.Context, *ent.VerificationFindingsQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationFindings) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationFindings) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationFindingsQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationFindingsQuery", q)
+}
+
+// The VerificationInboxFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationInboxFunc func(context.Context, *ent.VerificationInboxQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationInboxFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationInboxQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationInboxQuery", q)
+}
+
+// The TraverseVerificationInbox type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationInbox func(context.Context, *ent.VerificationInboxQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationInbox) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationInbox) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationInboxQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationInboxQuery", q)
+}
+
+// The VerificationMetricRollupsFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationMetricRollupsFunc func(context.Context, *ent.VerificationMetricRollupsQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationMetricRollupsFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationMetricRollupsQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationMetricRollupsQuery", q)
+}
+
+// The TraverseVerificationMetricRollups type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationMetricRollups func(context.Context, *ent.VerificationMetricRollupsQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationMetricRollups) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationMetricRollups) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationMetricRollupsQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationMetricRollupsQuery", q)
+}
+
+// The VerificationPipelineVersionsFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationPipelineVersionsFunc func(context.Context, *ent.VerificationPipelineVersionsQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationPipelineVersionsFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationPipelineVersionsQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationPipelineVersionsQuery", q)
+}
+
+// The TraverseVerificationPipelineVersions type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationPipelineVersions func(context.Context, *ent.VerificationPipelineVersionsQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationPipelineVersions) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationPipelineVersions) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationPipelineVersionsQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationPipelineVersionsQuery", q)
+}
+
+// The VerificationPolicyEvaluationsFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationPolicyEvaluationsFunc func(context.Context, *ent.VerificationPolicyEvaluationsQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationPolicyEvaluationsFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationPolicyEvaluationsQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationPolicyEvaluationsQuery", q)
+}
+
+// The TraverseVerificationPolicyEvaluations type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationPolicyEvaluations func(context.Context, *ent.VerificationPolicyEvaluationsQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationPolicyEvaluations) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationPolicyEvaluations) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationPolicyEvaluationsQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationPolicyEvaluationsQuery", q)
+}
+
+// The VerificationPolicyVersionsFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationPolicyVersionsFunc func(context.Context, *ent.VerificationPolicyVersionsQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationPolicyVersionsFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationPolicyVersionsQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationPolicyVersionsQuery", q)
+}
+
+// The TraverseVerificationPolicyVersions type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationPolicyVersions func(context.Context, *ent.VerificationPolicyVersionsQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationPolicyVersions) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationPolicyVersions) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationPolicyVersionsQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationPolicyVersionsQuery", q)
+}
+
+// The VerificationReportsFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationReportsFunc func(context.Context, *ent.VerificationReportsQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationReportsFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationReportsQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationReportsQuery", q)
+}
+
+// The TraverseVerificationReports type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationReports func(context.Context, *ent.VerificationReportsQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationReports) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationReports) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationReportsQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationReportsQuery", q)
+}
+
+// The VerificationRunsFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationRunsFunc func(context.Context, *ent.VerificationRunsQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationRunsFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationRunsQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationRunsQuery", q)
+}
+
+// The TraverseVerificationRuns type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationRuns func(context.Context, *ent.VerificationRunsQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationRuns) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationRuns) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationRunsQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationRunsQuery", q)
+}
+
+// The VerificationScoresFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationScoresFunc func(context.Context, *ent.VerificationScoresQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationScoresFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationScoresQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationScoresQuery", q)
+}
+
+// The TraverseVerificationScores type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationScores func(context.Context, *ent.VerificationScoresQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationScores) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationScores) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationScoresQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationScoresQuery", q)
+}
+
+// The VerificationTaskDependenciesFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationTaskDependenciesFunc func(context.Context, *ent.VerificationTaskDependenciesQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationTaskDependenciesFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationTaskDependenciesQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationTaskDependenciesQuery", q)
+}
+
+// The TraverseVerificationTaskDependencies type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationTaskDependencies func(context.Context, *ent.VerificationTaskDependenciesQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationTaskDependencies) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationTaskDependencies) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationTaskDependenciesQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationTaskDependenciesQuery", q)
+}
+
+// The VerificationTasksFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationTasksFunc func(context.Context, *ent.VerificationTasksQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationTasksFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationTasksQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationTasksQuery", q)
+}
+
+// The TraverseVerificationTasks type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationTasks func(context.Context, *ent.VerificationTasksQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationTasks) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationTasks) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationTasksQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationTasksQuery", q)
+}
+
+// The VerificationTelemetryEventsFunc type is an adapter to allow the use of ordinary function as a Querier.
+type VerificationTelemetryEventsFunc func(context.Context, *ent.VerificationTelemetryEventsQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f VerificationTelemetryEventsFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.VerificationTelemetryEventsQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.VerificationTelemetryEventsQuery", q)
+}
+
+// The TraverseVerificationTelemetryEvents type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseVerificationTelemetryEvents func(context.Context, *ent.VerificationTelemetryEventsQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseVerificationTelemetryEvents) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseVerificationTelemetryEvents) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.VerificationTelemetryEventsQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.VerificationTelemetryEventsQuery", q)
 }
 
 // The WorkspaceAuditEventFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -4253,6 +5261,46 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.ProjectMembershipQuery, predicate.ProjectMembership, projectmembership.OrderOption]{typ: ent.TypeProjectMembership, tq: q}, nil
 	case *ent.ProjectProviderBindingQuery:
 		return &query[*ent.ProjectProviderBindingQuery, predicate.ProjectProviderBinding, projectproviderbinding.OrderOption]{typ: ent.TypeProjectProviderBinding, tq: q}, nil
+	case *ent.QuantAlertQuery:
+		return &query[*ent.QuantAlertQuery, predicate.QuantAlert, quantalert.OrderOption]{typ: ent.TypeQuantAlert, tq: q}, nil
+	case *ent.QuantAuditEventQuery:
+		return &query[*ent.QuantAuditEventQuery, predicate.QuantAuditEvent, quantauditevent.OrderOption]{typ: ent.TypeQuantAuditEvent, tq: q}, nil
+	case *ent.QuantBacktestRunQuery:
+		return &query[*ent.QuantBacktestRunQuery, predicate.QuantBacktestRun, quantbacktestrun.OrderOption]{typ: ent.TypeQuantBacktestRun, tq: q}, nil
+	case *ent.QuantBrokerAccountQuery:
+		return &query[*ent.QuantBrokerAccountQuery, predicate.QuantBrokerAccount, quantbrokeraccount.OrderOption]{typ: ent.TypeQuantBrokerAccount, tq: q}, nil
+	case *ent.QuantDeploymentQuery:
+		return &query[*ent.QuantDeploymentQuery, predicate.QuantDeployment, quantdeployment.OrderOption]{typ: ent.TypeQuantDeployment, tq: q}, nil
+	case *ent.QuantDeviceQuery:
+		return &query[*ent.QuantDeviceQuery, predicate.QuantDevice, quantdevice.OrderOption]{typ: ent.TypeQuantDevice, tq: q}, nil
+	case *ent.QuantFillQuery:
+		return &query[*ent.QuantFillQuery, predicate.QuantFill, quantfill.OrderOption]{typ: ent.TypeQuantFill, tq: q}, nil
+	case *ent.QuantIdempotencyKeyQuery:
+		return &query[*ent.QuantIdempotencyKeyQuery, predicate.QuantIdempotencyKey, quantidempotencykey.OrderOption]{typ: ent.TypeQuantIdempotencyKey, tq: q}, nil
+	case *ent.QuantInstrumentQuery:
+		return &query[*ent.QuantInstrumentQuery, predicate.QuantInstrument, quantinstrument.OrderOption]{typ: ent.TypeQuantInstrument, tq: q}, nil
+	case *ent.QuantLiveChallengeQuery:
+		return &query[*ent.QuantLiveChallengeQuery, predicate.QuantLiveChallenge, quantlivechallenge.OrderOption]{typ: ent.TypeQuantLiveChallenge, tq: q}, nil
+	case *ent.QuantLiveSessionQuery:
+		return &query[*ent.QuantLiveSessionQuery, predicate.QuantLiveSession, quantlivesession.OrderOption]{typ: ent.TypeQuantLiveSession, tq: q}, nil
+	case *ent.QuantOperatorGrantQuery:
+		return &query[*ent.QuantOperatorGrantQuery, predicate.QuantOperatorGrant, quantoperatorgrant.OrderOption]{typ: ent.TypeQuantOperatorGrant, tq: q}, nil
+	case *ent.QuantOrderQuery:
+		return &query[*ent.QuantOrderQuery, predicate.QuantOrder, quantorder.OrderOption]{typ: ent.TypeQuantOrder, tq: q}, nil
+	case *ent.QuantOutboxEventQuery:
+		return &query[*ent.QuantOutboxEventQuery, predicate.QuantOutboxEvent, quantoutboxevent.OrderOption]{typ: ent.TypeQuantOutboxEvent, tq: q}, nil
+	case *ent.QuantPositionQuery:
+		return &query[*ent.QuantPositionQuery, predicate.QuantPosition, quantposition.OrderOption]{typ: ent.TypeQuantPosition, tq: q}, nil
+	case *ent.QuantRiskPolicyVersionQuery:
+		return &query[*ent.QuantRiskPolicyVersionQuery, predicate.QuantRiskPolicyVersion, quantriskpolicyversion.OrderOption]{typ: ent.TypeQuantRiskPolicyVersion, tq: q}, nil
+	case *ent.QuantStrategyQuery:
+		return &query[*ent.QuantStrategyQuery, predicate.QuantStrategy, quantstrategy.OrderOption]{typ: ent.TypeQuantStrategy, tq: q}, nil
+	case *ent.QuantStrategyVersionQuery:
+		return &query[*ent.QuantStrategyVersionQuery, predicate.QuantStrategyVersion, quantstrategyversion.OrderOption]{typ: ent.TypeQuantStrategyVersion, tq: q}, nil
+	case *ent.QuantWatchlistQuery:
+		return &query[*ent.QuantWatchlistQuery, predicate.QuantWatchlist, quantwatchlist.OrderOption]{typ: ent.TypeQuantWatchlist, tq: q}, nil
+	case *ent.QuantWatchlistItemQuery:
+		return &query[*ent.QuantWatchlistItemQuery, predicate.QuantWatchlistItem, quantwatchlistitem.OrderOption]{typ: ent.TypeQuantWatchlistItem, tq: q}, nil
 	case *ent.RiskEventQuery:
 		return &query[*ent.RiskEventQuery, predicate.RiskEvent, riskevent.OrderOption]{typ: ent.TypeRiskEvent, tq: q}, nil
 	case *ent.RiskLimitsQuery:
@@ -4267,6 +5315,38 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.UserDeviceTokenQuery, predicate.UserDeviceToken, userdevicetoken.OrderOption]{typ: ent.TypeUserDeviceToken, tq: q}, nil
 	case *ent.UserSecretsQuery:
 		return &query[*ent.UserSecretsQuery, predicate.UserSecrets, usersecrets.OrderOption]{typ: ent.TypeUserSecrets, tq: q}, nil
+	case *ent.VerificationAlertsQuery:
+		return &query[*ent.VerificationAlertsQuery, predicate.VerificationAlerts, verificationalerts.OrderOption]{typ: ent.TypeVerificationAlerts, tq: q}, nil
+	case *ent.VerificationAttemptsQuery:
+		return &query[*ent.VerificationAttemptsQuery, predicate.VerificationAttempts, verificationattempts.OrderOption]{typ: ent.TypeVerificationAttempts, tq: q}, nil
+	case *ent.VerificationEngineVersionsQuery:
+		return &query[*ent.VerificationEngineVersionsQuery, predicate.VerificationEngineVersions, verificationengineversions.OrderOption]{typ: ent.TypeVerificationEngineVersions, tq: q}, nil
+	case *ent.VerificationEvidenceQuery:
+		return &query[*ent.VerificationEvidenceQuery, predicate.VerificationEvidence, verificationevidence.OrderOption]{typ: ent.TypeVerificationEvidence, tq: q}, nil
+	case *ent.VerificationFindingsQuery:
+		return &query[*ent.VerificationFindingsQuery, predicate.VerificationFindings, verificationfindings.OrderOption]{typ: ent.TypeVerificationFindings, tq: q}, nil
+	case *ent.VerificationInboxQuery:
+		return &query[*ent.VerificationInboxQuery, predicate.VerificationInbox, verificationinbox.OrderOption]{typ: ent.TypeVerificationInbox, tq: q}, nil
+	case *ent.VerificationMetricRollupsQuery:
+		return &query[*ent.VerificationMetricRollupsQuery, predicate.VerificationMetricRollups, verificationmetricrollups.OrderOption]{typ: ent.TypeVerificationMetricRollups, tq: q}, nil
+	case *ent.VerificationPipelineVersionsQuery:
+		return &query[*ent.VerificationPipelineVersionsQuery, predicate.VerificationPipelineVersions, verificationpipelineversions.OrderOption]{typ: ent.TypeVerificationPipelineVersions, tq: q}, nil
+	case *ent.VerificationPolicyEvaluationsQuery:
+		return &query[*ent.VerificationPolicyEvaluationsQuery, predicate.VerificationPolicyEvaluations, verificationpolicyevaluations.OrderOption]{typ: ent.TypeVerificationPolicyEvaluations, tq: q}, nil
+	case *ent.VerificationPolicyVersionsQuery:
+		return &query[*ent.VerificationPolicyVersionsQuery, predicate.VerificationPolicyVersions, verificationpolicyversions.OrderOption]{typ: ent.TypeVerificationPolicyVersions, tq: q}, nil
+	case *ent.VerificationReportsQuery:
+		return &query[*ent.VerificationReportsQuery, predicate.VerificationReports, verificationreports.OrderOption]{typ: ent.TypeVerificationReports, tq: q}, nil
+	case *ent.VerificationRunsQuery:
+		return &query[*ent.VerificationRunsQuery, predicate.VerificationRuns, verificationruns.OrderOption]{typ: ent.TypeVerificationRuns, tq: q}, nil
+	case *ent.VerificationScoresQuery:
+		return &query[*ent.VerificationScoresQuery, predicate.VerificationScores, verificationscores.OrderOption]{typ: ent.TypeVerificationScores, tq: q}, nil
+	case *ent.VerificationTaskDependenciesQuery:
+		return &query[*ent.VerificationTaskDependenciesQuery, predicate.VerificationTaskDependencies, verificationtaskdependencies.OrderOption]{typ: ent.TypeVerificationTaskDependencies, tq: q}, nil
+	case *ent.VerificationTasksQuery:
+		return &query[*ent.VerificationTasksQuery, predicate.VerificationTasks, verificationtasks.OrderOption]{typ: ent.TypeVerificationTasks, tq: q}, nil
+	case *ent.VerificationTelemetryEventsQuery:
+		return &query[*ent.VerificationTelemetryEventsQuery, predicate.VerificationTelemetryEvents, verificationtelemetryevents.OrderOption]{typ: ent.TypeVerificationTelemetryEvents, tq: q}, nil
 	case *ent.WorkspaceAuditEventQuery:
 		return &query[*ent.WorkspaceAuditEventQuery, predicate.WorkspaceAuditEvent, workspaceauditevent.OrderOption]{typ: ent.TypeWorkspaceAuditEvent, tq: q}, nil
 	case *ent.WorkspaceProviderConnectionQuery:

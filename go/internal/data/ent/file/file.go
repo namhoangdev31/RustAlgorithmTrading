@@ -34,7 +34,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UsersWithPhotoInverseTable = "users"
 	// UsersWithPhotoColumn is the table column denoting the usersWithPhoto relation/edge.
-	UsersWithPhotoColumn = "photoId"
+	UsersWithPhotoColumn = "photo_id"
 )
 
 // Columns holds all SQL columns for file fields.

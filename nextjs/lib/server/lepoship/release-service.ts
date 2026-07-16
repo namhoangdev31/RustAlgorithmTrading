@@ -2,6 +2,7 @@ import { Prisma, type BundleApprovalKind } from "@/prisma/generated/client";
 
 import { enqueueOutboxEvent } from "@/lib/server/lepoship/outbox";
 import { prisma } from "@/lib/server/prisma";
+import { verificationGateBlocker } from "@/lib/server/lepoship/verification-gate";
 
 type Tx = Prisma.TransactionClient;
 
@@ -131,12 +132,13 @@ function securityEvidenceHasCriticalFindings(evidence: Prisma.JsonValue | null):
   return value.malwarePassed !== true || Number(value.criticalFindings ?? 1) > 0 || typeof value.digest !== "string";
 }
 
-async function releaseBlockers(tx: Tx, releaseId: string, allowedDeliveryMode: "experiment" | "rollout" | null = null) {
+export async function releaseBlockers(tx: Tx, releaseId: string, allowedDeliveryMode: "experiment" | "rollout" | null = null) {
   const release = await tx.bundleReleases.findUniqueOrThrow({
     where: { id: releaseId },
     include: {
       artifacts: true,
       approvals: true,
+      eligibleVerificationRun: { include: { evaluation: true, report: true } },
       overrides: { where: { revokedAt: null, expiresAt: { gt: new Date() } }, include: { approvals: true } },
       bundle: { select: { activeDeliveryMode: true } },
     },
@@ -146,15 +148,31 @@ async function releaseBlockers(tx: Tx, releaseId: string, allowedDeliveryMode: "
   if (!full || full.checksumSha256.length !== 64 || full.fileSize <= BigInt(0)) blockers.push("immutable_full_artifact");
 
   const approvals = new Map(release.approvals.map((approval) => [approval.kind, approval]));
-  const security = approvals.get("security");
-  if (!security || security.status !== "approved" || securityEvidenceHasCriticalFindings(security.evidence)) {
-    blockers.push("security_scan");
-  }
-
+  const activePipeline = await tx.verificationPipelineVersions.findFirst({
+    where: { isActive: true },
+    orderBy: { createdAt: "desc" },
+  });
+  const enforcementMode = activePipeline?.enforcementMode ?? "shadow";
   const validOverride = release.overrides.some((override) => {
     const uniqueApprovers = new Set(override.approvals.map((approval) => approval.approverId));
     return uniqueApprovers.size >= 2 && !uniqueApprovers.has(override.createdById);
   });
+  const security = approvals.get("security");
+  const run = release.eligibleVerificationRun;
+  const verificationBlocker = verificationGateBlocker({
+    enforcementMode,
+    releaseId: release.id,
+    fullArtifact: full ? { id: full.id, checksumSha256: full.checksumSha256 } : null,
+    run: run ? {
+      releaseId: run.releaseId, artifactId: run.artifactId, artifactChecksum: run.artifactChecksum,
+      policyVersionId: run.policyVersionId, status: run.status, decision: run.decision,
+      evaluation: run.evaluation ? { policyVersionId: run.evaluation.policyVersionId, decision: run.evaluation.decision } : null,
+      hasReport: Boolean(run.report),
+    } : null,
+    legacySecurityPassed: Boolean(security && security.status === "approved" && !securityEvidenceHasCriticalFindings(security.evidence)),
+    reviewOverridePassed: validOverride,
+  });
+  if (verificationBlocker) blockers.push(verificationBlocker);
   for (const kind of ["privacy", "moderation"] as const) {
     if (approvals.get(kind)?.status !== "approved" && !validOverride) blockers.push(`${kind}_approval`);
   }
@@ -287,6 +305,21 @@ export async function promoteRelease(input: { releaseId: string; actorId?: strin
     });
     return activated;
   }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+}
+
+export async function reconcileReleasePromotion(input: { releaseId: string; actorId?: string; reason: string }) {
+  const current = await prisma.bundleReleases.findUniqueOrThrow({ where: { id: input.releaseId } });
+  if (current.status === "active") return { promoted: true as const, release: current, blockers: [] as string[] };
+  if (current.status === "rejected" || current.status === "failed" || current.status === "rolled_back") {
+    return { promoted: false as const, release: current, blockers: [`release_${current.status}`] };
+  }
+  try {
+    const release = await promoteRelease(input);
+    return { promoted: true as const, release, blockers: [] as string[] };
+  } catch (error) {
+    if (!(error instanceof ReleaseGateError)) throw error;
+    return { promoted: false as const, release: current, blockers: error.blockers };
+  }
 }
 
 export async function rejectRelease(input: { releaseId: string; actorId: string; reason: string }) {

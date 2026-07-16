@@ -44,6 +44,10 @@ import (
 	"trading/control-gateway/internal/data/ent/project"
 	"trading/control-gateway/internal/data/ent/projectmembership"
 	"trading/control-gateway/internal/data/ent/projectproviderbinding"
+	"trading/control-gateway/internal/data/ent/verificationalerts"
+	"trading/control-gateway/internal/data/ent/verificationmetricrollups"
+	"trading/control-gateway/internal/data/ent/verificationruns"
+	"trading/control-gateway/internal/data/ent/verificationtelemetryevents"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -96,6 +100,10 @@ type ProjectQuery struct {
 	withProviderBindings           *ProjectProviderBindingQuery
 	withLeposhipBuilds             *LepoShipBuildQuery
 	withCanonicalBuildJobs         *BundleBuildJobsQuery
+	withVerificationRuns           *VerificationRunsQuery
+	withVerificationTelemetry      *VerificationTelemetryEventsQuery
+	withVerificationRollups        *VerificationMetricRollupsQuery
+	withVerificationAlerts         *VerificationAlertsQuery
 	modifiers                      []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -925,6 +933,94 @@ func (_q *ProjectQuery) QueryCanonicalBuildJobs() *BundleBuildJobsQuery {
 	return query
 }
 
+// QueryVerificationRuns chains the current query on the "verificationRuns" edge.
+func (_q *ProjectQuery) QueryVerificationRuns() *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(project.Table, project.FieldID, selector),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, project.VerificationRunsTable, project.VerificationRunsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryVerificationTelemetry chains the current query on the "verificationTelemetry" edge.
+func (_q *ProjectQuery) QueryVerificationTelemetry() *VerificationTelemetryEventsQuery {
+	query := (&VerificationTelemetryEventsClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(project.Table, project.FieldID, selector),
+			sqlgraph.To(verificationtelemetryevents.Table, verificationtelemetryevents.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, project.VerificationTelemetryTable, project.VerificationTelemetryColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryVerificationRollups chains the current query on the "verificationRollups" edge.
+func (_q *ProjectQuery) QueryVerificationRollups() *VerificationMetricRollupsQuery {
+	query := (&VerificationMetricRollupsClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(project.Table, project.FieldID, selector),
+			sqlgraph.To(verificationmetricrollups.Table, verificationmetricrollups.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, project.VerificationRollupsTable, project.VerificationRollupsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryVerificationAlerts chains the current query on the "verificationAlerts" edge.
+func (_q *ProjectQuery) QueryVerificationAlerts() *VerificationAlertsQuery {
+	query := (&VerificationAlertsClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(project.Table, project.FieldID, selector),
+			sqlgraph.To(verificationalerts.Table, verificationalerts.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, project.VerificationAlertsTable, project.VerificationAlertsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Project entity from the query.
 // Returns a *NotFoundError when no Project was found.
 func (_q *ProjectQuery) First(ctx context.Context) (*Project, error) {
@@ -1153,6 +1249,10 @@ func (_q *ProjectQuery) Clone() *ProjectQuery {
 		withProviderBindings:           _q.withProviderBindings.Clone(),
 		withLeposhipBuilds:             _q.withLeposhipBuilds.Clone(),
 		withCanonicalBuildJobs:         _q.withCanonicalBuildJobs.Clone(),
+		withVerificationRuns:           _q.withVerificationRuns.Clone(),
+		withVerificationTelemetry:      _q.withVerificationTelemetry.Clone(),
+		withVerificationRollups:        _q.withVerificationRollups.Clone(),
+		withVerificationAlerts:         _q.withVerificationAlerts.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
@@ -1556,18 +1656,62 @@ func (_q *ProjectQuery) WithCanonicalBuildJobs(opts ...func(*BundleBuildJobsQuer
 	return _q
 }
 
+// WithVerificationRuns tells the query-builder to eager-load the nodes that are connected to
+// the "verificationRuns" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProjectQuery) WithVerificationRuns(opts ...func(*VerificationRunsQuery)) *ProjectQuery {
+	query := (&VerificationRunsClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withVerificationRuns = query
+	return _q
+}
+
+// WithVerificationTelemetry tells the query-builder to eager-load the nodes that are connected to
+// the "verificationTelemetry" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProjectQuery) WithVerificationTelemetry(opts ...func(*VerificationTelemetryEventsQuery)) *ProjectQuery {
+	query := (&VerificationTelemetryEventsClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withVerificationTelemetry = query
+	return _q
+}
+
+// WithVerificationRollups tells the query-builder to eager-load the nodes that are connected to
+// the "verificationRollups" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProjectQuery) WithVerificationRollups(opts ...func(*VerificationMetricRollupsQuery)) *ProjectQuery {
+	query := (&VerificationMetricRollupsClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withVerificationRollups = query
+	return _q
+}
+
+// WithVerificationAlerts tells the query-builder to eager-load the nodes that are connected to
+// the "verificationAlerts" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProjectQuery) WithVerificationAlerts(opts ...func(*VerificationAlertsQuery)) *ProjectQuery {
+	query := (&VerificationAlertsClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withVerificationAlerts = query
+	return _q
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		DeletedAt time.Time `json:"deletedAt,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Project.Query().
-//		GroupBy(project.FieldName).
+//		GroupBy(project.FieldDeletedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *ProjectQuery) GroupBy(field string, fields ...string) *ProjectGroupBy {
@@ -1585,11 +1729,11 @@ func (_q *ProjectQuery) GroupBy(field string, fields ...string) *ProjectGroupBy 
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		DeletedAt time.Time `json:"deletedAt,omitempty"`
 //	}
 //
 //	client.Project.Query().
-//		Select(project.FieldName).
+//		Select(project.FieldDeletedAt).
 //		Scan(ctx, &v)
 func (_q *ProjectQuery) Select(fields ...string) *ProjectSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
@@ -1634,7 +1778,7 @@ func (_q *ProjectQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Proj
 	var (
 		nodes       = []*Project{}
 		_spec       = _q.querySpec()
-		loadedTypes = [36]bool{
+		loadedTypes = [40]bool{
 			_q.withOrganization != nil,
 			_q.withActiveNativeDeployment != nil,
 			_q.withBundle != nil,
@@ -1671,6 +1815,10 @@ func (_q *ProjectQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Proj
 			_q.withProviderBindings != nil,
 			_q.withLeposhipBuilds != nil,
 			_q.withCanonicalBuildJobs != nil,
+			_q.withVerificationRuns != nil,
+			_q.withVerificationTelemetry != nil,
+			_q.withVerificationRollups != nil,
+			_q.withVerificationAlerts != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -1976,6 +2124,40 @@ func (_q *ProjectQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Proj
 			func(n *Project) { n.Edges.CanonicalBuildJobs = []*BundleBuildJobs{} },
 			func(n *Project, e *BundleBuildJobs) {
 				n.Edges.CanonicalBuildJobs = append(n.Edges.CanonicalBuildJobs, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withVerificationRuns; query != nil {
+		if err := _q.loadVerificationRuns(ctx, query, nodes,
+			func(n *Project) { n.Edges.VerificationRuns = []*VerificationRuns{} },
+			func(n *Project, e *VerificationRuns) { n.Edges.VerificationRuns = append(n.Edges.VerificationRuns, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withVerificationTelemetry; query != nil {
+		if err := _q.loadVerificationTelemetry(ctx, query, nodes,
+			func(n *Project) { n.Edges.VerificationTelemetry = []*VerificationTelemetryEvents{} },
+			func(n *Project, e *VerificationTelemetryEvents) {
+				n.Edges.VerificationTelemetry = append(n.Edges.VerificationTelemetry, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withVerificationRollups; query != nil {
+		if err := _q.loadVerificationRollups(ctx, query, nodes,
+			func(n *Project) { n.Edges.VerificationRollups = []*VerificationMetricRollups{} },
+			func(n *Project, e *VerificationMetricRollups) {
+				n.Edges.VerificationRollups = append(n.Edges.VerificationRollups, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withVerificationAlerts; query != nil {
+		if err := _q.loadVerificationAlerts(ctx, query, nodes,
+			func(n *Project) { n.Edges.VerificationAlerts = []*VerificationAlerts{} },
+			func(n *Project, e *VerificationAlerts) {
+				n.Edges.VerificationAlerts = append(n.Edges.VerificationAlerts, e)
 			}); err != nil {
 			return nil, err
 		}
@@ -3040,6 +3222,126 @@ func (_q *ProjectQuery) loadCanonicalBuildJobs(ctx context.Context, query *Bundl
 	}
 	query.Where(predicate.BundleBuildJobs(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(project.CanonicalBuildJobsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ProjectId
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "projectId" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *ProjectQuery) loadVerificationRuns(ctx context.Context, query *VerificationRunsQuery, nodes []*Project, init func(*Project), assign func(*Project, *VerificationRuns)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Project)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(verificationruns.FieldProjectId)
+	}
+	query.Where(predicate.VerificationRuns(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(project.VerificationRunsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ProjectId
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "projectId" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *ProjectQuery) loadVerificationTelemetry(ctx context.Context, query *VerificationTelemetryEventsQuery, nodes []*Project, init func(*Project), assign func(*Project, *VerificationTelemetryEvents)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Project)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(verificationtelemetryevents.FieldProjectId)
+	}
+	query.Where(predicate.VerificationTelemetryEvents(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(project.VerificationTelemetryColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ProjectId
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "projectId" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *ProjectQuery) loadVerificationRollups(ctx context.Context, query *VerificationMetricRollupsQuery, nodes []*Project, init func(*Project), assign func(*Project, *VerificationMetricRollups)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Project)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(verificationmetricrollups.FieldProjectId)
+	}
+	query.Where(predicate.VerificationMetricRollups(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(project.VerificationRollupsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ProjectId
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "projectId" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *ProjectQuery) loadVerificationAlerts(ctx context.Context, query *VerificationAlertsQuery, nodes []*Project, init func(*Project), assign func(*Project, *VerificationAlerts)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Project)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(verificationalerts.FieldProjectId)
+	}
+	query.Where(predicate.VerificationAlerts(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(project.VerificationAlertsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

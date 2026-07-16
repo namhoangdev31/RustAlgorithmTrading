@@ -55,9 +55,11 @@ type BundleArtifacts struct {
 type BundleArtifactsEdges struct {
 	// Release holds the value of the release edge.
 	Release *BundleReleases `json:"release,omitempty"`
+	// VerificationRuns holds the value of the verificationRuns edge.
+	VerificationRuns []*VerificationRuns `json:"verificationRuns,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // ReleaseOrErr returns the Release value or an error if the edge
@@ -69,6 +71,15 @@ func (e BundleArtifactsEdges) ReleaseOrErr() (*BundleReleases, error) {
 		return nil, &NotFoundError{label: bundlereleases.Label}
 	}
 	return nil, &NotLoadedError{edge: "release"}
+}
+
+// VerificationRunsOrErr returns the VerificationRuns value or an error if the edge
+// was not loaded in eager-loading.
+func (e BundleArtifactsEdges) VerificationRunsOrErr() ([]*VerificationRuns, error) {
+	if e.loadedTypes[1] {
+		return e.VerificationRuns, nil
+	}
+	return nil, &NotLoadedError{edge: "verificationRuns"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -199,6 +210,11 @@ func (_m *BundleArtifacts) Value(name string) (ent.Value, error) {
 // QueryRelease queries the "release" edge of the BundleArtifacts entity.
 func (_m *BundleArtifacts) QueryRelease() *BundleReleasesQuery {
 	return NewBundleArtifactsClient(_m.config).QueryRelease(_m)
+}
+
+// QueryVerificationRuns queries the "verificationRuns" edge of the BundleArtifacts entity.
+func (_m *BundleArtifacts) QueryVerificationRuns() *VerificationRunsQuery {
+	return NewBundleArtifactsClient(_m.config).QueryVerificationRuns(_m)
 }
 
 // Update returns a builder for updating this BundleArtifacts.

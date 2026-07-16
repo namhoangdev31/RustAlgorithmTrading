@@ -285,6 +285,7 @@ export type BundleArtifactsWhereInput = {
   metadata?: Prisma.JsonNullableFilter<"BundleArtifacts">
   createdAt?: Prisma.DateTimeFilter<"BundleArtifacts"> | Date | string
   release?: Prisma.XOR<Prisma.BundleReleasesScalarRelationFilter, Prisma.BundleReleasesWhereInput>
+  verificationRuns?: Prisma.VerificationRunsListRelationFilter
 }
 
 export type BundleArtifactsOrderByWithRelationInput = {
@@ -302,6 +303,7 @@ export type BundleArtifactsOrderByWithRelationInput = {
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   release?: Prisma.BundleReleasesOrderByWithRelationInput
+  verificationRuns?: Prisma.VerificationRunsOrderByRelationAggregateInput
 }
 
 export type BundleArtifactsWhereUniqueInput = Prisma.AtLeast<{
@@ -324,6 +326,7 @@ export type BundleArtifactsWhereUniqueInput = Prisma.AtLeast<{
   metadata?: Prisma.JsonNullableFilter<"BundleArtifacts">
   createdAt?: Prisma.DateTimeFilter<"BundleArtifacts"> | Date | string
   release?: Prisma.XOR<Prisma.BundleReleasesScalarRelationFilter, Prisma.BundleReleasesWhereInput>
+  verificationRuns?: Prisma.VerificationRunsListRelationFilter
 }, "id" | "storageProvider_storageBucket_storageKey" | "releaseId_kind_baseBuildNumber_targetBuildNumber">
 
 export type BundleArtifactsOrderByWithAggregationInput = {
@@ -380,6 +383,7 @@ export type BundleArtifactsCreateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt: Date | string
   release: Prisma.BundleReleasesCreateNestedOneWithoutArtifactsInput
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutArtifactInput
 }
 
 export type BundleArtifactsUncheckedCreateInput = {
@@ -396,6 +400,7 @@ export type BundleArtifactsUncheckedCreateInput = {
   targetBuildNumber?: number | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt: Date | string
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutArtifactInput
 }
 
 export type BundleArtifactsUpdateInput = {
@@ -412,6 +417,7 @@ export type BundleArtifactsUpdateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   release?: Prisma.BundleReleasesUpdateOneRequiredWithoutArtifactsNestedInput
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutArtifactNestedInput
 }
 
 export type BundleArtifactsUncheckedUpdateInput = {
@@ -428,6 +434,7 @@ export type BundleArtifactsUncheckedUpdateInput = {
   targetBuildNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutArtifactNestedInput
 }
 
 export type BundleArtifactsCreateManyInput = {
@@ -558,6 +565,11 @@ export type BundleArtifactsSumOrderByAggregateInput = {
   targetBuildNumber?: Prisma.SortOrder
 }
 
+export type BundleArtifactsScalarRelationFilter = {
+  is?: Prisma.BundleArtifactsWhereInput
+  isNot?: Prisma.BundleArtifactsWhereInput
+}
+
 export type BundleArtifactsCreateNestedManyWithoutReleaseInput = {
   create?: Prisma.XOR<Prisma.BundleArtifactsCreateWithoutReleaseInput, Prisma.BundleArtifactsUncheckedCreateWithoutReleaseInput> | Prisma.BundleArtifactsCreateWithoutReleaseInput[] | Prisma.BundleArtifactsUncheckedCreateWithoutReleaseInput[]
   connectOrCreate?: Prisma.BundleArtifactsCreateOrConnectWithoutReleaseInput | Prisma.BundleArtifactsCreateOrConnectWithoutReleaseInput[]
@@ -612,6 +624,20 @@ export type NullableIntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type BundleArtifactsCreateNestedOneWithoutVerificationRunsInput = {
+  create?: Prisma.XOR<Prisma.BundleArtifactsCreateWithoutVerificationRunsInput, Prisma.BundleArtifactsUncheckedCreateWithoutVerificationRunsInput>
+  connectOrCreate?: Prisma.BundleArtifactsCreateOrConnectWithoutVerificationRunsInput
+  connect?: Prisma.BundleArtifactsWhereUniqueInput
+}
+
+export type BundleArtifactsUpdateOneRequiredWithoutVerificationRunsNestedInput = {
+  create?: Prisma.XOR<Prisma.BundleArtifactsCreateWithoutVerificationRunsInput, Prisma.BundleArtifactsUncheckedCreateWithoutVerificationRunsInput>
+  connectOrCreate?: Prisma.BundleArtifactsCreateOrConnectWithoutVerificationRunsInput
+  upsert?: Prisma.BundleArtifactsUpsertWithoutVerificationRunsInput
+  connect?: Prisma.BundleArtifactsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BundleArtifactsUpdateToOneWithWhereWithoutVerificationRunsInput, Prisma.BundleArtifactsUpdateWithoutVerificationRunsInput>, Prisma.BundleArtifactsUncheckedUpdateWithoutVerificationRunsInput>
+}
+
 export type BundleArtifactsCreateWithoutReleaseInput = {
   id: string
   kind: $Enums.BundleArtifactKind
@@ -625,6 +651,7 @@ export type BundleArtifactsCreateWithoutReleaseInput = {
   targetBuildNumber?: number | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt: Date | string
+  verificationRuns?: Prisma.VerificationRunsCreateNestedManyWithoutArtifactInput
 }
 
 export type BundleArtifactsUncheckedCreateWithoutReleaseInput = {
@@ -640,6 +667,7 @@ export type BundleArtifactsUncheckedCreateWithoutReleaseInput = {
   targetBuildNumber?: number | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt: Date | string
+  verificationRuns?: Prisma.VerificationRunsUncheckedCreateNestedManyWithoutArtifactInput
 }
 
 export type BundleArtifactsCreateOrConnectWithoutReleaseInput = {
@@ -687,6 +715,86 @@ export type BundleArtifactsScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"BundleArtifacts"> | Date | string
 }
 
+export type BundleArtifactsCreateWithoutVerificationRunsInput = {
+  id: string
+  kind: $Enums.BundleArtifactKind
+  storageProvider: string
+  storageBucket: string
+  storageKey: string
+  checksumSha256: string
+  fileSize: bigint | number
+  contentType: string
+  baseBuildNumber?: number | null
+  targetBuildNumber?: number | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt: Date | string
+  release: Prisma.BundleReleasesCreateNestedOneWithoutArtifactsInput
+}
+
+export type BundleArtifactsUncheckedCreateWithoutVerificationRunsInput = {
+  id: string
+  releaseId: string
+  kind: $Enums.BundleArtifactKind
+  storageProvider: string
+  storageBucket: string
+  storageKey: string
+  checksumSha256: string
+  fileSize: bigint | number
+  contentType: string
+  baseBuildNumber?: number | null
+  targetBuildNumber?: number | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt: Date | string
+}
+
+export type BundleArtifactsCreateOrConnectWithoutVerificationRunsInput = {
+  where: Prisma.BundleArtifactsWhereUniqueInput
+  create: Prisma.XOR<Prisma.BundleArtifactsCreateWithoutVerificationRunsInput, Prisma.BundleArtifactsUncheckedCreateWithoutVerificationRunsInput>
+}
+
+export type BundleArtifactsUpsertWithoutVerificationRunsInput = {
+  update: Prisma.XOR<Prisma.BundleArtifactsUpdateWithoutVerificationRunsInput, Prisma.BundleArtifactsUncheckedUpdateWithoutVerificationRunsInput>
+  create: Prisma.XOR<Prisma.BundleArtifactsCreateWithoutVerificationRunsInput, Prisma.BundleArtifactsUncheckedCreateWithoutVerificationRunsInput>
+  where?: Prisma.BundleArtifactsWhereInput
+}
+
+export type BundleArtifactsUpdateToOneWithWhereWithoutVerificationRunsInput = {
+  where?: Prisma.BundleArtifactsWhereInput
+  data: Prisma.XOR<Prisma.BundleArtifactsUpdateWithoutVerificationRunsInput, Prisma.BundleArtifactsUncheckedUpdateWithoutVerificationRunsInput>
+}
+
+export type BundleArtifactsUpdateWithoutVerificationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  kind?: Prisma.EnumBundleArtifactKindFieldUpdateOperationsInput | $Enums.BundleArtifactKind
+  storageProvider?: Prisma.StringFieldUpdateOperationsInput | string
+  storageBucket?: Prisma.StringFieldUpdateOperationsInput | string
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  checksumSha256?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  baseBuildNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  targetBuildNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  release?: Prisma.BundleReleasesUpdateOneRequiredWithoutArtifactsNestedInput
+}
+
+export type BundleArtifactsUncheckedUpdateWithoutVerificationRunsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  releaseId?: Prisma.StringFieldUpdateOperationsInput | string
+  kind?: Prisma.EnumBundleArtifactKindFieldUpdateOperationsInput | $Enums.BundleArtifactKind
+  storageProvider?: Prisma.StringFieldUpdateOperationsInput | string
+  storageBucket?: Prisma.StringFieldUpdateOperationsInput | string
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  checksumSha256?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  baseBuildNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  targetBuildNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type BundleArtifactsCreateManyReleaseInput = {
   id: string
   kind: $Enums.BundleArtifactKind
@@ -715,6 +823,7 @@ export type BundleArtifactsUpdateWithoutReleaseInput = {
   targetBuildNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  verificationRuns?: Prisma.VerificationRunsUpdateManyWithoutArtifactNestedInput
 }
 
 export type BundleArtifactsUncheckedUpdateWithoutReleaseInput = {
@@ -730,6 +839,7 @@ export type BundleArtifactsUncheckedUpdateWithoutReleaseInput = {
   targetBuildNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  verificationRuns?: Prisma.VerificationRunsUncheckedUpdateManyWithoutArtifactNestedInput
 }
 
 export type BundleArtifactsUncheckedUpdateManyWithoutReleaseInput = {
@@ -748,6 +858,35 @@ export type BundleArtifactsUncheckedUpdateManyWithoutReleaseInput = {
 }
 
 
+/**
+ * Count Type BundleArtifactsCountOutputType
+ */
+
+export type BundleArtifactsCountOutputType = {
+  verificationRuns: number
+}
+
+export type BundleArtifactsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  verificationRuns?: boolean | BundleArtifactsCountOutputTypeCountVerificationRunsArgs
+}
+
+/**
+ * BundleArtifactsCountOutputType without action
+ */
+export type BundleArtifactsCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BundleArtifactsCountOutputType
+   */
+  select?: Prisma.BundleArtifactsCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * BundleArtifactsCountOutputType without action
+ */
+export type BundleArtifactsCountOutputTypeCountVerificationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VerificationRunsWhereInput
+}
+
 
 export type BundleArtifactsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -764,6 +903,8 @@ export type BundleArtifactsSelect<ExtArgs extends runtime.Types.Extensions.Inter
   metadata?: boolean
   createdAt?: boolean
   release?: boolean | Prisma.BundleReleasesDefaultArgs<ExtArgs>
+  verificationRuns?: boolean | Prisma.BundleArtifacts$verificationRunsArgs<ExtArgs>
+  _count?: boolean | Prisma.BundleArtifactsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bundleArtifacts"]>
 
 export type BundleArtifactsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -819,6 +960,8 @@ export type BundleArtifactsSelectScalar = {
 export type BundleArtifactsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "releaseId" | "kind" | "storageProvider" | "storageBucket" | "storageKey" | "checksumSha256" | "fileSize" | "contentType" | "baseBuildNumber" | "targetBuildNumber" | "metadata" | "createdAt", ExtArgs["result"]["bundleArtifacts"]>
 export type BundleArtifactsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   release?: boolean | Prisma.BundleReleasesDefaultArgs<ExtArgs>
+  verificationRuns?: boolean | Prisma.BundleArtifacts$verificationRunsArgs<ExtArgs>
+  _count?: boolean | Prisma.BundleArtifactsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BundleArtifactsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   release?: boolean | Prisma.BundleReleasesDefaultArgs<ExtArgs>
@@ -831,6 +974,7 @@ export type $BundleArtifactsPayload<ExtArgs extends runtime.Types.Extensions.Int
   name: "BundleArtifacts"
   objects: {
     release: Prisma.$BundleReleasesPayload<ExtArgs>
+    verificationRuns: Prisma.$VerificationRunsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1241,6 +1385,7 @@ readonly fields: BundleArtifactsFieldRefs;
 export interface Prisma__BundleArtifactsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   release<T extends Prisma.BundleReleasesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleReleasesDefaultArgs<ExtArgs>>): Prisma.Prisma__BundleReleasesClient<runtime.Types.Result.GetResult<Prisma.$BundleReleasesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  verificationRuns<T extends Prisma.BundleArtifacts$verificationRunsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BundleArtifacts$verificationRunsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationRunsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1681,6 +1826,30 @@ export type BundleArtifactsDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many BundleArtifacts to delete.
    */
   limit?: number
+}
+
+/**
+ * BundleArtifacts.verificationRuns
+ */
+export type BundleArtifacts$verificationRunsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the VerificationRuns
+   */
+  select?: Prisma.VerificationRunsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the VerificationRuns
+   */
+  omit?: Prisma.VerificationRunsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VerificationRunsInclude<ExtArgs> | null
+  where?: Prisma.VerificationRunsWhereInput
+  orderBy?: Prisma.VerificationRunsOrderByWithRelationInput | Prisma.VerificationRunsOrderByWithRelationInput[]
+  cursor?: Prisma.VerificationRunsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VerificationRunsScalarFieldEnum | Prisma.VerificationRunsScalarFieldEnum[]
 }
 
 /**

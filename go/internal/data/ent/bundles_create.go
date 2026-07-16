@@ -74,6 +74,7 @@ import (
 	"trading/control-gateway/internal/data/ent/bundlewebhooks"
 	"trading/control-gateway/internal/data/ent/project"
 	"trading/control-gateway/internal/data/ent/schema"
+	"trading/control-gateway/internal/data/ent/verificationruns"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -88,6 +89,20 @@ type BundlesCreate struct {
 	mutation *BundlesMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_c *BundlesCreate) SetDeletedAt(v time.Time) *BundlesCreate {
+	_c.mutation.SetDeletedAt(v)
+	return _c
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_c *BundlesCreate) SetNillableDeletedAt(v *time.Time) *BundlesCreate {
+	if v != nil {
+		_c.SetDeletedAt(*v)
+	}
+	return _c
 }
 
 // SetBundleKey sets the "bundleKey" field.
@@ -662,20 +677,6 @@ func (_c *BundlesCreate) SetActiveDeliveryMode(v schema.BundleDeliveryMode) *Bun
 func (_c *BundlesCreate) SetNillableActiveDeliveryMode(v *schema.BundleDeliveryMode) *BundlesCreate {
 	if v != nil {
 		_c.SetActiveDeliveryMode(*v)
-	}
-	return _c
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (_c *BundlesCreate) SetDeletedAt(v time.Time) *BundlesCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_c *BundlesCreate) SetNillableDeletedAt(v *time.Time) *BundlesCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
 	}
 	return _c
 }
@@ -1769,6 +1770,21 @@ func (_c *BundlesCreate) AddSdkTokens(v ...*BundleSDKTokens) *BundlesCreate {
 	return _c.AddSdkTokenIDs(ids...)
 }
 
+// AddVerificationRunIDs adds the "verificationRuns" edge to the VerificationRuns entity by IDs.
+func (_c *BundlesCreate) AddVerificationRunIDs(ids ...uuid.UUID) *BundlesCreate {
+	_c.mutation.AddVerificationRunIDs(ids...)
+	return _c
+}
+
+// AddVerificationRuns adds the "verificationRuns" edges to the VerificationRuns entity.
+func (_c *BundlesCreate) AddVerificationRuns(v ...*VerificationRuns) *BundlesCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddVerificationRunIDs(ids...)
+}
+
 // Mutation returns the BundlesMutation object of the builder.
 func (_c *BundlesCreate) Mutation() *BundlesMutation {
 	return _c.mutation
@@ -1924,6 +1940,10 @@ func (_c *BundlesCreate) createSpec() (*Bundles, *sqlgraph.CreateSpec) {
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
+	}
+	if value, ok := _c.mutation.DeletedAt(); ok {
+		_spec.SetField(bundles.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.BundleKey(); ok {
 		_spec.SetField(bundles.FieldBundleKey, field.TypeString, value)
@@ -2084,10 +2104,6 @@ func (_c *BundlesCreate) createSpec() (*Bundles, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.ActiveDeliveryMode(); ok {
 		_spec.SetField(bundles.FieldActiveDeliveryMode, field.TypeEnum, value)
 		_node.ActiveDeliveryMode = value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(bundles.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
 	}
 	if nodes := _c.mutation.ProjectIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -3197,6 +3213,22 @@ func (_c *BundlesCreate) createSpec() (*Bundles, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := _c.mutation.VerificationRunsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundles.VerificationRunsTable,
+			Columns: []string{bundles.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -3204,7 +3236,7 @@ func (_c *BundlesCreate) createSpec() (*Bundles, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Bundles.Create().
-//		SetBundleKey(v).
+//		SetDeletedAt(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -3213,7 +3245,7 @@ func (_c *BundlesCreate) createSpec() (*Bundles, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.BundlesUpsert) {
-//			SetBundleKey(v+v).
+//			SetDeletedAt(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *BundlesCreate) OnConflict(opts ...sql.ConflictOption) *BundlesUpsertOne {
@@ -3248,6 +3280,24 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *BundlesUpsert) SetDeletedAt(v time.Time) *BundlesUpsert {
+	u.Set(bundles.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *BundlesUpsert) UpdateDeletedAt() *BundlesUpsert {
+	u.SetExcluded(bundles.FieldDeletedAt)
+	return u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *BundlesUpsert) ClearDeletedAt() *BundlesUpsert {
+	u.SetNull(bundles.FieldDeletedAt)
+	return u
+}
 
 // SetBundleKey sets the "bundleKey" field.
 func (u *BundlesUpsert) SetBundleKey(v string) *BundlesUpsert {
@@ -3981,24 +4031,6 @@ func (u *BundlesUpsert) UpdateActiveDeliveryMode() *BundlesUpsert {
 	return u
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (u *BundlesUpsert) SetDeletedAt(v time.Time) *BundlesUpsert {
-	u.Set(bundles.FieldDeletedAt, v)
-	return u
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *BundlesUpsert) UpdateDeletedAt() *BundlesUpsert {
-	u.SetExcluded(bundles.FieldDeletedAt)
-	return u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *BundlesUpsert) ClearDeletedAt() *BundlesUpsert {
-	u.SetNull(bundles.FieldDeletedAt)
-	return u
-}
-
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -4045,6 +4077,27 @@ func (u *BundlesUpsertOne) Update(set func(*BundlesUpsert)) *BundlesUpsertOne {
 		set(&BundlesUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *BundlesUpsertOne) SetDeletedAt(v time.Time) *BundlesUpsertOne {
+	return u.Update(func(s *BundlesUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *BundlesUpsertOne) UpdateDeletedAt() *BundlesUpsertOne {
+	return u.Update(func(s *BundlesUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *BundlesUpsertOne) ClearDeletedAt() *BundlesUpsertOne {
+	return u.Update(func(s *BundlesUpsert) {
+		s.ClearDeletedAt()
+	})
 }
 
 // SetBundleKey sets the "bundleKey" field.
@@ -4901,27 +4954,6 @@ func (u *BundlesUpsertOne) UpdateActiveDeliveryMode() *BundlesUpsertOne {
 	})
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (u *BundlesUpsertOne) SetDeletedAt(v time.Time) *BundlesUpsertOne {
-	return u.Update(func(s *BundlesUpsert) {
-		s.SetDeletedAt(v)
-	})
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *BundlesUpsertOne) UpdateDeletedAt() *BundlesUpsertOne {
-	return u.Update(func(s *BundlesUpsert) {
-		s.UpdateDeletedAt()
-	})
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *BundlesUpsertOne) ClearDeletedAt() *BundlesUpsertOne {
-	return u.Update(func(s *BundlesUpsert) {
-		s.ClearDeletedAt()
-	})
-}
-
 // Exec executes the query.
 func (u *BundlesUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -5058,7 +5090,7 @@ func (_c *BundlesCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.BundlesUpsert) {
-//			SetBundleKey(v+v).
+//			SetDeletedAt(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *BundlesCreateBulk) OnConflict(opts ...sql.ConflictOption) *BundlesUpsertBulk {
@@ -5135,6 +5167,27 @@ func (u *BundlesUpsertBulk) Update(set func(*BundlesUpsert)) *BundlesUpsertBulk 
 		set(&BundlesUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *BundlesUpsertBulk) SetDeletedAt(v time.Time) *BundlesUpsertBulk {
+	return u.Update(func(s *BundlesUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *BundlesUpsertBulk) UpdateDeletedAt() *BundlesUpsertBulk {
+	return u.Update(func(s *BundlesUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *BundlesUpsertBulk) ClearDeletedAt() *BundlesUpsertBulk {
+	return u.Update(func(s *BundlesUpsert) {
+		s.ClearDeletedAt()
+	})
 }
 
 // SetBundleKey sets the "bundleKey" field.
@@ -5988,27 +6041,6 @@ func (u *BundlesUpsertBulk) SetActiveDeliveryMode(v schema.BundleDeliveryMode) *
 func (u *BundlesUpsertBulk) UpdateActiveDeliveryMode() *BundlesUpsertBulk {
 	return u.Update(func(s *BundlesUpsert) {
 		s.UpdateActiveDeliveryMode()
-	})
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (u *BundlesUpsertBulk) SetDeletedAt(v time.Time) *BundlesUpsertBulk {
-	return u.Update(func(s *BundlesUpsert) {
-		s.SetDeletedAt(v)
-	})
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *BundlesUpsertBulk) UpdateDeletedAt() *BundlesUpsertBulk {
-	return u.Update(func(s *BundlesUpsert) {
-		s.UpdateDeletedAt()
-	})
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *BundlesUpsertBulk) ClearDeletedAt() *BundlesUpsertBulk {
-	return u.Update(func(s *BundlesUpsert) {
-		s.ClearDeletedAt()
 	})
 }
 

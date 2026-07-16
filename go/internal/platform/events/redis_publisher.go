@@ -16,12 +16,14 @@ type RedisPublisher struct {
 	stream string
 }
 
+const LepoShipStreamName = "LEPOSHIP_EVENTS_V1"
+
 func NewRedisPublisher(client *redisclient.Client, stream string) (*RedisPublisher, error) {
 	if client == nil {
 		return nil, nil
 	}
 	if strings.TrimSpace(stream) == "" {
-		stream = "CONTROL_GATEWAY_EVENTS"
+		stream = LepoShipStreamName
 	}
 	return &RedisPublisher{client: client, stream: stream}, nil
 }

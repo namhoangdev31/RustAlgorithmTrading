@@ -34,6 +34,7 @@ func (BundleReleases) Fields() []ent.Field {
 		field.Time("submittedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("submitted_at").Optional().Nillable(),
 		field.Time("approvedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("approved_at").Optional().Nillable(),
 		field.Time("activatedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("activated_at").Optional().Nillable(),
+		field.UUID("eligibleVerificationRunId", uuid.UUID{}).StorageKey("eligible_verification_run_id").Optional().Nillable(),
 		field.Time("createdAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("created_at"),
 		field.Time("updatedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("updated_at"),
 	}
@@ -56,6 +57,8 @@ func (BundleReleases) Edges() []ent.Edge {
 		edge.To("reviewQueue", BundleReviewQueue.Type),
 		edge.To("crashEvents", BundleCrashEvents.Type),
 		edge.To("bundleAbTestExposures", BundleAbTestExposures.Type),
+		edge.To("verificationRuns", VerificationRuns.Type),
+		edge.From("eligibleVerificationRun", VerificationRuns.Type).Ref("eligibleForRelease").Field("eligibleVerificationRunId").Unique(),
 	}
 }
 

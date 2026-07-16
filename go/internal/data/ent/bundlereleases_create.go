@@ -21,6 +21,7 @@ import (
 	"trading/control-gateway/internal/data/ent/bundlereviewqueue"
 	"trading/control-gateway/internal/data/ent/bundles"
 	"trading/control-gateway/internal/data/ent/schema"
+	"trading/control-gateway/internal/data/ent/verificationruns"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -169,6 +170,20 @@ func (_c *BundleReleasesCreate) SetActivatedAt(v time.Time) *BundleReleasesCreat
 func (_c *BundleReleasesCreate) SetNillableActivatedAt(v *time.Time) *BundleReleasesCreate {
 	if v != nil {
 		_c.SetActivatedAt(*v)
+	}
+	return _c
+}
+
+// SetEligibleVerificationRunId sets the "eligibleVerificationRunId" field.
+func (_c *BundleReleasesCreate) SetEligibleVerificationRunId(v uuid.UUID) *BundleReleasesCreate {
+	_c.mutation.SetEligibleVerificationRunId(v)
+	return _c
+}
+
+// SetNillableEligibleVerificationRunId sets the "eligibleVerificationRunId" field if the given value is not nil.
+func (_c *BundleReleasesCreate) SetNillableEligibleVerificationRunId(v *uuid.UUID) *BundleReleasesCreate {
+	if v != nil {
+		_c.SetEligibleVerificationRunId(*v)
 	}
 	return _c
 }
@@ -406,6 +421,40 @@ func (_c *BundleReleasesCreate) AddBundleAbTestExposures(v ...*BundleAbTestExpos
 		ids[i] = v[i].ID
 	}
 	return _c.AddBundleAbTestExposureIDs(ids...)
+}
+
+// AddVerificationRunIDs adds the "verificationRuns" edge to the VerificationRuns entity by IDs.
+func (_c *BundleReleasesCreate) AddVerificationRunIDs(ids ...uuid.UUID) *BundleReleasesCreate {
+	_c.mutation.AddVerificationRunIDs(ids...)
+	return _c
+}
+
+// AddVerificationRuns adds the "verificationRuns" edges to the VerificationRuns entity.
+func (_c *BundleReleasesCreate) AddVerificationRuns(v ...*VerificationRuns) *BundleReleasesCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddVerificationRunIDs(ids...)
+}
+
+// SetEligibleVerificationRunID sets the "eligibleVerificationRun" edge to the VerificationRuns entity by ID.
+func (_c *BundleReleasesCreate) SetEligibleVerificationRunID(id uuid.UUID) *BundleReleasesCreate {
+	_c.mutation.SetEligibleVerificationRunID(id)
+	return _c
+}
+
+// SetNillableEligibleVerificationRunID sets the "eligibleVerificationRun" edge to the VerificationRuns entity by ID if the given value is not nil.
+func (_c *BundleReleasesCreate) SetNillableEligibleVerificationRunID(id *uuid.UUID) *BundleReleasesCreate {
+	if id != nil {
+		_c = _c.SetEligibleVerificationRunID(*id)
+	}
+	return _c
+}
+
+// SetEligibleVerificationRun sets the "eligibleVerificationRun" edge to the VerificationRuns entity.
+func (_c *BundleReleasesCreate) SetEligibleVerificationRun(v *VerificationRuns) *BundleReleasesCreate {
+	return _c.SetEligibleVerificationRunID(v.ID)
 }
 
 // Mutation returns the BundleReleasesMutation object of the builder.
@@ -816,6 +865,39 @@ func (_c *BundleReleasesCreate) createSpec() (*BundleReleases, *sqlgraph.CreateS
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := _c.mutation.VerificationRunsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundlereleases.VerificationRunsTable,
+			Columns: []string{bundlereleases.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.EligibleVerificationRunIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   bundlereleases.EligibleVerificationRunTable,
+			Columns: []string{bundlereleases.EligibleVerificationRunColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.EligibleVerificationRunId = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -1051,6 +1133,24 @@ func (u *BundleReleasesUpsert) UpdateActivatedAt() *BundleReleasesUpsert {
 // ClearActivatedAt clears the value of the "activatedAt" field.
 func (u *BundleReleasesUpsert) ClearActivatedAt() *BundleReleasesUpsert {
 	u.SetNull(bundlereleases.FieldActivatedAt)
+	return u
+}
+
+// SetEligibleVerificationRunId sets the "eligibleVerificationRunId" field.
+func (u *BundleReleasesUpsert) SetEligibleVerificationRunId(v uuid.UUID) *BundleReleasesUpsert {
+	u.Set(bundlereleases.FieldEligibleVerificationRunId, v)
+	return u
+}
+
+// UpdateEligibleVerificationRunId sets the "eligibleVerificationRunId" field to the value that was provided on create.
+func (u *BundleReleasesUpsert) UpdateEligibleVerificationRunId() *BundleReleasesUpsert {
+	u.SetExcluded(bundlereleases.FieldEligibleVerificationRunId)
+	return u
+}
+
+// ClearEligibleVerificationRunId clears the value of the "eligibleVerificationRunId" field.
+func (u *BundleReleasesUpsert) ClearEligibleVerificationRunId() *BundleReleasesUpsert {
+	u.SetNull(bundlereleases.FieldEligibleVerificationRunId)
 	return u
 }
 
@@ -1340,6 +1440,27 @@ func (u *BundleReleasesUpsertOne) UpdateActivatedAt() *BundleReleasesUpsertOne {
 func (u *BundleReleasesUpsertOne) ClearActivatedAt() *BundleReleasesUpsertOne {
 	return u.Update(func(s *BundleReleasesUpsert) {
 		s.ClearActivatedAt()
+	})
+}
+
+// SetEligibleVerificationRunId sets the "eligibleVerificationRunId" field.
+func (u *BundleReleasesUpsertOne) SetEligibleVerificationRunId(v uuid.UUID) *BundleReleasesUpsertOne {
+	return u.Update(func(s *BundleReleasesUpsert) {
+		s.SetEligibleVerificationRunId(v)
+	})
+}
+
+// UpdateEligibleVerificationRunId sets the "eligibleVerificationRunId" field to the value that was provided on create.
+func (u *BundleReleasesUpsertOne) UpdateEligibleVerificationRunId() *BundleReleasesUpsertOne {
+	return u.Update(func(s *BundleReleasesUpsert) {
+		s.UpdateEligibleVerificationRunId()
+	})
+}
+
+// ClearEligibleVerificationRunId clears the value of the "eligibleVerificationRunId" field.
+func (u *BundleReleasesUpsertOne) ClearEligibleVerificationRunId() *BundleReleasesUpsertOne {
+	return u.Update(func(s *BundleReleasesUpsert) {
+		s.ClearEligibleVerificationRunId()
 	})
 }
 
@@ -1800,6 +1921,27 @@ func (u *BundleReleasesUpsertBulk) UpdateActivatedAt() *BundleReleasesUpsertBulk
 func (u *BundleReleasesUpsertBulk) ClearActivatedAt() *BundleReleasesUpsertBulk {
 	return u.Update(func(s *BundleReleasesUpsert) {
 		s.ClearActivatedAt()
+	})
+}
+
+// SetEligibleVerificationRunId sets the "eligibleVerificationRunId" field.
+func (u *BundleReleasesUpsertBulk) SetEligibleVerificationRunId(v uuid.UUID) *BundleReleasesUpsertBulk {
+	return u.Update(func(s *BundleReleasesUpsert) {
+		s.SetEligibleVerificationRunId(v)
+	})
+}
+
+// UpdateEligibleVerificationRunId sets the "eligibleVerificationRunId" field to the value that was provided on create.
+func (u *BundleReleasesUpsertBulk) UpdateEligibleVerificationRunId() *BundleReleasesUpsertBulk {
+	return u.Update(func(s *BundleReleasesUpsert) {
+		s.UpdateEligibleVerificationRunId()
+	})
+}
+
+// ClearEligibleVerificationRunId clears the value of the "eligibleVerificationRunId" field.
+func (u *BundleReleasesUpsertBulk) ClearEligibleVerificationRunId() *BundleReleasesUpsertBulk {
+	return u.Update(func(s *BundleReleasesUpsert) {
+		s.ClearEligibleVerificationRunId()
 	})
 }
 

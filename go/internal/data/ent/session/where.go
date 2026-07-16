@@ -56,6 +56,11 @@ func IDLTE(id uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldLTE(FieldID, id))
 }
 
+// DeletedAt applies equality check predicate on the "deletedAt" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.Session {
+	return predicate.Session(sql.FieldEQ(FieldDeletedAt, v))
+}
+
 // UserId applies equality check predicate on the "userId" field. It's identical to UserIdEQ.
 func UserId(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldUserId, v))
@@ -76,9 +81,54 @@ func UpdatedAt(v time.Time) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// DeletedAt applies equality check predicate on the "deletedAt" field. It's identical to DeletedAtEQ.
-func DeletedAt(v time.Time) predicate.Session {
+// DeletedAtEQ applies the EQ predicate on the "deletedAt" field.
+func DeletedAtEQ(v time.Time) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtNEQ applies the NEQ predicate on the "deletedAt" field.
+func DeletedAtNEQ(v time.Time) predicate.Session {
+	return predicate.Session(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deletedAt" field.
+func DeletedAtIn(vs ...time.Time) predicate.Session {
+	return predicate.Session(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deletedAt" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.Session {
+	return predicate.Session(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deletedAt" field.
+func DeletedAtGT(v time.Time) predicate.Session {
+	return predicate.Session(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deletedAt" field.
+func DeletedAtGTE(v time.Time) predicate.Session {
+	return predicate.Session(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deletedAt" field.
+func DeletedAtLT(v time.Time) predicate.Session {
+	return predicate.Session(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deletedAt" field.
+func DeletedAtLTE(v time.Time) predicate.Session {
+	return predicate.Session(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deletedAt" field.
+func DeletedAtIsNil() predicate.Session {
+	return predicate.Session(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deletedAt" field.
+func DeletedAtNotNil() predicate.Session {
+	return predicate.Session(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // UserIdEQ applies the EQ predicate on the "userId" field.
@@ -244,56 +294,6 @@ func UpdatedAtLT(v time.Time) predicate.Session {
 // UpdatedAtLTE applies the LTE predicate on the "updatedAt" field.
 func UpdatedAtLTE(v time.Time) predicate.Session {
 	return predicate.Session(sql.FieldLTE(FieldUpdatedAt, v))
-}
-
-// DeletedAtEQ applies the EQ predicate on the "deletedAt" field.
-func DeletedAtEQ(v time.Time) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldDeletedAt, v))
-}
-
-// DeletedAtNEQ applies the NEQ predicate on the "deletedAt" field.
-func DeletedAtNEQ(v time.Time) predicate.Session {
-	return predicate.Session(sql.FieldNEQ(FieldDeletedAt, v))
-}
-
-// DeletedAtIn applies the In predicate on the "deletedAt" field.
-func DeletedAtIn(vs ...time.Time) predicate.Session {
-	return predicate.Session(sql.FieldIn(FieldDeletedAt, vs...))
-}
-
-// DeletedAtNotIn applies the NotIn predicate on the "deletedAt" field.
-func DeletedAtNotIn(vs ...time.Time) predicate.Session {
-	return predicate.Session(sql.FieldNotIn(FieldDeletedAt, vs...))
-}
-
-// DeletedAtGT applies the GT predicate on the "deletedAt" field.
-func DeletedAtGT(v time.Time) predicate.Session {
-	return predicate.Session(sql.FieldGT(FieldDeletedAt, v))
-}
-
-// DeletedAtGTE applies the GTE predicate on the "deletedAt" field.
-func DeletedAtGTE(v time.Time) predicate.Session {
-	return predicate.Session(sql.FieldGTE(FieldDeletedAt, v))
-}
-
-// DeletedAtLT applies the LT predicate on the "deletedAt" field.
-func DeletedAtLT(v time.Time) predicate.Session {
-	return predicate.Session(sql.FieldLT(FieldDeletedAt, v))
-}
-
-// DeletedAtLTE applies the LTE predicate on the "deletedAt" field.
-func DeletedAtLTE(v time.Time) predicate.Session {
-	return predicate.Session(sql.FieldLTE(FieldDeletedAt, v))
-}
-
-// DeletedAtIsNil applies the IsNil predicate on the "deletedAt" field.
-func DeletedAtIsNil() predicate.Session {
-	return predicate.Session(sql.FieldIsNull(FieldDeletedAt))
-}
-
-// DeletedAtNotNil applies the NotNil predicate on the "deletedAt" field.
-func DeletedAtNotNil() predicate.Session {
-	return predicate.Session(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

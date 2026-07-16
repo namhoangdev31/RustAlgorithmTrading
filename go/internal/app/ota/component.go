@@ -30,6 +30,10 @@ import (
 	identityhttp "trading/control-gateway/internal/modules/identity/adapter/http"
 	identitypostgres "trading/control-gateway/internal/modules/identity/adapter/postgres"
 	identityapp "trading/control-gateway/internal/modules/identity/application"
+	verificationhttp "trading/control-gateway/internal/modules/verification/adapter/http"
+	verificationpostgres "trading/control-gateway/internal/modules/verification/adapter/postgres"
+	verifications3 "trading/control-gateway/internal/modules/verification/adapter/s3"
+	verificationapp "trading/control-gateway/internal/modules/verification/application"
 	"trading/control-gateway/internal/platform/cache"
 	"trading/control-gateway/internal/platform/config"
 	"trading/control-gateway/internal/platform/database"
@@ -45,6 +49,8 @@ type Component struct {
 	catalog         *cataloghttp.Handler
 	commerce        *commercehttp.Handler
 	engagement      *engagementhttp.Handler
+	verification    *verificationhttp.Handler
+	verificationSvc *verificationapp.Service
 	identityService identityhttp.AccessTokenVerifier
 	scheduler       *distributionscheduler.Scheduler
 	dispatcher      *events.Dispatcher
@@ -83,7 +89,7 @@ func Build(ctx context.Context, cfg *config.Config) (*Component, error) {
 
 	var redisStreamPublisher *events.RedisPublisher
 	if component.redis != nil {
-		redisStreamPublisher, err = events.NewRedisPublisher(component.redis, cfg.Events.StreamName)
+		redisStreamPublisher, err = events.NewRedisPublisher(component.redis, events.LepoShipStreamName)
 		if err != nil {
 			return nil, err
 		}
@@ -123,6 +129,20 @@ func Build(ctx context.Context, cfg *config.Config) (*Component, error) {
 		Interval: cfg.Events.OutboxInterval, LeaseTTL: cfg.Events.OutboxLeaseTTL,
 		BatchSize: cfg.Events.OutboxBatch, MaxAttempts: cfg.Events.MaxAttempts,
 	})
+	verificationConfigured := cfg.Storefront.ArtifactEndpoint != "" && cfg.Storefront.ArtifactBucket != "" && cfg.Storefront.ArtifactAccessKeyID != "" && cfg.Storefront.ArtifactSecretKey != ""
+	if component.redis != nil && verificationConfigured {
+		reportStore, reportErr := verifications3.New(ctx, verifications3.Config{
+			Endpoint: cfg.Storefront.ArtifactEndpoint, Region: cfg.Storefront.ArtifactRegion,
+			AccessKeyID: cfg.Storefront.ArtifactAccessKeyID, SecretKey: cfg.Storefront.ArtifactSecretKey,
+			ForcePathStyle: cfg.Storefront.ArtifactForcePathStyle, Provider: cfg.Storefront.ArtifactProvider,
+			Bucket: cfg.Storefront.ArtifactBucket,
+		})
+		if reportErr != nil {
+			return nil, fmt.Errorf("configure verification report storage: %w", reportErr)
+		}
+		component.verificationSvc = verificationapp.New(verificationpostgres.New(postgres), component.redis, reportStore)
+		component.verification = verificationhttp.New(component.verificationSvc, component.redis, cfg.Edge.ServiceSecret)
+	}
 
 	var artifactSigner *catalogs3.S3Signer
 	component.identity, component.catalog, component.commerce, component.engagement, component.identityService, artifactSigner, err = buildStorefront(ctx, cfg, postgres)
@@ -216,6 +236,9 @@ func (c *Component) Run(ctx context.Context) error {
 	c.scheduler.Start()
 	group, runCtx := errgroup.WithContext(ctx)
 	group.Go(func() error { return c.dispatcher.Run(runCtx) })
+	if c.verificationSvc != nil {
+		group.Go(func() error { return c.verificationSvc.Run(runCtx) })
+	}
 	err := group.Wait()
 	c.scheduler.Stop()
 	_ = c.Close()

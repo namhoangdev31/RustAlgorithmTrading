@@ -18,10 +18,11 @@ import (
 )
 
 const (
-	statusPending   = "pending"
-	statusLeased    = "leased"
-	statusProcessed = "processed"
-	statusFailed    = "failed"
+	statusPending          = "pending"
+	statusLeased           = "leased"
+	statusProcessed        = "processed"
+	statusFailed           = "failed"
+	statusLegacyProcessing = "processing"
 )
 
 type OutboxStore struct{ database *database.Postgres }
@@ -90,6 +91,7 @@ func (s *OutboxStore) Lease(ctx context.Context, owner string, limit int, ttl ti
 					bundleoutboxevents.Or(bundleoutboxevents.NextAttemptAtIsNil(), bundleoutboxevents.NextAttemptAtLTE(now)),
 				),
 				bundleoutboxevents.And(bundleoutboxevents.StatusEQ(statusLeased), bundleoutboxevents.LeasedUntilLTE(now)),
+				bundleoutboxevents.And(bundleoutboxevents.StatusEQ(statusLegacyProcessing), bundleoutboxevents.Or(bundleoutboxevents.LeasedUntilIsNil(), bundleoutboxevents.LeasedUntilLTE(now))),
 			),
 		).Order(bundleoutboxevents.ByCreatedAt()).
 			Limit(limit).

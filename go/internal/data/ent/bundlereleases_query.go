@@ -21,6 +21,7 @@ import (
 	"trading/control-gateway/internal/data/ent/bundlereviewqueue"
 	"trading/control-gateway/internal/data/ent/bundles"
 	"trading/control-gateway/internal/data/ent/predicate"
+	"trading/control-gateway/internal/data/ent/verificationruns"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -33,26 +34,28 @@ import (
 // BundleReleasesQuery is the builder for querying BundleReleases entities.
 type BundleReleasesQuery struct {
 	config
-	ctx                       *QueryContext
-	order                     []bundlereleases.OrderOption
-	inters                    []Interceptor
-	predicates                []predicate.BundleReleases
-	withBundle                *BundlesQuery
-	withChannel               *BundleChannelsQuery
-	withCurrentForChannels    *BundleChannelsQuery
-	withArtifacts             *BundleArtifactsQuery
-	withBuildJobs             *BundleBuildJobsQuery
-	withApprovals             *BundleReleaseApprovalsQuery
-	withOverrides             *BundleReleaseOverridesV2Query
-	withBaselineRollouts      *BundleDeliveryRolloutsQuery
-	withCandidateRollouts     *BundleDeliveryRolloutsQuery
-	withRolloutExposures      *BundleDeliveryRolloutExposuresQuery
-	withControlExperiments    *BundleAbTestsQuery
-	withTreatmentExperiments  *BundleAbTestsQuery
-	withReviewQueue           *BundleReviewQueueQuery
-	withCrashEvents           *BundleCrashEventsQuery
-	withBundleAbTestExposures *BundleAbTestExposuresQuery
-	modifiers                 []func(*sql.Selector)
+	ctx                         *QueryContext
+	order                       []bundlereleases.OrderOption
+	inters                      []Interceptor
+	predicates                  []predicate.BundleReleases
+	withBundle                  *BundlesQuery
+	withChannel                 *BundleChannelsQuery
+	withCurrentForChannels      *BundleChannelsQuery
+	withArtifacts               *BundleArtifactsQuery
+	withBuildJobs               *BundleBuildJobsQuery
+	withApprovals               *BundleReleaseApprovalsQuery
+	withOverrides               *BundleReleaseOverridesV2Query
+	withBaselineRollouts        *BundleDeliveryRolloutsQuery
+	withCandidateRollouts       *BundleDeliveryRolloutsQuery
+	withRolloutExposures        *BundleDeliveryRolloutExposuresQuery
+	withControlExperiments      *BundleAbTestsQuery
+	withTreatmentExperiments    *BundleAbTestsQuery
+	withReviewQueue             *BundleReviewQueueQuery
+	withCrashEvents             *BundleCrashEventsQuery
+	withBundleAbTestExposures   *BundleAbTestExposuresQuery
+	withVerificationRuns        *VerificationRunsQuery
+	withEligibleVerificationRun *VerificationRunsQuery
+	modifiers                   []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -419,6 +422,50 @@ func (_q *BundleReleasesQuery) QueryBundleAbTestExposures() *BundleAbTestExposur
 	return query
 }
 
+// QueryVerificationRuns chains the current query on the "verificationRuns" edge.
+func (_q *BundleReleasesQuery) QueryVerificationRuns() *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bundlereleases.Table, bundlereleases.FieldID, selector),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, bundlereleases.VerificationRunsTable, bundlereleases.VerificationRunsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEligibleVerificationRun chains the current query on the "eligibleVerificationRun" edge.
+func (_q *BundleReleasesQuery) QueryEligibleVerificationRun() *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bundlereleases.Table, bundlereleases.FieldID, selector),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, bundlereleases.EligibleVerificationRunTable, bundlereleases.EligibleVerificationRunColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first BundleReleases entity from the query.
 // Returns a *NotFoundError when no BundleReleases was found.
 func (_q *BundleReleasesQuery) First(ctx context.Context) (*BundleReleases, error) {
@@ -606,26 +653,28 @@ func (_q *BundleReleasesQuery) Clone() *BundleReleasesQuery {
 		return nil
 	}
 	return &BundleReleasesQuery{
-		config:                    _q.config,
-		ctx:                       _q.ctx.Clone(),
-		order:                     append([]bundlereleases.OrderOption{}, _q.order...),
-		inters:                    append([]Interceptor{}, _q.inters...),
-		predicates:                append([]predicate.BundleReleases{}, _q.predicates...),
-		withBundle:                _q.withBundle.Clone(),
-		withChannel:               _q.withChannel.Clone(),
-		withCurrentForChannels:    _q.withCurrentForChannels.Clone(),
-		withArtifacts:             _q.withArtifacts.Clone(),
-		withBuildJobs:             _q.withBuildJobs.Clone(),
-		withApprovals:             _q.withApprovals.Clone(),
-		withOverrides:             _q.withOverrides.Clone(),
-		withBaselineRollouts:      _q.withBaselineRollouts.Clone(),
-		withCandidateRollouts:     _q.withCandidateRollouts.Clone(),
-		withRolloutExposures:      _q.withRolloutExposures.Clone(),
-		withControlExperiments:    _q.withControlExperiments.Clone(),
-		withTreatmentExperiments:  _q.withTreatmentExperiments.Clone(),
-		withReviewQueue:           _q.withReviewQueue.Clone(),
-		withCrashEvents:           _q.withCrashEvents.Clone(),
-		withBundleAbTestExposures: _q.withBundleAbTestExposures.Clone(),
+		config:                      _q.config,
+		ctx:                         _q.ctx.Clone(),
+		order:                       append([]bundlereleases.OrderOption{}, _q.order...),
+		inters:                      append([]Interceptor{}, _q.inters...),
+		predicates:                  append([]predicate.BundleReleases{}, _q.predicates...),
+		withBundle:                  _q.withBundle.Clone(),
+		withChannel:                 _q.withChannel.Clone(),
+		withCurrentForChannels:      _q.withCurrentForChannels.Clone(),
+		withArtifacts:               _q.withArtifacts.Clone(),
+		withBuildJobs:               _q.withBuildJobs.Clone(),
+		withApprovals:               _q.withApprovals.Clone(),
+		withOverrides:               _q.withOverrides.Clone(),
+		withBaselineRollouts:        _q.withBaselineRollouts.Clone(),
+		withCandidateRollouts:       _q.withCandidateRollouts.Clone(),
+		withRolloutExposures:        _q.withRolloutExposures.Clone(),
+		withControlExperiments:      _q.withControlExperiments.Clone(),
+		withTreatmentExperiments:    _q.withTreatmentExperiments.Clone(),
+		withReviewQueue:             _q.withReviewQueue.Clone(),
+		withCrashEvents:             _q.withCrashEvents.Clone(),
+		withBundleAbTestExposures:   _q.withBundleAbTestExposures.Clone(),
+		withVerificationRuns:        _q.withVerificationRuns.Clone(),
+		withEligibleVerificationRun: _q.withEligibleVerificationRun.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
@@ -798,6 +847,28 @@ func (_q *BundleReleasesQuery) WithBundleAbTestExposures(opts ...func(*BundleAbT
 	return _q
 }
 
+// WithVerificationRuns tells the query-builder to eager-load the nodes that are connected to
+// the "verificationRuns" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *BundleReleasesQuery) WithVerificationRuns(opts ...func(*VerificationRunsQuery)) *BundleReleasesQuery {
+	query := (&VerificationRunsClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withVerificationRuns = query
+	return _q
+}
+
+// WithEligibleVerificationRun tells the query-builder to eager-load the nodes that are connected to
+// the "eligibleVerificationRun" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *BundleReleasesQuery) WithEligibleVerificationRun(opts ...func(*VerificationRunsQuery)) *BundleReleasesQuery {
+	query := (&VerificationRunsClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withEligibleVerificationRun = query
+	return _q
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -876,7 +947,7 @@ func (_q *BundleReleasesQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	var (
 		nodes       = []*BundleReleases{}
 		_spec       = _q.querySpec()
-		loadedTypes = [15]bool{
+		loadedTypes = [17]bool{
 			_q.withBundle != nil,
 			_q.withChannel != nil,
 			_q.withCurrentForChannels != nil,
@@ -892,6 +963,8 @@ func (_q *BundleReleasesQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 			_q.withReviewQueue != nil,
 			_q.withCrashEvents != nil,
 			_q.withBundleAbTestExposures != nil,
+			_q.withVerificationRuns != nil,
+			_q.withEligibleVerificationRun != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -1029,6 +1102,21 @@ func (_q *BundleReleasesQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 			func(n *BundleReleases, e *BundleAbTestExposures) {
 				n.Edges.BundleAbTestExposures = append(n.Edges.BundleAbTestExposures, e)
 			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withVerificationRuns; query != nil {
+		if err := _q.loadVerificationRuns(ctx, query, nodes,
+			func(n *BundleReleases) { n.Edges.VerificationRuns = []*VerificationRuns{} },
+			func(n *BundleReleases, e *VerificationRuns) {
+				n.Edges.VerificationRuns = append(n.Edges.VerificationRuns, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withEligibleVerificationRun; query != nil {
+		if err := _q.loadEligibleVerificationRun(ctx, query, nodes, nil,
+			func(n *BundleReleases, e *VerificationRuns) { n.Edges.EligibleVerificationRun = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -1501,6 +1589,68 @@ func (_q *BundleReleasesQuery) loadBundleAbTestExposures(ctx context.Context, qu
 	}
 	return nil
 }
+func (_q *BundleReleasesQuery) loadVerificationRuns(ctx context.Context, query *VerificationRunsQuery, nodes []*BundleReleases, init func(*BundleReleases), assign func(*BundleReleases, *VerificationRuns)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*BundleReleases)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(verificationruns.FieldReleaseId)
+	}
+	query.Where(predicate.VerificationRuns(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(bundlereleases.VerificationRunsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ReleaseId
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "releaseId" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *BundleReleasesQuery) loadEligibleVerificationRun(ctx context.Context, query *VerificationRunsQuery, nodes []*BundleReleases, init func(*BundleReleases), assign func(*BundleReleases, *VerificationRuns)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*BundleReleases)
+	for i := range nodes {
+		if nodes[i].EligibleVerificationRunId == nil {
+			continue
+		}
+		fk := *nodes[i].EligibleVerificationRunId
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(verificationruns.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "eligibleVerificationRunId" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (_q *BundleReleasesQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
@@ -1535,6 +1685,9 @@ func (_q *BundleReleasesQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if _q.withChannel != nil {
 			_spec.Node.AddColumnOnce(bundlereleases.FieldChannelId)
+		}
+		if _q.withEligibleVerificationRun != nil {
+			_spec.Node.AddColumnOnce(bundlereleases.FieldEligibleVerificationRunId)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

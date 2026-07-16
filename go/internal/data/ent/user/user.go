@@ -12,6 +12,8 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldDeletedAt holds the string denoting the deletedat field in the database.
+	FieldDeletedAt = "deleted_at"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
 	// FieldPassword holds the string denoting the password field in the database.
@@ -19,31 +21,29 @@ const (
 	// FieldProvider holds the string denoting the provider field in the database.
 	FieldProvider = "provider"
 	// FieldSocialId holds the string denoting the socialid field in the database.
-	FieldSocialId = "socialId"
+	FieldSocialId = "social_id"
 	// FieldFirstName holds the string denoting the firstname field in the database.
-	FieldFirstName = "firstName"
+	FieldFirstName = "first_name"
 	// FieldLastName holds the string denoting the lastname field in the database.
-	FieldLastName = "lastName"
+	FieldLastName = "last_name"
 	// FieldFullName holds the string denoting the fullname field in the database.
-	FieldFullName = "fullName"
+	FieldFullName = "full_name"
 	// FieldPhone holds the string denoting the phone field in the database.
 	FieldPhone = "phone"
 	// FieldDateOfBirth holds the string denoting the dateofbirth field in the database.
-	FieldDateOfBirth = "dateOfBirth"
+	FieldDateOfBirth = "date_of_birth"
 	// FieldGender holds the string denoting the gender field in the database.
 	FieldGender = "gender"
 	// FieldUserType holds the string denoting the usertype field in the database.
-	FieldUserType = "userType"
+	FieldUserType = "user_type"
 	// FieldPhotoId holds the string denoting the photoid field in the database.
-	FieldPhotoId = "photoId"
+	FieldPhotoId = "photo_id"
 	// FieldRegisterType holds the string denoting the registertype field in the database.
-	FieldRegisterType = "registerType"
+	FieldRegisterType = "register_type"
 	// FieldCreatedAt holds the string denoting the createdat field in the database.
-	FieldCreatedAt = "createdAt"
+	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updatedat field in the database.
-	FieldUpdatedAt = "updatedAt"
-	// FieldDeletedAt holds the string denoting the deletedat field in the database.
-	FieldDeletedAt = "deletedAt"
+	FieldUpdatedAt = "updated_at"
 	// EdgePhoto holds the string denoting the photo edge name in mutations.
 	EdgePhoto = "photo"
 	// EdgePayouts holds the string denoting the payouts edge name in mutations.
@@ -132,7 +132,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "file" package.
 	PhotoInverseTable = "files"
 	// PhotoColumn is the table column denoting the photo relation/edge.
-	PhotoColumn = "photoId"
+	PhotoColumn = "photo_id"
 	// PayoutsTable is the table that holds the payouts relation/edge.
 	PayoutsTable = "bundle_payouts"
 	// PayoutsInverseTable is the table name for the BundlePayouts entity.
@@ -411,6 +411,7 @@ const (
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
+	FieldDeletedAt,
 	FieldEmail,
 	FieldPassword,
 	FieldProvider,
@@ -426,7 +427,6 @@ var Columns = []string{
 	FieldRegisterType,
 	FieldCreatedAt,
 	FieldUpdatedAt,
-	FieldDeletedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -452,6 +452,11 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByDeletedAt orders the results by the deletedAt field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
 // ByEmail orders the results by the email field.
@@ -527,11 +532,6 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updatedAt field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
-}
-
-// ByDeletedAt orders the results by the deletedAt field.
-func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
 // ByPhotoField orders the results by photo field.

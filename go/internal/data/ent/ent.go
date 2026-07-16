@@ -139,6 +139,26 @@ import (
 	"trading/control-gateway/internal/data/ent/project"
 	"trading/control-gateway/internal/data/ent/projectmembership"
 	"trading/control-gateway/internal/data/ent/projectproviderbinding"
+	"trading/control-gateway/internal/data/ent/quantalert"
+	"trading/control-gateway/internal/data/ent/quantauditevent"
+	"trading/control-gateway/internal/data/ent/quantbacktestrun"
+	"trading/control-gateway/internal/data/ent/quantbrokeraccount"
+	"trading/control-gateway/internal/data/ent/quantdeployment"
+	"trading/control-gateway/internal/data/ent/quantdevice"
+	"trading/control-gateway/internal/data/ent/quantfill"
+	"trading/control-gateway/internal/data/ent/quantidempotencykey"
+	"trading/control-gateway/internal/data/ent/quantinstrument"
+	"trading/control-gateway/internal/data/ent/quantlivechallenge"
+	"trading/control-gateway/internal/data/ent/quantlivesession"
+	"trading/control-gateway/internal/data/ent/quantoperatorgrant"
+	"trading/control-gateway/internal/data/ent/quantorder"
+	"trading/control-gateway/internal/data/ent/quantoutboxevent"
+	"trading/control-gateway/internal/data/ent/quantposition"
+	"trading/control-gateway/internal/data/ent/quantriskpolicyversion"
+	"trading/control-gateway/internal/data/ent/quantstrategy"
+	"trading/control-gateway/internal/data/ent/quantstrategyversion"
+	"trading/control-gateway/internal/data/ent/quantwatchlist"
+	"trading/control-gateway/internal/data/ent/quantwatchlistitem"
 	"trading/control-gateway/internal/data/ent/riskevent"
 	"trading/control-gateway/internal/data/ent/risklimits"
 	"trading/control-gateway/internal/data/ent/session"
@@ -146,6 +166,22 @@ import (
 	"trading/control-gateway/internal/data/ent/user"
 	"trading/control-gateway/internal/data/ent/userdevicetoken"
 	"trading/control-gateway/internal/data/ent/usersecrets"
+	"trading/control-gateway/internal/data/ent/verificationalerts"
+	"trading/control-gateway/internal/data/ent/verificationattempts"
+	"trading/control-gateway/internal/data/ent/verificationengineversions"
+	"trading/control-gateway/internal/data/ent/verificationevidence"
+	"trading/control-gateway/internal/data/ent/verificationfindings"
+	"trading/control-gateway/internal/data/ent/verificationinbox"
+	"trading/control-gateway/internal/data/ent/verificationmetricrollups"
+	"trading/control-gateway/internal/data/ent/verificationpipelineversions"
+	"trading/control-gateway/internal/data/ent/verificationpolicyevaluations"
+	"trading/control-gateway/internal/data/ent/verificationpolicyversions"
+	"trading/control-gateway/internal/data/ent/verificationreports"
+	"trading/control-gateway/internal/data/ent/verificationruns"
+	"trading/control-gateway/internal/data/ent/verificationscores"
+	"trading/control-gateway/internal/data/ent/verificationtaskdependencies"
+	"trading/control-gateway/internal/data/ent/verificationtasks"
+	"trading/control-gateway/internal/data/ent/verificationtelemetryevents"
 	"trading/control-gateway/internal/data/ent/workspaceauditevent"
 	"trading/control-gateway/internal/data/ent/workspaceproviderconnection"
 
@@ -343,6 +379,26 @@ func checkColumn(t, c string) error {
 			project.Table:                        project.ValidColumn,
 			projectmembership.Table:              projectmembership.ValidColumn,
 			projectproviderbinding.Table:         projectproviderbinding.ValidColumn,
+			quantalert.Table:                     quantalert.ValidColumn,
+			quantauditevent.Table:                quantauditevent.ValidColumn,
+			quantbacktestrun.Table:               quantbacktestrun.ValidColumn,
+			quantbrokeraccount.Table:             quantbrokeraccount.ValidColumn,
+			quantdeployment.Table:                quantdeployment.ValidColumn,
+			quantdevice.Table:                    quantdevice.ValidColumn,
+			quantfill.Table:                      quantfill.ValidColumn,
+			quantidempotencykey.Table:            quantidempotencykey.ValidColumn,
+			quantinstrument.Table:                quantinstrument.ValidColumn,
+			quantlivechallenge.Table:             quantlivechallenge.ValidColumn,
+			quantlivesession.Table:               quantlivesession.ValidColumn,
+			quantoperatorgrant.Table:             quantoperatorgrant.ValidColumn,
+			quantorder.Table:                     quantorder.ValidColumn,
+			quantoutboxevent.Table:               quantoutboxevent.ValidColumn,
+			quantposition.Table:                  quantposition.ValidColumn,
+			quantriskpolicyversion.Table:         quantriskpolicyversion.ValidColumn,
+			quantstrategy.Table:                  quantstrategy.ValidColumn,
+			quantstrategyversion.Table:           quantstrategyversion.ValidColumn,
+			quantwatchlist.Table:                 quantwatchlist.ValidColumn,
+			quantwatchlistitem.Table:             quantwatchlistitem.ValidColumn,
 			riskevent.Table:                      riskevent.ValidColumn,
 			risklimits.Table:                     risklimits.ValidColumn,
 			session.Table:                        session.ValidColumn,
@@ -350,6 +406,22 @@ func checkColumn(t, c string) error {
 			user.Table:                           user.ValidColumn,
 			userdevicetoken.Table:                userdevicetoken.ValidColumn,
 			usersecrets.Table:                    usersecrets.ValidColumn,
+			verificationalerts.Table:             verificationalerts.ValidColumn,
+			verificationattempts.Table:           verificationattempts.ValidColumn,
+			verificationengineversions.Table:     verificationengineversions.ValidColumn,
+			verificationevidence.Table:           verificationevidence.ValidColumn,
+			verificationfindings.Table:           verificationfindings.ValidColumn,
+			verificationinbox.Table:              verificationinbox.ValidColumn,
+			verificationmetricrollups.Table:      verificationmetricrollups.ValidColumn,
+			verificationpipelineversions.Table:   verificationpipelineversions.ValidColumn,
+			verificationpolicyevaluations.Table:  verificationpolicyevaluations.ValidColumn,
+			verificationpolicyversions.Table:     verificationpolicyversions.ValidColumn,
+			verificationreports.Table:            verificationreports.ValidColumn,
+			verificationruns.Table:               verificationruns.ValidColumn,
+			verificationscores.Table:             verificationscores.ValidColumn,
+			verificationtaskdependencies.Table:   verificationtaskdependencies.ValidColumn,
+			verificationtasks.Table:              verificationtasks.ValidColumn,
+			verificationtelemetryevents.Table:    verificationtelemetryevents.ValidColumn,
 			workspaceauditevent.Table:            workspaceauditevent.ValidColumn,
 			workspaceproviderconnection.Table:    workspaceproviderconnection.ValidColumn,
 		})

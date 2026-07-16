@@ -41,6 +41,7 @@ func (BundleArtifacts) Fields() []ent.Field {
 func (BundleArtifacts) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("release", BundleReleases.Type).Ref("artifacts").Field("releaseId").Unique().Required(),
+		edge.To("verificationRuns", VerificationRuns.Type),
 	}
 }
 

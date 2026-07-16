@@ -1,8 +1,10 @@
 import { createReadStream } from "node:fs";
 import type { Readable } from "node:stream";
 
-import { S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
+import { pipeline } from "node:stream/promises";
+import { createWriteStream } from "node:fs";
 
 export interface StoredArtifact {
   provider: "s3" | "r2";
@@ -80,4 +82,10 @@ export async function putArtifactFile(
     contentType: options.contentType ?? "application/zip",
     checksumSha256: options.checksumSha256,
   });
+}
+
+export async function downloadArtifactFile(bucket: string, key: string, destination: string) {
+  const response = await client().send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+  if (!response.Body) throw new Error("ARTIFACT_BODY_MISSING");
+  await pipeline(response.Body as Readable, createWriteStream(destination, { mode: 0o600 }));
 }

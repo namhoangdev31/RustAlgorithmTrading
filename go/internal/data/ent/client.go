@@ -142,6 +142,26 @@ import (
 	"trading/control-gateway/internal/data/ent/project"
 	"trading/control-gateway/internal/data/ent/projectmembership"
 	"trading/control-gateway/internal/data/ent/projectproviderbinding"
+	"trading/control-gateway/internal/data/ent/quantalert"
+	"trading/control-gateway/internal/data/ent/quantauditevent"
+	"trading/control-gateway/internal/data/ent/quantbacktestrun"
+	"trading/control-gateway/internal/data/ent/quantbrokeraccount"
+	"trading/control-gateway/internal/data/ent/quantdeployment"
+	"trading/control-gateway/internal/data/ent/quantdevice"
+	"trading/control-gateway/internal/data/ent/quantfill"
+	"trading/control-gateway/internal/data/ent/quantidempotencykey"
+	"trading/control-gateway/internal/data/ent/quantinstrument"
+	"trading/control-gateway/internal/data/ent/quantlivechallenge"
+	"trading/control-gateway/internal/data/ent/quantlivesession"
+	"trading/control-gateway/internal/data/ent/quantoperatorgrant"
+	"trading/control-gateway/internal/data/ent/quantorder"
+	"trading/control-gateway/internal/data/ent/quantoutboxevent"
+	"trading/control-gateway/internal/data/ent/quantposition"
+	"trading/control-gateway/internal/data/ent/quantriskpolicyversion"
+	"trading/control-gateway/internal/data/ent/quantstrategy"
+	"trading/control-gateway/internal/data/ent/quantstrategyversion"
+	"trading/control-gateway/internal/data/ent/quantwatchlist"
+	"trading/control-gateway/internal/data/ent/quantwatchlistitem"
 	"trading/control-gateway/internal/data/ent/riskevent"
 	"trading/control-gateway/internal/data/ent/risklimits"
 	"trading/control-gateway/internal/data/ent/session"
@@ -149,6 +169,22 @@ import (
 	"trading/control-gateway/internal/data/ent/user"
 	"trading/control-gateway/internal/data/ent/userdevicetoken"
 	"trading/control-gateway/internal/data/ent/usersecrets"
+	"trading/control-gateway/internal/data/ent/verificationalerts"
+	"trading/control-gateway/internal/data/ent/verificationattempts"
+	"trading/control-gateway/internal/data/ent/verificationengineversions"
+	"trading/control-gateway/internal/data/ent/verificationevidence"
+	"trading/control-gateway/internal/data/ent/verificationfindings"
+	"trading/control-gateway/internal/data/ent/verificationinbox"
+	"trading/control-gateway/internal/data/ent/verificationmetricrollups"
+	"trading/control-gateway/internal/data/ent/verificationpipelineversions"
+	"trading/control-gateway/internal/data/ent/verificationpolicyevaluations"
+	"trading/control-gateway/internal/data/ent/verificationpolicyversions"
+	"trading/control-gateway/internal/data/ent/verificationreports"
+	"trading/control-gateway/internal/data/ent/verificationruns"
+	"trading/control-gateway/internal/data/ent/verificationscores"
+	"trading/control-gateway/internal/data/ent/verificationtaskdependencies"
+	"trading/control-gateway/internal/data/ent/verificationtasks"
+	"trading/control-gateway/internal/data/ent/verificationtelemetryevents"
 	"trading/control-gateway/internal/data/ent/workspaceauditevent"
 	"trading/control-gateway/internal/data/ent/workspaceproviderconnection"
 
@@ -426,6 +462,46 @@ type Client struct {
 	ProjectMembership *ProjectMembershipClient
 	// ProjectProviderBinding is the client for interacting with the ProjectProviderBinding builders.
 	ProjectProviderBinding *ProjectProviderBindingClient
+	// QuantAlert is the client for interacting with the QuantAlert builders.
+	QuantAlert *QuantAlertClient
+	// QuantAuditEvent is the client for interacting with the QuantAuditEvent builders.
+	QuantAuditEvent *QuantAuditEventClient
+	// QuantBacktestRun is the client for interacting with the QuantBacktestRun builders.
+	QuantBacktestRun *QuantBacktestRunClient
+	// QuantBrokerAccount is the client for interacting with the QuantBrokerAccount builders.
+	QuantBrokerAccount *QuantBrokerAccountClient
+	// QuantDeployment is the client for interacting with the QuantDeployment builders.
+	QuantDeployment *QuantDeploymentClient
+	// QuantDevice is the client for interacting with the QuantDevice builders.
+	QuantDevice *QuantDeviceClient
+	// QuantFill is the client for interacting with the QuantFill builders.
+	QuantFill *QuantFillClient
+	// QuantIdempotencyKey is the client for interacting with the QuantIdempotencyKey builders.
+	QuantIdempotencyKey *QuantIdempotencyKeyClient
+	// QuantInstrument is the client for interacting with the QuantInstrument builders.
+	QuantInstrument *QuantInstrumentClient
+	// QuantLiveChallenge is the client for interacting with the QuantLiveChallenge builders.
+	QuantLiveChallenge *QuantLiveChallengeClient
+	// QuantLiveSession is the client for interacting with the QuantLiveSession builders.
+	QuantLiveSession *QuantLiveSessionClient
+	// QuantOperatorGrant is the client for interacting with the QuantOperatorGrant builders.
+	QuantOperatorGrant *QuantOperatorGrantClient
+	// QuantOrder is the client for interacting with the QuantOrder builders.
+	QuantOrder *QuantOrderClient
+	// QuantOutboxEvent is the client for interacting with the QuantOutboxEvent builders.
+	QuantOutboxEvent *QuantOutboxEventClient
+	// QuantPosition is the client for interacting with the QuantPosition builders.
+	QuantPosition *QuantPositionClient
+	// QuantRiskPolicyVersion is the client for interacting with the QuantRiskPolicyVersion builders.
+	QuantRiskPolicyVersion *QuantRiskPolicyVersionClient
+	// QuantStrategy is the client for interacting with the QuantStrategy builders.
+	QuantStrategy *QuantStrategyClient
+	// QuantStrategyVersion is the client for interacting with the QuantStrategyVersion builders.
+	QuantStrategyVersion *QuantStrategyVersionClient
+	// QuantWatchlist is the client for interacting with the QuantWatchlist builders.
+	QuantWatchlist *QuantWatchlistClient
+	// QuantWatchlistItem is the client for interacting with the QuantWatchlistItem builders.
+	QuantWatchlistItem *QuantWatchlistItemClient
 	// RiskEvent is the client for interacting with the RiskEvent builders.
 	RiskEvent *RiskEventClient
 	// RiskLimits is the client for interacting with the RiskLimits builders.
@@ -440,6 +516,38 @@ type Client struct {
 	UserDeviceToken *UserDeviceTokenClient
 	// UserSecrets is the client for interacting with the UserSecrets builders.
 	UserSecrets *UserSecretsClient
+	// VerificationAlerts is the client for interacting with the VerificationAlerts builders.
+	VerificationAlerts *VerificationAlertsClient
+	// VerificationAttempts is the client for interacting with the VerificationAttempts builders.
+	VerificationAttempts *VerificationAttemptsClient
+	// VerificationEngineVersions is the client for interacting with the VerificationEngineVersions builders.
+	VerificationEngineVersions *VerificationEngineVersionsClient
+	// VerificationEvidence is the client for interacting with the VerificationEvidence builders.
+	VerificationEvidence *VerificationEvidenceClient
+	// VerificationFindings is the client for interacting with the VerificationFindings builders.
+	VerificationFindings *VerificationFindingsClient
+	// VerificationInbox is the client for interacting with the VerificationInbox builders.
+	VerificationInbox *VerificationInboxClient
+	// VerificationMetricRollups is the client for interacting with the VerificationMetricRollups builders.
+	VerificationMetricRollups *VerificationMetricRollupsClient
+	// VerificationPipelineVersions is the client for interacting with the VerificationPipelineVersions builders.
+	VerificationPipelineVersions *VerificationPipelineVersionsClient
+	// VerificationPolicyEvaluations is the client for interacting with the VerificationPolicyEvaluations builders.
+	VerificationPolicyEvaluations *VerificationPolicyEvaluationsClient
+	// VerificationPolicyVersions is the client for interacting with the VerificationPolicyVersions builders.
+	VerificationPolicyVersions *VerificationPolicyVersionsClient
+	// VerificationReports is the client for interacting with the VerificationReports builders.
+	VerificationReports *VerificationReportsClient
+	// VerificationRuns is the client for interacting with the VerificationRuns builders.
+	VerificationRuns *VerificationRunsClient
+	// VerificationScores is the client for interacting with the VerificationScores builders.
+	VerificationScores *VerificationScoresClient
+	// VerificationTaskDependencies is the client for interacting with the VerificationTaskDependencies builders.
+	VerificationTaskDependencies *VerificationTaskDependenciesClient
+	// VerificationTasks is the client for interacting with the VerificationTasks builders.
+	VerificationTasks *VerificationTasksClient
+	// VerificationTelemetryEvents is the client for interacting with the VerificationTelemetryEvents builders.
+	VerificationTelemetryEvents *VerificationTelemetryEventsClient
 	// WorkspaceAuditEvent is the client for interacting with the WorkspaceAuditEvent builders.
 	WorkspaceAuditEvent *WorkspaceAuditEventClient
 	// WorkspaceProviderConnection is the client for interacting with the WorkspaceProviderConnection builders.
@@ -586,6 +694,26 @@ func (c *Client) init() {
 	c.Project = NewProjectClient(c.config)
 	c.ProjectMembership = NewProjectMembershipClient(c.config)
 	c.ProjectProviderBinding = NewProjectProviderBindingClient(c.config)
+	c.QuantAlert = NewQuantAlertClient(c.config)
+	c.QuantAuditEvent = NewQuantAuditEventClient(c.config)
+	c.QuantBacktestRun = NewQuantBacktestRunClient(c.config)
+	c.QuantBrokerAccount = NewQuantBrokerAccountClient(c.config)
+	c.QuantDeployment = NewQuantDeploymentClient(c.config)
+	c.QuantDevice = NewQuantDeviceClient(c.config)
+	c.QuantFill = NewQuantFillClient(c.config)
+	c.QuantIdempotencyKey = NewQuantIdempotencyKeyClient(c.config)
+	c.QuantInstrument = NewQuantInstrumentClient(c.config)
+	c.QuantLiveChallenge = NewQuantLiveChallengeClient(c.config)
+	c.QuantLiveSession = NewQuantLiveSessionClient(c.config)
+	c.QuantOperatorGrant = NewQuantOperatorGrantClient(c.config)
+	c.QuantOrder = NewQuantOrderClient(c.config)
+	c.QuantOutboxEvent = NewQuantOutboxEventClient(c.config)
+	c.QuantPosition = NewQuantPositionClient(c.config)
+	c.QuantRiskPolicyVersion = NewQuantRiskPolicyVersionClient(c.config)
+	c.QuantStrategy = NewQuantStrategyClient(c.config)
+	c.QuantStrategyVersion = NewQuantStrategyVersionClient(c.config)
+	c.QuantWatchlist = NewQuantWatchlistClient(c.config)
+	c.QuantWatchlistItem = NewQuantWatchlistItemClient(c.config)
 	c.RiskEvent = NewRiskEventClient(c.config)
 	c.RiskLimits = NewRiskLimitsClient(c.config)
 	c.Session = NewSessionClient(c.config)
@@ -593,6 +721,22 @@ func (c *Client) init() {
 	c.User = NewUserClient(c.config)
 	c.UserDeviceToken = NewUserDeviceTokenClient(c.config)
 	c.UserSecrets = NewUserSecretsClient(c.config)
+	c.VerificationAlerts = NewVerificationAlertsClient(c.config)
+	c.VerificationAttempts = NewVerificationAttemptsClient(c.config)
+	c.VerificationEngineVersions = NewVerificationEngineVersionsClient(c.config)
+	c.VerificationEvidence = NewVerificationEvidenceClient(c.config)
+	c.VerificationFindings = NewVerificationFindingsClient(c.config)
+	c.VerificationInbox = NewVerificationInboxClient(c.config)
+	c.VerificationMetricRollups = NewVerificationMetricRollupsClient(c.config)
+	c.VerificationPipelineVersions = NewVerificationPipelineVersionsClient(c.config)
+	c.VerificationPolicyEvaluations = NewVerificationPolicyEvaluationsClient(c.config)
+	c.VerificationPolicyVersions = NewVerificationPolicyVersionsClient(c.config)
+	c.VerificationReports = NewVerificationReportsClient(c.config)
+	c.VerificationRuns = NewVerificationRunsClient(c.config)
+	c.VerificationScores = NewVerificationScoresClient(c.config)
+	c.VerificationTaskDependencies = NewVerificationTaskDependenciesClient(c.config)
+	c.VerificationTasks = NewVerificationTasksClient(c.config)
+	c.VerificationTelemetryEvents = NewVerificationTelemetryEventsClient(c.config)
 	c.WorkspaceAuditEvent = NewWorkspaceAuditEventClient(c.config)
 	c.WorkspaceProviderConnection = NewWorkspaceProviderConnectionClient(c.config)
 }
@@ -818,6 +962,26 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Project:                        NewProjectClient(cfg),
 		ProjectMembership:              NewProjectMembershipClient(cfg),
 		ProjectProviderBinding:         NewProjectProviderBindingClient(cfg),
+		QuantAlert:                     NewQuantAlertClient(cfg),
+		QuantAuditEvent:                NewQuantAuditEventClient(cfg),
+		QuantBacktestRun:               NewQuantBacktestRunClient(cfg),
+		QuantBrokerAccount:             NewQuantBrokerAccountClient(cfg),
+		QuantDeployment:                NewQuantDeploymentClient(cfg),
+		QuantDevice:                    NewQuantDeviceClient(cfg),
+		QuantFill:                      NewQuantFillClient(cfg),
+		QuantIdempotencyKey:            NewQuantIdempotencyKeyClient(cfg),
+		QuantInstrument:                NewQuantInstrumentClient(cfg),
+		QuantLiveChallenge:             NewQuantLiveChallengeClient(cfg),
+		QuantLiveSession:               NewQuantLiveSessionClient(cfg),
+		QuantOperatorGrant:             NewQuantOperatorGrantClient(cfg),
+		QuantOrder:                     NewQuantOrderClient(cfg),
+		QuantOutboxEvent:               NewQuantOutboxEventClient(cfg),
+		QuantPosition:                  NewQuantPositionClient(cfg),
+		QuantRiskPolicyVersion:         NewQuantRiskPolicyVersionClient(cfg),
+		QuantStrategy:                  NewQuantStrategyClient(cfg),
+		QuantStrategyVersion:           NewQuantStrategyVersionClient(cfg),
+		QuantWatchlist:                 NewQuantWatchlistClient(cfg),
+		QuantWatchlistItem:             NewQuantWatchlistItemClient(cfg),
 		RiskEvent:                      NewRiskEventClient(cfg),
 		RiskLimits:                     NewRiskLimitsClient(cfg),
 		Session:                        NewSessionClient(cfg),
@@ -825,6 +989,22 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		User:                           NewUserClient(cfg),
 		UserDeviceToken:                NewUserDeviceTokenClient(cfg),
 		UserSecrets:                    NewUserSecretsClient(cfg),
+		VerificationAlerts:             NewVerificationAlertsClient(cfg),
+		VerificationAttempts:           NewVerificationAttemptsClient(cfg),
+		VerificationEngineVersions:     NewVerificationEngineVersionsClient(cfg),
+		VerificationEvidence:           NewVerificationEvidenceClient(cfg),
+		VerificationFindings:           NewVerificationFindingsClient(cfg),
+		VerificationInbox:              NewVerificationInboxClient(cfg),
+		VerificationMetricRollups:      NewVerificationMetricRollupsClient(cfg),
+		VerificationPipelineVersions:   NewVerificationPipelineVersionsClient(cfg),
+		VerificationPolicyEvaluations:  NewVerificationPolicyEvaluationsClient(cfg),
+		VerificationPolicyVersions:     NewVerificationPolicyVersionsClient(cfg),
+		VerificationReports:            NewVerificationReportsClient(cfg),
+		VerificationRuns:               NewVerificationRunsClient(cfg),
+		VerificationScores:             NewVerificationScoresClient(cfg),
+		VerificationTaskDependencies:   NewVerificationTaskDependenciesClient(cfg),
+		VerificationTasks:              NewVerificationTasksClient(cfg),
+		VerificationTelemetryEvents:    NewVerificationTelemetryEventsClient(cfg),
 		WorkspaceAuditEvent:            NewWorkspaceAuditEventClient(cfg),
 		WorkspaceProviderConnection:    NewWorkspaceProviderConnectionClient(cfg),
 	}, nil
@@ -977,6 +1157,26 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Project:                        NewProjectClient(cfg),
 		ProjectMembership:              NewProjectMembershipClient(cfg),
 		ProjectProviderBinding:         NewProjectProviderBindingClient(cfg),
+		QuantAlert:                     NewQuantAlertClient(cfg),
+		QuantAuditEvent:                NewQuantAuditEventClient(cfg),
+		QuantBacktestRun:               NewQuantBacktestRunClient(cfg),
+		QuantBrokerAccount:             NewQuantBrokerAccountClient(cfg),
+		QuantDeployment:                NewQuantDeploymentClient(cfg),
+		QuantDevice:                    NewQuantDeviceClient(cfg),
+		QuantFill:                      NewQuantFillClient(cfg),
+		QuantIdempotencyKey:            NewQuantIdempotencyKeyClient(cfg),
+		QuantInstrument:                NewQuantInstrumentClient(cfg),
+		QuantLiveChallenge:             NewQuantLiveChallengeClient(cfg),
+		QuantLiveSession:               NewQuantLiveSessionClient(cfg),
+		QuantOperatorGrant:             NewQuantOperatorGrantClient(cfg),
+		QuantOrder:                     NewQuantOrderClient(cfg),
+		QuantOutboxEvent:               NewQuantOutboxEventClient(cfg),
+		QuantPosition:                  NewQuantPositionClient(cfg),
+		QuantRiskPolicyVersion:         NewQuantRiskPolicyVersionClient(cfg),
+		QuantStrategy:                  NewQuantStrategyClient(cfg),
+		QuantStrategyVersion:           NewQuantStrategyVersionClient(cfg),
+		QuantWatchlist:                 NewQuantWatchlistClient(cfg),
+		QuantWatchlistItem:             NewQuantWatchlistItemClient(cfg),
 		RiskEvent:                      NewRiskEventClient(cfg),
 		RiskLimits:                     NewRiskLimitsClient(cfg),
 		Session:                        NewSessionClient(cfg),
@@ -984,6 +1184,22 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		User:                           NewUserClient(cfg),
 		UserDeviceToken:                NewUserDeviceTokenClient(cfg),
 		UserSecrets:                    NewUserSecretsClient(cfg),
+		VerificationAlerts:             NewVerificationAlertsClient(cfg),
+		VerificationAttempts:           NewVerificationAttemptsClient(cfg),
+		VerificationEngineVersions:     NewVerificationEngineVersionsClient(cfg),
+		VerificationEvidence:           NewVerificationEvidenceClient(cfg),
+		VerificationFindings:           NewVerificationFindingsClient(cfg),
+		VerificationInbox:              NewVerificationInboxClient(cfg),
+		VerificationMetricRollups:      NewVerificationMetricRollupsClient(cfg),
+		VerificationPipelineVersions:   NewVerificationPipelineVersionsClient(cfg),
+		VerificationPolicyEvaluations:  NewVerificationPolicyEvaluationsClient(cfg),
+		VerificationPolicyVersions:     NewVerificationPolicyVersionsClient(cfg),
+		VerificationReports:            NewVerificationReportsClient(cfg),
+		VerificationRuns:               NewVerificationRunsClient(cfg),
+		VerificationScores:             NewVerificationScoresClient(cfg),
+		VerificationTaskDependencies:   NewVerificationTaskDependenciesClient(cfg),
+		VerificationTasks:              NewVerificationTasksClient(cfg),
+		VerificationTelemetryEvents:    NewVerificationTelemetryEventsClient(cfg),
 		WorkspaceAuditEvent:            NewWorkspaceAuditEventClient(cfg),
 		WorkspaceProviderConnection:    NewWorkspaceProviderConnectionClient(cfg),
 	}, nil
@@ -1058,8 +1274,20 @@ func (c *Client) Use(hooks ...Hook) {
 		c.NativeTelemetryEnvelope, c.NativeWAFEvent, c.NativeWAFRule, c.Notifications,
 		c.Order, c.Organization, c.OrganizationMembership, c.PersonalAccessToken,
 		c.PreviewComment, c.Project, c.ProjectMembership, c.ProjectProviderBinding,
-		c.RiskEvent, c.RiskLimits, c.Session, c.SsoConfig, c.User, c.UserDeviceToken,
-		c.UserSecrets, c.WorkspaceAuditEvent, c.WorkspaceProviderConnection,
+		c.QuantAlert, c.QuantAuditEvent, c.QuantBacktestRun, c.QuantBrokerAccount,
+		c.QuantDeployment, c.QuantDevice, c.QuantFill, c.QuantIdempotencyKey,
+		c.QuantInstrument, c.QuantLiveChallenge, c.QuantLiveSession,
+		c.QuantOperatorGrant, c.QuantOrder, c.QuantOutboxEvent, c.QuantPosition,
+		c.QuantRiskPolicyVersion, c.QuantStrategy, c.QuantStrategyVersion,
+		c.QuantWatchlist, c.QuantWatchlistItem, c.RiskEvent, c.RiskLimits, c.Session,
+		c.SsoConfig, c.User, c.UserDeviceToken, c.UserSecrets, c.VerificationAlerts,
+		c.VerificationAttempts, c.VerificationEngineVersions, c.VerificationEvidence,
+		c.VerificationFindings, c.VerificationInbox, c.VerificationMetricRollups,
+		c.VerificationPipelineVersions, c.VerificationPolicyEvaluations,
+		c.VerificationPolicyVersions, c.VerificationReports, c.VerificationRuns,
+		c.VerificationScores, c.VerificationTaskDependencies, c.VerificationTasks,
+		c.VerificationTelemetryEvents, c.WorkspaceAuditEvent,
+		c.WorkspaceProviderConnection,
 	} {
 		n.Use(hooks...)
 	}
@@ -1112,8 +1340,20 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.NativeTelemetryEnvelope, c.NativeWAFEvent, c.NativeWAFRule, c.Notifications,
 		c.Order, c.Organization, c.OrganizationMembership, c.PersonalAccessToken,
 		c.PreviewComment, c.Project, c.ProjectMembership, c.ProjectProviderBinding,
-		c.RiskEvent, c.RiskLimits, c.Session, c.SsoConfig, c.User, c.UserDeviceToken,
-		c.UserSecrets, c.WorkspaceAuditEvent, c.WorkspaceProviderConnection,
+		c.QuantAlert, c.QuantAuditEvent, c.QuantBacktestRun, c.QuantBrokerAccount,
+		c.QuantDeployment, c.QuantDevice, c.QuantFill, c.QuantIdempotencyKey,
+		c.QuantInstrument, c.QuantLiveChallenge, c.QuantLiveSession,
+		c.QuantOperatorGrant, c.QuantOrder, c.QuantOutboxEvent, c.QuantPosition,
+		c.QuantRiskPolicyVersion, c.QuantStrategy, c.QuantStrategyVersion,
+		c.QuantWatchlist, c.QuantWatchlistItem, c.RiskEvent, c.RiskLimits, c.Session,
+		c.SsoConfig, c.User, c.UserDeviceToken, c.UserSecrets, c.VerificationAlerts,
+		c.VerificationAttempts, c.VerificationEngineVersions, c.VerificationEvidence,
+		c.VerificationFindings, c.VerificationInbox, c.VerificationMetricRollups,
+		c.VerificationPipelineVersions, c.VerificationPolicyEvaluations,
+		c.VerificationPolicyVersions, c.VerificationReports, c.VerificationRuns,
+		c.VerificationScores, c.VerificationTaskDependencies, c.VerificationTasks,
+		c.VerificationTelemetryEvents, c.WorkspaceAuditEvent,
+		c.WorkspaceProviderConnection,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -1384,6 +1624,46 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ProjectMembership.mutate(ctx, m)
 	case *ProjectProviderBindingMutation:
 		return c.ProjectProviderBinding.mutate(ctx, m)
+	case *QuantAlertMutation:
+		return c.QuantAlert.mutate(ctx, m)
+	case *QuantAuditEventMutation:
+		return c.QuantAuditEvent.mutate(ctx, m)
+	case *QuantBacktestRunMutation:
+		return c.QuantBacktestRun.mutate(ctx, m)
+	case *QuantBrokerAccountMutation:
+		return c.QuantBrokerAccount.mutate(ctx, m)
+	case *QuantDeploymentMutation:
+		return c.QuantDeployment.mutate(ctx, m)
+	case *QuantDeviceMutation:
+		return c.QuantDevice.mutate(ctx, m)
+	case *QuantFillMutation:
+		return c.QuantFill.mutate(ctx, m)
+	case *QuantIdempotencyKeyMutation:
+		return c.QuantIdempotencyKey.mutate(ctx, m)
+	case *QuantInstrumentMutation:
+		return c.QuantInstrument.mutate(ctx, m)
+	case *QuantLiveChallengeMutation:
+		return c.QuantLiveChallenge.mutate(ctx, m)
+	case *QuantLiveSessionMutation:
+		return c.QuantLiveSession.mutate(ctx, m)
+	case *QuantOperatorGrantMutation:
+		return c.QuantOperatorGrant.mutate(ctx, m)
+	case *QuantOrderMutation:
+		return c.QuantOrder.mutate(ctx, m)
+	case *QuantOutboxEventMutation:
+		return c.QuantOutboxEvent.mutate(ctx, m)
+	case *QuantPositionMutation:
+		return c.QuantPosition.mutate(ctx, m)
+	case *QuantRiskPolicyVersionMutation:
+		return c.QuantRiskPolicyVersion.mutate(ctx, m)
+	case *QuantStrategyMutation:
+		return c.QuantStrategy.mutate(ctx, m)
+	case *QuantStrategyVersionMutation:
+		return c.QuantStrategyVersion.mutate(ctx, m)
+	case *QuantWatchlistMutation:
+		return c.QuantWatchlist.mutate(ctx, m)
+	case *QuantWatchlistItemMutation:
+		return c.QuantWatchlistItem.mutate(ctx, m)
 	case *RiskEventMutation:
 		return c.RiskEvent.mutate(ctx, m)
 	case *RiskLimitsMutation:
@@ -1398,6 +1678,38 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.UserDeviceToken.mutate(ctx, m)
 	case *UserSecretsMutation:
 		return c.UserSecrets.mutate(ctx, m)
+	case *VerificationAlertsMutation:
+		return c.VerificationAlerts.mutate(ctx, m)
+	case *VerificationAttemptsMutation:
+		return c.VerificationAttempts.mutate(ctx, m)
+	case *VerificationEngineVersionsMutation:
+		return c.VerificationEngineVersions.mutate(ctx, m)
+	case *VerificationEvidenceMutation:
+		return c.VerificationEvidence.mutate(ctx, m)
+	case *VerificationFindingsMutation:
+		return c.VerificationFindings.mutate(ctx, m)
+	case *VerificationInboxMutation:
+		return c.VerificationInbox.mutate(ctx, m)
+	case *VerificationMetricRollupsMutation:
+		return c.VerificationMetricRollups.mutate(ctx, m)
+	case *VerificationPipelineVersionsMutation:
+		return c.VerificationPipelineVersions.mutate(ctx, m)
+	case *VerificationPolicyEvaluationsMutation:
+		return c.VerificationPolicyEvaluations.mutate(ctx, m)
+	case *VerificationPolicyVersionsMutation:
+		return c.VerificationPolicyVersions.mutate(ctx, m)
+	case *VerificationReportsMutation:
+		return c.VerificationReports.mutate(ctx, m)
+	case *VerificationRunsMutation:
+		return c.VerificationRuns.mutate(ctx, m)
+	case *VerificationScoresMutation:
+		return c.VerificationScores.mutate(ctx, m)
+	case *VerificationTaskDependenciesMutation:
+		return c.VerificationTaskDependencies.mutate(ctx, m)
+	case *VerificationTasksMutation:
+		return c.VerificationTasks.mutate(ctx, m)
+	case *VerificationTelemetryEventsMutation:
+		return c.VerificationTelemetryEvents.mutate(ctx, m)
 	case *WorkspaceAuditEventMutation:
 		return c.WorkspaceAuditEvent.mutate(ctx, m)
 	case *WorkspaceProviderConnectionMutation:
@@ -3036,6 +3348,22 @@ func (c *BundleArtifactsClient) QueryRelease(_m *BundleArtifacts) *BundleRelease
 			sqlgraph.From(bundleartifacts.Table, bundleartifacts.FieldID, id),
 			sqlgraph.To(bundlereleases.Table, bundlereleases.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, bundleartifacts.ReleaseTable, bundleartifacts.ReleaseColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryVerificationRuns queries the verificationRuns edge of a BundleArtifacts.
+func (c *BundleArtifactsClient) QueryVerificationRuns(_m *BundleArtifacts) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bundleartifacts.Table, bundleartifacts.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, bundleartifacts.VerificationRunsTable, bundleartifacts.VerificationRunsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -10639,6 +10967,38 @@ func (c *BundleReleasesClient) QueryBundleAbTestExposures(_m *BundleReleases) *B
 	return query
 }
 
+// QueryVerificationRuns queries the verificationRuns edge of a BundleReleases.
+func (c *BundleReleasesClient) QueryVerificationRuns(_m *BundleReleases) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bundlereleases.Table, bundlereleases.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, bundlereleases.VerificationRunsTable, bundlereleases.VerificationRunsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEligibleVerificationRun queries the eligibleVerificationRun edge of a BundleReleases.
+func (c *BundleReleasesClient) QueryEligibleVerificationRun(_m *BundleReleases) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bundlereleases.Table, bundlereleases.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, bundlereleases.EligibleVerificationRunTable, bundlereleases.EligibleVerificationRunColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *BundleReleasesClient) Hooks() []Hook {
 	return c.hooks.BundleReleases
@@ -16537,6 +16897,22 @@ func (c *BundlesClient) QuerySdkTokens(_m *Bundles) *BundleSDKTokensQuery {
 			sqlgraph.From(bundles.Table, bundles.FieldID, id),
 			sqlgraph.To(bundlesdktokens.Table, bundlesdktokens.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, bundles.SdkTokensTable, bundles.SdkTokensColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryVerificationRuns queries the verificationRuns edge of a Bundles.
+func (c *BundlesClient) QueryVerificationRuns(_m *Bundles) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bundles.Table, bundles.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, bundles.VerificationRunsTable, bundles.VerificationRunsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -24395,6 +24771,70 @@ func (c *ProjectClient) QueryCanonicalBuildJobs(_m *Project) *BundleBuildJobsQue
 	return query
 }
 
+// QueryVerificationRuns queries the verificationRuns edge of a Project.
+func (c *ProjectClient) QueryVerificationRuns(_m *Project) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(project.Table, project.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, project.VerificationRunsTable, project.VerificationRunsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryVerificationTelemetry queries the verificationTelemetry edge of a Project.
+func (c *ProjectClient) QueryVerificationTelemetry(_m *Project) *VerificationTelemetryEventsQuery {
+	query := (&VerificationTelemetryEventsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(project.Table, project.FieldID, id),
+			sqlgraph.To(verificationtelemetryevents.Table, verificationtelemetryevents.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, project.VerificationTelemetryTable, project.VerificationTelemetryColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryVerificationRollups queries the verificationRollups edge of a Project.
+func (c *ProjectClient) QueryVerificationRollups(_m *Project) *VerificationMetricRollupsQuery {
+	query := (&VerificationMetricRollupsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(project.Table, project.FieldID, id),
+			sqlgraph.To(verificationmetricrollups.Table, verificationmetricrollups.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, project.VerificationRollupsTable, project.VerificationRollupsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryVerificationAlerts queries the verificationAlerts edge of a Project.
+func (c *ProjectClient) QueryVerificationAlerts(_m *Project) *VerificationAlertsQuery {
+	query := (&VerificationAlertsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(project.Table, project.FieldID, id),
+			sqlgraph.To(verificationalerts.Table, verificationalerts.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, project.VerificationAlertsTable, project.VerificationAlertsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ProjectClient) Hooks() []Hook {
 	return c.hooks.Project
@@ -24747,6 +25187,3274 @@ func (c *ProjectProviderBindingClient) mutate(ctx context.Context, m *ProjectPro
 		return (&ProjectProviderBindingDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown ProjectProviderBinding mutation op: %q", m.Op())
+	}
+}
+
+// QuantAlertClient is a client for the QuantAlert schema.
+type QuantAlertClient struct {
+	config
+}
+
+// NewQuantAlertClient returns a client for the QuantAlert from the given config.
+func NewQuantAlertClient(c config) *QuantAlertClient {
+	return &QuantAlertClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantalert.Hooks(f(g(h())))`.
+func (c *QuantAlertClient) Use(hooks ...Hook) {
+	c.hooks.QuantAlert = append(c.hooks.QuantAlert, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantalert.Intercept(f(g(h())))`.
+func (c *QuantAlertClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantAlert = append(c.inters.QuantAlert, interceptors...)
+}
+
+// Create returns a builder for creating a QuantAlert entity.
+func (c *QuantAlertClient) Create() *QuantAlertCreate {
+	mutation := newQuantAlertMutation(c.config, OpCreate)
+	return &QuantAlertCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantAlert entities.
+func (c *QuantAlertClient) CreateBulk(builders ...*QuantAlertCreate) *QuantAlertCreateBulk {
+	return &QuantAlertCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantAlertClient) MapCreateBulk(slice any, setFunc func(*QuantAlertCreate, int)) *QuantAlertCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantAlertCreateBulk{err: fmt.Errorf("calling to QuantAlertClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantAlertCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantAlertCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantAlert.
+func (c *QuantAlertClient) Update() *QuantAlertUpdate {
+	mutation := newQuantAlertMutation(c.config, OpUpdate)
+	return &QuantAlertUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantAlertClient) UpdateOne(_m *QuantAlert) *QuantAlertUpdateOne {
+	mutation := newQuantAlertMutation(c.config, OpUpdateOne, withQuantAlert(_m))
+	return &QuantAlertUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantAlertClient) UpdateOneID(id uuid.UUID) *QuantAlertUpdateOne {
+	mutation := newQuantAlertMutation(c.config, OpUpdateOne, withQuantAlertID(id))
+	return &QuantAlertUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantAlert.
+func (c *QuantAlertClient) Delete() *QuantAlertDelete {
+	mutation := newQuantAlertMutation(c.config, OpDelete)
+	return &QuantAlertDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantAlertClient) DeleteOne(_m *QuantAlert) *QuantAlertDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantAlertClient) DeleteOneID(id uuid.UUID) *QuantAlertDeleteOne {
+	builder := c.Delete().Where(quantalert.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantAlertDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantAlert.
+func (c *QuantAlertClient) Query() *QuantAlertQuery {
+	return &QuantAlertQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantAlert},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantAlert entity by its id.
+func (c *QuantAlertClient) Get(ctx context.Context, id uuid.UUID) (*QuantAlert, error) {
+	return c.Query().Where(quantalert.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantAlertClient) GetX(ctx context.Context, id uuid.UUID) *QuantAlert {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *QuantAlertClient) Hooks() []Hook {
+	return c.hooks.QuantAlert
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantAlertClient) Interceptors() []Interceptor {
+	return c.inters.QuantAlert
+}
+
+func (c *QuantAlertClient) mutate(ctx context.Context, m *QuantAlertMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantAlertCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantAlertUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantAlertUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantAlertDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantAlert mutation op: %q", m.Op())
+	}
+}
+
+// QuantAuditEventClient is a client for the QuantAuditEvent schema.
+type QuantAuditEventClient struct {
+	config
+}
+
+// NewQuantAuditEventClient returns a client for the QuantAuditEvent from the given config.
+func NewQuantAuditEventClient(c config) *QuantAuditEventClient {
+	return &QuantAuditEventClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantauditevent.Hooks(f(g(h())))`.
+func (c *QuantAuditEventClient) Use(hooks ...Hook) {
+	c.hooks.QuantAuditEvent = append(c.hooks.QuantAuditEvent, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantauditevent.Intercept(f(g(h())))`.
+func (c *QuantAuditEventClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantAuditEvent = append(c.inters.QuantAuditEvent, interceptors...)
+}
+
+// Create returns a builder for creating a QuantAuditEvent entity.
+func (c *QuantAuditEventClient) Create() *QuantAuditEventCreate {
+	mutation := newQuantAuditEventMutation(c.config, OpCreate)
+	return &QuantAuditEventCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantAuditEvent entities.
+func (c *QuantAuditEventClient) CreateBulk(builders ...*QuantAuditEventCreate) *QuantAuditEventCreateBulk {
+	return &QuantAuditEventCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantAuditEventClient) MapCreateBulk(slice any, setFunc func(*QuantAuditEventCreate, int)) *QuantAuditEventCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantAuditEventCreateBulk{err: fmt.Errorf("calling to QuantAuditEventClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantAuditEventCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantAuditEventCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantAuditEvent.
+func (c *QuantAuditEventClient) Update() *QuantAuditEventUpdate {
+	mutation := newQuantAuditEventMutation(c.config, OpUpdate)
+	return &QuantAuditEventUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantAuditEventClient) UpdateOne(_m *QuantAuditEvent) *QuantAuditEventUpdateOne {
+	mutation := newQuantAuditEventMutation(c.config, OpUpdateOne, withQuantAuditEvent(_m))
+	return &QuantAuditEventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantAuditEventClient) UpdateOneID(id uuid.UUID) *QuantAuditEventUpdateOne {
+	mutation := newQuantAuditEventMutation(c.config, OpUpdateOne, withQuantAuditEventID(id))
+	return &QuantAuditEventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantAuditEvent.
+func (c *QuantAuditEventClient) Delete() *QuantAuditEventDelete {
+	mutation := newQuantAuditEventMutation(c.config, OpDelete)
+	return &QuantAuditEventDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantAuditEventClient) DeleteOne(_m *QuantAuditEvent) *QuantAuditEventDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantAuditEventClient) DeleteOneID(id uuid.UUID) *QuantAuditEventDeleteOne {
+	builder := c.Delete().Where(quantauditevent.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantAuditEventDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantAuditEvent.
+func (c *QuantAuditEventClient) Query() *QuantAuditEventQuery {
+	return &QuantAuditEventQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantAuditEvent},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantAuditEvent entity by its id.
+func (c *QuantAuditEventClient) Get(ctx context.Context, id uuid.UUID) (*QuantAuditEvent, error) {
+	return c.Query().Where(quantauditevent.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantAuditEventClient) GetX(ctx context.Context, id uuid.UUID) *QuantAuditEvent {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *QuantAuditEventClient) Hooks() []Hook {
+	return c.hooks.QuantAuditEvent
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantAuditEventClient) Interceptors() []Interceptor {
+	return c.inters.QuantAuditEvent
+}
+
+func (c *QuantAuditEventClient) mutate(ctx context.Context, m *QuantAuditEventMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantAuditEventCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantAuditEventUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantAuditEventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantAuditEventDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantAuditEvent mutation op: %q", m.Op())
+	}
+}
+
+// QuantBacktestRunClient is a client for the QuantBacktestRun schema.
+type QuantBacktestRunClient struct {
+	config
+}
+
+// NewQuantBacktestRunClient returns a client for the QuantBacktestRun from the given config.
+func NewQuantBacktestRunClient(c config) *QuantBacktestRunClient {
+	return &QuantBacktestRunClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantbacktestrun.Hooks(f(g(h())))`.
+func (c *QuantBacktestRunClient) Use(hooks ...Hook) {
+	c.hooks.QuantBacktestRun = append(c.hooks.QuantBacktestRun, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantbacktestrun.Intercept(f(g(h())))`.
+func (c *QuantBacktestRunClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantBacktestRun = append(c.inters.QuantBacktestRun, interceptors...)
+}
+
+// Create returns a builder for creating a QuantBacktestRun entity.
+func (c *QuantBacktestRunClient) Create() *QuantBacktestRunCreate {
+	mutation := newQuantBacktestRunMutation(c.config, OpCreate)
+	return &QuantBacktestRunCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantBacktestRun entities.
+func (c *QuantBacktestRunClient) CreateBulk(builders ...*QuantBacktestRunCreate) *QuantBacktestRunCreateBulk {
+	return &QuantBacktestRunCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantBacktestRunClient) MapCreateBulk(slice any, setFunc func(*QuantBacktestRunCreate, int)) *QuantBacktestRunCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantBacktestRunCreateBulk{err: fmt.Errorf("calling to QuantBacktestRunClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantBacktestRunCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantBacktestRunCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantBacktestRun.
+func (c *QuantBacktestRunClient) Update() *QuantBacktestRunUpdate {
+	mutation := newQuantBacktestRunMutation(c.config, OpUpdate)
+	return &QuantBacktestRunUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantBacktestRunClient) UpdateOne(_m *QuantBacktestRun) *QuantBacktestRunUpdateOne {
+	mutation := newQuantBacktestRunMutation(c.config, OpUpdateOne, withQuantBacktestRun(_m))
+	return &QuantBacktestRunUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantBacktestRunClient) UpdateOneID(id uuid.UUID) *QuantBacktestRunUpdateOne {
+	mutation := newQuantBacktestRunMutation(c.config, OpUpdateOne, withQuantBacktestRunID(id))
+	return &QuantBacktestRunUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantBacktestRun.
+func (c *QuantBacktestRunClient) Delete() *QuantBacktestRunDelete {
+	mutation := newQuantBacktestRunMutation(c.config, OpDelete)
+	return &QuantBacktestRunDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantBacktestRunClient) DeleteOne(_m *QuantBacktestRun) *QuantBacktestRunDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantBacktestRunClient) DeleteOneID(id uuid.UUID) *QuantBacktestRunDeleteOne {
+	builder := c.Delete().Where(quantbacktestrun.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantBacktestRunDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantBacktestRun.
+func (c *QuantBacktestRunClient) Query() *QuantBacktestRunQuery {
+	return &QuantBacktestRunQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantBacktestRun},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantBacktestRun entity by its id.
+func (c *QuantBacktestRunClient) Get(ctx context.Context, id uuid.UUID) (*QuantBacktestRun, error) {
+	return c.Query().Where(quantbacktestrun.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantBacktestRunClient) GetX(ctx context.Context, id uuid.UUID) *QuantBacktestRun {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryStrategyVersion queries the strategyVersion edge of a QuantBacktestRun.
+func (c *QuantBacktestRunClient) QueryStrategyVersion(_m *QuantBacktestRun) *QuantStrategyVersionQuery {
+	query := (&QuantStrategyVersionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantbacktestrun.Table, quantbacktestrun.FieldID, id),
+			sqlgraph.To(quantstrategyversion.Table, quantstrategyversion.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantbacktestrun.StrategyVersionTable, quantbacktestrun.StrategyVersionColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantBacktestRunClient) Hooks() []Hook {
+	return c.hooks.QuantBacktestRun
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantBacktestRunClient) Interceptors() []Interceptor {
+	return c.inters.QuantBacktestRun
+}
+
+func (c *QuantBacktestRunClient) mutate(ctx context.Context, m *QuantBacktestRunMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantBacktestRunCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantBacktestRunUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantBacktestRunUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantBacktestRunDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantBacktestRun mutation op: %q", m.Op())
+	}
+}
+
+// QuantBrokerAccountClient is a client for the QuantBrokerAccount schema.
+type QuantBrokerAccountClient struct {
+	config
+}
+
+// NewQuantBrokerAccountClient returns a client for the QuantBrokerAccount from the given config.
+func NewQuantBrokerAccountClient(c config) *QuantBrokerAccountClient {
+	return &QuantBrokerAccountClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantbrokeraccount.Hooks(f(g(h())))`.
+func (c *QuantBrokerAccountClient) Use(hooks ...Hook) {
+	c.hooks.QuantBrokerAccount = append(c.hooks.QuantBrokerAccount, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantbrokeraccount.Intercept(f(g(h())))`.
+func (c *QuantBrokerAccountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantBrokerAccount = append(c.inters.QuantBrokerAccount, interceptors...)
+}
+
+// Create returns a builder for creating a QuantBrokerAccount entity.
+func (c *QuantBrokerAccountClient) Create() *QuantBrokerAccountCreate {
+	mutation := newQuantBrokerAccountMutation(c.config, OpCreate)
+	return &QuantBrokerAccountCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantBrokerAccount entities.
+func (c *QuantBrokerAccountClient) CreateBulk(builders ...*QuantBrokerAccountCreate) *QuantBrokerAccountCreateBulk {
+	return &QuantBrokerAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantBrokerAccountClient) MapCreateBulk(slice any, setFunc func(*QuantBrokerAccountCreate, int)) *QuantBrokerAccountCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantBrokerAccountCreateBulk{err: fmt.Errorf("calling to QuantBrokerAccountClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantBrokerAccountCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantBrokerAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantBrokerAccount.
+func (c *QuantBrokerAccountClient) Update() *QuantBrokerAccountUpdate {
+	mutation := newQuantBrokerAccountMutation(c.config, OpUpdate)
+	return &QuantBrokerAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantBrokerAccountClient) UpdateOne(_m *QuantBrokerAccount) *QuantBrokerAccountUpdateOne {
+	mutation := newQuantBrokerAccountMutation(c.config, OpUpdateOne, withQuantBrokerAccount(_m))
+	return &QuantBrokerAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantBrokerAccountClient) UpdateOneID(id uuid.UUID) *QuantBrokerAccountUpdateOne {
+	mutation := newQuantBrokerAccountMutation(c.config, OpUpdateOne, withQuantBrokerAccountID(id))
+	return &QuantBrokerAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantBrokerAccount.
+func (c *QuantBrokerAccountClient) Delete() *QuantBrokerAccountDelete {
+	mutation := newQuantBrokerAccountMutation(c.config, OpDelete)
+	return &QuantBrokerAccountDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantBrokerAccountClient) DeleteOne(_m *QuantBrokerAccount) *QuantBrokerAccountDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantBrokerAccountClient) DeleteOneID(id uuid.UUID) *QuantBrokerAccountDeleteOne {
+	builder := c.Delete().Where(quantbrokeraccount.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantBrokerAccountDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantBrokerAccount.
+func (c *QuantBrokerAccountClient) Query() *QuantBrokerAccountQuery {
+	return &QuantBrokerAccountQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantBrokerAccount},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantBrokerAccount entity by its id.
+func (c *QuantBrokerAccountClient) Get(ctx context.Context, id uuid.UUID) (*QuantBrokerAccount, error) {
+	return c.Query().Where(quantbrokeraccount.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantBrokerAccountClient) GetX(ctx context.Context, id uuid.UUID) *QuantBrokerAccount {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGrants queries the grants edge of a QuantBrokerAccount.
+func (c *QuantBrokerAccountClient) QueryGrants(_m *QuantBrokerAccount) *QuantOperatorGrantQuery {
+	query := (&QuantOperatorGrantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantbrokeraccount.Table, quantbrokeraccount.FieldID, id),
+			sqlgraph.To(quantoperatorgrant.Table, quantoperatorgrant.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantbrokeraccount.GrantsTable, quantbrokeraccount.GrantsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLiveSessions queries the liveSessions edge of a QuantBrokerAccount.
+func (c *QuantBrokerAccountClient) QueryLiveSessions(_m *QuantBrokerAccount) *QuantLiveSessionQuery {
+	query := (&QuantLiveSessionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantbrokeraccount.Table, quantbrokeraccount.FieldID, id),
+			sqlgraph.To(quantlivesession.Table, quantlivesession.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantbrokeraccount.LiveSessionsTable, quantbrokeraccount.LiveSessionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOrders queries the orders edge of a QuantBrokerAccount.
+func (c *QuantBrokerAccountClient) QueryOrders(_m *QuantBrokerAccount) *QuantOrderQuery {
+	query := (&QuantOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantbrokeraccount.Table, quantbrokeraccount.FieldID, id),
+			sqlgraph.To(quantorder.Table, quantorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantbrokeraccount.OrdersTable, quantbrokeraccount.OrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFills queries the fills edge of a QuantBrokerAccount.
+func (c *QuantBrokerAccountClient) QueryFills(_m *QuantBrokerAccount) *QuantFillQuery {
+	query := (&QuantFillClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantbrokeraccount.Table, quantbrokeraccount.FieldID, id),
+			sqlgraph.To(quantfill.Table, quantfill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantbrokeraccount.FillsTable, quantbrokeraccount.FillsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPositions queries the positions edge of a QuantBrokerAccount.
+func (c *QuantBrokerAccountClient) QueryPositions(_m *QuantBrokerAccount) *QuantPositionQuery {
+	query := (&QuantPositionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantbrokeraccount.Table, quantbrokeraccount.FieldID, id),
+			sqlgraph.To(quantposition.Table, quantposition.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantbrokeraccount.PositionsTable, quantbrokeraccount.PositionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryStrategies queries the strategies edge of a QuantBrokerAccount.
+func (c *QuantBrokerAccountClient) QueryStrategies(_m *QuantBrokerAccount) *QuantStrategyQuery {
+	query := (&QuantStrategyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantbrokeraccount.Table, quantbrokeraccount.FieldID, id),
+			sqlgraph.To(quantstrategy.Table, quantstrategy.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantbrokeraccount.StrategiesTable, quantbrokeraccount.StrategiesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDeployments queries the deployments edge of a QuantBrokerAccount.
+func (c *QuantBrokerAccountClient) QueryDeployments(_m *QuantBrokerAccount) *QuantDeploymentQuery {
+	query := (&QuantDeploymentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantbrokeraccount.Table, quantbrokeraccount.FieldID, id),
+			sqlgraph.To(quantdeployment.Table, quantdeployment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantbrokeraccount.DeploymentsTable, quantbrokeraccount.DeploymentsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRiskPolicies queries the riskPolicies edge of a QuantBrokerAccount.
+func (c *QuantBrokerAccountClient) QueryRiskPolicies(_m *QuantBrokerAccount) *QuantRiskPolicyVersionQuery {
+	query := (&QuantRiskPolicyVersionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantbrokeraccount.Table, quantbrokeraccount.FieldID, id),
+			sqlgraph.To(quantriskpolicyversion.Table, quantriskpolicyversion.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantbrokeraccount.RiskPoliciesTable, quantbrokeraccount.RiskPoliciesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantBrokerAccountClient) Hooks() []Hook {
+	return c.hooks.QuantBrokerAccount
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantBrokerAccountClient) Interceptors() []Interceptor {
+	return c.inters.QuantBrokerAccount
+}
+
+func (c *QuantBrokerAccountClient) mutate(ctx context.Context, m *QuantBrokerAccountMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantBrokerAccountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantBrokerAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantBrokerAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantBrokerAccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantBrokerAccount mutation op: %q", m.Op())
+	}
+}
+
+// QuantDeploymentClient is a client for the QuantDeployment schema.
+type QuantDeploymentClient struct {
+	config
+}
+
+// NewQuantDeploymentClient returns a client for the QuantDeployment from the given config.
+func NewQuantDeploymentClient(c config) *QuantDeploymentClient {
+	return &QuantDeploymentClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantdeployment.Hooks(f(g(h())))`.
+func (c *QuantDeploymentClient) Use(hooks ...Hook) {
+	c.hooks.QuantDeployment = append(c.hooks.QuantDeployment, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantdeployment.Intercept(f(g(h())))`.
+func (c *QuantDeploymentClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantDeployment = append(c.inters.QuantDeployment, interceptors...)
+}
+
+// Create returns a builder for creating a QuantDeployment entity.
+func (c *QuantDeploymentClient) Create() *QuantDeploymentCreate {
+	mutation := newQuantDeploymentMutation(c.config, OpCreate)
+	return &QuantDeploymentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantDeployment entities.
+func (c *QuantDeploymentClient) CreateBulk(builders ...*QuantDeploymentCreate) *QuantDeploymentCreateBulk {
+	return &QuantDeploymentCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantDeploymentClient) MapCreateBulk(slice any, setFunc func(*QuantDeploymentCreate, int)) *QuantDeploymentCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantDeploymentCreateBulk{err: fmt.Errorf("calling to QuantDeploymentClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantDeploymentCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantDeploymentCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantDeployment.
+func (c *QuantDeploymentClient) Update() *QuantDeploymentUpdate {
+	mutation := newQuantDeploymentMutation(c.config, OpUpdate)
+	return &QuantDeploymentUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantDeploymentClient) UpdateOne(_m *QuantDeployment) *QuantDeploymentUpdateOne {
+	mutation := newQuantDeploymentMutation(c.config, OpUpdateOne, withQuantDeployment(_m))
+	return &QuantDeploymentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantDeploymentClient) UpdateOneID(id uuid.UUID) *QuantDeploymentUpdateOne {
+	mutation := newQuantDeploymentMutation(c.config, OpUpdateOne, withQuantDeploymentID(id))
+	return &QuantDeploymentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantDeployment.
+func (c *QuantDeploymentClient) Delete() *QuantDeploymentDelete {
+	mutation := newQuantDeploymentMutation(c.config, OpDelete)
+	return &QuantDeploymentDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantDeploymentClient) DeleteOne(_m *QuantDeployment) *QuantDeploymentDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantDeploymentClient) DeleteOneID(id uuid.UUID) *QuantDeploymentDeleteOne {
+	builder := c.Delete().Where(quantdeployment.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantDeploymentDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantDeployment.
+func (c *QuantDeploymentClient) Query() *QuantDeploymentQuery {
+	return &QuantDeploymentQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantDeployment},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantDeployment entity by its id.
+func (c *QuantDeploymentClient) Get(ctx context.Context, id uuid.UUID) (*QuantDeployment, error) {
+	return c.Query().Where(quantdeployment.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantDeploymentClient) GetX(ctx context.Context, id uuid.UUID) *QuantDeployment {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAccount queries the account edge of a QuantDeployment.
+func (c *QuantDeploymentClient) QueryAccount(_m *QuantDeployment) *QuantBrokerAccountQuery {
+	query := (&QuantBrokerAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantdeployment.Table, quantdeployment.FieldID, id),
+			sqlgraph.To(quantbrokeraccount.Table, quantbrokeraccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantdeployment.AccountTable, quantdeployment.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryStrategy queries the strategy edge of a QuantDeployment.
+func (c *QuantDeploymentClient) QueryStrategy(_m *QuantDeployment) *QuantStrategyQuery {
+	query := (&QuantStrategyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantdeployment.Table, quantdeployment.FieldID, id),
+			sqlgraph.To(quantstrategy.Table, quantstrategy.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantdeployment.StrategyTable, quantdeployment.StrategyColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryStrategyVersion queries the strategyVersion edge of a QuantDeployment.
+func (c *QuantDeploymentClient) QueryStrategyVersion(_m *QuantDeployment) *QuantStrategyVersionQuery {
+	query := (&QuantStrategyVersionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantdeployment.Table, quantdeployment.FieldID, id),
+			sqlgraph.To(quantstrategyversion.Table, quantstrategyversion.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantdeployment.StrategyVersionTable, quantdeployment.StrategyVersionColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantDeploymentClient) Hooks() []Hook {
+	return c.hooks.QuantDeployment
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantDeploymentClient) Interceptors() []Interceptor {
+	return c.inters.QuantDeployment
+}
+
+func (c *QuantDeploymentClient) mutate(ctx context.Context, m *QuantDeploymentMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantDeploymentCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantDeploymentUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantDeploymentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantDeploymentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantDeployment mutation op: %q", m.Op())
+	}
+}
+
+// QuantDeviceClient is a client for the QuantDevice schema.
+type QuantDeviceClient struct {
+	config
+}
+
+// NewQuantDeviceClient returns a client for the QuantDevice from the given config.
+func NewQuantDeviceClient(c config) *QuantDeviceClient {
+	return &QuantDeviceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantdevice.Hooks(f(g(h())))`.
+func (c *QuantDeviceClient) Use(hooks ...Hook) {
+	c.hooks.QuantDevice = append(c.hooks.QuantDevice, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantdevice.Intercept(f(g(h())))`.
+func (c *QuantDeviceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantDevice = append(c.inters.QuantDevice, interceptors...)
+}
+
+// Create returns a builder for creating a QuantDevice entity.
+func (c *QuantDeviceClient) Create() *QuantDeviceCreate {
+	mutation := newQuantDeviceMutation(c.config, OpCreate)
+	return &QuantDeviceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantDevice entities.
+func (c *QuantDeviceClient) CreateBulk(builders ...*QuantDeviceCreate) *QuantDeviceCreateBulk {
+	return &QuantDeviceCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantDeviceClient) MapCreateBulk(slice any, setFunc func(*QuantDeviceCreate, int)) *QuantDeviceCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantDeviceCreateBulk{err: fmt.Errorf("calling to QuantDeviceClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantDeviceCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantDeviceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantDevice.
+func (c *QuantDeviceClient) Update() *QuantDeviceUpdate {
+	mutation := newQuantDeviceMutation(c.config, OpUpdate)
+	return &QuantDeviceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantDeviceClient) UpdateOne(_m *QuantDevice) *QuantDeviceUpdateOne {
+	mutation := newQuantDeviceMutation(c.config, OpUpdateOne, withQuantDevice(_m))
+	return &QuantDeviceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantDeviceClient) UpdateOneID(id uuid.UUID) *QuantDeviceUpdateOne {
+	mutation := newQuantDeviceMutation(c.config, OpUpdateOne, withQuantDeviceID(id))
+	return &QuantDeviceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantDevice.
+func (c *QuantDeviceClient) Delete() *QuantDeviceDelete {
+	mutation := newQuantDeviceMutation(c.config, OpDelete)
+	return &QuantDeviceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantDeviceClient) DeleteOne(_m *QuantDevice) *QuantDeviceDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantDeviceClient) DeleteOneID(id uuid.UUID) *QuantDeviceDeleteOne {
+	builder := c.Delete().Where(quantdevice.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantDeviceDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantDevice.
+func (c *QuantDeviceClient) Query() *QuantDeviceQuery {
+	return &QuantDeviceQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantDevice},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantDevice entity by its id.
+func (c *QuantDeviceClient) Get(ctx context.Context, id uuid.UUID) (*QuantDevice, error) {
+	return c.Query().Where(quantdevice.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantDeviceClient) GetX(ctx context.Context, id uuid.UUID) *QuantDevice {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *QuantDeviceClient) Hooks() []Hook {
+	return c.hooks.QuantDevice
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantDeviceClient) Interceptors() []Interceptor {
+	return c.inters.QuantDevice
+}
+
+func (c *QuantDeviceClient) mutate(ctx context.Context, m *QuantDeviceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantDeviceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantDeviceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantDeviceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantDeviceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantDevice mutation op: %q", m.Op())
+	}
+}
+
+// QuantFillClient is a client for the QuantFill schema.
+type QuantFillClient struct {
+	config
+}
+
+// NewQuantFillClient returns a client for the QuantFill from the given config.
+func NewQuantFillClient(c config) *QuantFillClient {
+	return &QuantFillClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantfill.Hooks(f(g(h())))`.
+func (c *QuantFillClient) Use(hooks ...Hook) {
+	c.hooks.QuantFill = append(c.hooks.QuantFill, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantfill.Intercept(f(g(h())))`.
+func (c *QuantFillClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantFill = append(c.inters.QuantFill, interceptors...)
+}
+
+// Create returns a builder for creating a QuantFill entity.
+func (c *QuantFillClient) Create() *QuantFillCreate {
+	mutation := newQuantFillMutation(c.config, OpCreate)
+	return &QuantFillCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantFill entities.
+func (c *QuantFillClient) CreateBulk(builders ...*QuantFillCreate) *QuantFillCreateBulk {
+	return &QuantFillCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantFillClient) MapCreateBulk(slice any, setFunc func(*QuantFillCreate, int)) *QuantFillCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantFillCreateBulk{err: fmt.Errorf("calling to QuantFillClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantFillCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantFillCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantFill.
+func (c *QuantFillClient) Update() *QuantFillUpdate {
+	mutation := newQuantFillMutation(c.config, OpUpdate)
+	return &QuantFillUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantFillClient) UpdateOne(_m *QuantFill) *QuantFillUpdateOne {
+	mutation := newQuantFillMutation(c.config, OpUpdateOne, withQuantFill(_m))
+	return &QuantFillUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantFillClient) UpdateOneID(id uuid.UUID) *QuantFillUpdateOne {
+	mutation := newQuantFillMutation(c.config, OpUpdateOne, withQuantFillID(id))
+	return &QuantFillUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantFill.
+func (c *QuantFillClient) Delete() *QuantFillDelete {
+	mutation := newQuantFillMutation(c.config, OpDelete)
+	return &QuantFillDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantFillClient) DeleteOne(_m *QuantFill) *QuantFillDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantFillClient) DeleteOneID(id uuid.UUID) *QuantFillDeleteOne {
+	builder := c.Delete().Where(quantfill.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantFillDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantFill.
+func (c *QuantFillClient) Query() *QuantFillQuery {
+	return &QuantFillQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantFill},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantFill entity by its id.
+func (c *QuantFillClient) Get(ctx context.Context, id uuid.UUID) (*QuantFill, error) {
+	return c.Query().Where(quantfill.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantFillClient) GetX(ctx context.Context, id uuid.UUID) *QuantFill {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOrder queries the order edge of a QuantFill.
+func (c *QuantFillClient) QueryOrder(_m *QuantFill) *QuantOrderQuery {
+	query := (&QuantOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantfill.Table, quantfill.FieldID, id),
+			sqlgraph.To(quantorder.Table, quantorder.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantfill.OrderTable, quantfill.OrderColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAccount queries the account edge of a QuantFill.
+func (c *QuantFillClient) QueryAccount(_m *QuantFill) *QuantBrokerAccountQuery {
+	query := (&QuantBrokerAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantfill.Table, quantfill.FieldID, id),
+			sqlgraph.To(quantbrokeraccount.Table, quantbrokeraccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantfill.AccountTable, quantfill.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInstrument queries the instrument edge of a QuantFill.
+func (c *QuantFillClient) QueryInstrument(_m *QuantFill) *QuantInstrumentQuery {
+	query := (&QuantInstrumentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantfill.Table, quantfill.FieldID, id),
+			sqlgraph.To(quantinstrument.Table, quantinstrument.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantfill.InstrumentTable, quantfill.InstrumentColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantFillClient) Hooks() []Hook {
+	return c.hooks.QuantFill
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantFillClient) Interceptors() []Interceptor {
+	return c.inters.QuantFill
+}
+
+func (c *QuantFillClient) mutate(ctx context.Context, m *QuantFillMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantFillCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantFillUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantFillUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantFillDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantFill mutation op: %q", m.Op())
+	}
+}
+
+// QuantIdempotencyKeyClient is a client for the QuantIdempotencyKey schema.
+type QuantIdempotencyKeyClient struct {
+	config
+}
+
+// NewQuantIdempotencyKeyClient returns a client for the QuantIdempotencyKey from the given config.
+func NewQuantIdempotencyKeyClient(c config) *QuantIdempotencyKeyClient {
+	return &QuantIdempotencyKeyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantidempotencykey.Hooks(f(g(h())))`.
+func (c *QuantIdempotencyKeyClient) Use(hooks ...Hook) {
+	c.hooks.QuantIdempotencyKey = append(c.hooks.QuantIdempotencyKey, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantidempotencykey.Intercept(f(g(h())))`.
+func (c *QuantIdempotencyKeyClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantIdempotencyKey = append(c.inters.QuantIdempotencyKey, interceptors...)
+}
+
+// Create returns a builder for creating a QuantIdempotencyKey entity.
+func (c *QuantIdempotencyKeyClient) Create() *QuantIdempotencyKeyCreate {
+	mutation := newQuantIdempotencyKeyMutation(c.config, OpCreate)
+	return &QuantIdempotencyKeyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantIdempotencyKey entities.
+func (c *QuantIdempotencyKeyClient) CreateBulk(builders ...*QuantIdempotencyKeyCreate) *QuantIdempotencyKeyCreateBulk {
+	return &QuantIdempotencyKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantIdempotencyKeyClient) MapCreateBulk(slice any, setFunc func(*QuantIdempotencyKeyCreate, int)) *QuantIdempotencyKeyCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantIdempotencyKeyCreateBulk{err: fmt.Errorf("calling to QuantIdempotencyKeyClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantIdempotencyKeyCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantIdempotencyKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantIdempotencyKey.
+func (c *QuantIdempotencyKeyClient) Update() *QuantIdempotencyKeyUpdate {
+	mutation := newQuantIdempotencyKeyMutation(c.config, OpUpdate)
+	return &QuantIdempotencyKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantIdempotencyKeyClient) UpdateOne(_m *QuantIdempotencyKey) *QuantIdempotencyKeyUpdateOne {
+	mutation := newQuantIdempotencyKeyMutation(c.config, OpUpdateOne, withQuantIdempotencyKey(_m))
+	return &QuantIdempotencyKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantIdempotencyKeyClient) UpdateOneID(id uuid.UUID) *QuantIdempotencyKeyUpdateOne {
+	mutation := newQuantIdempotencyKeyMutation(c.config, OpUpdateOne, withQuantIdempotencyKeyID(id))
+	return &QuantIdempotencyKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantIdempotencyKey.
+func (c *QuantIdempotencyKeyClient) Delete() *QuantIdempotencyKeyDelete {
+	mutation := newQuantIdempotencyKeyMutation(c.config, OpDelete)
+	return &QuantIdempotencyKeyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantIdempotencyKeyClient) DeleteOne(_m *QuantIdempotencyKey) *QuantIdempotencyKeyDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantIdempotencyKeyClient) DeleteOneID(id uuid.UUID) *QuantIdempotencyKeyDeleteOne {
+	builder := c.Delete().Where(quantidempotencykey.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantIdempotencyKeyDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantIdempotencyKey.
+func (c *QuantIdempotencyKeyClient) Query() *QuantIdempotencyKeyQuery {
+	return &QuantIdempotencyKeyQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantIdempotencyKey},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantIdempotencyKey entity by its id.
+func (c *QuantIdempotencyKeyClient) Get(ctx context.Context, id uuid.UUID) (*QuantIdempotencyKey, error) {
+	return c.Query().Where(quantidempotencykey.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantIdempotencyKeyClient) GetX(ctx context.Context, id uuid.UUID) *QuantIdempotencyKey {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *QuantIdempotencyKeyClient) Hooks() []Hook {
+	return c.hooks.QuantIdempotencyKey
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantIdempotencyKeyClient) Interceptors() []Interceptor {
+	return c.inters.QuantIdempotencyKey
+}
+
+func (c *QuantIdempotencyKeyClient) mutate(ctx context.Context, m *QuantIdempotencyKeyMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantIdempotencyKeyCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantIdempotencyKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantIdempotencyKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantIdempotencyKeyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantIdempotencyKey mutation op: %q", m.Op())
+	}
+}
+
+// QuantInstrumentClient is a client for the QuantInstrument schema.
+type QuantInstrumentClient struct {
+	config
+}
+
+// NewQuantInstrumentClient returns a client for the QuantInstrument from the given config.
+func NewQuantInstrumentClient(c config) *QuantInstrumentClient {
+	return &QuantInstrumentClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantinstrument.Hooks(f(g(h())))`.
+func (c *QuantInstrumentClient) Use(hooks ...Hook) {
+	c.hooks.QuantInstrument = append(c.hooks.QuantInstrument, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantinstrument.Intercept(f(g(h())))`.
+func (c *QuantInstrumentClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantInstrument = append(c.inters.QuantInstrument, interceptors...)
+}
+
+// Create returns a builder for creating a QuantInstrument entity.
+func (c *QuantInstrumentClient) Create() *QuantInstrumentCreate {
+	mutation := newQuantInstrumentMutation(c.config, OpCreate)
+	return &QuantInstrumentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantInstrument entities.
+func (c *QuantInstrumentClient) CreateBulk(builders ...*QuantInstrumentCreate) *QuantInstrumentCreateBulk {
+	return &QuantInstrumentCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantInstrumentClient) MapCreateBulk(slice any, setFunc func(*QuantInstrumentCreate, int)) *QuantInstrumentCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantInstrumentCreateBulk{err: fmt.Errorf("calling to QuantInstrumentClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantInstrumentCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantInstrumentCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantInstrument.
+func (c *QuantInstrumentClient) Update() *QuantInstrumentUpdate {
+	mutation := newQuantInstrumentMutation(c.config, OpUpdate)
+	return &QuantInstrumentUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantInstrumentClient) UpdateOne(_m *QuantInstrument) *QuantInstrumentUpdateOne {
+	mutation := newQuantInstrumentMutation(c.config, OpUpdateOne, withQuantInstrument(_m))
+	return &QuantInstrumentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantInstrumentClient) UpdateOneID(id uuid.UUID) *QuantInstrumentUpdateOne {
+	mutation := newQuantInstrumentMutation(c.config, OpUpdateOne, withQuantInstrumentID(id))
+	return &QuantInstrumentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantInstrument.
+func (c *QuantInstrumentClient) Delete() *QuantInstrumentDelete {
+	mutation := newQuantInstrumentMutation(c.config, OpDelete)
+	return &QuantInstrumentDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantInstrumentClient) DeleteOne(_m *QuantInstrument) *QuantInstrumentDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantInstrumentClient) DeleteOneID(id uuid.UUID) *QuantInstrumentDeleteOne {
+	builder := c.Delete().Where(quantinstrument.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantInstrumentDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantInstrument.
+func (c *QuantInstrumentClient) Query() *QuantInstrumentQuery {
+	return &QuantInstrumentQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantInstrument},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantInstrument entity by its id.
+func (c *QuantInstrumentClient) Get(ctx context.Context, id uuid.UUID) (*QuantInstrument, error) {
+	return c.Query().Where(quantinstrument.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantInstrumentClient) GetX(ctx context.Context, id uuid.UUID) *QuantInstrument {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryWatchlistItems queries the watchlistItems edge of a QuantInstrument.
+func (c *QuantInstrumentClient) QueryWatchlistItems(_m *QuantInstrument) *QuantWatchlistItemQuery {
+	query := (&QuantWatchlistItemClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantinstrument.Table, quantinstrument.FieldID, id),
+			sqlgraph.To(quantwatchlistitem.Table, quantwatchlistitem.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantinstrument.WatchlistItemsTable, quantinstrument.WatchlistItemsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOrders queries the orders edge of a QuantInstrument.
+func (c *QuantInstrumentClient) QueryOrders(_m *QuantInstrument) *QuantOrderQuery {
+	query := (&QuantOrderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantinstrument.Table, quantinstrument.FieldID, id),
+			sqlgraph.To(quantorder.Table, quantorder.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantinstrument.OrdersTable, quantinstrument.OrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFills queries the fills edge of a QuantInstrument.
+func (c *QuantInstrumentClient) QueryFills(_m *QuantInstrument) *QuantFillQuery {
+	query := (&QuantFillClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantinstrument.Table, quantinstrument.FieldID, id),
+			sqlgraph.To(quantfill.Table, quantfill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantinstrument.FillsTable, quantinstrument.FillsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPositions queries the positions edge of a QuantInstrument.
+func (c *QuantInstrumentClient) QueryPositions(_m *QuantInstrument) *QuantPositionQuery {
+	query := (&QuantPositionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantinstrument.Table, quantinstrument.FieldID, id),
+			sqlgraph.To(quantposition.Table, quantposition.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantinstrument.PositionsTable, quantinstrument.PositionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantInstrumentClient) Hooks() []Hook {
+	return c.hooks.QuantInstrument
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantInstrumentClient) Interceptors() []Interceptor {
+	return c.inters.QuantInstrument
+}
+
+func (c *QuantInstrumentClient) mutate(ctx context.Context, m *QuantInstrumentMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantInstrumentCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantInstrumentUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantInstrumentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantInstrumentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantInstrument mutation op: %q", m.Op())
+	}
+}
+
+// QuantLiveChallengeClient is a client for the QuantLiveChallenge schema.
+type QuantLiveChallengeClient struct {
+	config
+}
+
+// NewQuantLiveChallengeClient returns a client for the QuantLiveChallenge from the given config.
+func NewQuantLiveChallengeClient(c config) *QuantLiveChallengeClient {
+	return &QuantLiveChallengeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantlivechallenge.Hooks(f(g(h())))`.
+func (c *QuantLiveChallengeClient) Use(hooks ...Hook) {
+	c.hooks.QuantLiveChallenge = append(c.hooks.QuantLiveChallenge, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantlivechallenge.Intercept(f(g(h())))`.
+func (c *QuantLiveChallengeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantLiveChallenge = append(c.inters.QuantLiveChallenge, interceptors...)
+}
+
+// Create returns a builder for creating a QuantLiveChallenge entity.
+func (c *QuantLiveChallengeClient) Create() *QuantLiveChallengeCreate {
+	mutation := newQuantLiveChallengeMutation(c.config, OpCreate)
+	return &QuantLiveChallengeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantLiveChallenge entities.
+func (c *QuantLiveChallengeClient) CreateBulk(builders ...*QuantLiveChallengeCreate) *QuantLiveChallengeCreateBulk {
+	return &QuantLiveChallengeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantLiveChallengeClient) MapCreateBulk(slice any, setFunc func(*QuantLiveChallengeCreate, int)) *QuantLiveChallengeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantLiveChallengeCreateBulk{err: fmt.Errorf("calling to QuantLiveChallengeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantLiveChallengeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantLiveChallengeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantLiveChallenge.
+func (c *QuantLiveChallengeClient) Update() *QuantLiveChallengeUpdate {
+	mutation := newQuantLiveChallengeMutation(c.config, OpUpdate)
+	return &QuantLiveChallengeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantLiveChallengeClient) UpdateOne(_m *QuantLiveChallenge) *QuantLiveChallengeUpdateOne {
+	mutation := newQuantLiveChallengeMutation(c.config, OpUpdateOne, withQuantLiveChallenge(_m))
+	return &QuantLiveChallengeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantLiveChallengeClient) UpdateOneID(id uuid.UUID) *QuantLiveChallengeUpdateOne {
+	mutation := newQuantLiveChallengeMutation(c.config, OpUpdateOne, withQuantLiveChallengeID(id))
+	return &QuantLiveChallengeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantLiveChallenge.
+func (c *QuantLiveChallengeClient) Delete() *QuantLiveChallengeDelete {
+	mutation := newQuantLiveChallengeMutation(c.config, OpDelete)
+	return &QuantLiveChallengeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantLiveChallengeClient) DeleteOne(_m *QuantLiveChallenge) *QuantLiveChallengeDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantLiveChallengeClient) DeleteOneID(id uuid.UUID) *QuantLiveChallengeDeleteOne {
+	builder := c.Delete().Where(quantlivechallenge.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantLiveChallengeDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantLiveChallenge.
+func (c *QuantLiveChallengeClient) Query() *QuantLiveChallengeQuery {
+	return &QuantLiveChallengeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantLiveChallenge},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantLiveChallenge entity by its id.
+func (c *QuantLiveChallengeClient) Get(ctx context.Context, id uuid.UUID) (*QuantLiveChallenge, error) {
+	return c.Query().Where(quantlivechallenge.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantLiveChallengeClient) GetX(ctx context.Context, id uuid.UUID) *QuantLiveChallenge {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *QuantLiveChallengeClient) Hooks() []Hook {
+	return c.hooks.QuantLiveChallenge
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantLiveChallengeClient) Interceptors() []Interceptor {
+	return c.inters.QuantLiveChallenge
+}
+
+func (c *QuantLiveChallengeClient) mutate(ctx context.Context, m *QuantLiveChallengeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantLiveChallengeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantLiveChallengeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantLiveChallengeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantLiveChallengeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantLiveChallenge mutation op: %q", m.Op())
+	}
+}
+
+// QuantLiveSessionClient is a client for the QuantLiveSession schema.
+type QuantLiveSessionClient struct {
+	config
+}
+
+// NewQuantLiveSessionClient returns a client for the QuantLiveSession from the given config.
+func NewQuantLiveSessionClient(c config) *QuantLiveSessionClient {
+	return &QuantLiveSessionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantlivesession.Hooks(f(g(h())))`.
+func (c *QuantLiveSessionClient) Use(hooks ...Hook) {
+	c.hooks.QuantLiveSession = append(c.hooks.QuantLiveSession, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantlivesession.Intercept(f(g(h())))`.
+func (c *QuantLiveSessionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantLiveSession = append(c.inters.QuantLiveSession, interceptors...)
+}
+
+// Create returns a builder for creating a QuantLiveSession entity.
+func (c *QuantLiveSessionClient) Create() *QuantLiveSessionCreate {
+	mutation := newQuantLiveSessionMutation(c.config, OpCreate)
+	return &QuantLiveSessionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantLiveSession entities.
+func (c *QuantLiveSessionClient) CreateBulk(builders ...*QuantLiveSessionCreate) *QuantLiveSessionCreateBulk {
+	return &QuantLiveSessionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantLiveSessionClient) MapCreateBulk(slice any, setFunc func(*QuantLiveSessionCreate, int)) *QuantLiveSessionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantLiveSessionCreateBulk{err: fmt.Errorf("calling to QuantLiveSessionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantLiveSessionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantLiveSessionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantLiveSession.
+func (c *QuantLiveSessionClient) Update() *QuantLiveSessionUpdate {
+	mutation := newQuantLiveSessionMutation(c.config, OpUpdate)
+	return &QuantLiveSessionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantLiveSessionClient) UpdateOne(_m *QuantLiveSession) *QuantLiveSessionUpdateOne {
+	mutation := newQuantLiveSessionMutation(c.config, OpUpdateOne, withQuantLiveSession(_m))
+	return &QuantLiveSessionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantLiveSessionClient) UpdateOneID(id uuid.UUID) *QuantLiveSessionUpdateOne {
+	mutation := newQuantLiveSessionMutation(c.config, OpUpdateOne, withQuantLiveSessionID(id))
+	return &QuantLiveSessionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantLiveSession.
+func (c *QuantLiveSessionClient) Delete() *QuantLiveSessionDelete {
+	mutation := newQuantLiveSessionMutation(c.config, OpDelete)
+	return &QuantLiveSessionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantLiveSessionClient) DeleteOne(_m *QuantLiveSession) *QuantLiveSessionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantLiveSessionClient) DeleteOneID(id uuid.UUID) *QuantLiveSessionDeleteOne {
+	builder := c.Delete().Where(quantlivesession.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantLiveSessionDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantLiveSession.
+func (c *QuantLiveSessionClient) Query() *QuantLiveSessionQuery {
+	return &QuantLiveSessionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantLiveSession},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantLiveSession entity by its id.
+func (c *QuantLiveSessionClient) Get(ctx context.Context, id uuid.UUID) (*QuantLiveSession, error) {
+	return c.Query().Where(quantlivesession.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantLiveSessionClient) GetX(ctx context.Context, id uuid.UUID) *QuantLiveSession {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAccount queries the account edge of a QuantLiveSession.
+func (c *QuantLiveSessionClient) QueryAccount(_m *QuantLiveSession) *QuantBrokerAccountQuery {
+	query := (&QuantBrokerAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantlivesession.Table, quantlivesession.FieldID, id),
+			sqlgraph.To(quantbrokeraccount.Table, quantbrokeraccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantlivesession.AccountTable, quantlivesession.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantLiveSessionClient) Hooks() []Hook {
+	return c.hooks.QuantLiveSession
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantLiveSessionClient) Interceptors() []Interceptor {
+	return c.inters.QuantLiveSession
+}
+
+func (c *QuantLiveSessionClient) mutate(ctx context.Context, m *QuantLiveSessionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantLiveSessionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantLiveSessionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantLiveSessionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantLiveSessionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantLiveSession mutation op: %q", m.Op())
+	}
+}
+
+// QuantOperatorGrantClient is a client for the QuantOperatorGrant schema.
+type QuantOperatorGrantClient struct {
+	config
+}
+
+// NewQuantOperatorGrantClient returns a client for the QuantOperatorGrant from the given config.
+func NewQuantOperatorGrantClient(c config) *QuantOperatorGrantClient {
+	return &QuantOperatorGrantClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantoperatorgrant.Hooks(f(g(h())))`.
+func (c *QuantOperatorGrantClient) Use(hooks ...Hook) {
+	c.hooks.QuantOperatorGrant = append(c.hooks.QuantOperatorGrant, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantoperatorgrant.Intercept(f(g(h())))`.
+func (c *QuantOperatorGrantClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantOperatorGrant = append(c.inters.QuantOperatorGrant, interceptors...)
+}
+
+// Create returns a builder for creating a QuantOperatorGrant entity.
+func (c *QuantOperatorGrantClient) Create() *QuantOperatorGrantCreate {
+	mutation := newQuantOperatorGrantMutation(c.config, OpCreate)
+	return &QuantOperatorGrantCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantOperatorGrant entities.
+func (c *QuantOperatorGrantClient) CreateBulk(builders ...*QuantOperatorGrantCreate) *QuantOperatorGrantCreateBulk {
+	return &QuantOperatorGrantCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantOperatorGrantClient) MapCreateBulk(slice any, setFunc func(*QuantOperatorGrantCreate, int)) *QuantOperatorGrantCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantOperatorGrantCreateBulk{err: fmt.Errorf("calling to QuantOperatorGrantClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantOperatorGrantCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantOperatorGrantCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantOperatorGrant.
+func (c *QuantOperatorGrantClient) Update() *QuantOperatorGrantUpdate {
+	mutation := newQuantOperatorGrantMutation(c.config, OpUpdate)
+	return &QuantOperatorGrantUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantOperatorGrantClient) UpdateOne(_m *QuantOperatorGrant) *QuantOperatorGrantUpdateOne {
+	mutation := newQuantOperatorGrantMutation(c.config, OpUpdateOne, withQuantOperatorGrant(_m))
+	return &QuantOperatorGrantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantOperatorGrantClient) UpdateOneID(id uuid.UUID) *QuantOperatorGrantUpdateOne {
+	mutation := newQuantOperatorGrantMutation(c.config, OpUpdateOne, withQuantOperatorGrantID(id))
+	return &QuantOperatorGrantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantOperatorGrant.
+func (c *QuantOperatorGrantClient) Delete() *QuantOperatorGrantDelete {
+	mutation := newQuantOperatorGrantMutation(c.config, OpDelete)
+	return &QuantOperatorGrantDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantOperatorGrantClient) DeleteOne(_m *QuantOperatorGrant) *QuantOperatorGrantDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantOperatorGrantClient) DeleteOneID(id uuid.UUID) *QuantOperatorGrantDeleteOne {
+	builder := c.Delete().Where(quantoperatorgrant.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantOperatorGrantDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantOperatorGrant.
+func (c *QuantOperatorGrantClient) Query() *QuantOperatorGrantQuery {
+	return &QuantOperatorGrantQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantOperatorGrant},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantOperatorGrant entity by its id.
+func (c *QuantOperatorGrantClient) Get(ctx context.Context, id uuid.UUID) (*QuantOperatorGrant, error) {
+	return c.Query().Where(quantoperatorgrant.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantOperatorGrantClient) GetX(ctx context.Context, id uuid.UUID) *QuantOperatorGrant {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAccount queries the account edge of a QuantOperatorGrant.
+func (c *QuantOperatorGrantClient) QueryAccount(_m *QuantOperatorGrant) *QuantBrokerAccountQuery {
+	query := (&QuantBrokerAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantoperatorgrant.Table, quantoperatorgrant.FieldID, id),
+			sqlgraph.To(quantbrokeraccount.Table, quantbrokeraccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantoperatorgrant.AccountTable, quantoperatorgrant.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantOperatorGrantClient) Hooks() []Hook {
+	return c.hooks.QuantOperatorGrant
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantOperatorGrantClient) Interceptors() []Interceptor {
+	return c.inters.QuantOperatorGrant
+}
+
+func (c *QuantOperatorGrantClient) mutate(ctx context.Context, m *QuantOperatorGrantMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantOperatorGrantCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantOperatorGrantUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantOperatorGrantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantOperatorGrantDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantOperatorGrant mutation op: %q", m.Op())
+	}
+}
+
+// QuantOrderClient is a client for the QuantOrder schema.
+type QuantOrderClient struct {
+	config
+}
+
+// NewQuantOrderClient returns a client for the QuantOrder from the given config.
+func NewQuantOrderClient(c config) *QuantOrderClient {
+	return &QuantOrderClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantorder.Hooks(f(g(h())))`.
+func (c *QuantOrderClient) Use(hooks ...Hook) {
+	c.hooks.QuantOrder = append(c.hooks.QuantOrder, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantorder.Intercept(f(g(h())))`.
+func (c *QuantOrderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantOrder = append(c.inters.QuantOrder, interceptors...)
+}
+
+// Create returns a builder for creating a QuantOrder entity.
+func (c *QuantOrderClient) Create() *QuantOrderCreate {
+	mutation := newQuantOrderMutation(c.config, OpCreate)
+	return &QuantOrderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantOrder entities.
+func (c *QuantOrderClient) CreateBulk(builders ...*QuantOrderCreate) *QuantOrderCreateBulk {
+	return &QuantOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantOrderClient) MapCreateBulk(slice any, setFunc func(*QuantOrderCreate, int)) *QuantOrderCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantOrderCreateBulk{err: fmt.Errorf("calling to QuantOrderClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantOrderCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantOrderCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantOrder.
+func (c *QuantOrderClient) Update() *QuantOrderUpdate {
+	mutation := newQuantOrderMutation(c.config, OpUpdate)
+	return &QuantOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantOrderClient) UpdateOne(_m *QuantOrder) *QuantOrderUpdateOne {
+	mutation := newQuantOrderMutation(c.config, OpUpdateOne, withQuantOrder(_m))
+	return &QuantOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantOrderClient) UpdateOneID(id uuid.UUID) *QuantOrderUpdateOne {
+	mutation := newQuantOrderMutation(c.config, OpUpdateOne, withQuantOrderID(id))
+	return &QuantOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantOrder.
+func (c *QuantOrderClient) Delete() *QuantOrderDelete {
+	mutation := newQuantOrderMutation(c.config, OpDelete)
+	return &QuantOrderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantOrderClient) DeleteOne(_m *QuantOrder) *QuantOrderDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantOrderClient) DeleteOneID(id uuid.UUID) *QuantOrderDeleteOne {
+	builder := c.Delete().Where(quantorder.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantOrderDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantOrder.
+func (c *QuantOrderClient) Query() *QuantOrderQuery {
+	return &QuantOrderQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantOrder},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantOrder entity by its id.
+func (c *QuantOrderClient) Get(ctx context.Context, id uuid.UUID) (*QuantOrder, error) {
+	return c.Query().Where(quantorder.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantOrderClient) GetX(ctx context.Context, id uuid.UUID) *QuantOrder {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAccount queries the account edge of a QuantOrder.
+func (c *QuantOrderClient) QueryAccount(_m *QuantOrder) *QuantBrokerAccountQuery {
+	query := (&QuantBrokerAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantorder.Table, quantorder.FieldID, id),
+			sqlgraph.To(quantbrokeraccount.Table, quantbrokeraccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantorder.AccountTable, quantorder.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInstrument queries the instrument edge of a QuantOrder.
+func (c *QuantOrderClient) QueryInstrument(_m *QuantOrder) *QuantInstrumentQuery {
+	query := (&QuantInstrumentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantorder.Table, quantorder.FieldID, id),
+			sqlgraph.To(quantinstrument.Table, quantinstrument.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantorder.InstrumentTable, quantorder.InstrumentColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFills queries the fills edge of a QuantOrder.
+func (c *QuantOrderClient) QueryFills(_m *QuantOrder) *QuantFillQuery {
+	query := (&QuantFillClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantorder.Table, quantorder.FieldID, id),
+			sqlgraph.To(quantfill.Table, quantfill.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantorder.FillsTable, quantorder.FillsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantOrderClient) Hooks() []Hook {
+	return c.hooks.QuantOrder
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantOrderClient) Interceptors() []Interceptor {
+	return c.inters.QuantOrder
+}
+
+func (c *QuantOrderClient) mutate(ctx context.Context, m *QuantOrderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantOrderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantOrderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantOrderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantOrderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantOrder mutation op: %q", m.Op())
+	}
+}
+
+// QuantOutboxEventClient is a client for the QuantOutboxEvent schema.
+type QuantOutboxEventClient struct {
+	config
+}
+
+// NewQuantOutboxEventClient returns a client for the QuantOutboxEvent from the given config.
+func NewQuantOutboxEventClient(c config) *QuantOutboxEventClient {
+	return &QuantOutboxEventClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantoutboxevent.Hooks(f(g(h())))`.
+func (c *QuantOutboxEventClient) Use(hooks ...Hook) {
+	c.hooks.QuantOutboxEvent = append(c.hooks.QuantOutboxEvent, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantoutboxevent.Intercept(f(g(h())))`.
+func (c *QuantOutboxEventClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantOutboxEvent = append(c.inters.QuantOutboxEvent, interceptors...)
+}
+
+// Create returns a builder for creating a QuantOutboxEvent entity.
+func (c *QuantOutboxEventClient) Create() *QuantOutboxEventCreate {
+	mutation := newQuantOutboxEventMutation(c.config, OpCreate)
+	return &QuantOutboxEventCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantOutboxEvent entities.
+func (c *QuantOutboxEventClient) CreateBulk(builders ...*QuantOutboxEventCreate) *QuantOutboxEventCreateBulk {
+	return &QuantOutboxEventCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantOutboxEventClient) MapCreateBulk(slice any, setFunc func(*QuantOutboxEventCreate, int)) *QuantOutboxEventCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantOutboxEventCreateBulk{err: fmt.Errorf("calling to QuantOutboxEventClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantOutboxEventCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantOutboxEventCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantOutboxEvent.
+func (c *QuantOutboxEventClient) Update() *QuantOutboxEventUpdate {
+	mutation := newQuantOutboxEventMutation(c.config, OpUpdate)
+	return &QuantOutboxEventUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantOutboxEventClient) UpdateOne(_m *QuantOutboxEvent) *QuantOutboxEventUpdateOne {
+	mutation := newQuantOutboxEventMutation(c.config, OpUpdateOne, withQuantOutboxEvent(_m))
+	return &QuantOutboxEventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantOutboxEventClient) UpdateOneID(id uuid.UUID) *QuantOutboxEventUpdateOne {
+	mutation := newQuantOutboxEventMutation(c.config, OpUpdateOne, withQuantOutboxEventID(id))
+	return &QuantOutboxEventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantOutboxEvent.
+func (c *QuantOutboxEventClient) Delete() *QuantOutboxEventDelete {
+	mutation := newQuantOutboxEventMutation(c.config, OpDelete)
+	return &QuantOutboxEventDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantOutboxEventClient) DeleteOne(_m *QuantOutboxEvent) *QuantOutboxEventDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantOutboxEventClient) DeleteOneID(id uuid.UUID) *QuantOutboxEventDeleteOne {
+	builder := c.Delete().Where(quantoutboxevent.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantOutboxEventDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantOutboxEvent.
+func (c *QuantOutboxEventClient) Query() *QuantOutboxEventQuery {
+	return &QuantOutboxEventQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantOutboxEvent},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantOutboxEvent entity by its id.
+func (c *QuantOutboxEventClient) Get(ctx context.Context, id uuid.UUID) (*QuantOutboxEvent, error) {
+	return c.Query().Where(quantoutboxevent.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantOutboxEventClient) GetX(ctx context.Context, id uuid.UUID) *QuantOutboxEvent {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *QuantOutboxEventClient) Hooks() []Hook {
+	return c.hooks.QuantOutboxEvent
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantOutboxEventClient) Interceptors() []Interceptor {
+	return c.inters.QuantOutboxEvent
+}
+
+func (c *QuantOutboxEventClient) mutate(ctx context.Context, m *QuantOutboxEventMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantOutboxEventCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantOutboxEventUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantOutboxEventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantOutboxEventDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantOutboxEvent mutation op: %q", m.Op())
+	}
+}
+
+// QuantPositionClient is a client for the QuantPosition schema.
+type QuantPositionClient struct {
+	config
+}
+
+// NewQuantPositionClient returns a client for the QuantPosition from the given config.
+func NewQuantPositionClient(c config) *QuantPositionClient {
+	return &QuantPositionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantposition.Hooks(f(g(h())))`.
+func (c *QuantPositionClient) Use(hooks ...Hook) {
+	c.hooks.QuantPosition = append(c.hooks.QuantPosition, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantposition.Intercept(f(g(h())))`.
+func (c *QuantPositionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantPosition = append(c.inters.QuantPosition, interceptors...)
+}
+
+// Create returns a builder for creating a QuantPosition entity.
+func (c *QuantPositionClient) Create() *QuantPositionCreate {
+	mutation := newQuantPositionMutation(c.config, OpCreate)
+	return &QuantPositionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantPosition entities.
+func (c *QuantPositionClient) CreateBulk(builders ...*QuantPositionCreate) *QuantPositionCreateBulk {
+	return &QuantPositionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantPositionClient) MapCreateBulk(slice any, setFunc func(*QuantPositionCreate, int)) *QuantPositionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantPositionCreateBulk{err: fmt.Errorf("calling to QuantPositionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantPositionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantPositionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantPosition.
+func (c *QuantPositionClient) Update() *QuantPositionUpdate {
+	mutation := newQuantPositionMutation(c.config, OpUpdate)
+	return &QuantPositionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantPositionClient) UpdateOne(_m *QuantPosition) *QuantPositionUpdateOne {
+	mutation := newQuantPositionMutation(c.config, OpUpdateOne, withQuantPosition(_m))
+	return &QuantPositionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantPositionClient) UpdateOneID(id uuid.UUID) *QuantPositionUpdateOne {
+	mutation := newQuantPositionMutation(c.config, OpUpdateOne, withQuantPositionID(id))
+	return &QuantPositionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantPosition.
+func (c *QuantPositionClient) Delete() *QuantPositionDelete {
+	mutation := newQuantPositionMutation(c.config, OpDelete)
+	return &QuantPositionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantPositionClient) DeleteOne(_m *QuantPosition) *QuantPositionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantPositionClient) DeleteOneID(id uuid.UUID) *QuantPositionDeleteOne {
+	builder := c.Delete().Where(quantposition.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantPositionDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantPosition.
+func (c *QuantPositionClient) Query() *QuantPositionQuery {
+	return &QuantPositionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantPosition},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantPosition entity by its id.
+func (c *QuantPositionClient) Get(ctx context.Context, id uuid.UUID) (*QuantPosition, error) {
+	return c.Query().Where(quantposition.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantPositionClient) GetX(ctx context.Context, id uuid.UUID) *QuantPosition {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAccount queries the account edge of a QuantPosition.
+func (c *QuantPositionClient) QueryAccount(_m *QuantPosition) *QuantBrokerAccountQuery {
+	query := (&QuantBrokerAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantposition.Table, quantposition.FieldID, id),
+			sqlgraph.To(quantbrokeraccount.Table, quantbrokeraccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantposition.AccountTable, quantposition.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInstrument queries the instrument edge of a QuantPosition.
+func (c *QuantPositionClient) QueryInstrument(_m *QuantPosition) *QuantInstrumentQuery {
+	query := (&QuantInstrumentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantposition.Table, quantposition.FieldID, id),
+			sqlgraph.To(quantinstrument.Table, quantinstrument.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantposition.InstrumentTable, quantposition.InstrumentColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantPositionClient) Hooks() []Hook {
+	return c.hooks.QuantPosition
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantPositionClient) Interceptors() []Interceptor {
+	return c.inters.QuantPosition
+}
+
+func (c *QuantPositionClient) mutate(ctx context.Context, m *QuantPositionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantPositionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantPositionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantPositionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantPositionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantPosition mutation op: %q", m.Op())
+	}
+}
+
+// QuantRiskPolicyVersionClient is a client for the QuantRiskPolicyVersion schema.
+type QuantRiskPolicyVersionClient struct {
+	config
+}
+
+// NewQuantRiskPolicyVersionClient returns a client for the QuantRiskPolicyVersion from the given config.
+func NewQuantRiskPolicyVersionClient(c config) *QuantRiskPolicyVersionClient {
+	return &QuantRiskPolicyVersionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantriskpolicyversion.Hooks(f(g(h())))`.
+func (c *QuantRiskPolicyVersionClient) Use(hooks ...Hook) {
+	c.hooks.QuantRiskPolicyVersion = append(c.hooks.QuantRiskPolicyVersion, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantriskpolicyversion.Intercept(f(g(h())))`.
+func (c *QuantRiskPolicyVersionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantRiskPolicyVersion = append(c.inters.QuantRiskPolicyVersion, interceptors...)
+}
+
+// Create returns a builder for creating a QuantRiskPolicyVersion entity.
+func (c *QuantRiskPolicyVersionClient) Create() *QuantRiskPolicyVersionCreate {
+	mutation := newQuantRiskPolicyVersionMutation(c.config, OpCreate)
+	return &QuantRiskPolicyVersionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantRiskPolicyVersion entities.
+func (c *QuantRiskPolicyVersionClient) CreateBulk(builders ...*QuantRiskPolicyVersionCreate) *QuantRiskPolicyVersionCreateBulk {
+	return &QuantRiskPolicyVersionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantRiskPolicyVersionClient) MapCreateBulk(slice any, setFunc func(*QuantRiskPolicyVersionCreate, int)) *QuantRiskPolicyVersionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantRiskPolicyVersionCreateBulk{err: fmt.Errorf("calling to QuantRiskPolicyVersionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantRiskPolicyVersionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantRiskPolicyVersionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantRiskPolicyVersion.
+func (c *QuantRiskPolicyVersionClient) Update() *QuantRiskPolicyVersionUpdate {
+	mutation := newQuantRiskPolicyVersionMutation(c.config, OpUpdate)
+	return &QuantRiskPolicyVersionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantRiskPolicyVersionClient) UpdateOne(_m *QuantRiskPolicyVersion) *QuantRiskPolicyVersionUpdateOne {
+	mutation := newQuantRiskPolicyVersionMutation(c.config, OpUpdateOne, withQuantRiskPolicyVersion(_m))
+	return &QuantRiskPolicyVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantRiskPolicyVersionClient) UpdateOneID(id uuid.UUID) *QuantRiskPolicyVersionUpdateOne {
+	mutation := newQuantRiskPolicyVersionMutation(c.config, OpUpdateOne, withQuantRiskPolicyVersionID(id))
+	return &QuantRiskPolicyVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantRiskPolicyVersion.
+func (c *QuantRiskPolicyVersionClient) Delete() *QuantRiskPolicyVersionDelete {
+	mutation := newQuantRiskPolicyVersionMutation(c.config, OpDelete)
+	return &QuantRiskPolicyVersionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantRiskPolicyVersionClient) DeleteOne(_m *QuantRiskPolicyVersion) *QuantRiskPolicyVersionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantRiskPolicyVersionClient) DeleteOneID(id uuid.UUID) *QuantRiskPolicyVersionDeleteOne {
+	builder := c.Delete().Where(quantriskpolicyversion.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantRiskPolicyVersionDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantRiskPolicyVersion.
+func (c *QuantRiskPolicyVersionClient) Query() *QuantRiskPolicyVersionQuery {
+	return &QuantRiskPolicyVersionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantRiskPolicyVersion},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantRiskPolicyVersion entity by its id.
+func (c *QuantRiskPolicyVersionClient) Get(ctx context.Context, id uuid.UUID) (*QuantRiskPolicyVersion, error) {
+	return c.Query().Where(quantriskpolicyversion.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantRiskPolicyVersionClient) GetX(ctx context.Context, id uuid.UUID) *QuantRiskPolicyVersion {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAccount queries the account edge of a QuantRiskPolicyVersion.
+func (c *QuantRiskPolicyVersionClient) QueryAccount(_m *QuantRiskPolicyVersion) *QuantBrokerAccountQuery {
+	query := (&QuantBrokerAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantriskpolicyversion.Table, quantriskpolicyversion.FieldID, id),
+			sqlgraph.To(quantbrokeraccount.Table, quantbrokeraccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantriskpolicyversion.AccountTable, quantriskpolicyversion.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantRiskPolicyVersionClient) Hooks() []Hook {
+	return c.hooks.QuantRiskPolicyVersion
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantRiskPolicyVersionClient) Interceptors() []Interceptor {
+	return c.inters.QuantRiskPolicyVersion
+}
+
+func (c *QuantRiskPolicyVersionClient) mutate(ctx context.Context, m *QuantRiskPolicyVersionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantRiskPolicyVersionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantRiskPolicyVersionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantRiskPolicyVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantRiskPolicyVersionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantRiskPolicyVersion mutation op: %q", m.Op())
+	}
+}
+
+// QuantStrategyClient is a client for the QuantStrategy schema.
+type QuantStrategyClient struct {
+	config
+}
+
+// NewQuantStrategyClient returns a client for the QuantStrategy from the given config.
+func NewQuantStrategyClient(c config) *QuantStrategyClient {
+	return &QuantStrategyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantstrategy.Hooks(f(g(h())))`.
+func (c *QuantStrategyClient) Use(hooks ...Hook) {
+	c.hooks.QuantStrategy = append(c.hooks.QuantStrategy, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantstrategy.Intercept(f(g(h())))`.
+func (c *QuantStrategyClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantStrategy = append(c.inters.QuantStrategy, interceptors...)
+}
+
+// Create returns a builder for creating a QuantStrategy entity.
+func (c *QuantStrategyClient) Create() *QuantStrategyCreate {
+	mutation := newQuantStrategyMutation(c.config, OpCreate)
+	return &QuantStrategyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantStrategy entities.
+func (c *QuantStrategyClient) CreateBulk(builders ...*QuantStrategyCreate) *QuantStrategyCreateBulk {
+	return &QuantStrategyCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantStrategyClient) MapCreateBulk(slice any, setFunc func(*QuantStrategyCreate, int)) *QuantStrategyCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantStrategyCreateBulk{err: fmt.Errorf("calling to QuantStrategyClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantStrategyCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantStrategyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantStrategy.
+func (c *QuantStrategyClient) Update() *QuantStrategyUpdate {
+	mutation := newQuantStrategyMutation(c.config, OpUpdate)
+	return &QuantStrategyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantStrategyClient) UpdateOne(_m *QuantStrategy) *QuantStrategyUpdateOne {
+	mutation := newQuantStrategyMutation(c.config, OpUpdateOne, withQuantStrategy(_m))
+	return &QuantStrategyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantStrategyClient) UpdateOneID(id uuid.UUID) *QuantStrategyUpdateOne {
+	mutation := newQuantStrategyMutation(c.config, OpUpdateOne, withQuantStrategyID(id))
+	return &QuantStrategyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantStrategy.
+func (c *QuantStrategyClient) Delete() *QuantStrategyDelete {
+	mutation := newQuantStrategyMutation(c.config, OpDelete)
+	return &QuantStrategyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantStrategyClient) DeleteOne(_m *QuantStrategy) *QuantStrategyDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantStrategyClient) DeleteOneID(id uuid.UUID) *QuantStrategyDeleteOne {
+	builder := c.Delete().Where(quantstrategy.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantStrategyDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantStrategy.
+func (c *QuantStrategyClient) Query() *QuantStrategyQuery {
+	return &QuantStrategyQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantStrategy},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantStrategy entity by its id.
+func (c *QuantStrategyClient) Get(ctx context.Context, id uuid.UUID) (*QuantStrategy, error) {
+	return c.Query().Where(quantstrategy.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantStrategyClient) GetX(ctx context.Context, id uuid.UUID) *QuantStrategy {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAccount queries the account edge of a QuantStrategy.
+func (c *QuantStrategyClient) QueryAccount(_m *QuantStrategy) *QuantBrokerAccountQuery {
+	query := (&QuantBrokerAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantstrategy.Table, quantstrategy.FieldID, id),
+			sqlgraph.To(quantbrokeraccount.Table, quantbrokeraccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantstrategy.AccountTable, quantstrategy.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCurrentVersion queries the currentVersion edge of a QuantStrategy.
+func (c *QuantStrategyClient) QueryCurrentVersion(_m *QuantStrategy) *QuantStrategyVersionQuery {
+	query := (&QuantStrategyVersionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantstrategy.Table, quantstrategy.FieldID, id),
+			sqlgraph.To(quantstrategyversion.Table, quantstrategyversion.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, quantstrategy.CurrentVersionTable, quantstrategy.CurrentVersionColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryVersions queries the versions edge of a QuantStrategy.
+func (c *QuantStrategyClient) QueryVersions(_m *QuantStrategy) *QuantStrategyVersionQuery {
+	query := (&QuantStrategyVersionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantstrategy.Table, quantstrategy.FieldID, id),
+			sqlgraph.To(quantstrategyversion.Table, quantstrategyversion.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantstrategy.VersionsTable, quantstrategy.VersionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDeployments queries the deployments edge of a QuantStrategy.
+func (c *QuantStrategyClient) QueryDeployments(_m *QuantStrategy) *QuantDeploymentQuery {
+	query := (&QuantDeploymentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantstrategy.Table, quantstrategy.FieldID, id),
+			sqlgraph.To(quantdeployment.Table, quantdeployment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantstrategy.DeploymentsTable, quantstrategy.DeploymentsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantStrategyClient) Hooks() []Hook {
+	return c.hooks.QuantStrategy
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantStrategyClient) Interceptors() []Interceptor {
+	return c.inters.QuantStrategy
+}
+
+func (c *QuantStrategyClient) mutate(ctx context.Context, m *QuantStrategyMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantStrategyCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantStrategyUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantStrategyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantStrategyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantStrategy mutation op: %q", m.Op())
+	}
+}
+
+// QuantStrategyVersionClient is a client for the QuantStrategyVersion schema.
+type QuantStrategyVersionClient struct {
+	config
+}
+
+// NewQuantStrategyVersionClient returns a client for the QuantStrategyVersion from the given config.
+func NewQuantStrategyVersionClient(c config) *QuantStrategyVersionClient {
+	return &QuantStrategyVersionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantstrategyversion.Hooks(f(g(h())))`.
+func (c *QuantStrategyVersionClient) Use(hooks ...Hook) {
+	c.hooks.QuantStrategyVersion = append(c.hooks.QuantStrategyVersion, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantstrategyversion.Intercept(f(g(h())))`.
+func (c *QuantStrategyVersionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantStrategyVersion = append(c.inters.QuantStrategyVersion, interceptors...)
+}
+
+// Create returns a builder for creating a QuantStrategyVersion entity.
+func (c *QuantStrategyVersionClient) Create() *QuantStrategyVersionCreate {
+	mutation := newQuantStrategyVersionMutation(c.config, OpCreate)
+	return &QuantStrategyVersionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantStrategyVersion entities.
+func (c *QuantStrategyVersionClient) CreateBulk(builders ...*QuantStrategyVersionCreate) *QuantStrategyVersionCreateBulk {
+	return &QuantStrategyVersionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantStrategyVersionClient) MapCreateBulk(slice any, setFunc func(*QuantStrategyVersionCreate, int)) *QuantStrategyVersionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantStrategyVersionCreateBulk{err: fmt.Errorf("calling to QuantStrategyVersionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantStrategyVersionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantStrategyVersionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantStrategyVersion.
+func (c *QuantStrategyVersionClient) Update() *QuantStrategyVersionUpdate {
+	mutation := newQuantStrategyVersionMutation(c.config, OpUpdate)
+	return &QuantStrategyVersionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantStrategyVersionClient) UpdateOne(_m *QuantStrategyVersion) *QuantStrategyVersionUpdateOne {
+	mutation := newQuantStrategyVersionMutation(c.config, OpUpdateOne, withQuantStrategyVersion(_m))
+	return &QuantStrategyVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantStrategyVersionClient) UpdateOneID(id uuid.UUID) *QuantStrategyVersionUpdateOne {
+	mutation := newQuantStrategyVersionMutation(c.config, OpUpdateOne, withQuantStrategyVersionID(id))
+	return &QuantStrategyVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantStrategyVersion.
+func (c *QuantStrategyVersionClient) Delete() *QuantStrategyVersionDelete {
+	mutation := newQuantStrategyVersionMutation(c.config, OpDelete)
+	return &QuantStrategyVersionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantStrategyVersionClient) DeleteOne(_m *QuantStrategyVersion) *QuantStrategyVersionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantStrategyVersionClient) DeleteOneID(id uuid.UUID) *QuantStrategyVersionDeleteOne {
+	builder := c.Delete().Where(quantstrategyversion.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantStrategyVersionDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantStrategyVersion.
+func (c *QuantStrategyVersionClient) Query() *QuantStrategyVersionQuery {
+	return &QuantStrategyVersionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantStrategyVersion},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantStrategyVersion entity by its id.
+func (c *QuantStrategyVersionClient) Get(ctx context.Context, id uuid.UUID) (*QuantStrategyVersion, error) {
+	return c.Query().Where(quantstrategyversion.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantStrategyVersionClient) GetX(ctx context.Context, id uuid.UUID) *QuantStrategyVersion {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryStrategy queries the strategy edge of a QuantStrategyVersion.
+func (c *QuantStrategyVersionClient) QueryStrategy(_m *QuantStrategyVersion) *QuantStrategyQuery {
+	query := (&QuantStrategyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantstrategyversion.Table, quantstrategyversion.FieldID, id),
+			sqlgraph.To(quantstrategy.Table, quantstrategy.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantstrategyversion.StrategyTable, quantstrategyversion.StrategyColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCurrentFor queries the currentFor edge of a QuantStrategyVersion.
+func (c *QuantStrategyVersionClient) QueryCurrentFor(_m *QuantStrategyVersion) *QuantStrategyQuery {
+	query := (&QuantStrategyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantstrategyversion.Table, quantstrategyversion.FieldID, id),
+			sqlgraph.To(quantstrategy.Table, quantstrategy.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, quantstrategyversion.CurrentForTable, quantstrategyversion.CurrentForColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBacktests queries the backtests edge of a QuantStrategyVersion.
+func (c *QuantStrategyVersionClient) QueryBacktests(_m *QuantStrategyVersion) *QuantBacktestRunQuery {
+	query := (&QuantBacktestRunClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantstrategyversion.Table, quantstrategyversion.FieldID, id),
+			sqlgraph.To(quantbacktestrun.Table, quantbacktestrun.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantstrategyversion.BacktestsTable, quantstrategyversion.BacktestsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDeployments queries the deployments edge of a QuantStrategyVersion.
+func (c *QuantStrategyVersionClient) QueryDeployments(_m *QuantStrategyVersion) *QuantDeploymentQuery {
+	query := (&QuantDeploymentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantstrategyversion.Table, quantstrategyversion.FieldID, id),
+			sqlgraph.To(quantdeployment.Table, quantdeployment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantstrategyversion.DeploymentsTable, quantstrategyversion.DeploymentsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantStrategyVersionClient) Hooks() []Hook {
+	return c.hooks.QuantStrategyVersion
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantStrategyVersionClient) Interceptors() []Interceptor {
+	return c.inters.QuantStrategyVersion
+}
+
+func (c *QuantStrategyVersionClient) mutate(ctx context.Context, m *QuantStrategyVersionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantStrategyVersionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantStrategyVersionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantStrategyVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantStrategyVersionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantStrategyVersion mutation op: %q", m.Op())
+	}
+}
+
+// QuantWatchlistClient is a client for the QuantWatchlist schema.
+type QuantWatchlistClient struct {
+	config
+}
+
+// NewQuantWatchlistClient returns a client for the QuantWatchlist from the given config.
+func NewQuantWatchlistClient(c config) *QuantWatchlistClient {
+	return &QuantWatchlistClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantwatchlist.Hooks(f(g(h())))`.
+func (c *QuantWatchlistClient) Use(hooks ...Hook) {
+	c.hooks.QuantWatchlist = append(c.hooks.QuantWatchlist, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantwatchlist.Intercept(f(g(h())))`.
+func (c *QuantWatchlistClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantWatchlist = append(c.inters.QuantWatchlist, interceptors...)
+}
+
+// Create returns a builder for creating a QuantWatchlist entity.
+func (c *QuantWatchlistClient) Create() *QuantWatchlistCreate {
+	mutation := newQuantWatchlistMutation(c.config, OpCreate)
+	return &QuantWatchlistCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantWatchlist entities.
+func (c *QuantWatchlistClient) CreateBulk(builders ...*QuantWatchlistCreate) *QuantWatchlistCreateBulk {
+	return &QuantWatchlistCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantWatchlistClient) MapCreateBulk(slice any, setFunc func(*QuantWatchlistCreate, int)) *QuantWatchlistCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantWatchlistCreateBulk{err: fmt.Errorf("calling to QuantWatchlistClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantWatchlistCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantWatchlistCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantWatchlist.
+func (c *QuantWatchlistClient) Update() *QuantWatchlistUpdate {
+	mutation := newQuantWatchlistMutation(c.config, OpUpdate)
+	return &QuantWatchlistUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantWatchlistClient) UpdateOne(_m *QuantWatchlist) *QuantWatchlistUpdateOne {
+	mutation := newQuantWatchlistMutation(c.config, OpUpdateOne, withQuantWatchlist(_m))
+	return &QuantWatchlistUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantWatchlistClient) UpdateOneID(id uuid.UUID) *QuantWatchlistUpdateOne {
+	mutation := newQuantWatchlistMutation(c.config, OpUpdateOne, withQuantWatchlistID(id))
+	return &QuantWatchlistUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantWatchlist.
+func (c *QuantWatchlistClient) Delete() *QuantWatchlistDelete {
+	mutation := newQuantWatchlistMutation(c.config, OpDelete)
+	return &QuantWatchlistDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantWatchlistClient) DeleteOne(_m *QuantWatchlist) *QuantWatchlistDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantWatchlistClient) DeleteOneID(id uuid.UUID) *QuantWatchlistDeleteOne {
+	builder := c.Delete().Where(quantwatchlist.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantWatchlistDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantWatchlist.
+func (c *QuantWatchlistClient) Query() *QuantWatchlistQuery {
+	return &QuantWatchlistQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantWatchlist},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantWatchlist entity by its id.
+func (c *QuantWatchlistClient) Get(ctx context.Context, id uuid.UUID) (*QuantWatchlist, error) {
+	return c.Query().Where(quantwatchlist.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantWatchlistClient) GetX(ctx context.Context, id uuid.UUID) *QuantWatchlist {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryItems queries the items edge of a QuantWatchlist.
+func (c *QuantWatchlistClient) QueryItems(_m *QuantWatchlist) *QuantWatchlistItemQuery {
+	query := (&QuantWatchlistItemClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantwatchlist.Table, quantwatchlist.FieldID, id),
+			sqlgraph.To(quantwatchlistitem.Table, quantwatchlistitem.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, quantwatchlist.ItemsTable, quantwatchlist.ItemsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantWatchlistClient) Hooks() []Hook {
+	return c.hooks.QuantWatchlist
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantWatchlistClient) Interceptors() []Interceptor {
+	return c.inters.QuantWatchlist
+}
+
+func (c *QuantWatchlistClient) mutate(ctx context.Context, m *QuantWatchlistMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantWatchlistCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantWatchlistUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantWatchlistUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantWatchlistDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantWatchlist mutation op: %q", m.Op())
+	}
+}
+
+// QuantWatchlistItemClient is a client for the QuantWatchlistItem schema.
+type QuantWatchlistItemClient struct {
+	config
+}
+
+// NewQuantWatchlistItemClient returns a client for the QuantWatchlistItem from the given config.
+func NewQuantWatchlistItemClient(c config) *QuantWatchlistItemClient {
+	return &QuantWatchlistItemClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quantwatchlistitem.Hooks(f(g(h())))`.
+func (c *QuantWatchlistItemClient) Use(hooks ...Hook) {
+	c.hooks.QuantWatchlistItem = append(c.hooks.QuantWatchlistItem, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quantwatchlistitem.Intercept(f(g(h())))`.
+func (c *QuantWatchlistItemClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuantWatchlistItem = append(c.inters.QuantWatchlistItem, interceptors...)
+}
+
+// Create returns a builder for creating a QuantWatchlistItem entity.
+func (c *QuantWatchlistItemClient) Create() *QuantWatchlistItemCreate {
+	mutation := newQuantWatchlistItemMutation(c.config, OpCreate)
+	return &QuantWatchlistItemCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuantWatchlistItem entities.
+func (c *QuantWatchlistItemClient) CreateBulk(builders ...*QuantWatchlistItemCreate) *QuantWatchlistItemCreateBulk {
+	return &QuantWatchlistItemCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuantWatchlistItemClient) MapCreateBulk(slice any, setFunc func(*QuantWatchlistItemCreate, int)) *QuantWatchlistItemCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuantWatchlistItemCreateBulk{err: fmt.Errorf("calling to QuantWatchlistItemClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuantWatchlistItemCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuantWatchlistItemCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuantWatchlistItem.
+func (c *QuantWatchlistItemClient) Update() *QuantWatchlistItemUpdate {
+	mutation := newQuantWatchlistItemMutation(c.config, OpUpdate)
+	return &QuantWatchlistItemUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuantWatchlistItemClient) UpdateOne(_m *QuantWatchlistItem) *QuantWatchlistItemUpdateOne {
+	mutation := newQuantWatchlistItemMutation(c.config, OpUpdateOne, withQuantWatchlistItem(_m))
+	return &QuantWatchlistItemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuantWatchlistItemClient) UpdateOneID(id uuid.UUID) *QuantWatchlistItemUpdateOne {
+	mutation := newQuantWatchlistItemMutation(c.config, OpUpdateOne, withQuantWatchlistItemID(id))
+	return &QuantWatchlistItemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuantWatchlistItem.
+func (c *QuantWatchlistItemClient) Delete() *QuantWatchlistItemDelete {
+	mutation := newQuantWatchlistItemMutation(c.config, OpDelete)
+	return &QuantWatchlistItemDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuantWatchlistItemClient) DeleteOne(_m *QuantWatchlistItem) *QuantWatchlistItemDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuantWatchlistItemClient) DeleteOneID(id uuid.UUID) *QuantWatchlistItemDeleteOne {
+	builder := c.Delete().Where(quantwatchlistitem.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuantWatchlistItemDeleteOne{builder}
+}
+
+// Query returns a query builder for QuantWatchlistItem.
+func (c *QuantWatchlistItemClient) Query() *QuantWatchlistItemQuery {
+	return &QuantWatchlistItemQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuantWatchlistItem},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuantWatchlistItem entity by its id.
+func (c *QuantWatchlistItemClient) Get(ctx context.Context, id uuid.UUID) (*QuantWatchlistItem, error) {
+	return c.Query().Where(quantwatchlistitem.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuantWatchlistItemClient) GetX(ctx context.Context, id uuid.UUID) *QuantWatchlistItem {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryWatchlist queries the watchlist edge of a QuantWatchlistItem.
+func (c *QuantWatchlistItemClient) QueryWatchlist(_m *QuantWatchlistItem) *QuantWatchlistQuery {
+	query := (&QuantWatchlistClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantwatchlistitem.Table, quantwatchlistitem.FieldID, id),
+			sqlgraph.To(quantwatchlist.Table, quantwatchlist.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantwatchlistitem.WatchlistTable, quantwatchlistitem.WatchlistColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInstrument queries the instrument edge of a QuantWatchlistItem.
+func (c *QuantWatchlistItemClient) QueryInstrument(_m *QuantWatchlistItem) *QuantInstrumentQuery {
+	query := (&QuantInstrumentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(quantwatchlistitem.Table, quantwatchlistitem.FieldID, id),
+			sqlgraph.To(quantinstrument.Table, quantinstrument.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, quantwatchlistitem.InstrumentTable, quantwatchlistitem.InstrumentColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *QuantWatchlistItemClient) Hooks() []Hook {
+	return c.hooks.QuantWatchlistItem
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuantWatchlistItemClient) Interceptors() []Interceptor {
+	return c.inters.QuantWatchlistItem
+}
+
+func (c *QuantWatchlistItemClient) mutate(ctx context.Context, m *QuantWatchlistItemMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuantWatchlistItemCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuantWatchlistItemUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuantWatchlistItemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuantWatchlistItemDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuantWatchlistItem mutation op: %q", m.Op())
 	}
 }
 
@@ -26385,6 +30093,2870 @@ func (c *UserSecretsClient) mutate(ctx context.Context, m *UserSecretsMutation) 
 	}
 }
 
+// VerificationAlertsClient is a client for the VerificationAlerts schema.
+type VerificationAlertsClient struct {
+	config
+}
+
+// NewVerificationAlertsClient returns a client for the VerificationAlerts from the given config.
+func NewVerificationAlertsClient(c config) *VerificationAlertsClient {
+	return &VerificationAlertsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationalerts.Hooks(f(g(h())))`.
+func (c *VerificationAlertsClient) Use(hooks ...Hook) {
+	c.hooks.VerificationAlerts = append(c.hooks.VerificationAlerts, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationalerts.Intercept(f(g(h())))`.
+func (c *VerificationAlertsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationAlerts = append(c.inters.VerificationAlerts, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationAlerts entity.
+func (c *VerificationAlertsClient) Create() *VerificationAlertsCreate {
+	mutation := newVerificationAlertsMutation(c.config, OpCreate)
+	return &VerificationAlertsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationAlerts entities.
+func (c *VerificationAlertsClient) CreateBulk(builders ...*VerificationAlertsCreate) *VerificationAlertsCreateBulk {
+	return &VerificationAlertsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationAlertsClient) MapCreateBulk(slice any, setFunc func(*VerificationAlertsCreate, int)) *VerificationAlertsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationAlertsCreateBulk{err: fmt.Errorf("calling to VerificationAlertsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationAlertsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationAlertsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationAlerts.
+func (c *VerificationAlertsClient) Update() *VerificationAlertsUpdate {
+	mutation := newVerificationAlertsMutation(c.config, OpUpdate)
+	return &VerificationAlertsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationAlertsClient) UpdateOne(_m *VerificationAlerts) *VerificationAlertsUpdateOne {
+	mutation := newVerificationAlertsMutation(c.config, OpUpdateOne, withVerificationAlerts(_m))
+	return &VerificationAlertsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationAlertsClient) UpdateOneID(id uuid.UUID) *VerificationAlertsUpdateOne {
+	mutation := newVerificationAlertsMutation(c.config, OpUpdateOne, withVerificationAlertsID(id))
+	return &VerificationAlertsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationAlerts.
+func (c *VerificationAlertsClient) Delete() *VerificationAlertsDelete {
+	mutation := newVerificationAlertsMutation(c.config, OpDelete)
+	return &VerificationAlertsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationAlertsClient) DeleteOne(_m *VerificationAlerts) *VerificationAlertsDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationAlertsClient) DeleteOneID(id uuid.UUID) *VerificationAlertsDeleteOne {
+	builder := c.Delete().Where(verificationalerts.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationAlertsDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationAlerts.
+func (c *VerificationAlertsClient) Query() *VerificationAlertsQuery {
+	return &VerificationAlertsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationAlerts},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationAlerts entity by its id.
+func (c *VerificationAlertsClient) Get(ctx context.Context, id uuid.UUID) (*VerificationAlerts, error) {
+	return c.Query().Where(verificationalerts.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationAlertsClient) GetX(ctx context.Context, id uuid.UUID) *VerificationAlerts {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProject queries the project edge of a VerificationAlerts.
+func (c *VerificationAlertsClient) QueryProject(_m *VerificationAlerts) *ProjectQuery {
+	query := (&ProjectClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationalerts.Table, verificationalerts.FieldID, id),
+			sqlgraph.To(project.Table, project.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationalerts.ProjectTable, verificationalerts.ProjectColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationAlertsClient) Hooks() []Hook {
+	return c.hooks.VerificationAlerts
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationAlertsClient) Interceptors() []Interceptor {
+	return c.inters.VerificationAlerts
+}
+
+func (c *VerificationAlertsClient) mutate(ctx context.Context, m *VerificationAlertsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationAlertsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationAlertsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationAlertsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationAlertsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationAlerts mutation op: %q", m.Op())
+	}
+}
+
+// VerificationAttemptsClient is a client for the VerificationAttempts schema.
+type VerificationAttemptsClient struct {
+	config
+}
+
+// NewVerificationAttemptsClient returns a client for the VerificationAttempts from the given config.
+func NewVerificationAttemptsClient(c config) *VerificationAttemptsClient {
+	return &VerificationAttemptsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationattempts.Hooks(f(g(h())))`.
+func (c *VerificationAttemptsClient) Use(hooks ...Hook) {
+	c.hooks.VerificationAttempts = append(c.hooks.VerificationAttempts, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationattempts.Intercept(f(g(h())))`.
+func (c *VerificationAttemptsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationAttempts = append(c.inters.VerificationAttempts, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationAttempts entity.
+func (c *VerificationAttemptsClient) Create() *VerificationAttemptsCreate {
+	mutation := newVerificationAttemptsMutation(c.config, OpCreate)
+	return &VerificationAttemptsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationAttempts entities.
+func (c *VerificationAttemptsClient) CreateBulk(builders ...*VerificationAttemptsCreate) *VerificationAttemptsCreateBulk {
+	return &VerificationAttemptsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationAttemptsClient) MapCreateBulk(slice any, setFunc func(*VerificationAttemptsCreate, int)) *VerificationAttemptsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationAttemptsCreateBulk{err: fmt.Errorf("calling to VerificationAttemptsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationAttemptsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationAttemptsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationAttempts.
+func (c *VerificationAttemptsClient) Update() *VerificationAttemptsUpdate {
+	mutation := newVerificationAttemptsMutation(c.config, OpUpdate)
+	return &VerificationAttemptsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationAttemptsClient) UpdateOne(_m *VerificationAttempts) *VerificationAttemptsUpdateOne {
+	mutation := newVerificationAttemptsMutation(c.config, OpUpdateOne, withVerificationAttempts(_m))
+	return &VerificationAttemptsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationAttemptsClient) UpdateOneID(id uuid.UUID) *VerificationAttemptsUpdateOne {
+	mutation := newVerificationAttemptsMutation(c.config, OpUpdateOne, withVerificationAttemptsID(id))
+	return &VerificationAttemptsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationAttempts.
+func (c *VerificationAttemptsClient) Delete() *VerificationAttemptsDelete {
+	mutation := newVerificationAttemptsMutation(c.config, OpDelete)
+	return &VerificationAttemptsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationAttemptsClient) DeleteOne(_m *VerificationAttempts) *VerificationAttemptsDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationAttemptsClient) DeleteOneID(id uuid.UUID) *VerificationAttemptsDeleteOne {
+	builder := c.Delete().Where(verificationattempts.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationAttemptsDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationAttempts.
+func (c *VerificationAttemptsClient) Query() *VerificationAttemptsQuery {
+	return &VerificationAttemptsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationAttempts},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationAttempts entity by its id.
+func (c *VerificationAttemptsClient) Get(ctx context.Context, id uuid.UUID) (*VerificationAttempts, error) {
+	return c.Query().Where(verificationattempts.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationAttemptsClient) GetX(ctx context.Context, id uuid.UUID) *VerificationAttempts {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTask queries the task edge of a VerificationAttempts.
+func (c *VerificationAttemptsClient) QueryTask(_m *VerificationAttempts) *VerificationTasksQuery {
+	query := (&VerificationTasksClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationattempts.Table, verificationattempts.FieldID, id),
+			sqlgraph.To(verificationtasks.Table, verificationtasks.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationattempts.TaskTable, verificationattempts.TaskColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAcceptedForTask queries the acceptedForTask edge of a VerificationAttempts.
+func (c *VerificationAttemptsClient) QueryAcceptedForTask(_m *VerificationAttempts) *VerificationTasksQuery {
+	query := (&VerificationTasksClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationattempts.Table, verificationattempts.FieldID, id),
+			sqlgraph.To(verificationtasks.Table, verificationtasks.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, verificationattempts.AcceptedForTaskTable, verificationattempts.AcceptedForTaskColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFindings queries the findings edge of a VerificationAttempts.
+func (c *VerificationAttemptsClient) QueryFindings(_m *VerificationAttempts) *VerificationFindingsQuery {
+	query := (&VerificationFindingsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationattempts.Table, verificationattempts.FieldID, id),
+			sqlgraph.To(verificationfindings.Table, verificationfindings.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationattempts.FindingsTable, verificationattempts.FindingsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEvidence queries the evidence edge of a VerificationAttempts.
+func (c *VerificationAttemptsClient) QueryEvidence(_m *VerificationAttempts) *VerificationEvidenceQuery {
+	query := (&VerificationEvidenceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationattempts.Table, verificationattempts.FieldID, id),
+			sqlgraph.To(verificationevidence.Table, verificationevidence.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationattempts.EvidenceTable, verificationattempts.EvidenceColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationAttemptsClient) Hooks() []Hook {
+	return c.hooks.VerificationAttempts
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationAttemptsClient) Interceptors() []Interceptor {
+	return c.inters.VerificationAttempts
+}
+
+func (c *VerificationAttemptsClient) mutate(ctx context.Context, m *VerificationAttemptsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationAttemptsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationAttemptsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationAttemptsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationAttemptsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationAttempts mutation op: %q", m.Op())
+	}
+}
+
+// VerificationEngineVersionsClient is a client for the VerificationEngineVersions schema.
+type VerificationEngineVersionsClient struct {
+	config
+}
+
+// NewVerificationEngineVersionsClient returns a client for the VerificationEngineVersions from the given config.
+func NewVerificationEngineVersionsClient(c config) *VerificationEngineVersionsClient {
+	return &VerificationEngineVersionsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationengineversions.Hooks(f(g(h())))`.
+func (c *VerificationEngineVersionsClient) Use(hooks ...Hook) {
+	c.hooks.VerificationEngineVersions = append(c.hooks.VerificationEngineVersions, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationengineversions.Intercept(f(g(h())))`.
+func (c *VerificationEngineVersionsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationEngineVersions = append(c.inters.VerificationEngineVersions, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationEngineVersions entity.
+func (c *VerificationEngineVersionsClient) Create() *VerificationEngineVersionsCreate {
+	mutation := newVerificationEngineVersionsMutation(c.config, OpCreate)
+	return &VerificationEngineVersionsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationEngineVersions entities.
+func (c *VerificationEngineVersionsClient) CreateBulk(builders ...*VerificationEngineVersionsCreate) *VerificationEngineVersionsCreateBulk {
+	return &VerificationEngineVersionsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationEngineVersionsClient) MapCreateBulk(slice any, setFunc func(*VerificationEngineVersionsCreate, int)) *VerificationEngineVersionsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationEngineVersionsCreateBulk{err: fmt.Errorf("calling to VerificationEngineVersionsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationEngineVersionsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationEngineVersionsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationEngineVersions.
+func (c *VerificationEngineVersionsClient) Update() *VerificationEngineVersionsUpdate {
+	mutation := newVerificationEngineVersionsMutation(c.config, OpUpdate)
+	return &VerificationEngineVersionsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationEngineVersionsClient) UpdateOne(_m *VerificationEngineVersions) *VerificationEngineVersionsUpdateOne {
+	mutation := newVerificationEngineVersionsMutation(c.config, OpUpdateOne, withVerificationEngineVersions(_m))
+	return &VerificationEngineVersionsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationEngineVersionsClient) UpdateOneID(id uuid.UUID) *VerificationEngineVersionsUpdateOne {
+	mutation := newVerificationEngineVersionsMutation(c.config, OpUpdateOne, withVerificationEngineVersionsID(id))
+	return &VerificationEngineVersionsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationEngineVersions.
+func (c *VerificationEngineVersionsClient) Delete() *VerificationEngineVersionsDelete {
+	mutation := newVerificationEngineVersionsMutation(c.config, OpDelete)
+	return &VerificationEngineVersionsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationEngineVersionsClient) DeleteOne(_m *VerificationEngineVersions) *VerificationEngineVersionsDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationEngineVersionsClient) DeleteOneID(id uuid.UUID) *VerificationEngineVersionsDeleteOne {
+	builder := c.Delete().Where(verificationengineversions.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationEngineVersionsDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationEngineVersions.
+func (c *VerificationEngineVersionsClient) Query() *VerificationEngineVersionsQuery {
+	return &VerificationEngineVersionsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationEngineVersions},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationEngineVersions entity by its id.
+func (c *VerificationEngineVersionsClient) Get(ctx context.Context, id uuid.UUID) (*VerificationEngineVersions, error) {
+	return c.Query().Where(verificationengineversions.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationEngineVersionsClient) GetX(ctx context.Context, id uuid.UUID) *VerificationEngineVersions {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTasks queries the tasks edge of a VerificationEngineVersions.
+func (c *VerificationEngineVersionsClient) QueryTasks(_m *VerificationEngineVersions) *VerificationTasksQuery {
+	query := (&VerificationTasksClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationengineversions.Table, verificationengineversions.FieldID, id),
+			sqlgraph.To(verificationtasks.Table, verificationtasks.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationengineversions.TasksTable, verificationengineversions.TasksColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationEngineVersionsClient) Hooks() []Hook {
+	return c.hooks.VerificationEngineVersions
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationEngineVersionsClient) Interceptors() []Interceptor {
+	return c.inters.VerificationEngineVersions
+}
+
+func (c *VerificationEngineVersionsClient) mutate(ctx context.Context, m *VerificationEngineVersionsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationEngineVersionsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationEngineVersionsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationEngineVersionsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationEngineVersionsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationEngineVersions mutation op: %q", m.Op())
+	}
+}
+
+// VerificationEvidenceClient is a client for the VerificationEvidence schema.
+type VerificationEvidenceClient struct {
+	config
+}
+
+// NewVerificationEvidenceClient returns a client for the VerificationEvidence from the given config.
+func NewVerificationEvidenceClient(c config) *VerificationEvidenceClient {
+	return &VerificationEvidenceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationevidence.Hooks(f(g(h())))`.
+func (c *VerificationEvidenceClient) Use(hooks ...Hook) {
+	c.hooks.VerificationEvidence = append(c.hooks.VerificationEvidence, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationevidence.Intercept(f(g(h())))`.
+func (c *VerificationEvidenceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationEvidence = append(c.inters.VerificationEvidence, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationEvidence entity.
+func (c *VerificationEvidenceClient) Create() *VerificationEvidenceCreate {
+	mutation := newVerificationEvidenceMutation(c.config, OpCreate)
+	return &VerificationEvidenceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationEvidence entities.
+func (c *VerificationEvidenceClient) CreateBulk(builders ...*VerificationEvidenceCreate) *VerificationEvidenceCreateBulk {
+	return &VerificationEvidenceCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationEvidenceClient) MapCreateBulk(slice any, setFunc func(*VerificationEvidenceCreate, int)) *VerificationEvidenceCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationEvidenceCreateBulk{err: fmt.Errorf("calling to VerificationEvidenceClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationEvidenceCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationEvidenceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationEvidence.
+func (c *VerificationEvidenceClient) Update() *VerificationEvidenceUpdate {
+	mutation := newVerificationEvidenceMutation(c.config, OpUpdate)
+	return &VerificationEvidenceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationEvidenceClient) UpdateOne(_m *VerificationEvidence) *VerificationEvidenceUpdateOne {
+	mutation := newVerificationEvidenceMutation(c.config, OpUpdateOne, withVerificationEvidence(_m))
+	return &VerificationEvidenceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationEvidenceClient) UpdateOneID(id uuid.UUID) *VerificationEvidenceUpdateOne {
+	mutation := newVerificationEvidenceMutation(c.config, OpUpdateOne, withVerificationEvidenceID(id))
+	return &VerificationEvidenceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationEvidence.
+func (c *VerificationEvidenceClient) Delete() *VerificationEvidenceDelete {
+	mutation := newVerificationEvidenceMutation(c.config, OpDelete)
+	return &VerificationEvidenceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationEvidenceClient) DeleteOne(_m *VerificationEvidence) *VerificationEvidenceDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationEvidenceClient) DeleteOneID(id uuid.UUID) *VerificationEvidenceDeleteOne {
+	builder := c.Delete().Where(verificationevidence.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationEvidenceDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationEvidence.
+func (c *VerificationEvidenceClient) Query() *VerificationEvidenceQuery {
+	return &VerificationEvidenceQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationEvidence},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationEvidence entity by its id.
+func (c *VerificationEvidenceClient) Get(ctx context.Context, id uuid.UUID) (*VerificationEvidence, error) {
+	return c.Query().Where(verificationevidence.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationEvidenceClient) GetX(ctx context.Context, id uuid.UUID) *VerificationEvidence {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRun queries the run edge of a VerificationEvidence.
+func (c *VerificationEvidenceClient) QueryRun(_m *VerificationEvidence) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationevidence.Table, verificationevidence.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationevidence.RunTable, verificationevidence.RunColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTask queries the task edge of a VerificationEvidence.
+func (c *VerificationEvidenceClient) QueryTask(_m *VerificationEvidence) *VerificationTasksQuery {
+	query := (&VerificationTasksClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationevidence.Table, verificationevidence.FieldID, id),
+			sqlgraph.To(verificationtasks.Table, verificationtasks.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationevidence.TaskTable, verificationevidence.TaskColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAttempt queries the attempt edge of a VerificationEvidence.
+func (c *VerificationEvidenceClient) QueryAttempt(_m *VerificationEvidence) *VerificationAttemptsQuery {
+	query := (&VerificationAttemptsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationevidence.Table, verificationevidence.FieldID, id),
+			sqlgraph.To(verificationattempts.Table, verificationattempts.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationevidence.AttemptTable, verificationevidence.AttemptColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationEvidenceClient) Hooks() []Hook {
+	return c.hooks.VerificationEvidence
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationEvidenceClient) Interceptors() []Interceptor {
+	return c.inters.VerificationEvidence
+}
+
+func (c *VerificationEvidenceClient) mutate(ctx context.Context, m *VerificationEvidenceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationEvidenceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationEvidenceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationEvidenceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationEvidenceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationEvidence mutation op: %q", m.Op())
+	}
+}
+
+// VerificationFindingsClient is a client for the VerificationFindings schema.
+type VerificationFindingsClient struct {
+	config
+}
+
+// NewVerificationFindingsClient returns a client for the VerificationFindings from the given config.
+func NewVerificationFindingsClient(c config) *VerificationFindingsClient {
+	return &VerificationFindingsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationfindings.Hooks(f(g(h())))`.
+func (c *VerificationFindingsClient) Use(hooks ...Hook) {
+	c.hooks.VerificationFindings = append(c.hooks.VerificationFindings, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationfindings.Intercept(f(g(h())))`.
+func (c *VerificationFindingsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationFindings = append(c.inters.VerificationFindings, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationFindings entity.
+func (c *VerificationFindingsClient) Create() *VerificationFindingsCreate {
+	mutation := newVerificationFindingsMutation(c.config, OpCreate)
+	return &VerificationFindingsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationFindings entities.
+func (c *VerificationFindingsClient) CreateBulk(builders ...*VerificationFindingsCreate) *VerificationFindingsCreateBulk {
+	return &VerificationFindingsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationFindingsClient) MapCreateBulk(slice any, setFunc func(*VerificationFindingsCreate, int)) *VerificationFindingsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationFindingsCreateBulk{err: fmt.Errorf("calling to VerificationFindingsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationFindingsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationFindingsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationFindings.
+func (c *VerificationFindingsClient) Update() *VerificationFindingsUpdate {
+	mutation := newVerificationFindingsMutation(c.config, OpUpdate)
+	return &VerificationFindingsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationFindingsClient) UpdateOne(_m *VerificationFindings) *VerificationFindingsUpdateOne {
+	mutation := newVerificationFindingsMutation(c.config, OpUpdateOne, withVerificationFindings(_m))
+	return &VerificationFindingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationFindingsClient) UpdateOneID(id uuid.UUID) *VerificationFindingsUpdateOne {
+	mutation := newVerificationFindingsMutation(c.config, OpUpdateOne, withVerificationFindingsID(id))
+	return &VerificationFindingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationFindings.
+func (c *VerificationFindingsClient) Delete() *VerificationFindingsDelete {
+	mutation := newVerificationFindingsMutation(c.config, OpDelete)
+	return &VerificationFindingsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationFindingsClient) DeleteOne(_m *VerificationFindings) *VerificationFindingsDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationFindingsClient) DeleteOneID(id uuid.UUID) *VerificationFindingsDeleteOne {
+	builder := c.Delete().Where(verificationfindings.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationFindingsDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationFindings.
+func (c *VerificationFindingsClient) Query() *VerificationFindingsQuery {
+	return &VerificationFindingsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationFindings},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationFindings entity by its id.
+func (c *VerificationFindingsClient) Get(ctx context.Context, id uuid.UUID) (*VerificationFindings, error) {
+	return c.Query().Where(verificationfindings.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationFindingsClient) GetX(ctx context.Context, id uuid.UUID) *VerificationFindings {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRun queries the run edge of a VerificationFindings.
+func (c *VerificationFindingsClient) QueryRun(_m *VerificationFindings) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationfindings.Table, verificationfindings.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationfindings.RunTable, verificationfindings.RunColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTask queries the task edge of a VerificationFindings.
+func (c *VerificationFindingsClient) QueryTask(_m *VerificationFindings) *VerificationTasksQuery {
+	query := (&VerificationTasksClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationfindings.Table, verificationfindings.FieldID, id),
+			sqlgraph.To(verificationtasks.Table, verificationtasks.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationfindings.TaskTable, verificationfindings.TaskColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAttempt queries the attempt edge of a VerificationFindings.
+func (c *VerificationFindingsClient) QueryAttempt(_m *VerificationFindings) *VerificationAttemptsQuery {
+	query := (&VerificationAttemptsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationfindings.Table, verificationfindings.FieldID, id),
+			sqlgraph.To(verificationattempts.Table, verificationattempts.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationfindings.AttemptTable, verificationfindings.AttemptColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationFindingsClient) Hooks() []Hook {
+	return c.hooks.VerificationFindings
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationFindingsClient) Interceptors() []Interceptor {
+	return c.inters.VerificationFindings
+}
+
+func (c *VerificationFindingsClient) mutate(ctx context.Context, m *VerificationFindingsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationFindingsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationFindingsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationFindingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationFindingsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationFindings mutation op: %q", m.Op())
+	}
+}
+
+// VerificationInboxClient is a client for the VerificationInbox schema.
+type VerificationInboxClient struct {
+	config
+}
+
+// NewVerificationInboxClient returns a client for the VerificationInbox from the given config.
+func NewVerificationInboxClient(c config) *VerificationInboxClient {
+	return &VerificationInboxClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationinbox.Hooks(f(g(h())))`.
+func (c *VerificationInboxClient) Use(hooks ...Hook) {
+	c.hooks.VerificationInbox = append(c.hooks.VerificationInbox, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationinbox.Intercept(f(g(h())))`.
+func (c *VerificationInboxClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationInbox = append(c.inters.VerificationInbox, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationInbox entity.
+func (c *VerificationInboxClient) Create() *VerificationInboxCreate {
+	mutation := newVerificationInboxMutation(c.config, OpCreate)
+	return &VerificationInboxCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationInbox entities.
+func (c *VerificationInboxClient) CreateBulk(builders ...*VerificationInboxCreate) *VerificationInboxCreateBulk {
+	return &VerificationInboxCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationInboxClient) MapCreateBulk(slice any, setFunc func(*VerificationInboxCreate, int)) *VerificationInboxCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationInboxCreateBulk{err: fmt.Errorf("calling to VerificationInboxClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationInboxCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationInboxCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationInbox.
+func (c *VerificationInboxClient) Update() *VerificationInboxUpdate {
+	mutation := newVerificationInboxMutation(c.config, OpUpdate)
+	return &VerificationInboxUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationInboxClient) UpdateOne(_m *VerificationInbox) *VerificationInboxUpdateOne {
+	mutation := newVerificationInboxMutation(c.config, OpUpdateOne, withVerificationInbox(_m))
+	return &VerificationInboxUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationInboxClient) UpdateOneID(id uuid.UUID) *VerificationInboxUpdateOne {
+	mutation := newVerificationInboxMutation(c.config, OpUpdateOne, withVerificationInboxID(id))
+	return &VerificationInboxUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationInbox.
+func (c *VerificationInboxClient) Delete() *VerificationInboxDelete {
+	mutation := newVerificationInboxMutation(c.config, OpDelete)
+	return &VerificationInboxDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationInboxClient) DeleteOne(_m *VerificationInbox) *VerificationInboxDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationInboxClient) DeleteOneID(id uuid.UUID) *VerificationInboxDeleteOne {
+	builder := c.Delete().Where(verificationinbox.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationInboxDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationInbox.
+func (c *VerificationInboxClient) Query() *VerificationInboxQuery {
+	return &VerificationInboxQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationInbox},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationInbox entity by its id.
+func (c *VerificationInboxClient) Get(ctx context.Context, id uuid.UUID) (*VerificationInbox, error) {
+	return c.Query().Where(verificationinbox.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationInboxClient) GetX(ctx context.Context, id uuid.UUID) *VerificationInbox {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationInboxClient) Hooks() []Hook {
+	return c.hooks.VerificationInbox
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationInboxClient) Interceptors() []Interceptor {
+	return c.inters.VerificationInbox
+}
+
+func (c *VerificationInboxClient) mutate(ctx context.Context, m *VerificationInboxMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationInboxCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationInboxUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationInboxUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationInboxDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationInbox mutation op: %q", m.Op())
+	}
+}
+
+// VerificationMetricRollupsClient is a client for the VerificationMetricRollups schema.
+type VerificationMetricRollupsClient struct {
+	config
+}
+
+// NewVerificationMetricRollupsClient returns a client for the VerificationMetricRollups from the given config.
+func NewVerificationMetricRollupsClient(c config) *VerificationMetricRollupsClient {
+	return &VerificationMetricRollupsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationmetricrollups.Hooks(f(g(h())))`.
+func (c *VerificationMetricRollupsClient) Use(hooks ...Hook) {
+	c.hooks.VerificationMetricRollups = append(c.hooks.VerificationMetricRollups, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationmetricrollups.Intercept(f(g(h())))`.
+func (c *VerificationMetricRollupsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationMetricRollups = append(c.inters.VerificationMetricRollups, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationMetricRollups entity.
+func (c *VerificationMetricRollupsClient) Create() *VerificationMetricRollupsCreate {
+	mutation := newVerificationMetricRollupsMutation(c.config, OpCreate)
+	return &VerificationMetricRollupsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationMetricRollups entities.
+func (c *VerificationMetricRollupsClient) CreateBulk(builders ...*VerificationMetricRollupsCreate) *VerificationMetricRollupsCreateBulk {
+	return &VerificationMetricRollupsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationMetricRollupsClient) MapCreateBulk(slice any, setFunc func(*VerificationMetricRollupsCreate, int)) *VerificationMetricRollupsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationMetricRollupsCreateBulk{err: fmt.Errorf("calling to VerificationMetricRollupsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationMetricRollupsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationMetricRollupsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationMetricRollups.
+func (c *VerificationMetricRollupsClient) Update() *VerificationMetricRollupsUpdate {
+	mutation := newVerificationMetricRollupsMutation(c.config, OpUpdate)
+	return &VerificationMetricRollupsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationMetricRollupsClient) UpdateOne(_m *VerificationMetricRollups) *VerificationMetricRollupsUpdateOne {
+	mutation := newVerificationMetricRollupsMutation(c.config, OpUpdateOne, withVerificationMetricRollups(_m))
+	return &VerificationMetricRollupsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationMetricRollupsClient) UpdateOneID(id uuid.UUID) *VerificationMetricRollupsUpdateOne {
+	mutation := newVerificationMetricRollupsMutation(c.config, OpUpdateOne, withVerificationMetricRollupsID(id))
+	return &VerificationMetricRollupsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationMetricRollups.
+func (c *VerificationMetricRollupsClient) Delete() *VerificationMetricRollupsDelete {
+	mutation := newVerificationMetricRollupsMutation(c.config, OpDelete)
+	return &VerificationMetricRollupsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationMetricRollupsClient) DeleteOne(_m *VerificationMetricRollups) *VerificationMetricRollupsDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationMetricRollupsClient) DeleteOneID(id uuid.UUID) *VerificationMetricRollupsDeleteOne {
+	builder := c.Delete().Where(verificationmetricrollups.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationMetricRollupsDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationMetricRollups.
+func (c *VerificationMetricRollupsClient) Query() *VerificationMetricRollupsQuery {
+	return &VerificationMetricRollupsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationMetricRollups},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationMetricRollups entity by its id.
+func (c *VerificationMetricRollupsClient) Get(ctx context.Context, id uuid.UUID) (*VerificationMetricRollups, error) {
+	return c.Query().Where(verificationmetricrollups.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationMetricRollupsClient) GetX(ctx context.Context, id uuid.UUID) *VerificationMetricRollups {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProject queries the project edge of a VerificationMetricRollups.
+func (c *VerificationMetricRollupsClient) QueryProject(_m *VerificationMetricRollups) *ProjectQuery {
+	query := (&ProjectClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationmetricrollups.Table, verificationmetricrollups.FieldID, id),
+			sqlgraph.To(project.Table, project.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationmetricrollups.ProjectTable, verificationmetricrollups.ProjectColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationMetricRollupsClient) Hooks() []Hook {
+	return c.hooks.VerificationMetricRollups
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationMetricRollupsClient) Interceptors() []Interceptor {
+	return c.inters.VerificationMetricRollups
+}
+
+func (c *VerificationMetricRollupsClient) mutate(ctx context.Context, m *VerificationMetricRollupsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationMetricRollupsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationMetricRollupsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationMetricRollupsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationMetricRollupsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationMetricRollups mutation op: %q", m.Op())
+	}
+}
+
+// VerificationPipelineVersionsClient is a client for the VerificationPipelineVersions schema.
+type VerificationPipelineVersionsClient struct {
+	config
+}
+
+// NewVerificationPipelineVersionsClient returns a client for the VerificationPipelineVersions from the given config.
+func NewVerificationPipelineVersionsClient(c config) *VerificationPipelineVersionsClient {
+	return &VerificationPipelineVersionsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationpipelineversions.Hooks(f(g(h())))`.
+func (c *VerificationPipelineVersionsClient) Use(hooks ...Hook) {
+	c.hooks.VerificationPipelineVersions = append(c.hooks.VerificationPipelineVersions, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationpipelineversions.Intercept(f(g(h())))`.
+func (c *VerificationPipelineVersionsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationPipelineVersions = append(c.inters.VerificationPipelineVersions, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationPipelineVersions entity.
+func (c *VerificationPipelineVersionsClient) Create() *VerificationPipelineVersionsCreate {
+	mutation := newVerificationPipelineVersionsMutation(c.config, OpCreate)
+	return &VerificationPipelineVersionsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationPipelineVersions entities.
+func (c *VerificationPipelineVersionsClient) CreateBulk(builders ...*VerificationPipelineVersionsCreate) *VerificationPipelineVersionsCreateBulk {
+	return &VerificationPipelineVersionsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationPipelineVersionsClient) MapCreateBulk(slice any, setFunc func(*VerificationPipelineVersionsCreate, int)) *VerificationPipelineVersionsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationPipelineVersionsCreateBulk{err: fmt.Errorf("calling to VerificationPipelineVersionsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationPipelineVersionsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationPipelineVersionsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationPipelineVersions.
+func (c *VerificationPipelineVersionsClient) Update() *VerificationPipelineVersionsUpdate {
+	mutation := newVerificationPipelineVersionsMutation(c.config, OpUpdate)
+	return &VerificationPipelineVersionsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationPipelineVersionsClient) UpdateOne(_m *VerificationPipelineVersions) *VerificationPipelineVersionsUpdateOne {
+	mutation := newVerificationPipelineVersionsMutation(c.config, OpUpdateOne, withVerificationPipelineVersions(_m))
+	return &VerificationPipelineVersionsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationPipelineVersionsClient) UpdateOneID(id uuid.UUID) *VerificationPipelineVersionsUpdateOne {
+	mutation := newVerificationPipelineVersionsMutation(c.config, OpUpdateOne, withVerificationPipelineVersionsID(id))
+	return &VerificationPipelineVersionsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationPipelineVersions.
+func (c *VerificationPipelineVersionsClient) Delete() *VerificationPipelineVersionsDelete {
+	mutation := newVerificationPipelineVersionsMutation(c.config, OpDelete)
+	return &VerificationPipelineVersionsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationPipelineVersionsClient) DeleteOne(_m *VerificationPipelineVersions) *VerificationPipelineVersionsDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationPipelineVersionsClient) DeleteOneID(id uuid.UUID) *VerificationPipelineVersionsDeleteOne {
+	builder := c.Delete().Where(verificationpipelineversions.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationPipelineVersionsDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationPipelineVersions.
+func (c *VerificationPipelineVersionsClient) Query() *VerificationPipelineVersionsQuery {
+	return &VerificationPipelineVersionsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationPipelineVersions},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationPipelineVersions entity by its id.
+func (c *VerificationPipelineVersionsClient) Get(ctx context.Context, id uuid.UUID) (*VerificationPipelineVersions, error) {
+	return c.Query().Where(verificationpipelineversions.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationPipelineVersionsClient) GetX(ctx context.Context, id uuid.UUID) *VerificationPipelineVersions {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRuns queries the runs edge of a VerificationPipelineVersions.
+func (c *VerificationPipelineVersionsClient) QueryRuns(_m *VerificationPipelineVersions) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationpipelineversions.Table, verificationpipelineversions.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationpipelineversions.RunsTable, verificationpipelineversions.RunsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationPipelineVersionsClient) Hooks() []Hook {
+	return c.hooks.VerificationPipelineVersions
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationPipelineVersionsClient) Interceptors() []Interceptor {
+	return c.inters.VerificationPipelineVersions
+}
+
+func (c *VerificationPipelineVersionsClient) mutate(ctx context.Context, m *VerificationPipelineVersionsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationPipelineVersionsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationPipelineVersionsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationPipelineVersionsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationPipelineVersionsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationPipelineVersions mutation op: %q", m.Op())
+	}
+}
+
+// VerificationPolicyEvaluationsClient is a client for the VerificationPolicyEvaluations schema.
+type VerificationPolicyEvaluationsClient struct {
+	config
+}
+
+// NewVerificationPolicyEvaluationsClient returns a client for the VerificationPolicyEvaluations from the given config.
+func NewVerificationPolicyEvaluationsClient(c config) *VerificationPolicyEvaluationsClient {
+	return &VerificationPolicyEvaluationsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationpolicyevaluations.Hooks(f(g(h())))`.
+func (c *VerificationPolicyEvaluationsClient) Use(hooks ...Hook) {
+	c.hooks.VerificationPolicyEvaluations = append(c.hooks.VerificationPolicyEvaluations, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationpolicyevaluations.Intercept(f(g(h())))`.
+func (c *VerificationPolicyEvaluationsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationPolicyEvaluations = append(c.inters.VerificationPolicyEvaluations, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationPolicyEvaluations entity.
+func (c *VerificationPolicyEvaluationsClient) Create() *VerificationPolicyEvaluationsCreate {
+	mutation := newVerificationPolicyEvaluationsMutation(c.config, OpCreate)
+	return &VerificationPolicyEvaluationsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationPolicyEvaluations entities.
+func (c *VerificationPolicyEvaluationsClient) CreateBulk(builders ...*VerificationPolicyEvaluationsCreate) *VerificationPolicyEvaluationsCreateBulk {
+	return &VerificationPolicyEvaluationsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationPolicyEvaluationsClient) MapCreateBulk(slice any, setFunc func(*VerificationPolicyEvaluationsCreate, int)) *VerificationPolicyEvaluationsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationPolicyEvaluationsCreateBulk{err: fmt.Errorf("calling to VerificationPolicyEvaluationsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationPolicyEvaluationsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationPolicyEvaluationsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationPolicyEvaluations.
+func (c *VerificationPolicyEvaluationsClient) Update() *VerificationPolicyEvaluationsUpdate {
+	mutation := newVerificationPolicyEvaluationsMutation(c.config, OpUpdate)
+	return &VerificationPolicyEvaluationsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationPolicyEvaluationsClient) UpdateOne(_m *VerificationPolicyEvaluations) *VerificationPolicyEvaluationsUpdateOne {
+	mutation := newVerificationPolicyEvaluationsMutation(c.config, OpUpdateOne, withVerificationPolicyEvaluations(_m))
+	return &VerificationPolicyEvaluationsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationPolicyEvaluationsClient) UpdateOneID(id uuid.UUID) *VerificationPolicyEvaluationsUpdateOne {
+	mutation := newVerificationPolicyEvaluationsMutation(c.config, OpUpdateOne, withVerificationPolicyEvaluationsID(id))
+	return &VerificationPolicyEvaluationsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationPolicyEvaluations.
+func (c *VerificationPolicyEvaluationsClient) Delete() *VerificationPolicyEvaluationsDelete {
+	mutation := newVerificationPolicyEvaluationsMutation(c.config, OpDelete)
+	return &VerificationPolicyEvaluationsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationPolicyEvaluationsClient) DeleteOne(_m *VerificationPolicyEvaluations) *VerificationPolicyEvaluationsDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationPolicyEvaluationsClient) DeleteOneID(id uuid.UUID) *VerificationPolicyEvaluationsDeleteOne {
+	builder := c.Delete().Where(verificationpolicyevaluations.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationPolicyEvaluationsDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationPolicyEvaluations.
+func (c *VerificationPolicyEvaluationsClient) Query() *VerificationPolicyEvaluationsQuery {
+	return &VerificationPolicyEvaluationsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationPolicyEvaluations},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationPolicyEvaluations entity by its id.
+func (c *VerificationPolicyEvaluationsClient) Get(ctx context.Context, id uuid.UUID) (*VerificationPolicyEvaluations, error) {
+	return c.Query().Where(verificationpolicyevaluations.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationPolicyEvaluationsClient) GetX(ctx context.Context, id uuid.UUID) *VerificationPolicyEvaluations {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRun queries the run edge of a VerificationPolicyEvaluations.
+func (c *VerificationPolicyEvaluationsClient) QueryRun(_m *VerificationPolicyEvaluations) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationpolicyevaluations.Table, verificationpolicyevaluations.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, verificationpolicyevaluations.RunTable, verificationpolicyevaluations.RunColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPolicyVersion queries the policyVersion edge of a VerificationPolicyEvaluations.
+func (c *VerificationPolicyEvaluationsClient) QueryPolicyVersion(_m *VerificationPolicyEvaluations) *VerificationPolicyVersionsQuery {
+	query := (&VerificationPolicyVersionsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationpolicyevaluations.Table, verificationpolicyevaluations.FieldID, id),
+			sqlgraph.To(verificationpolicyversions.Table, verificationpolicyversions.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationpolicyevaluations.PolicyVersionTable, verificationpolicyevaluations.PolicyVersionColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationPolicyEvaluationsClient) Hooks() []Hook {
+	return c.hooks.VerificationPolicyEvaluations
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationPolicyEvaluationsClient) Interceptors() []Interceptor {
+	return c.inters.VerificationPolicyEvaluations
+}
+
+func (c *VerificationPolicyEvaluationsClient) mutate(ctx context.Context, m *VerificationPolicyEvaluationsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationPolicyEvaluationsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationPolicyEvaluationsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationPolicyEvaluationsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationPolicyEvaluationsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationPolicyEvaluations mutation op: %q", m.Op())
+	}
+}
+
+// VerificationPolicyVersionsClient is a client for the VerificationPolicyVersions schema.
+type VerificationPolicyVersionsClient struct {
+	config
+}
+
+// NewVerificationPolicyVersionsClient returns a client for the VerificationPolicyVersions from the given config.
+func NewVerificationPolicyVersionsClient(c config) *VerificationPolicyVersionsClient {
+	return &VerificationPolicyVersionsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationpolicyversions.Hooks(f(g(h())))`.
+func (c *VerificationPolicyVersionsClient) Use(hooks ...Hook) {
+	c.hooks.VerificationPolicyVersions = append(c.hooks.VerificationPolicyVersions, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationpolicyversions.Intercept(f(g(h())))`.
+func (c *VerificationPolicyVersionsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationPolicyVersions = append(c.inters.VerificationPolicyVersions, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationPolicyVersions entity.
+func (c *VerificationPolicyVersionsClient) Create() *VerificationPolicyVersionsCreate {
+	mutation := newVerificationPolicyVersionsMutation(c.config, OpCreate)
+	return &VerificationPolicyVersionsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationPolicyVersions entities.
+func (c *VerificationPolicyVersionsClient) CreateBulk(builders ...*VerificationPolicyVersionsCreate) *VerificationPolicyVersionsCreateBulk {
+	return &VerificationPolicyVersionsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationPolicyVersionsClient) MapCreateBulk(slice any, setFunc func(*VerificationPolicyVersionsCreate, int)) *VerificationPolicyVersionsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationPolicyVersionsCreateBulk{err: fmt.Errorf("calling to VerificationPolicyVersionsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationPolicyVersionsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationPolicyVersionsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationPolicyVersions.
+func (c *VerificationPolicyVersionsClient) Update() *VerificationPolicyVersionsUpdate {
+	mutation := newVerificationPolicyVersionsMutation(c.config, OpUpdate)
+	return &VerificationPolicyVersionsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationPolicyVersionsClient) UpdateOne(_m *VerificationPolicyVersions) *VerificationPolicyVersionsUpdateOne {
+	mutation := newVerificationPolicyVersionsMutation(c.config, OpUpdateOne, withVerificationPolicyVersions(_m))
+	return &VerificationPolicyVersionsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationPolicyVersionsClient) UpdateOneID(id uuid.UUID) *VerificationPolicyVersionsUpdateOne {
+	mutation := newVerificationPolicyVersionsMutation(c.config, OpUpdateOne, withVerificationPolicyVersionsID(id))
+	return &VerificationPolicyVersionsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationPolicyVersions.
+func (c *VerificationPolicyVersionsClient) Delete() *VerificationPolicyVersionsDelete {
+	mutation := newVerificationPolicyVersionsMutation(c.config, OpDelete)
+	return &VerificationPolicyVersionsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationPolicyVersionsClient) DeleteOne(_m *VerificationPolicyVersions) *VerificationPolicyVersionsDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationPolicyVersionsClient) DeleteOneID(id uuid.UUID) *VerificationPolicyVersionsDeleteOne {
+	builder := c.Delete().Where(verificationpolicyversions.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationPolicyVersionsDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationPolicyVersions.
+func (c *VerificationPolicyVersionsClient) Query() *VerificationPolicyVersionsQuery {
+	return &VerificationPolicyVersionsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationPolicyVersions},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationPolicyVersions entity by its id.
+func (c *VerificationPolicyVersionsClient) Get(ctx context.Context, id uuid.UUID) (*VerificationPolicyVersions, error) {
+	return c.Query().Where(verificationpolicyversions.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationPolicyVersionsClient) GetX(ctx context.Context, id uuid.UUID) *VerificationPolicyVersions {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRuns queries the runs edge of a VerificationPolicyVersions.
+func (c *VerificationPolicyVersionsClient) QueryRuns(_m *VerificationPolicyVersions) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationpolicyversions.Table, verificationpolicyversions.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationpolicyversions.RunsTable, verificationpolicyversions.RunsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEvaluations queries the evaluations edge of a VerificationPolicyVersions.
+func (c *VerificationPolicyVersionsClient) QueryEvaluations(_m *VerificationPolicyVersions) *VerificationPolicyEvaluationsQuery {
+	query := (&VerificationPolicyEvaluationsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationpolicyversions.Table, verificationpolicyversions.FieldID, id),
+			sqlgraph.To(verificationpolicyevaluations.Table, verificationpolicyevaluations.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationpolicyversions.EvaluationsTable, verificationpolicyversions.EvaluationsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationPolicyVersionsClient) Hooks() []Hook {
+	return c.hooks.VerificationPolicyVersions
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationPolicyVersionsClient) Interceptors() []Interceptor {
+	return c.inters.VerificationPolicyVersions
+}
+
+func (c *VerificationPolicyVersionsClient) mutate(ctx context.Context, m *VerificationPolicyVersionsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationPolicyVersionsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationPolicyVersionsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationPolicyVersionsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationPolicyVersionsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationPolicyVersions mutation op: %q", m.Op())
+	}
+}
+
+// VerificationReportsClient is a client for the VerificationReports schema.
+type VerificationReportsClient struct {
+	config
+}
+
+// NewVerificationReportsClient returns a client for the VerificationReports from the given config.
+func NewVerificationReportsClient(c config) *VerificationReportsClient {
+	return &VerificationReportsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationreports.Hooks(f(g(h())))`.
+func (c *VerificationReportsClient) Use(hooks ...Hook) {
+	c.hooks.VerificationReports = append(c.hooks.VerificationReports, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationreports.Intercept(f(g(h())))`.
+func (c *VerificationReportsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationReports = append(c.inters.VerificationReports, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationReports entity.
+func (c *VerificationReportsClient) Create() *VerificationReportsCreate {
+	mutation := newVerificationReportsMutation(c.config, OpCreate)
+	return &VerificationReportsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationReports entities.
+func (c *VerificationReportsClient) CreateBulk(builders ...*VerificationReportsCreate) *VerificationReportsCreateBulk {
+	return &VerificationReportsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationReportsClient) MapCreateBulk(slice any, setFunc func(*VerificationReportsCreate, int)) *VerificationReportsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationReportsCreateBulk{err: fmt.Errorf("calling to VerificationReportsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationReportsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationReportsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationReports.
+func (c *VerificationReportsClient) Update() *VerificationReportsUpdate {
+	mutation := newVerificationReportsMutation(c.config, OpUpdate)
+	return &VerificationReportsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationReportsClient) UpdateOne(_m *VerificationReports) *VerificationReportsUpdateOne {
+	mutation := newVerificationReportsMutation(c.config, OpUpdateOne, withVerificationReports(_m))
+	return &VerificationReportsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationReportsClient) UpdateOneID(id uuid.UUID) *VerificationReportsUpdateOne {
+	mutation := newVerificationReportsMutation(c.config, OpUpdateOne, withVerificationReportsID(id))
+	return &VerificationReportsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationReports.
+func (c *VerificationReportsClient) Delete() *VerificationReportsDelete {
+	mutation := newVerificationReportsMutation(c.config, OpDelete)
+	return &VerificationReportsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationReportsClient) DeleteOne(_m *VerificationReports) *VerificationReportsDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationReportsClient) DeleteOneID(id uuid.UUID) *VerificationReportsDeleteOne {
+	builder := c.Delete().Where(verificationreports.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationReportsDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationReports.
+func (c *VerificationReportsClient) Query() *VerificationReportsQuery {
+	return &VerificationReportsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationReports},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationReports entity by its id.
+func (c *VerificationReportsClient) Get(ctx context.Context, id uuid.UUID) (*VerificationReports, error) {
+	return c.Query().Where(verificationreports.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationReportsClient) GetX(ctx context.Context, id uuid.UUID) *VerificationReports {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRun queries the run edge of a VerificationReports.
+func (c *VerificationReportsClient) QueryRun(_m *VerificationReports) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationreports.Table, verificationreports.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, verificationreports.RunTable, verificationreports.RunColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationReportsClient) Hooks() []Hook {
+	return c.hooks.VerificationReports
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationReportsClient) Interceptors() []Interceptor {
+	return c.inters.VerificationReports
+}
+
+func (c *VerificationReportsClient) mutate(ctx context.Context, m *VerificationReportsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationReportsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationReportsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationReportsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationReportsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationReports mutation op: %q", m.Op())
+	}
+}
+
+// VerificationRunsClient is a client for the VerificationRuns schema.
+type VerificationRunsClient struct {
+	config
+}
+
+// NewVerificationRunsClient returns a client for the VerificationRuns from the given config.
+func NewVerificationRunsClient(c config) *VerificationRunsClient {
+	return &VerificationRunsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationruns.Hooks(f(g(h())))`.
+func (c *VerificationRunsClient) Use(hooks ...Hook) {
+	c.hooks.VerificationRuns = append(c.hooks.VerificationRuns, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationruns.Intercept(f(g(h())))`.
+func (c *VerificationRunsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationRuns = append(c.inters.VerificationRuns, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationRuns entity.
+func (c *VerificationRunsClient) Create() *VerificationRunsCreate {
+	mutation := newVerificationRunsMutation(c.config, OpCreate)
+	return &VerificationRunsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationRuns entities.
+func (c *VerificationRunsClient) CreateBulk(builders ...*VerificationRunsCreate) *VerificationRunsCreateBulk {
+	return &VerificationRunsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationRunsClient) MapCreateBulk(slice any, setFunc func(*VerificationRunsCreate, int)) *VerificationRunsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationRunsCreateBulk{err: fmt.Errorf("calling to VerificationRunsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationRunsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationRunsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationRuns.
+func (c *VerificationRunsClient) Update() *VerificationRunsUpdate {
+	mutation := newVerificationRunsMutation(c.config, OpUpdate)
+	return &VerificationRunsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationRunsClient) UpdateOne(_m *VerificationRuns) *VerificationRunsUpdateOne {
+	mutation := newVerificationRunsMutation(c.config, OpUpdateOne, withVerificationRuns(_m))
+	return &VerificationRunsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationRunsClient) UpdateOneID(id uuid.UUID) *VerificationRunsUpdateOne {
+	mutation := newVerificationRunsMutation(c.config, OpUpdateOne, withVerificationRunsID(id))
+	return &VerificationRunsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationRuns.
+func (c *VerificationRunsClient) Delete() *VerificationRunsDelete {
+	mutation := newVerificationRunsMutation(c.config, OpDelete)
+	return &VerificationRunsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationRunsClient) DeleteOne(_m *VerificationRuns) *VerificationRunsDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationRunsClient) DeleteOneID(id uuid.UUID) *VerificationRunsDeleteOne {
+	builder := c.Delete().Where(verificationruns.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationRunsDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationRuns.
+func (c *VerificationRunsClient) Query() *VerificationRunsQuery {
+	return &VerificationRunsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationRuns},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationRuns entity by its id.
+func (c *VerificationRunsClient) Get(ctx context.Context, id uuid.UUID) (*VerificationRuns, error) {
+	return c.Query().Where(verificationruns.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationRunsClient) GetX(ctx context.Context, id uuid.UUID) *VerificationRuns {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProject queries the project edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryProject(_m *VerificationRuns) *ProjectQuery {
+	query := (&ProjectClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(project.Table, project.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationruns.ProjectTable, verificationruns.ProjectColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBundle queries the bundle edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryBundle(_m *VerificationRuns) *BundlesQuery {
+	query := (&BundlesClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(bundles.Table, bundles.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationruns.BundleTable, verificationruns.BundleColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRelease queries the release edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryRelease(_m *VerificationRuns) *BundleReleasesQuery {
+	query := (&BundleReleasesClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(bundlereleases.Table, bundlereleases.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationruns.ReleaseTable, verificationruns.ReleaseColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryArtifact queries the artifact edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryArtifact(_m *VerificationRuns) *BundleArtifactsQuery {
+	query := (&BundleArtifactsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(bundleartifacts.Table, bundleartifacts.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationruns.ArtifactTable, verificationruns.ArtifactColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPipelineVersion queries the pipelineVersion edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryPipelineVersion(_m *VerificationRuns) *VerificationPipelineVersionsQuery {
+	query := (&VerificationPipelineVersionsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(verificationpipelineversions.Table, verificationpipelineversions.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationruns.PipelineVersionTable, verificationruns.PipelineVersionColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPolicyVersion queries the policyVersion edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryPolicyVersion(_m *VerificationRuns) *VerificationPolicyVersionsQuery {
+	query := (&VerificationPolicyVersionsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(verificationpolicyversions.Table, verificationpolicyversions.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationruns.PolicyVersionTable, verificationruns.PolicyVersionColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEligibleForRelease queries the eligibleForRelease edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryEligibleForRelease(_m *VerificationRuns) *BundleReleasesQuery {
+	query := (&BundleReleasesClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(bundlereleases.Table, bundlereleases.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, verificationruns.EligibleForReleaseTable, verificationruns.EligibleForReleaseColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTasks queries the tasks edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryTasks(_m *VerificationRuns) *VerificationTasksQuery {
+	query := (&VerificationTasksClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(verificationtasks.Table, verificationtasks.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationruns.TasksTable, verificationruns.TasksColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFindings queries the findings edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryFindings(_m *VerificationRuns) *VerificationFindingsQuery {
+	query := (&VerificationFindingsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(verificationfindings.Table, verificationfindings.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationruns.FindingsTable, verificationruns.FindingsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEvidence queries the evidence edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryEvidence(_m *VerificationRuns) *VerificationEvidenceQuery {
+	query := (&VerificationEvidenceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(verificationevidence.Table, verificationevidence.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationruns.EvidenceTable, verificationruns.EvidenceColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryScore queries the score edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryScore(_m *VerificationRuns) *VerificationScoresQuery {
+	query := (&VerificationScoresClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(verificationscores.Table, verificationscores.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, verificationruns.ScoreTable, verificationruns.ScoreColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEvaluation queries the evaluation edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryEvaluation(_m *VerificationRuns) *VerificationPolicyEvaluationsQuery {
+	query := (&VerificationPolicyEvaluationsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(verificationpolicyevaluations.Table, verificationpolicyevaluations.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, verificationruns.EvaluationTable, verificationruns.EvaluationColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryReport queries the report edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryReport(_m *VerificationRuns) *VerificationReportsQuery {
+	query := (&VerificationReportsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(verificationreports.Table, verificationreports.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, verificationruns.ReportTable, verificationruns.ReportColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTelemetry queries the telemetry edge of a VerificationRuns.
+func (c *VerificationRunsClient) QueryTelemetry(_m *VerificationRuns) *VerificationTelemetryEventsQuery {
+	query := (&VerificationTelemetryEventsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationruns.Table, verificationruns.FieldID, id),
+			sqlgraph.To(verificationtelemetryevents.Table, verificationtelemetryevents.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationruns.TelemetryTable, verificationruns.TelemetryColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationRunsClient) Hooks() []Hook {
+	return c.hooks.VerificationRuns
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationRunsClient) Interceptors() []Interceptor {
+	return c.inters.VerificationRuns
+}
+
+func (c *VerificationRunsClient) mutate(ctx context.Context, m *VerificationRunsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationRunsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationRunsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationRunsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationRunsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationRuns mutation op: %q", m.Op())
+	}
+}
+
+// VerificationScoresClient is a client for the VerificationScores schema.
+type VerificationScoresClient struct {
+	config
+}
+
+// NewVerificationScoresClient returns a client for the VerificationScores from the given config.
+func NewVerificationScoresClient(c config) *VerificationScoresClient {
+	return &VerificationScoresClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationscores.Hooks(f(g(h())))`.
+func (c *VerificationScoresClient) Use(hooks ...Hook) {
+	c.hooks.VerificationScores = append(c.hooks.VerificationScores, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationscores.Intercept(f(g(h())))`.
+func (c *VerificationScoresClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationScores = append(c.inters.VerificationScores, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationScores entity.
+func (c *VerificationScoresClient) Create() *VerificationScoresCreate {
+	mutation := newVerificationScoresMutation(c.config, OpCreate)
+	return &VerificationScoresCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationScores entities.
+func (c *VerificationScoresClient) CreateBulk(builders ...*VerificationScoresCreate) *VerificationScoresCreateBulk {
+	return &VerificationScoresCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationScoresClient) MapCreateBulk(slice any, setFunc func(*VerificationScoresCreate, int)) *VerificationScoresCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationScoresCreateBulk{err: fmt.Errorf("calling to VerificationScoresClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationScoresCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationScoresCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationScores.
+func (c *VerificationScoresClient) Update() *VerificationScoresUpdate {
+	mutation := newVerificationScoresMutation(c.config, OpUpdate)
+	return &VerificationScoresUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationScoresClient) UpdateOne(_m *VerificationScores) *VerificationScoresUpdateOne {
+	mutation := newVerificationScoresMutation(c.config, OpUpdateOne, withVerificationScores(_m))
+	return &VerificationScoresUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationScoresClient) UpdateOneID(id uuid.UUID) *VerificationScoresUpdateOne {
+	mutation := newVerificationScoresMutation(c.config, OpUpdateOne, withVerificationScoresID(id))
+	return &VerificationScoresUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationScores.
+func (c *VerificationScoresClient) Delete() *VerificationScoresDelete {
+	mutation := newVerificationScoresMutation(c.config, OpDelete)
+	return &VerificationScoresDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationScoresClient) DeleteOne(_m *VerificationScores) *VerificationScoresDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationScoresClient) DeleteOneID(id uuid.UUID) *VerificationScoresDeleteOne {
+	builder := c.Delete().Where(verificationscores.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationScoresDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationScores.
+func (c *VerificationScoresClient) Query() *VerificationScoresQuery {
+	return &VerificationScoresQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationScores},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationScores entity by its id.
+func (c *VerificationScoresClient) Get(ctx context.Context, id uuid.UUID) (*VerificationScores, error) {
+	return c.Query().Where(verificationscores.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationScoresClient) GetX(ctx context.Context, id uuid.UUID) *VerificationScores {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRun queries the run edge of a VerificationScores.
+func (c *VerificationScoresClient) QueryRun(_m *VerificationScores) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationscores.Table, verificationscores.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, verificationscores.RunTable, verificationscores.RunColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationScoresClient) Hooks() []Hook {
+	return c.hooks.VerificationScores
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationScoresClient) Interceptors() []Interceptor {
+	return c.inters.VerificationScores
+}
+
+func (c *VerificationScoresClient) mutate(ctx context.Context, m *VerificationScoresMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationScoresCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationScoresUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationScoresUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationScoresDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationScores mutation op: %q", m.Op())
+	}
+}
+
+// VerificationTaskDependenciesClient is a client for the VerificationTaskDependencies schema.
+type VerificationTaskDependenciesClient struct {
+	config
+}
+
+// NewVerificationTaskDependenciesClient returns a client for the VerificationTaskDependencies from the given config.
+func NewVerificationTaskDependenciesClient(c config) *VerificationTaskDependenciesClient {
+	return &VerificationTaskDependenciesClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationtaskdependencies.Hooks(f(g(h())))`.
+func (c *VerificationTaskDependenciesClient) Use(hooks ...Hook) {
+	c.hooks.VerificationTaskDependencies = append(c.hooks.VerificationTaskDependencies, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationtaskdependencies.Intercept(f(g(h())))`.
+func (c *VerificationTaskDependenciesClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationTaskDependencies = append(c.inters.VerificationTaskDependencies, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationTaskDependencies entity.
+func (c *VerificationTaskDependenciesClient) Create() *VerificationTaskDependenciesCreate {
+	mutation := newVerificationTaskDependenciesMutation(c.config, OpCreate)
+	return &VerificationTaskDependenciesCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationTaskDependencies entities.
+func (c *VerificationTaskDependenciesClient) CreateBulk(builders ...*VerificationTaskDependenciesCreate) *VerificationTaskDependenciesCreateBulk {
+	return &VerificationTaskDependenciesCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationTaskDependenciesClient) MapCreateBulk(slice any, setFunc func(*VerificationTaskDependenciesCreate, int)) *VerificationTaskDependenciesCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationTaskDependenciesCreateBulk{err: fmt.Errorf("calling to VerificationTaskDependenciesClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationTaskDependenciesCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationTaskDependenciesCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationTaskDependencies.
+func (c *VerificationTaskDependenciesClient) Update() *VerificationTaskDependenciesUpdate {
+	mutation := newVerificationTaskDependenciesMutation(c.config, OpUpdate)
+	return &VerificationTaskDependenciesUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationTaskDependenciesClient) UpdateOne(_m *VerificationTaskDependencies) *VerificationTaskDependenciesUpdateOne {
+	mutation := newVerificationTaskDependenciesMutation(c.config, OpUpdateOne, withVerificationTaskDependencies(_m))
+	return &VerificationTaskDependenciesUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationTaskDependenciesClient) UpdateOneID(id uuid.UUID) *VerificationTaskDependenciesUpdateOne {
+	mutation := newVerificationTaskDependenciesMutation(c.config, OpUpdateOne, withVerificationTaskDependenciesID(id))
+	return &VerificationTaskDependenciesUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationTaskDependencies.
+func (c *VerificationTaskDependenciesClient) Delete() *VerificationTaskDependenciesDelete {
+	mutation := newVerificationTaskDependenciesMutation(c.config, OpDelete)
+	return &VerificationTaskDependenciesDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationTaskDependenciesClient) DeleteOne(_m *VerificationTaskDependencies) *VerificationTaskDependenciesDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationTaskDependenciesClient) DeleteOneID(id uuid.UUID) *VerificationTaskDependenciesDeleteOne {
+	builder := c.Delete().Where(verificationtaskdependencies.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationTaskDependenciesDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationTaskDependencies.
+func (c *VerificationTaskDependenciesClient) Query() *VerificationTaskDependenciesQuery {
+	return &VerificationTaskDependenciesQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationTaskDependencies},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationTaskDependencies entity by its id.
+func (c *VerificationTaskDependenciesClient) Get(ctx context.Context, id uuid.UUID) (*VerificationTaskDependencies, error) {
+	return c.Query().Where(verificationtaskdependencies.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationTaskDependenciesClient) GetX(ctx context.Context, id uuid.UUID) *VerificationTaskDependencies {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTask queries the task edge of a VerificationTaskDependencies.
+func (c *VerificationTaskDependenciesClient) QueryTask(_m *VerificationTaskDependencies) *VerificationTasksQuery {
+	query := (&VerificationTasksClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationtaskdependencies.Table, verificationtaskdependencies.FieldID, id),
+			sqlgraph.To(verificationtasks.Table, verificationtasks.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationtaskdependencies.TaskTable, verificationtaskdependencies.TaskColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPrerequisite queries the prerequisite edge of a VerificationTaskDependencies.
+func (c *VerificationTaskDependenciesClient) QueryPrerequisite(_m *VerificationTaskDependencies) *VerificationTasksQuery {
+	query := (&VerificationTasksClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationtaskdependencies.Table, verificationtaskdependencies.FieldID, id),
+			sqlgraph.To(verificationtasks.Table, verificationtasks.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationtaskdependencies.PrerequisiteTable, verificationtaskdependencies.PrerequisiteColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationTaskDependenciesClient) Hooks() []Hook {
+	return c.hooks.VerificationTaskDependencies
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationTaskDependenciesClient) Interceptors() []Interceptor {
+	return c.inters.VerificationTaskDependencies
+}
+
+func (c *VerificationTaskDependenciesClient) mutate(ctx context.Context, m *VerificationTaskDependenciesMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationTaskDependenciesCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationTaskDependenciesUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationTaskDependenciesUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationTaskDependenciesDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationTaskDependencies mutation op: %q", m.Op())
+	}
+}
+
+// VerificationTasksClient is a client for the VerificationTasks schema.
+type VerificationTasksClient struct {
+	config
+}
+
+// NewVerificationTasksClient returns a client for the VerificationTasks from the given config.
+func NewVerificationTasksClient(c config) *VerificationTasksClient {
+	return &VerificationTasksClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationtasks.Hooks(f(g(h())))`.
+func (c *VerificationTasksClient) Use(hooks ...Hook) {
+	c.hooks.VerificationTasks = append(c.hooks.VerificationTasks, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationtasks.Intercept(f(g(h())))`.
+func (c *VerificationTasksClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationTasks = append(c.inters.VerificationTasks, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationTasks entity.
+func (c *VerificationTasksClient) Create() *VerificationTasksCreate {
+	mutation := newVerificationTasksMutation(c.config, OpCreate)
+	return &VerificationTasksCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationTasks entities.
+func (c *VerificationTasksClient) CreateBulk(builders ...*VerificationTasksCreate) *VerificationTasksCreateBulk {
+	return &VerificationTasksCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationTasksClient) MapCreateBulk(slice any, setFunc func(*VerificationTasksCreate, int)) *VerificationTasksCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationTasksCreateBulk{err: fmt.Errorf("calling to VerificationTasksClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationTasksCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationTasksCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationTasks.
+func (c *VerificationTasksClient) Update() *VerificationTasksUpdate {
+	mutation := newVerificationTasksMutation(c.config, OpUpdate)
+	return &VerificationTasksUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationTasksClient) UpdateOne(_m *VerificationTasks) *VerificationTasksUpdateOne {
+	mutation := newVerificationTasksMutation(c.config, OpUpdateOne, withVerificationTasks(_m))
+	return &VerificationTasksUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationTasksClient) UpdateOneID(id uuid.UUID) *VerificationTasksUpdateOne {
+	mutation := newVerificationTasksMutation(c.config, OpUpdateOne, withVerificationTasksID(id))
+	return &VerificationTasksUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationTasks.
+func (c *VerificationTasksClient) Delete() *VerificationTasksDelete {
+	mutation := newVerificationTasksMutation(c.config, OpDelete)
+	return &VerificationTasksDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationTasksClient) DeleteOne(_m *VerificationTasks) *VerificationTasksDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationTasksClient) DeleteOneID(id uuid.UUID) *VerificationTasksDeleteOne {
+	builder := c.Delete().Where(verificationtasks.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationTasksDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationTasks.
+func (c *VerificationTasksClient) Query() *VerificationTasksQuery {
+	return &VerificationTasksQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationTasks},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationTasks entity by its id.
+func (c *VerificationTasksClient) Get(ctx context.Context, id uuid.UUID) (*VerificationTasks, error) {
+	return c.Query().Where(verificationtasks.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationTasksClient) GetX(ctx context.Context, id uuid.UUID) *VerificationTasks {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRun queries the run edge of a VerificationTasks.
+func (c *VerificationTasksClient) QueryRun(_m *VerificationTasks) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationtasks.Table, verificationtasks.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationtasks.RunTable, verificationtasks.RunColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEngineVersion queries the engineVersion edge of a VerificationTasks.
+func (c *VerificationTasksClient) QueryEngineVersion(_m *VerificationTasks) *VerificationEngineVersionsQuery {
+	query := (&VerificationEngineVersionsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationtasks.Table, verificationtasks.FieldID, id),
+			sqlgraph.To(verificationengineversions.Table, verificationengineversions.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationtasks.EngineVersionTable, verificationtasks.EngineVersionColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAttempts queries the attempts edge of a VerificationTasks.
+func (c *VerificationTasksClient) QueryAttempts(_m *VerificationTasks) *VerificationAttemptsQuery {
+	query := (&VerificationAttemptsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationtasks.Table, verificationtasks.FieldID, id),
+			sqlgraph.To(verificationattempts.Table, verificationattempts.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationtasks.AttemptsTable, verificationtasks.AttemptsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAcceptedAttempt queries the acceptedAttempt edge of a VerificationTasks.
+func (c *VerificationTasksClient) QueryAcceptedAttempt(_m *VerificationTasks) *VerificationAttemptsQuery {
+	query := (&VerificationAttemptsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationtasks.Table, verificationtasks.FieldID, id),
+			sqlgraph.To(verificationattempts.Table, verificationattempts.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, verificationtasks.AcceptedAttemptTable, verificationtasks.AcceptedAttemptColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPrerequisites queries the prerequisites edge of a VerificationTasks.
+func (c *VerificationTasksClient) QueryPrerequisites(_m *VerificationTasks) *VerificationTaskDependenciesQuery {
+	query := (&VerificationTaskDependenciesClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationtasks.Table, verificationtasks.FieldID, id),
+			sqlgraph.To(verificationtaskdependencies.Table, verificationtaskdependencies.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationtasks.PrerequisitesTable, verificationtasks.PrerequisitesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDependents queries the dependents edge of a VerificationTasks.
+func (c *VerificationTasksClient) QueryDependents(_m *VerificationTasks) *VerificationTaskDependenciesQuery {
+	query := (&VerificationTaskDependenciesClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationtasks.Table, verificationtasks.FieldID, id),
+			sqlgraph.To(verificationtaskdependencies.Table, verificationtaskdependencies.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationtasks.DependentsTable, verificationtasks.DependentsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFindings queries the findings edge of a VerificationTasks.
+func (c *VerificationTasksClient) QueryFindings(_m *VerificationTasks) *VerificationFindingsQuery {
+	query := (&VerificationFindingsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationtasks.Table, verificationtasks.FieldID, id),
+			sqlgraph.To(verificationfindings.Table, verificationfindings.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationtasks.FindingsTable, verificationtasks.FindingsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEvidence queries the evidence edge of a VerificationTasks.
+func (c *VerificationTasksClient) QueryEvidence(_m *VerificationTasks) *VerificationEvidenceQuery {
+	query := (&VerificationEvidenceClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationtasks.Table, verificationtasks.FieldID, id),
+			sqlgraph.To(verificationevidence.Table, verificationevidence.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, verificationtasks.EvidenceTable, verificationtasks.EvidenceColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationTasksClient) Hooks() []Hook {
+	return c.hooks.VerificationTasks
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationTasksClient) Interceptors() []Interceptor {
+	return c.inters.VerificationTasks
+}
+
+func (c *VerificationTasksClient) mutate(ctx context.Context, m *VerificationTasksMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationTasksCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationTasksUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationTasksUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationTasksDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationTasks mutation op: %q", m.Op())
+	}
+}
+
+// VerificationTelemetryEventsClient is a client for the VerificationTelemetryEvents schema.
+type VerificationTelemetryEventsClient struct {
+	config
+}
+
+// NewVerificationTelemetryEventsClient returns a client for the VerificationTelemetryEvents from the given config.
+func NewVerificationTelemetryEventsClient(c config) *VerificationTelemetryEventsClient {
+	return &VerificationTelemetryEventsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `verificationtelemetryevents.Hooks(f(g(h())))`.
+func (c *VerificationTelemetryEventsClient) Use(hooks ...Hook) {
+	c.hooks.VerificationTelemetryEvents = append(c.hooks.VerificationTelemetryEvents, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `verificationtelemetryevents.Intercept(f(g(h())))`.
+func (c *VerificationTelemetryEventsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.VerificationTelemetryEvents = append(c.inters.VerificationTelemetryEvents, interceptors...)
+}
+
+// Create returns a builder for creating a VerificationTelemetryEvents entity.
+func (c *VerificationTelemetryEventsClient) Create() *VerificationTelemetryEventsCreate {
+	mutation := newVerificationTelemetryEventsMutation(c.config, OpCreate)
+	return &VerificationTelemetryEventsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of VerificationTelemetryEvents entities.
+func (c *VerificationTelemetryEventsClient) CreateBulk(builders ...*VerificationTelemetryEventsCreate) *VerificationTelemetryEventsCreateBulk {
+	return &VerificationTelemetryEventsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *VerificationTelemetryEventsClient) MapCreateBulk(slice any, setFunc func(*VerificationTelemetryEventsCreate, int)) *VerificationTelemetryEventsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &VerificationTelemetryEventsCreateBulk{err: fmt.Errorf("calling to VerificationTelemetryEventsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*VerificationTelemetryEventsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &VerificationTelemetryEventsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for VerificationTelemetryEvents.
+func (c *VerificationTelemetryEventsClient) Update() *VerificationTelemetryEventsUpdate {
+	mutation := newVerificationTelemetryEventsMutation(c.config, OpUpdate)
+	return &VerificationTelemetryEventsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *VerificationTelemetryEventsClient) UpdateOne(_m *VerificationTelemetryEvents) *VerificationTelemetryEventsUpdateOne {
+	mutation := newVerificationTelemetryEventsMutation(c.config, OpUpdateOne, withVerificationTelemetryEvents(_m))
+	return &VerificationTelemetryEventsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *VerificationTelemetryEventsClient) UpdateOneID(id uuid.UUID) *VerificationTelemetryEventsUpdateOne {
+	mutation := newVerificationTelemetryEventsMutation(c.config, OpUpdateOne, withVerificationTelemetryEventsID(id))
+	return &VerificationTelemetryEventsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for VerificationTelemetryEvents.
+func (c *VerificationTelemetryEventsClient) Delete() *VerificationTelemetryEventsDelete {
+	mutation := newVerificationTelemetryEventsMutation(c.config, OpDelete)
+	return &VerificationTelemetryEventsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *VerificationTelemetryEventsClient) DeleteOne(_m *VerificationTelemetryEvents) *VerificationTelemetryEventsDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *VerificationTelemetryEventsClient) DeleteOneID(id uuid.UUID) *VerificationTelemetryEventsDeleteOne {
+	builder := c.Delete().Where(verificationtelemetryevents.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &VerificationTelemetryEventsDeleteOne{builder}
+}
+
+// Query returns a query builder for VerificationTelemetryEvents.
+func (c *VerificationTelemetryEventsClient) Query() *VerificationTelemetryEventsQuery {
+	return &VerificationTelemetryEventsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeVerificationTelemetryEvents},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a VerificationTelemetryEvents entity by its id.
+func (c *VerificationTelemetryEventsClient) Get(ctx context.Context, id uuid.UUID) (*VerificationTelemetryEvents, error) {
+	return c.Query().Where(verificationtelemetryevents.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *VerificationTelemetryEventsClient) GetX(ctx context.Context, id uuid.UUID) *VerificationTelemetryEvents {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProject queries the project edge of a VerificationTelemetryEvents.
+func (c *VerificationTelemetryEventsClient) QueryProject(_m *VerificationTelemetryEvents) *ProjectQuery {
+	query := (&ProjectClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationtelemetryevents.Table, verificationtelemetryevents.FieldID, id),
+			sqlgraph.To(project.Table, project.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationtelemetryevents.ProjectTable, verificationtelemetryevents.ProjectColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRun queries the run edge of a VerificationTelemetryEvents.
+func (c *VerificationTelemetryEventsClient) QueryRun(_m *VerificationTelemetryEvents) *VerificationRunsQuery {
+	query := (&VerificationRunsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(verificationtelemetryevents.Table, verificationtelemetryevents.FieldID, id),
+			sqlgraph.To(verificationruns.Table, verificationruns.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, verificationtelemetryevents.RunTable, verificationtelemetryevents.RunColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *VerificationTelemetryEventsClient) Hooks() []Hook {
+	return c.hooks.VerificationTelemetryEvents
+}
+
+// Interceptors returns the client interceptors.
+func (c *VerificationTelemetryEventsClient) Interceptors() []Interceptor {
+	return c.inters.VerificationTelemetryEvents
+}
+
+func (c *VerificationTelemetryEventsClient) mutate(ctx context.Context, m *VerificationTelemetryEventsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&VerificationTelemetryEventsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&VerificationTelemetryEventsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&VerificationTelemetryEventsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&VerificationTelemetryEventsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown VerificationTelemetryEvents mutation op: %q", m.Op())
+	}
+}
+
 // WorkspaceAuditEventClient is a client for the WorkspaceAuditEvent schema.
 type WorkspaceAuditEventClient struct {
 	config
@@ -26724,8 +33296,18 @@ type (
 		NativeServiceTrustPolicy, NativeSourceMap, NativeTelemetryEnvelope,
 		NativeWAFEvent, NativeWAFRule, Notifications, Order, Organization,
 		OrganizationMembership, PersonalAccessToken, PreviewComment, Project,
-		ProjectMembership, ProjectProviderBinding, RiskEvent, RiskLimits, Session,
-		SsoConfig, User, UserDeviceToken, UserSecrets, WorkspaceAuditEvent,
+		ProjectMembership, ProjectProviderBinding, QuantAlert, QuantAuditEvent,
+		QuantBacktestRun, QuantBrokerAccount, QuantDeployment, QuantDevice, QuantFill,
+		QuantIdempotencyKey, QuantInstrument, QuantLiveChallenge, QuantLiveSession,
+		QuantOperatorGrant, QuantOrder, QuantOutboxEvent, QuantPosition,
+		QuantRiskPolicyVersion, QuantStrategy, QuantStrategyVersion, QuantWatchlist,
+		QuantWatchlistItem, RiskEvent, RiskLimits, Session, SsoConfig, User,
+		UserDeviceToken, UserSecrets, VerificationAlerts, VerificationAttempts,
+		VerificationEngineVersions, VerificationEvidence, VerificationFindings,
+		VerificationInbox, VerificationMetricRollups, VerificationPipelineVersions,
+		VerificationPolicyEvaluations, VerificationPolicyVersions, VerificationReports,
+		VerificationRuns, VerificationScores, VerificationTaskDependencies,
+		VerificationTasks, VerificationTelemetryEvents, WorkspaceAuditEvent,
 		WorkspaceProviderConnection []ent.Hook
 	}
 	inters struct {
@@ -26767,8 +33349,18 @@ type (
 		NativeServiceTrustPolicy, NativeSourceMap, NativeTelemetryEnvelope,
 		NativeWAFEvent, NativeWAFRule, Notifications, Order, Organization,
 		OrganizationMembership, PersonalAccessToken, PreviewComment, Project,
-		ProjectMembership, ProjectProviderBinding, RiskEvent, RiskLimits, Session,
-		SsoConfig, User, UserDeviceToken, UserSecrets, WorkspaceAuditEvent,
+		ProjectMembership, ProjectProviderBinding, QuantAlert, QuantAuditEvent,
+		QuantBacktestRun, QuantBrokerAccount, QuantDeployment, QuantDevice, QuantFill,
+		QuantIdempotencyKey, QuantInstrument, QuantLiveChallenge, QuantLiveSession,
+		QuantOperatorGrant, QuantOrder, QuantOutboxEvent, QuantPosition,
+		QuantRiskPolicyVersion, QuantStrategy, QuantStrategyVersion, QuantWatchlist,
+		QuantWatchlistItem, RiskEvent, RiskLimits, Session, SsoConfig, User,
+		UserDeviceToken, UserSecrets, VerificationAlerts, VerificationAttempts,
+		VerificationEngineVersions, VerificationEvidence, VerificationFindings,
+		VerificationInbox, VerificationMetricRollups, VerificationPipelineVersions,
+		VerificationPolicyEvaluations, VerificationPolicyVersions, VerificationReports,
+		VerificationRuns, VerificationScores, VerificationTaskDependencies,
+		VerificationTasks, VerificationTelemetryEvents, WorkspaceAuditEvent,
 		WorkspaceProviderConnection []ent.Interceptor
 	}
 )

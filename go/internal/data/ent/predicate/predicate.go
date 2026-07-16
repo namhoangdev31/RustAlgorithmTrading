@@ -399,6 +399,66 @@ type ProjectMembership func(*sql.Selector)
 // ProjectProviderBinding is the predicate function for projectproviderbinding builders.
 type ProjectProviderBinding func(*sql.Selector)
 
+// QuantAlert is the predicate function for quantalert builders.
+type QuantAlert func(*sql.Selector)
+
+// QuantAuditEvent is the predicate function for quantauditevent builders.
+type QuantAuditEvent func(*sql.Selector)
+
+// QuantBacktestRun is the predicate function for quantbacktestrun builders.
+type QuantBacktestRun func(*sql.Selector)
+
+// QuantBrokerAccount is the predicate function for quantbrokeraccount builders.
+type QuantBrokerAccount func(*sql.Selector)
+
+// QuantDeployment is the predicate function for quantdeployment builders.
+type QuantDeployment func(*sql.Selector)
+
+// QuantDevice is the predicate function for quantdevice builders.
+type QuantDevice func(*sql.Selector)
+
+// QuantFill is the predicate function for quantfill builders.
+type QuantFill func(*sql.Selector)
+
+// QuantIdempotencyKey is the predicate function for quantidempotencykey builders.
+type QuantIdempotencyKey func(*sql.Selector)
+
+// QuantInstrument is the predicate function for quantinstrument builders.
+type QuantInstrument func(*sql.Selector)
+
+// QuantLiveChallenge is the predicate function for quantlivechallenge builders.
+type QuantLiveChallenge func(*sql.Selector)
+
+// QuantLiveSession is the predicate function for quantlivesession builders.
+type QuantLiveSession func(*sql.Selector)
+
+// QuantOperatorGrant is the predicate function for quantoperatorgrant builders.
+type QuantOperatorGrant func(*sql.Selector)
+
+// QuantOrder is the predicate function for quantorder builders.
+type QuantOrder func(*sql.Selector)
+
+// QuantOutboxEvent is the predicate function for quantoutboxevent builders.
+type QuantOutboxEvent func(*sql.Selector)
+
+// QuantPosition is the predicate function for quantposition builders.
+type QuantPosition func(*sql.Selector)
+
+// QuantRiskPolicyVersion is the predicate function for quantriskpolicyversion builders.
+type QuantRiskPolicyVersion func(*sql.Selector)
+
+// QuantStrategy is the predicate function for quantstrategy builders.
+type QuantStrategy func(*sql.Selector)
+
+// QuantStrategyVersion is the predicate function for quantstrategyversion builders.
+type QuantStrategyVersion func(*sql.Selector)
+
+// QuantWatchlist is the predicate function for quantwatchlist builders.
+type QuantWatchlist func(*sql.Selector)
+
+// QuantWatchlistItem is the predicate function for quantwatchlistitem builders.
+type QuantWatchlistItem func(*sql.Selector)
+
 // RiskEvent is the predicate function for riskevent builders.
 type RiskEvent func(*sql.Selector)
 
@@ -419,6 +479,54 @@ type UserDeviceToken func(*sql.Selector)
 
 // UserSecrets is the predicate function for usersecrets builders.
 type UserSecrets func(*sql.Selector)
+
+// VerificationAlerts is the predicate function for verificationalerts builders.
+type VerificationAlerts func(*sql.Selector)
+
+// VerificationAttempts is the predicate function for verificationattempts builders.
+type VerificationAttempts func(*sql.Selector)
+
+// VerificationEngineVersions is the predicate function for verificationengineversions builders.
+type VerificationEngineVersions func(*sql.Selector)
+
+// VerificationEvidence is the predicate function for verificationevidence builders.
+type VerificationEvidence func(*sql.Selector)
+
+// VerificationFindings is the predicate function for verificationfindings builders.
+type VerificationFindings func(*sql.Selector)
+
+// VerificationInbox is the predicate function for verificationinbox builders.
+type VerificationInbox func(*sql.Selector)
+
+// VerificationMetricRollups is the predicate function for verificationmetricrollups builders.
+type VerificationMetricRollups func(*sql.Selector)
+
+// VerificationPipelineVersions is the predicate function for verificationpipelineversions builders.
+type VerificationPipelineVersions func(*sql.Selector)
+
+// VerificationPolicyEvaluations is the predicate function for verificationpolicyevaluations builders.
+type VerificationPolicyEvaluations func(*sql.Selector)
+
+// VerificationPolicyVersions is the predicate function for verificationpolicyversions builders.
+type VerificationPolicyVersions func(*sql.Selector)
+
+// VerificationReports is the predicate function for verificationreports builders.
+type VerificationReports func(*sql.Selector)
+
+// VerificationRuns is the predicate function for verificationruns builders.
+type VerificationRuns func(*sql.Selector)
+
+// VerificationScores is the predicate function for verificationscores builders.
+type VerificationScores func(*sql.Selector)
+
+// VerificationTaskDependencies is the predicate function for verificationtaskdependencies builders.
+type VerificationTaskDependencies func(*sql.Selector)
+
+// VerificationTasks is the predicate function for verificationtasks builders.
+type VerificationTasks func(*sql.Selector)
+
+// VerificationTelemetryEvents is the predicate function for verificationtelemetryevents builders.
+type VerificationTelemetryEvents func(*sql.Selector)
 
 // WorkspaceAuditEvent is the predicate function for workspaceauditevent builders.
 type WorkspaceAuditEvent func(*sql.Selector)

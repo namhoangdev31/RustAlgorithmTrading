@@ -19,6 +19,8 @@ type Notifications struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
+	// DeletedAt holds the value of the "deletedAt" field.
+	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Body holds the value of the "body" field.
@@ -43,8 +45,6 @@ type Notifications struct {
 	CreatedAt time.Time `json:"createdAt,omitempty"`
 	// UpdatedAt holds the value of the "updatedAt" field.
 	UpdatedAt time.Time `json:"updatedAt,omitempty"`
-	// DeletedAt holds the value of the "deletedAt" field.
-	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the NotificationsQuery when eager-loading is set.
 	Edges        NotificationsEdges `json:"edges"`
@@ -95,7 +95,7 @@ func (*Notifications) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case notifications.FieldTitle, notifications.FieldBody, notifications.FieldType, notifications.FieldResourceType, notifications.FieldMetadata:
 			values[i] = new(sql.NullString)
-		case notifications.FieldReadAt, notifications.FieldCreatedAt, notifications.FieldUpdatedAt, notifications.FieldDeletedAt:
+		case notifications.FieldDeletedAt, notifications.FieldReadAt, notifications.FieldCreatedAt, notifications.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case notifications.FieldID, notifications.FieldRecipientId:
 			values[i] = new(uuid.UUID)
@@ -119,6 +119,13 @@ func (_m *Notifications) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
 				_m.ID = *value
+			}
+		case notifications.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deletedAt", values[i])
+			} else if value.Valid {
+				_m.DeletedAt = new(time.Time)
+				*_m.DeletedAt = value.Time
 			}
 		case notifications.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -198,13 +205,6 @@ func (_m *Notifications) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
 			}
-		case notifications.FieldDeletedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field deletedAt", values[i])
-			} else if value.Valid {
-				_m.DeletedAt = new(time.Time)
-				*_m.DeletedAt = value.Time
-			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -251,6 +251,11 @@ func (_m *Notifications) String() string {
 	var builder strings.Builder
 	builder.WriteString("Notifications(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.DeletedAt; v != nil {
+		builder.WriteString("deletedAt=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
 	builder.WriteString("title=")
 	builder.WriteString(_m.Title)
 	builder.WriteString(", ")
@@ -298,11 +303,6 @@ func (_m *Notifications) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updatedAt=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := _m.DeletedAt; v != nil {
-		builder.WriteString("deletedAt=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
 	builder.WriteByte(')')
 	return builder.String()
 }

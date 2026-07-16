@@ -20,7 +20,6 @@ x-rust-env: &rust-env
   ALPACA_LIVE_SECRET_KEY: ${ALPACA_LIVE_SECRET_KEY:-}
   MASSIVE_API_KEY: ${MASSIVE_API_KEY:-}
   REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-  QUANTANT_NATS_ADDRESS: ${QUANTANT_NATS_ADDRESS:-nats://nats:4222}
   QUANTANT_ASSET_CLASS: ${QUANTANT_ASSET_CLASS:-us_equity}
   QUANTANT_MARKET_DATA_PROVIDER: ${QUANTANT_MARKET_DATA_PROVIDER:-alpaca}
   QUANTANT_EXECUTION_DELIVERY_SUBJECT: ${QUANTANT_EXECUTION_DELIVERY_SUBJECT:-quantant.execution.delivery}
@@ -174,18 +173,6 @@ services:
       timeout: 3s
       retries: 20
 
-  nats-integration:
-    image: nats:2.11.6-alpine
-    profiles: [ "go-integration" ]
-    command: [ "-js", "-sd", "/data", "-m", "8222" ]
-    ports:
-      - "54222:4222"
-      - "58222:8222"
-    networks:
-      - private
-    tmpfs:
-      - /data
-
   minio-integration:
     image: quay.io/minio/minio:RELEASE.2025-07-23T15-54-02Z
     profiles: [ "go-integration" ]
@@ -321,9 +308,6 @@ services:
       DATABASE_URL: ${DATABASE_URL:-postgresql://local_app:local-postgres-password@postgres:5432/rust_algorithm_trading}
       QUESTDB_PG_URL: postgresql://${QUESTDB_USER:-admin}:${QUESTDB_PASSWORD:-local-questdb-password}@questdb:8812/qdb
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      NATS_URL: ${NATS_URL:-nats://nats:4222}
-      NATS_STREAM_NAME: ${NATS_STREAM_NAME:-CONTROL_GATEWAY_EVENTS}
-      NATS_SUBJECT_PREFIX: ${NATS_SUBJECT_PREFIX:-control-gateway}
       OUTBOX_POLL_INTERVAL: ${OUTBOX_POLL_INTERVAL:-2s}
       OUTBOX_LEASE_TTL: ${OUTBOX_LEASE_TTL:-30s}
       OUTBOX_BATCH_SIZE: ${OUTBOX_BATCH_SIZE:-100}

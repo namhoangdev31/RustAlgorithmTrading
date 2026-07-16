@@ -41,6 +41,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// EdgeRelease holds the string denoting the release edge name in mutations.
 	EdgeRelease = "release"
+	// EdgeVerificationRuns holds the string denoting the verificationruns edge name in mutations.
+	EdgeVerificationRuns = "verificationRuns"
 	// Table holds the table name of the bundleartifacts in the database.
 	Table = "bundle_artifacts"
 	// ReleaseTable is the table that holds the release relation/edge.
@@ -50,6 +52,13 @@ const (
 	ReleaseInverseTable = "bundle_releases"
 	// ReleaseColumn is the table column denoting the release relation/edge.
 	ReleaseColumn = "release_id"
+	// VerificationRunsTable is the table that holds the verificationRuns relation/edge.
+	VerificationRunsTable = "verification_runs"
+	// VerificationRunsInverseTable is the table name for the VerificationRuns entity.
+	// It exists in this package in order to avoid circular dependency with the "verificationruns" package.
+	VerificationRunsInverseTable = "verification_runs"
+	// VerificationRunsColumn is the table column denoting the verificationRuns relation/edge.
+	VerificationRunsColumn = "artifact_id"
 )
 
 // Columns holds all SQL columns for bundleartifacts fields.
@@ -158,10 +167,31 @@ func ByReleaseField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newReleaseStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByVerificationRunsCount orders the results by verificationRuns count.
+func ByVerificationRunsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newVerificationRunsStep(), opts...)
+	}
+}
+
+// ByVerificationRuns orders the results by verificationRuns terms.
+func ByVerificationRuns(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newVerificationRunsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newReleaseStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ReleaseInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, ReleaseTable, ReleaseColumn),
+	)
+}
+func newVerificationRunsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(VerificationRunsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, VerificationRunsTable, VerificationRunsColumn),
 	)
 }

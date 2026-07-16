@@ -11,6 +11,7 @@ import (
 	"trading/control-gateway/internal/data/ent/bundleartifacts"
 	"trading/control-gateway/internal/data/ent/bundlereleases"
 	"trading/control-gateway/internal/data/ent/schema"
+	"trading/control-gateway/internal/data/ent/verificationruns"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -130,6 +131,21 @@ func (_c *BundleArtifactsCreate) SetReleaseID(id uuid.UUID) *BundleArtifactsCrea
 // SetRelease sets the "release" edge to the BundleReleases entity.
 func (_c *BundleArtifactsCreate) SetRelease(v *BundleReleases) *BundleArtifactsCreate {
 	return _c.SetReleaseID(v.ID)
+}
+
+// AddVerificationRunIDs adds the "verificationRuns" edge to the VerificationRuns entity by IDs.
+func (_c *BundleArtifactsCreate) AddVerificationRunIDs(ids ...uuid.UUID) *BundleArtifactsCreate {
+	_c.mutation.AddVerificationRunIDs(ids...)
+	return _c
+}
+
+// AddVerificationRuns adds the "verificationRuns" edges to the VerificationRuns entity.
+func (_c *BundleArtifactsCreate) AddVerificationRuns(v ...*VerificationRuns) *BundleArtifactsCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddVerificationRunIDs(ids...)
 }
 
 // Mutation returns the BundleArtifactsMutation object of the builder.
@@ -296,6 +312,22 @@ func (_c *BundleArtifactsCreate) createSpec() (*BundleArtifacts, *sqlgraph.Creat
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.ReleaseId = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.VerificationRunsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   bundleartifacts.VerificationRunsTable,
+			Columns: []string{bundleartifacts.VerificationRunsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(verificationruns.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

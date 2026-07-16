@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lepos.dev/contracts/verification-result.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "attemptId", "leaseOwner", "engineDigest", "artifactChecksum", "status", "findings", "evidence", "metrics", "coverage", "completeness", "reproducibility", "engineHealth", "startedAt", "completedAt"],
+  "properties": {
+    "schemaVersion": { "const": "verification-result.v1" },
+    "attemptId": { "type": "string", "format": "uuid" },
+    "leaseOwner": { "type": "string", "minLength": 1 },
+    "engineDigest": { "type": "string", "minLength": 16 },
+    "artifactChecksum": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "status": { "enum": ["succeeded", "bundle_failed", "infrastructure_failed", "timed_out", "cancelled"] },
+    "findings": { "type": "array", "maxItems": 10000, "items": { "type": "object" } },
+    "evidence": { "type": "array", "maxItems": 1000, "items": { "type": "object" } },
+    "metrics": { "type": "object", "additionalProperties": { "type": "number" } },
+    "coverage": { "type": "number", "minimum": 0, "maximum": 1 },
+    "completeness": { "type": "number", "minimum": 0, "maximum": 1 },
+    "reproducibility": { "type": "number", "minimum": 0, "maximum": 1 },
+    "engineHealth": { "type": "number", "minimum": 0, "maximum": 1 },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "completedAt": { "type": "string", "format": "date-time" },
+    "errorCode": { "type": "string", "maxLength": 100 },
+    "errorMessage": { "type": "string", "maxLength": 4000 }
+  }
+}

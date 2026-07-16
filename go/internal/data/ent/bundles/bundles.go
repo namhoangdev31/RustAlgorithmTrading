@@ -15,6 +15,8 @@ const (
 	Label = "bundles"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldDeletedAt holds the string denoting the deletedat field in the database.
+	FieldDeletedAt = "deleted_at"
 	// FieldBundleKey holds the string denoting the bundlekey field in the database.
 	FieldBundleKey = "bundle_key"
 	// FieldName holds the string denoting the name field in the database.
@@ -103,8 +105,6 @@ const (
 	FieldActiveRolloutId = "active_rollout_id"
 	// FieldActiveDeliveryMode holds the string denoting the activedeliverymode field in the database.
 	FieldActiveDeliveryMode = "active_delivery_mode"
-	// FieldDeletedAt holds the string denoting the deletedat field in the database.
-	FieldDeletedAt = "deleted_at"
 	// EdgeProject holds the string denoting the project edge name in mutations.
 	EdgeProject = "project"
 	// EdgeAbTests holds the string denoting the abtests edge name in mutations.
@@ -243,6 +243,8 @@ const (
 	EdgeStripeWebhookEvents = "stripeWebhookEvents"
 	// EdgeSdkTokens holds the string denoting the sdktokens edge name in mutations.
 	EdgeSdkTokens = "sdkTokens"
+	// EdgeVerificationRuns holds the string denoting the verificationruns edge name in mutations.
+	EdgeVerificationRuns = "verificationRuns"
 	// Table holds the table name of the bundles in the database.
 	Table = "bundles"
 	// ProjectTable is the table that holds the project relation/edge.
@@ -728,11 +730,19 @@ const (
 	SdkTokensInverseTable = "bundle_sdk_tokens"
 	// SdkTokensColumn is the table column denoting the sdkTokens relation/edge.
 	SdkTokensColumn = "bundle_id"
+	// VerificationRunsTable is the table that holds the verificationRuns relation/edge.
+	VerificationRunsTable = "verification_runs"
+	// VerificationRunsInverseTable is the table name for the VerificationRuns entity.
+	// It exists in this package in order to avoid circular dependency with the "verificationruns" package.
+	VerificationRunsInverseTable = "verification_runs"
+	// VerificationRunsColumn is the table column denoting the verificationRuns relation/edge.
+	VerificationRunsColumn = "bundle_id"
 )
 
 // Columns holds all SQL columns for bundles fields.
 var Columns = []string{
 	FieldID,
+	FieldDeletedAt,
 	FieldBundleKey,
 	FieldName,
 	FieldSlug,
@@ -777,7 +787,6 @@ var Columns = []string{
 	FieldActiveAbTestId,
 	FieldActiveRolloutId,
 	FieldActiveDeliveryMode,
-	FieldDeletedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -835,6 +844,11 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByDeletedAt orders the results by the deletedAt field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
 // ByBundleKey orders the results by the bundleKey field.
@@ -1055,11 +1069,6 @@ func ByActiveRolloutId(opts ...sql.OrderTermOption) OrderOption {
 // ByActiveDeliveryMode orders the results by the activeDeliveryMode field.
 func ByActiveDeliveryMode(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldActiveDeliveryMode, opts...).ToFunc()
-}
-
-// ByDeletedAt orders the results by the deletedAt field.
-func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
 // ByProjectField orders the results by project field.
@@ -1943,6 +1952,20 @@ func BySdkTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newSdkTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByVerificationRunsCount orders the results by verificationRuns count.
+func ByVerificationRunsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newVerificationRunsStep(), opts...)
+	}
+}
+
+// ByVerificationRuns orders the results by verificationRuns terms.
+func ByVerificationRuns(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newVerificationRunsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newProjectStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -2424,5 +2447,12 @@ func newSdkTokensStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SdkTokensInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, SdkTokensTable, SdkTokensColumn),
+	)
+}
+func newVerificationRunsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(VerificationRunsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, VerificationRunsTable, VerificationRunsColumn),
 	)
 }

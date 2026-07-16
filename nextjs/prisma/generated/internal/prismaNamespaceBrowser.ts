@@ -138,6 +138,22 @@ export const ModelName = {
   BundleRolloutExposures: 'BundleRolloutExposures',
   BundleOutboxEvents: 'BundleOutboxEvents',
   LepoShipIdempotencyKeys: 'LepoShipIdempotencyKeys',
+  VerificationPipelineVersions: 'VerificationPipelineVersions',
+  VerificationEngineVersions: 'VerificationEngineVersions',
+  VerificationPolicyVersions: 'VerificationPolicyVersions',
+  VerificationRuns: 'VerificationRuns',
+  VerificationTasks: 'VerificationTasks',
+  VerificationTaskDependencies: 'VerificationTaskDependencies',
+  VerificationAttempts: 'VerificationAttempts',
+  VerificationFindings: 'VerificationFindings',
+  VerificationEvidence: 'VerificationEvidence',
+  VerificationScores: 'VerificationScores',
+  VerificationPolicyEvaluations: 'VerificationPolicyEvaluations',
+  VerificationReports: 'VerificationReports',
+  VerificationInbox: 'VerificationInbox',
+  VerificationTelemetryEvents: 'VerificationTelemetryEvents',
+  VerificationMetricRollups: 'VerificationMetricRollups',
+  VerificationAlerts: 'VerificationAlerts',
   BundleReleaseOverrides: 'BundleReleaseOverrides',
   BundleFinancialLedgerEntries: 'BundleFinancialLedgerEntries',
   BundleUpdatePhases: 'BundleUpdatePhases',
@@ -189,7 +205,28 @@ export const ModelName = {
   LepoShipBuild: 'LepoShipBuild',
   MarketplaceCompatibilityRun: 'MarketplaceCompatibilityRun',
   BundleSdkTokens: 'BundleSdkTokens',
-  BundleWebhookDeliveries: 'BundleWebhookDeliveries'
+  BundleWebhookDeliveries: 'BundleWebhookDeliveries',
+  LepoShipCronRun: 'LepoShipCronRun',
+  QuantInstrument: 'QuantInstrument',
+  QuantBrokerAccount: 'QuantBrokerAccount',
+  QuantOperatorGrant: 'QuantOperatorGrant',
+  QuantWatchlist: 'QuantWatchlist',
+  QuantWatchlistItem: 'QuantWatchlistItem',
+  QuantStrategy: 'QuantStrategy',
+  QuantStrategyVersion: 'QuantStrategyVersion',
+  QuantBacktestRun: 'QuantBacktestRun',
+  QuantDeployment: 'QuantDeployment',
+  QuantOrder: 'QuantOrder',
+  QuantFill: 'QuantFill',
+  QuantPosition: 'QuantPosition',
+  QuantRiskPolicyVersion: 'QuantRiskPolicyVersion',
+  QuantAlert: 'QuantAlert',
+  QuantLiveSession: 'QuantLiveSession',
+  QuantDevice: 'QuantDevice',
+  QuantLiveChallenge: 'QuantLiveChallenge',
+  QuantIdempotencyKey: 'QuantIdempotencyKey',
+  QuantOutboxEvent: 'QuantOutboxEvent',
+  QuantAuditEvent: 'QuantAuditEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -399,6 +436,7 @@ export const BundleReleasesScalarFieldEnum = {
   submittedAt: 'submittedAt',
   approvedAt: 'approvedAt',
   activatedAt: 'activatedAt',
+  eligibleVerificationRunId: 'eligibleVerificationRunId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1684,6 +1722,279 @@ export const LepoShipIdempotencyKeysScalarFieldEnum = {
 export type LepoShipIdempotencyKeysScalarFieldEnum = (typeof LepoShipIdempotencyKeysScalarFieldEnum)[keyof typeof LepoShipIdempotencyKeysScalarFieldEnum]
 
 
+export const VerificationPipelineVersionsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  version: 'version',
+  definition: 'definition',
+  definitionHash: 'definitionHash',
+  enforcementMode: 'enforcementMode',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VerificationPipelineVersionsScalarFieldEnum = (typeof VerificationPipelineVersionsScalarFieldEnum)[keyof typeof VerificationPipelineVersionsScalarFieldEnum]
+
+
+export const VerificationEngineVersionsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  version: 'version',
+  imageDigest: 'imageDigest',
+  manifest: 'manifest',
+  configurationSchema: 'configurationSchema',
+  resultSchemaVersion: 'resultSchemaVersion',
+  isActive: 'isActive',
+  approvedAt: 'approvedAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VerificationEngineVersionsScalarFieldEnum = (typeof VerificationEngineVersionsScalarFieldEnum)[keyof typeof VerificationEngineVersionsScalarFieldEnum]
+
+
+export const VerificationPolicyVersionsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  version: 'version',
+  definition: 'definition',
+  definitionHash: 'definitionHash',
+  isActive: 'isActive',
+  effectiveAt: 'effectiveAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VerificationPolicyVersionsScalarFieldEnum = (typeof VerificationPolicyVersionsScalarFieldEnum)[keyof typeof VerificationPolicyVersionsScalarFieldEnum]
+
+
+export const VerificationRunsScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  bundleId: 'bundleId',
+  releaseId: 'releaseId',
+  artifactId: 'artifactId',
+  artifactChecksum: 'artifactChecksum',
+  triggerEventKey: 'triggerEventKey',
+  pipelineVersionId: 'pipelineVersionId',
+  policyVersionId: 'policyVersionId',
+  scoringVersion: 'scoringVersion',
+  status: 'status',
+  decision: 'decision',
+  overallScore: 'overallScore',
+  confidence: 'confidence',
+  completeness: 'completeness',
+  errorCode: 'errorCode',
+  errorMessage: 'errorMessage',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VerificationRunsScalarFieldEnum = (typeof VerificationRunsScalarFieldEnum)[keyof typeof VerificationRunsScalarFieldEnum]
+
+
+export const VerificationTasksScalarFieldEnum = {
+  id: 'id',
+  runId: 'runId',
+  engineVersionId: 'engineVersionId',
+  nodeId: 'nodeId',
+  resourceClass: 'resourceClass',
+  required: 'required',
+  status: 'status',
+  configuration: 'configuration',
+  attempt: 'attempt',
+  maxAttempts: 'maxAttempts',
+  timeoutSeconds: 'timeoutSeconds',
+  nextAttemptAt: 'nextAttemptAt',
+  acceptedAttemptId: 'acceptedAttemptId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VerificationTasksScalarFieldEnum = (typeof VerificationTasksScalarFieldEnum)[keyof typeof VerificationTasksScalarFieldEnum]
+
+
+export const VerificationTaskDependenciesScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  prerequisiteId: 'prerequisiteId'
+} as const
+
+export type VerificationTaskDependenciesScalarFieldEnum = (typeof VerificationTaskDependenciesScalarFieldEnum)[keyof typeof VerificationTaskDependenciesScalarFieldEnum]
+
+
+export const VerificationAttemptsScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  attemptNo: 'attemptNo',
+  status: 'status',
+  workerId: 'workerId',
+  leaseOwner: 'leaseOwner',
+  leasedUntil: 'leasedUntil',
+  heartbeatAt: 'heartbeatAt',
+  deadlineAt: 'deadlineAt',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  errorCode: 'errorCode',
+  errorMessage: 'errorMessage',
+  resultDigest: 'resultDigest',
+  metrics: 'metrics',
+  coverage: 'coverage',
+  completeness: 'completeness',
+  reproducibility: 'reproducibility',
+  engineHealth: 'engineHealth',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VerificationAttemptsScalarFieldEnum = (typeof VerificationAttemptsScalarFieldEnum)[keyof typeof VerificationAttemptsScalarFieldEnum]
+
+
+export const VerificationFindingsScalarFieldEnum = {
+  id: 'id',
+  runId: 'runId',
+  taskId: 'taskId',
+  attemptId: 'attemptId',
+  fingerprint: 'fingerprint',
+  dimension: 'dimension',
+  severity: 'severity',
+  confidence: 'confidence',
+  ruleId: 'ruleId',
+  title: 'title',
+  description: 'description',
+  location: 'location',
+  remediation: 'remediation',
+  createdAt: 'createdAt'
+} as const
+
+export type VerificationFindingsScalarFieldEnum = (typeof VerificationFindingsScalarFieldEnum)[keyof typeof VerificationFindingsScalarFieldEnum]
+
+
+export const VerificationEvidenceScalarFieldEnum = {
+  id: 'id',
+  runId: 'runId',
+  taskId: 'taskId',
+  attemptId: 'attemptId',
+  kind: 'kind',
+  storageProvider: 'storageProvider',
+  storageBucket: 'storageBucket',
+  storageKey: 'storageKey',
+  checksumSha256: 'checksumSha256',
+  fileSize: 'fileSize',
+  contentType: 'contentType',
+  sensitivity: 'sensitivity',
+  createdAt: 'createdAt'
+} as const
+
+export type VerificationEvidenceScalarFieldEnum = (typeof VerificationEvidenceScalarFieldEnum)[keyof typeof VerificationEvidenceScalarFieldEnum]
+
+
+export const VerificationScoresScalarFieldEnum = {
+  id: 'id',
+  runId: 'runId',
+  version: 'version',
+  dimensions: 'dimensions',
+  overall: 'overall',
+  confidence: 'confidence',
+  createdAt: 'createdAt'
+} as const
+
+export type VerificationScoresScalarFieldEnum = (typeof VerificationScoresScalarFieldEnum)[keyof typeof VerificationScoresScalarFieldEnum]
+
+
+export const VerificationPolicyEvaluationsScalarFieldEnum = {
+  id: 'id',
+  runId: 'runId',
+  policyVersionId: 'policyVersionId',
+  inputDigest: 'inputDigest',
+  decision: 'decision',
+  results: 'results',
+  createdAt: 'createdAt'
+} as const
+
+export type VerificationPolicyEvaluationsScalarFieldEnum = (typeof VerificationPolicyEvaluationsScalarFieldEnum)[keyof typeof VerificationPolicyEvaluationsScalarFieldEnum]
+
+
+export const VerificationReportsScalarFieldEnum = {
+  id: 'id',
+  runId: 'runId',
+  schemaVersion: 'schemaVersion',
+  storageProvider: 'storageProvider',
+  storageBucket: 'storageBucket',
+  storageKey: 'storageKey',
+  checksumSha256: 'checksumSha256',
+  createdAt: 'createdAt'
+} as const
+
+export type VerificationReportsScalarFieldEnum = (typeof VerificationReportsScalarFieldEnum)[keyof typeof VerificationReportsScalarFieldEnum]
+
+
+export const VerificationInboxScalarFieldEnum = {
+  id: 'id',
+  consumer: 'consumer',
+  messageId: 'messageId',
+  outcome: 'outcome',
+  processedAt: 'processedAt'
+} as const
+
+export type VerificationInboxScalarFieldEnum = (typeof VerificationInboxScalarFieldEnum)[keyof typeof VerificationInboxScalarFieldEnum]
+
+
+export const VerificationTelemetryEventsScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  projectId: 'projectId',
+  runId: 'runId',
+  kind: 'kind',
+  correlationId: 'correlationId',
+  payload: 'payload',
+  occurredAt: 'occurredAt',
+  createdAt: 'createdAt'
+} as const
+
+export type VerificationTelemetryEventsScalarFieldEnum = (typeof VerificationTelemetryEventsScalarFieldEnum)[keyof typeof VerificationTelemetryEventsScalarFieldEnum]
+
+
+export const VerificationMetricRollupsScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  metric: 'metric',
+  scope: 'scope',
+  windowStart: 'windowStart',
+  windowEnd: 'windowEnd',
+  count: 'count',
+  sum: 'sum',
+  min: 'min',
+  max: 'max',
+  p95: 'p95',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VerificationMetricRollupsScalarFieldEnum = (typeof VerificationMetricRollupsScalarFieldEnum)[keyof typeof VerificationMetricRollupsScalarFieldEnum]
+
+
+export const VerificationAlertsScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  ruleId: 'ruleId',
+  scope: 'scope',
+  status: 'status',
+  severity: 'severity',
+  firstSeenAt: 'firstSeenAt',
+  lastSeenAt: 'lastSeenAt',
+  acknowledgedAt: 'acknowledgedAt',
+  acknowledgedBy: 'acknowledgedBy',
+  resolvedAt: 'resolvedAt',
+  details: 'details'
+} as const
+
+export type VerificationAlertsScalarFieldEnum = (typeof VerificationAlertsScalarFieldEnum)[keyof typeof VerificationAlertsScalarFieldEnum]
+
+
 export const BundleReleaseOverridesScalarFieldEnum = {
   id: 'id',
   bundleId: 'bundleId',
@@ -2567,6 +2878,365 @@ export const BundleWebhookDeliveriesScalarFieldEnum = {
 } as const
 
 export type BundleWebhookDeliveriesScalarFieldEnum = (typeof BundleWebhookDeliveriesScalarFieldEnum)[keyof typeof BundleWebhookDeliveriesScalarFieldEnum]
+
+
+export const LepoShipCronRunScalarFieldEnum = {
+  id: 'id',
+  job: 'job',
+  status: 'status',
+  processed: 'processed',
+  skipped: 'skipped',
+  message: 'message',
+  error: 'error',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  durationMs: 'durationMs',
+  trigger: 'trigger'
+} as const
+
+export type LepoShipCronRunScalarFieldEnum = (typeof LepoShipCronRunScalarFieldEnum)[keyof typeof LepoShipCronRunScalarFieldEnum]
+
+
+export const QuantInstrumentScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  providerSymbol: 'providerSymbol',
+  canonicalSymbol: 'canonicalSymbol',
+  displayName: 'displayName',
+  assetClass: 'assetClass',
+  exchange: 'exchange',
+  currency: 'currency',
+  timezone: 'timezone',
+  priceScale: 'priceScale',
+  quantityScale: 'quantityScale',
+  marketDataLevel: 'marketDataLevel',
+  executionLevel: 'executionLevel',
+  capabilities: 'capabilities',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuantInstrumentScalarFieldEnum = (typeof QuantInstrumentScalarFieldEnum)[keyof typeof QuantInstrumentScalarFieldEnum]
+
+
+export const QuantBrokerAccountScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  externalAccountId: 'externalAccountId',
+  displayName: 'displayName',
+  baseCurrency: 'baseCurrency',
+  supportByAsset: 'supportByAsset',
+  isEnabled: 'isEnabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuantBrokerAccountScalarFieldEnum = (typeof QuantBrokerAccountScalarFieldEnum)[keyof typeof QuantBrokerAccountScalarFieldEnum]
+
+
+export const QuantOperatorGrantScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  operatorId: 'operatorId',
+  scopes: 'scopes',
+  deviceBoundOnly: 'deviceBoundOnly',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type QuantOperatorGrantScalarFieldEnum = (typeof QuantOperatorGrantScalarFieldEnum)[keyof typeof QuantOperatorGrantScalarFieldEnum]
+
+
+export const QuantWatchlistScalarFieldEnum = {
+  id: 'id',
+  operatorId: 'operatorId',
+  name: 'name',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuantWatchlistScalarFieldEnum = (typeof QuantWatchlistScalarFieldEnum)[keyof typeof QuantWatchlistScalarFieldEnum]
+
+
+export const QuantWatchlistItemScalarFieldEnum = {
+  id: 'id',
+  watchlistId: 'watchlistId',
+  instrumentId: 'instrumentId',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type QuantWatchlistItemScalarFieldEnum = (typeof QuantWatchlistItemScalarFieldEnum)[keyof typeof QuantWatchlistItemScalarFieldEnum]
+
+
+export const QuantStrategyScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  templateKey: 'templateKey',
+  name: 'name',
+  lifecycle: 'lifecycle',
+  currentVersionId: 'currentVersionId',
+  archivedAt: 'archivedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuantStrategyScalarFieldEnum = (typeof QuantStrategyScalarFieldEnum)[keyof typeof QuantStrategyScalarFieldEnum]
+
+
+export const QuantStrategyVersionScalarFieldEnum = {
+  id: 'id',
+  strategyId: 'strategyId',
+  version: 'version',
+  versionHash: 'versionHash',
+  schemaVersion: 'schemaVersion',
+  parameters: 'parameters',
+  riskSnapshot: 'riskSnapshot',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt'
+} as const
+
+export type QuantStrategyVersionScalarFieldEnum = (typeof QuantStrategyVersionScalarFieldEnum)[keyof typeof QuantStrategyVersionScalarFieldEnum]
+
+
+export const QuantBacktestRunScalarFieldEnum = {
+  id: 'id',
+  strategyVersionId: 'strategyVersionId',
+  status: 'status',
+  datasetHash: 'datasetHash',
+  seed: 'seed',
+  setup: 'setup',
+  progressPercent: 'progressPercent',
+  result: 'result',
+  error: 'error',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type QuantBacktestRunScalarFieldEnum = (typeof QuantBacktestRunScalarFieldEnum)[keyof typeof QuantBacktestRunScalarFieldEnum]
+
+
+export const QuantDeploymentScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  strategyId: 'strategyId',
+  strategyVersionId: 'strategyVersionId',
+  mode: 'mode',
+  status: 'status',
+  desiredState: 'desiredState',
+  actualState: 'actualState',
+  runtimeIdentity: 'runtimeIdentity',
+  version: 'version',
+  lastHeartbeatAt: 'lastHeartbeatAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuantDeploymentScalarFieldEnum = (typeof QuantDeploymentScalarFieldEnum)[keyof typeof QuantDeploymentScalarFieldEnum]
+
+
+export const QuantOrderScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  instrumentId: 'instrumentId',
+  deploymentId: 'deploymentId',
+  clientOrderId: 'clientOrderId',
+  brokerOrderId: 'brokerOrderId',
+  idempotencyKey: 'idempotencyKey',
+  mode: 'mode',
+  side: 'side',
+  orderType: 'orderType',
+  timeInForce: 'timeInForce',
+  quantity: 'quantity',
+  limitPrice: 'limitPrice',
+  stopPrice: 'stopPrice',
+  trailValue: 'trailValue',
+  takeProfitPrice: 'takeProfitPrice',
+  stopLossPrice: 'stopLossPrice',
+  status: 'status',
+  version: 'version',
+  strategyVersionHash: 'strategyVersionHash',
+  riskSnapshot: 'riskSnapshot',
+  submittedAt: 'submittedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuantOrderScalarFieldEnum = (typeof QuantOrderScalarFieldEnum)[keyof typeof QuantOrderScalarFieldEnum]
+
+
+export const QuantFillScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  accountId: 'accountId',
+  instrumentId: 'instrumentId',
+  brokerFillId: 'brokerFillId',
+  quantity: 'quantity',
+  price: 'price',
+  commission: 'commission',
+  liquidity: 'liquidity',
+  occurredAt: 'occurredAt',
+  createdAt: 'createdAt'
+} as const
+
+export type QuantFillScalarFieldEnum = (typeof QuantFillScalarFieldEnum)[keyof typeof QuantFillScalarFieldEnum]
+
+
+export const QuantPositionScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  instrumentId: 'instrumentId',
+  mode: 'mode',
+  quantity: 'quantity',
+  averagePrice: 'averagePrice',
+  realizedPnl: 'realizedPnl',
+  version: 'version',
+  reconciledAt: 'reconciledAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuantPositionScalarFieldEnum = (typeof QuantPositionScalarFieldEnum)[keyof typeof QuantPositionScalarFieldEnum]
+
+
+export const QuantRiskPolicyVersionScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  version: 'version',
+  policy: 'policy',
+  policyHash: 'policyHash',
+  status: 'status',
+  effectiveAt: 'effectiveAt',
+  createdBy: 'createdBy',
+  stepUpSessionId: 'stepUpSessionId',
+  createdAt: 'createdAt'
+} as const
+
+export type QuantRiskPolicyVersionScalarFieldEnum = (typeof QuantRiskPolicyVersionScalarFieldEnum)[keyof typeof QuantRiskPolicyVersionScalarFieldEnum]
+
+
+export const QuantAlertScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  severity: 'severity',
+  type: 'type',
+  title: 'title',
+  message: 'message',
+  aggregateId: 'aggregateId',
+  payload: 'payload',
+  acknowledgedBy: 'acknowledgedBy',
+  acknowledgedAt: 'acknowledgedAt',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type QuantAlertScalarFieldEnum = (typeof QuantAlertScalarFieldEnum)[keyof typeof QuantAlertScalarFieldEnum]
+
+
+export const QuantLiveSessionScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  operatorId: 'operatorId',
+  deviceId: 'deviceId',
+  challengeHash: 'challengeHash',
+  sessionTokenHash: 'sessionTokenHash',
+  publicKeyThumbprint: 'publicKeyThumbprint',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type QuantLiveSessionScalarFieldEnum = (typeof QuantLiveSessionScalarFieldEnum)[keyof typeof QuantLiveSessionScalarFieldEnum]
+
+
+export const QuantDeviceScalarFieldEnum = {
+  id: 'id',
+  operatorId: 'operatorId',
+  deviceIdentifier: 'deviceIdentifier',
+  displayName: 'displayName',
+  publicKeyJwk: 'publicKeyJwk',
+  appAttestKeyId: 'appAttestKeyId',
+  status: 'status',
+  lastAttestedAt: 'lastAttestedAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuantDeviceScalarFieldEnum = (typeof QuantDeviceScalarFieldEnum)[keyof typeof QuantDeviceScalarFieldEnum]
+
+
+export const QuantLiveChallengeScalarFieldEnum = {
+  id: 'id',
+  operatorId: 'operatorId',
+  accountId: 'accountId',
+  deviceIdentifier: 'deviceIdentifier',
+  challengeHash: 'challengeHash',
+  expiresAt: 'expiresAt',
+  consumedAt: 'consumedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type QuantLiveChallengeScalarFieldEnum = (typeof QuantLiveChallengeScalarFieldEnum)[keyof typeof QuantLiveChallengeScalarFieldEnum]
+
+
+export const QuantIdempotencyKeyScalarFieldEnum = {
+  id: 'id',
+  operatorId: 'operatorId',
+  key: 'key',
+  requestHash: 'requestHash',
+  statusCode: 'statusCode',
+  response: 'response',
+  lockedUntil: 'lockedUntil',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QuantIdempotencyKeyScalarFieldEnum = (typeof QuantIdempotencyKeyScalarFieldEnum)[keyof typeof QuantIdempotencyKeyScalarFieldEnum]
+
+
+export const QuantOutboxEventScalarFieldEnum = {
+  id: 'id',
+  aggregateType: 'aggregateType',
+  aggregateId: 'aggregateId',
+  sequence: 'sequence',
+  type: 'type',
+  schemaVersion: 'schemaVersion',
+  payload: 'payload',
+  occurredAt: 'occurredAt',
+  publishedAt: 'publishedAt',
+  attempts: 'attempts',
+  lastError: 'lastError',
+  createdAt: 'createdAt'
+} as const
+
+export type QuantOutboxEventScalarFieldEnum = (typeof QuantOutboxEventScalarFieldEnum)[keyof typeof QuantOutboxEventScalarFieldEnum]
+
+
+export const QuantAuditEventScalarFieldEnum = {
+  id: 'id',
+  sequence: 'sequence',
+  operatorId: 'operatorId',
+  deviceId: 'deviceId',
+  accountId: 'accountId',
+  mode: 'mode',
+  action: 'action',
+  aggregateType: 'aggregateType',
+  aggregateId: 'aggregateId',
+  correlationId: 'correlationId',
+  stepUp: 'stepUp',
+  requestHash: 'requestHash',
+  before: 'before',
+  after: 'after',
+  occurredAt: 'occurredAt',
+  createdAt: 'createdAt'
+} as const
+
+export type QuantAuditEventScalarFieldEnum = (typeof QuantAuditEventScalarFieldEnum)[keyof typeof QuantAuditEventScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -25,6 +25,20 @@ type NotificationsCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetDeletedAt sets the "deletedAt" field.
+func (_c *NotificationsCreate) SetDeletedAt(v time.Time) *NotificationsCreate {
+	_c.mutation.SetDeletedAt(v)
+	return _c
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_c *NotificationsCreate) SetNillableDeletedAt(v *time.Time) *NotificationsCreate {
+	if v != nil {
+		_c.SetDeletedAt(*v)
+	}
+	return _c
+}
+
 // SetTitle sets the "title" field.
 func (_c *NotificationsCreate) SetTitle(v string) *NotificationsCreate {
 	_c.mutation.SetTitle(v)
@@ -150,20 +164,6 @@ func (_c *NotificationsCreate) SetCreatedAt(v time.Time) *NotificationsCreate {
 // SetUpdatedAt sets the "updatedAt" field.
 func (_c *NotificationsCreate) SetUpdatedAt(v time.Time) *NotificationsCreate {
 	_c.mutation.SetUpdatedAt(v)
-	return _c
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (_c *NotificationsCreate) SetDeletedAt(v time.Time) *NotificationsCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_c *NotificationsCreate) SetNillableDeletedAt(v *time.Time) *NotificationsCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
-	}
 	return _c
 }
 
@@ -303,6 +303,10 @@ func (_c *NotificationsCreate) createSpec() (*Notifications, *sqlgraph.CreateSpe
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
+	if value, ok := _c.mutation.DeletedAt(); ok {
+		_spec.SetField(notifications.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = &value
+	}
 	if value, ok := _c.mutation.Title(); ok {
 		_spec.SetField(notifications.FieldTitle, field.TypeString, value)
 		_node.Title = value
@@ -342,10 +346,6 @@ func (_c *NotificationsCreate) createSpec() (*Notifications, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(notifications.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(notifications.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
 	}
 	if nodes := _c.mutation.ActorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -388,7 +388,7 @@ func (_c *NotificationsCreate) createSpec() (*Notifications, *sqlgraph.CreateSpe
 // of the `INSERT` statement. For example:
 //
 //	client.Notifications.Create().
-//		SetTitle(v).
+//		SetDeletedAt(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -397,7 +397,7 @@ func (_c *NotificationsCreate) createSpec() (*Notifications, *sqlgraph.CreateSpe
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.NotificationsUpsert) {
-//			SetTitle(v+v).
+//			SetDeletedAt(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *NotificationsCreate) OnConflict(opts ...sql.ConflictOption) *NotificationsUpsertOne {
@@ -432,6 +432,24 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *NotificationsUpsert) SetDeletedAt(v time.Time) *NotificationsUpsert {
+	u.Set(notifications.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *NotificationsUpsert) UpdateDeletedAt() *NotificationsUpsert {
+	u.SetExcluded(notifications.FieldDeletedAt)
+	return u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *NotificationsUpsert) ClearDeletedAt() *NotificationsUpsert {
+	u.SetNull(notifications.FieldDeletedAt)
+	return u
+}
 
 // SetTitle sets the "title" field.
 func (u *NotificationsUpsert) SetTitle(v string) *NotificationsUpsert {
@@ -613,24 +631,6 @@ func (u *NotificationsUpsert) UpdateUpdatedAt() *NotificationsUpsert {
 	return u
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (u *NotificationsUpsert) SetDeletedAt(v time.Time) *NotificationsUpsert {
-	u.Set(notifications.FieldDeletedAt, v)
-	return u
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *NotificationsUpsert) UpdateDeletedAt() *NotificationsUpsert {
-	u.SetExcluded(notifications.FieldDeletedAt)
-	return u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *NotificationsUpsert) ClearDeletedAt() *NotificationsUpsert {
-	u.SetNull(notifications.FieldDeletedAt)
-	return u
-}
-
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -677,6 +677,27 @@ func (u *NotificationsUpsertOne) Update(set func(*NotificationsUpsert)) *Notific
 		set(&NotificationsUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *NotificationsUpsertOne) SetDeletedAt(v time.Time) *NotificationsUpsertOne {
+	return u.Update(func(s *NotificationsUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *NotificationsUpsertOne) UpdateDeletedAt() *NotificationsUpsertOne {
+	return u.Update(func(s *NotificationsUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *NotificationsUpsertOne) ClearDeletedAt() *NotificationsUpsertOne {
+	return u.Update(func(s *NotificationsUpsert) {
+		s.ClearDeletedAt()
+	})
 }
 
 // SetTitle sets the "title" field.
@@ -889,27 +910,6 @@ func (u *NotificationsUpsertOne) UpdateUpdatedAt() *NotificationsUpsertOne {
 	})
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (u *NotificationsUpsertOne) SetDeletedAt(v time.Time) *NotificationsUpsertOne {
-	return u.Update(func(s *NotificationsUpsert) {
-		s.SetDeletedAt(v)
-	})
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *NotificationsUpsertOne) UpdateDeletedAt() *NotificationsUpsertOne {
-	return u.Update(func(s *NotificationsUpsert) {
-		s.UpdateDeletedAt()
-	})
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *NotificationsUpsertOne) ClearDeletedAt() *NotificationsUpsertOne {
-	return u.Update(func(s *NotificationsUpsert) {
-		s.ClearDeletedAt()
-	})
-}
-
 // Exec executes the query.
 func (u *NotificationsUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -1046,7 +1046,7 @@ func (_c *NotificationsCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.NotificationsUpsert) {
-//			SetTitle(v+v).
+//			SetDeletedAt(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *NotificationsCreateBulk) OnConflict(opts ...sql.ConflictOption) *NotificationsUpsertBulk {
@@ -1123,6 +1123,27 @@ func (u *NotificationsUpsertBulk) Update(set func(*NotificationsUpsert)) *Notifi
 		set(&NotificationsUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *NotificationsUpsertBulk) SetDeletedAt(v time.Time) *NotificationsUpsertBulk {
+	return u.Update(func(s *NotificationsUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *NotificationsUpsertBulk) UpdateDeletedAt() *NotificationsUpsertBulk {
+	return u.Update(func(s *NotificationsUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *NotificationsUpsertBulk) ClearDeletedAt() *NotificationsUpsertBulk {
+	return u.Update(func(s *NotificationsUpsert) {
+		s.ClearDeletedAt()
+	})
 }
 
 // SetTitle sets the "title" field.
@@ -1332,27 +1353,6 @@ func (u *NotificationsUpsertBulk) SetUpdatedAt(v time.Time) *NotificationsUpsert
 func (u *NotificationsUpsertBulk) UpdateUpdatedAt() *NotificationsUpsertBulk {
 	return u.Update(func(s *NotificationsUpsert) {
 		s.UpdateUpdatedAt()
-	})
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (u *NotificationsUpsertBulk) SetDeletedAt(v time.Time) *NotificationsUpsertBulk {
-	return u.Update(func(s *NotificationsUpsert) {
-		s.SetDeletedAt(v)
-	})
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *NotificationsUpsertBulk) UpdateDeletedAt() *NotificationsUpsertBulk {
-	return u.Update(func(s *NotificationsUpsert) {
-		s.UpdateDeletedAt()
-	})
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *NotificationsUpsertBulk) ClearDeletedAt() *NotificationsUpsertBulk {
-	return u.Update(func(s *NotificationsUpsert) {
-		s.ClearDeletedAt()
 	})
 }
 

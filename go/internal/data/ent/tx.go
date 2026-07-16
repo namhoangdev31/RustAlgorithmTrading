@@ -274,6 +274,46 @@ type Tx struct {
 	ProjectMembership *ProjectMembershipClient
 	// ProjectProviderBinding is the client for interacting with the ProjectProviderBinding builders.
 	ProjectProviderBinding *ProjectProviderBindingClient
+	// QuantAlert is the client for interacting with the QuantAlert builders.
+	QuantAlert *QuantAlertClient
+	// QuantAuditEvent is the client for interacting with the QuantAuditEvent builders.
+	QuantAuditEvent *QuantAuditEventClient
+	// QuantBacktestRun is the client for interacting with the QuantBacktestRun builders.
+	QuantBacktestRun *QuantBacktestRunClient
+	// QuantBrokerAccount is the client for interacting with the QuantBrokerAccount builders.
+	QuantBrokerAccount *QuantBrokerAccountClient
+	// QuantDeployment is the client for interacting with the QuantDeployment builders.
+	QuantDeployment *QuantDeploymentClient
+	// QuantDevice is the client for interacting with the QuantDevice builders.
+	QuantDevice *QuantDeviceClient
+	// QuantFill is the client for interacting with the QuantFill builders.
+	QuantFill *QuantFillClient
+	// QuantIdempotencyKey is the client for interacting with the QuantIdempotencyKey builders.
+	QuantIdempotencyKey *QuantIdempotencyKeyClient
+	// QuantInstrument is the client for interacting with the QuantInstrument builders.
+	QuantInstrument *QuantInstrumentClient
+	// QuantLiveChallenge is the client for interacting with the QuantLiveChallenge builders.
+	QuantLiveChallenge *QuantLiveChallengeClient
+	// QuantLiveSession is the client for interacting with the QuantLiveSession builders.
+	QuantLiveSession *QuantLiveSessionClient
+	// QuantOperatorGrant is the client for interacting with the QuantOperatorGrant builders.
+	QuantOperatorGrant *QuantOperatorGrantClient
+	// QuantOrder is the client for interacting with the QuantOrder builders.
+	QuantOrder *QuantOrderClient
+	// QuantOutboxEvent is the client for interacting with the QuantOutboxEvent builders.
+	QuantOutboxEvent *QuantOutboxEventClient
+	// QuantPosition is the client for interacting with the QuantPosition builders.
+	QuantPosition *QuantPositionClient
+	// QuantRiskPolicyVersion is the client for interacting with the QuantRiskPolicyVersion builders.
+	QuantRiskPolicyVersion *QuantRiskPolicyVersionClient
+	// QuantStrategy is the client for interacting with the QuantStrategy builders.
+	QuantStrategy *QuantStrategyClient
+	// QuantStrategyVersion is the client for interacting with the QuantStrategyVersion builders.
+	QuantStrategyVersion *QuantStrategyVersionClient
+	// QuantWatchlist is the client for interacting with the QuantWatchlist builders.
+	QuantWatchlist *QuantWatchlistClient
+	// QuantWatchlistItem is the client for interacting with the QuantWatchlistItem builders.
+	QuantWatchlistItem *QuantWatchlistItemClient
 	// RiskEvent is the client for interacting with the RiskEvent builders.
 	RiskEvent *RiskEventClient
 	// RiskLimits is the client for interacting with the RiskLimits builders.
@@ -288,6 +328,38 @@ type Tx struct {
 	UserDeviceToken *UserDeviceTokenClient
 	// UserSecrets is the client for interacting with the UserSecrets builders.
 	UserSecrets *UserSecretsClient
+	// VerificationAlerts is the client for interacting with the VerificationAlerts builders.
+	VerificationAlerts *VerificationAlertsClient
+	// VerificationAttempts is the client for interacting with the VerificationAttempts builders.
+	VerificationAttempts *VerificationAttemptsClient
+	// VerificationEngineVersions is the client for interacting with the VerificationEngineVersions builders.
+	VerificationEngineVersions *VerificationEngineVersionsClient
+	// VerificationEvidence is the client for interacting with the VerificationEvidence builders.
+	VerificationEvidence *VerificationEvidenceClient
+	// VerificationFindings is the client for interacting with the VerificationFindings builders.
+	VerificationFindings *VerificationFindingsClient
+	// VerificationInbox is the client for interacting with the VerificationInbox builders.
+	VerificationInbox *VerificationInboxClient
+	// VerificationMetricRollups is the client for interacting with the VerificationMetricRollups builders.
+	VerificationMetricRollups *VerificationMetricRollupsClient
+	// VerificationPipelineVersions is the client for interacting with the VerificationPipelineVersions builders.
+	VerificationPipelineVersions *VerificationPipelineVersionsClient
+	// VerificationPolicyEvaluations is the client for interacting with the VerificationPolicyEvaluations builders.
+	VerificationPolicyEvaluations *VerificationPolicyEvaluationsClient
+	// VerificationPolicyVersions is the client for interacting with the VerificationPolicyVersions builders.
+	VerificationPolicyVersions *VerificationPolicyVersionsClient
+	// VerificationReports is the client for interacting with the VerificationReports builders.
+	VerificationReports *VerificationReportsClient
+	// VerificationRuns is the client for interacting with the VerificationRuns builders.
+	VerificationRuns *VerificationRunsClient
+	// VerificationScores is the client for interacting with the VerificationScores builders.
+	VerificationScores *VerificationScoresClient
+	// VerificationTaskDependencies is the client for interacting with the VerificationTaskDependencies builders.
+	VerificationTaskDependencies *VerificationTaskDependenciesClient
+	// VerificationTasks is the client for interacting with the VerificationTasks builders.
+	VerificationTasks *VerificationTasksClient
+	// VerificationTelemetryEvents is the client for interacting with the VerificationTelemetryEvents builders.
+	VerificationTelemetryEvents *VerificationTelemetryEventsClient
 	// WorkspaceAuditEvent is the client for interacting with the WorkspaceAuditEvent builders.
 	WorkspaceAuditEvent *WorkspaceAuditEventClient
 	// WorkspaceProviderConnection is the client for interacting with the WorkspaceProviderConnection builders.
@@ -554,6 +626,26 @@ func (tx *Tx) init() {
 	tx.Project = NewProjectClient(tx.config)
 	tx.ProjectMembership = NewProjectMembershipClient(tx.config)
 	tx.ProjectProviderBinding = NewProjectProviderBindingClient(tx.config)
+	tx.QuantAlert = NewQuantAlertClient(tx.config)
+	tx.QuantAuditEvent = NewQuantAuditEventClient(tx.config)
+	tx.QuantBacktestRun = NewQuantBacktestRunClient(tx.config)
+	tx.QuantBrokerAccount = NewQuantBrokerAccountClient(tx.config)
+	tx.QuantDeployment = NewQuantDeploymentClient(tx.config)
+	tx.QuantDevice = NewQuantDeviceClient(tx.config)
+	tx.QuantFill = NewQuantFillClient(tx.config)
+	tx.QuantIdempotencyKey = NewQuantIdempotencyKeyClient(tx.config)
+	tx.QuantInstrument = NewQuantInstrumentClient(tx.config)
+	tx.QuantLiveChallenge = NewQuantLiveChallengeClient(tx.config)
+	tx.QuantLiveSession = NewQuantLiveSessionClient(tx.config)
+	tx.QuantOperatorGrant = NewQuantOperatorGrantClient(tx.config)
+	tx.QuantOrder = NewQuantOrderClient(tx.config)
+	tx.QuantOutboxEvent = NewQuantOutboxEventClient(tx.config)
+	tx.QuantPosition = NewQuantPositionClient(tx.config)
+	tx.QuantRiskPolicyVersion = NewQuantRiskPolicyVersionClient(tx.config)
+	tx.QuantStrategy = NewQuantStrategyClient(tx.config)
+	tx.QuantStrategyVersion = NewQuantStrategyVersionClient(tx.config)
+	tx.QuantWatchlist = NewQuantWatchlistClient(tx.config)
+	tx.QuantWatchlistItem = NewQuantWatchlistItemClient(tx.config)
 	tx.RiskEvent = NewRiskEventClient(tx.config)
 	tx.RiskLimits = NewRiskLimitsClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
@@ -561,6 +653,22 @@ func (tx *Tx) init() {
 	tx.User = NewUserClient(tx.config)
 	tx.UserDeviceToken = NewUserDeviceTokenClient(tx.config)
 	tx.UserSecrets = NewUserSecretsClient(tx.config)
+	tx.VerificationAlerts = NewVerificationAlertsClient(tx.config)
+	tx.VerificationAttempts = NewVerificationAttemptsClient(tx.config)
+	tx.VerificationEngineVersions = NewVerificationEngineVersionsClient(tx.config)
+	tx.VerificationEvidence = NewVerificationEvidenceClient(tx.config)
+	tx.VerificationFindings = NewVerificationFindingsClient(tx.config)
+	tx.VerificationInbox = NewVerificationInboxClient(tx.config)
+	tx.VerificationMetricRollups = NewVerificationMetricRollupsClient(tx.config)
+	tx.VerificationPipelineVersions = NewVerificationPipelineVersionsClient(tx.config)
+	tx.VerificationPolicyEvaluations = NewVerificationPolicyEvaluationsClient(tx.config)
+	tx.VerificationPolicyVersions = NewVerificationPolicyVersionsClient(tx.config)
+	tx.VerificationReports = NewVerificationReportsClient(tx.config)
+	tx.VerificationRuns = NewVerificationRunsClient(tx.config)
+	tx.VerificationScores = NewVerificationScoresClient(tx.config)
+	tx.VerificationTaskDependencies = NewVerificationTaskDependenciesClient(tx.config)
+	tx.VerificationTasks = NewVerificationTasksClient(tx.config)
+	tx.VerificationTelemetryEvents = NewVerificationTelemetryEventsClient(tx.config)
 	tx.WorkspaceAuditEvent = NewWorkspaceAuditEventClient(tx.config)
 	tx.WorkspaceProviderConnection = NewWorkspaceProviderConnectionClient(tx.config)
 }

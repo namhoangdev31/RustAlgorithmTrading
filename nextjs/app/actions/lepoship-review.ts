@@ -5,7 +5,7 @@ import { localizedHref, redirect } from "@/i18n/navigation";
 import { requireCurrentUser } from "@/lib/server/current-user";
 import { prisma } from "@/lib/server/prisma";
 import { z } from "zod";
-import { promoteRelease, rejectRelease } from "@/lib/server/lepoship/release-service";
+import { reconcileReleasePromotion, rejectRelease } from "@/lib/server/lepoship/release-service";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -51,8 +51,6 @@ export async function approveReviewQueueAction(formData: FormData) {
     if (canonicalItem?.release) {
       const release = canonicalItem.release;
       const privacy = await prisma.bundlePrivacyDeclarations.findUnique({ where: { bundleId: canonicalItem.bundleId } });
-      const security = canonicalItem.release.approvals.find((approval) => approval.kind === "security" && approval.status === "approved");
-      if (!security) throw new Error("A passing canonical security scan is required.");
       if (!privacy || !["submitted", "approved"].includes(privacy.declarationStatus)) throw new Error("A submitted privacy declaration is required.");
       await prisma.$transaction(async (tx) => {
         const claimed = await tx.bundleReviewQueue.updateMany({
@@ -67,10 +65,10 @@ export async function approveReviewQueueAction(formData: FormData) {
             update: { status: "approved", actorId: user.id, policyVersion: "production-gate-v2", createdAt: new Date() },
           });
         }
-        await tx.bundleReleases.update({ where: { id: release.id }, data: { status: "approved", approvedAt: new Date(), updatedAt: new Date() } });
+        await tx.bundleReleases.update({ where: { id: release.id }, data: { approvedAt: new Date(), updatedAt: new Date() } });
         await tx.bundlePrivacyDeclarations.update({ where: { bundleId: canonicalItem.bundleId }, data: { declarationStatus: "approved", reviewedAt: new Date(), updatedAt: new Date() } });
       }, { isolationLevel: "Serializable" });
-      await promoteRelease({ releaseId: release.id, actorId: user.id, reason: "Moderation and privacy approval completed." });
+      await reconcileReleasePromotion({ releaseId: release.id, actorId: user.id, reason: "Moderation and privacy approval completed." });
     } else {
     await prisma.$transaction(async (tx) => {
       // 1. Read the queue item and verify it is still pending.
@@ -163,11 +161,12 @@ export async function createEmergencyReleaseOverrideAction(formData: FormData) {
   if (!queueItemId || reason.length < 10) throw new Error("A detailed override reason is required.");
   const item = await prisma.bundleReviewQueue.findUnique({
     where: { id: queueItemId },
-    include: { release: { include: { approvals: true } } },
+    include: { release: { include: { approvals: true, verificationRuns: { orderBy: { createdAt: "desc" }, take: 1 } } } },
   });
   if (!item?.release || item.status !== "pending") throw new Error("Pending canonical release review item not found.");
   const security = item.release.approvals.find((approval) => approval.kind === "security" && approval.status === "approved");
-  if (!security) throw new Error("Emergency override cannot bypass the security gate.");
+  const reviewRun = item.release.verificationRuns[0];
+  if (!security && !(reviewRun?.status === "completed" && reviewRun.decision === "review")) throw new Error("Emergency override is allowed only for a verification REVIEW decision; reject and incomplete cannot be bypassed.");
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 60 * 60 * 1000);
   await prisma.$transaction([
@@ -186,6 +185,7 @@ export async function approveEmergencyReleaseOverrideAction(formData: FormData) 
   const override = await prisma.bundleReleaseOverridesV2.findUnique({ where: { id: overrideId }, include: { approvals: true } });
   if (!override || override.revokedAt || override.expiresAt <= new Date()) throw new Error("Active override not found.");
   if (override.createdById === user.id) throw new Error("Override creator cannot approve their own request.");
+  const releaseId = override.releaseId;
   await prisma.$transaction(async (tx) => {
     await tx.bundleReleaseOverrideApprovals.upsert({
       where: { overrideId_approverId: { overrideId, approverId: user.id } },
@@ -195,7 +195,20 @@ export async function approveEmergencyReleaseOverrideAction(formData: FormData) 
     await tx.bundleAuditLog.create({
       data: { id: crypto.randomUUID(), bundleId: override.bundleId, userId: user.id, action: "emergency_override_approved", fieldName: overrideId, createdAt: new Date() },
     });
+    const approvalCount = await tx.bundleReleaseOverrideApprovals.count({ where: { overrideId } });
+    if (approvalCount >= 2) {
+      const run = await tx.verificationRuns.findFirst({ where: { releaseId, status: "completed", decision: "review" }, orderBy: { createdAt: "desc" } });
+      if (run) {
+        await tx.bundleReleases.update({ where: { id: releaseId }, data: { eligibleVerificationRunId: run.id, updatedAt: new Date() } });
+        await tx.bundleReleaseApprovals.upsert({
+          where: { releaseId_kind: { releaseId, kind: "security" } },
+          create: { id: crypto.randomUUID(), releaseId, kind: "security", status: "approved", actorId: user.id, policyVersion: run.policyVersionId, evidence: { source: "verification_review_override", runId: run.id, overrideId }, createdAt: new Date() },
+          update: { status: "approved", actorId: user.id, policyVersion: run.policyVersionId, evidence: { source: "verification_review_override", runId: run.id, overrideId }, createdAt: new Date() },
+        });
+      }
+    }
   });
+  await reconcileReleasePromotion({ releaseId, actorId: user.id, reason: "Two-person verification review override completed." });
   revalidatePath("/admin/review-queue");
 }
 

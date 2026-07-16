@@ -3,11 +3,15 @@ package config
 import "testing"
 
 func TestRunModeValidation(t *testing.T) {
-	for _, mode := range []string{"both", "control-plane", "edge-gateway"} {
+	for _, mode := range []string{"both", "control-plane", "edge-gateway", "lepoship-worker"} {
 		cfg := Config{RunMode: mode, Environment: "development"}
-		if mode != "edge-gateway" {
+		if mode != "edge-gateway" && mode != "lepoship-worker" {
 			cfg.Storage.DatabaseURL = "postgres://localhost/test"
 			cfg.Storage.QuestDBURL = "postgres://localhost/qdb"
+		}
+		if mode == "lepoship-worker" {
+			cfg.Storage = Storage{DatabaseURL: "postgres://localhost/test", RedisURL: "redis://localhost:6379"}
+			cfg.Storefront = Storefront{ArtifactProvider: "minio", ArtifactEndpoint: "http://localhost:9000", ArtifactBucket: "artifacts", ArtifactAccessKeyID: "access", ArtifactSecretKey: "secret", ArtifactForcePathStyle: true}
 		}
 		if err := cfg.Validate(); err != nil {
 			t.Fatalf("mode %s rejected: %v", mode, err)

@@ -12,6 +12,8 @@ const (
 	Label = "project"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldDeletedAt holds the string denoting the deletedat field in the database.
+	FieldDeletedAt = "deleted_at"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldDescription holds the string denoting the description field in the database.
@@ -28,8 +30,6 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updatedat field in the database.
 	FieldUpdatedAt = "updated_at"
-	// FieldDeletedAt holds the string denoting the deletedat field in the database.
-	FieldDeletedAt = "deleted_at"
 	// EdgeOrganization holds the string denoting the organization edge name in mutations.
 	EdgeOrganization = "organization"
 	// EdgeActiveNativeDeployment holds the string denoting the activenativedeployment edge name in mutations.
@@ -102,6 +102,14 @@ const (
 	EdgeLeposhipBuilds = "leposhipBuilds"
 	// EdgeCanonicalBuildJobs holds the string denoting the canonicalbuildjobs edge name in mutations.
 	EdgeCanonicalBuildJobs = "canonicalBuildJobs"
+	// EdgeVerificationRuns holds the string denoting the verificationruns edge name in mutations.
+	EdgeVerificationRuns = "verificationRuns"
+	// EdgeVerificationTelemetry holds the string denoting the verificationtelemetry edge name in mutations.
+	EdgeVerificationTelemetry = "verificationTelemetry"
+	// EdgeVerificationRollups holds the string denoting the verificationrollups edge name in mutations.
+	EdgeVerificationRollups = "verificationRollups"
+	// EdgeVerificationAlerts holds the string denoting the verificationalerts edge name in mutations.
+	EdgeVerificationAlerts = "verificationAlerts"
 	// Table holds the table name of the project in the database.
 	Table = "projects"
 	// OrganizationTable is the table that holds the organization relation/edge.
@@ -356,11 +364,40 @@ const (
 	CanonicalBuildJobsInverseTable = "bundle_build_jobs"
 	// CanonicalBuildJobsColumn is the table column denoting the canonicalBuildJobs relation/edge.
 	CanonicalBuildJobsColumn = "project_id"
+	// VerificationRunsTable is the table that holds the verificationRuns relation/edge.
+	VerificationRunsTable = "verification_runs"
+	// VerificationRunsInverseTable is the table name for the VerificationRuns entity.
+	// It exists in this package in order to avoid circular dependency with the "verificationruns" package.
+	VerificationRunsInverseTable = "verification_runs"
+	// VerificationRunsColumn is the table column denoting the verificationRuns relation/edge.
+	VerificationRunsColumn = "project_id"
+	// VerificationTelemetryTable is the table that holds the verificationTelemetry relation/edge.
+	VerificationTelemetryTable = "verification_telemetry_events"
+	// VerificationTelemetryInverseTable is the table name for the VerificationTelemetryEvents entity.
+	// It exists in this package in order to avoid circular dependency with the "verificationtelemetryevents" package.
+	VerificationTelemetryInverseTable = "verification_telemetry_events"
+	// VerificationTelemetryColumn is the table column denoting the verificationTelemetry relation/edge.
+	VerificationTelemetryColumn = "project_id"
+	// VerificationRollupsTable is the table that holds the verificationRollups relation/edge.
+	VerificationRollupsTable = "verification_metric_rollups"
+	// VerificationRollupsInverseTable is the table name for the VerificationMetricRollups entity.
+	// It exists in this package in order to avoid circular dependency with the "verificationmetricrollups" package.
+	VerificationRollupsInverseTable = "verification_metric_rollups"
+	// VerificationRollupsColumn is the table column denoting the verificationRollups relation/edge.
+	VerificationRollupsColumn = "project_id"
+	// VerificationAlertsTable is the table that holds the verificationAlerts relation/edge.
+	VerificationAlertsTable = "verification_alerts"
+	// VerificationAlertsInverseTable is the table name for the VerificationAlerts entity.
+	// It exists in this package in order to avoid circular dependency with the "verificationalerts" package.
+	VerificationAlertsInverseTable = "verification_alerts"
+	// VerificationAlertsColumn is the table column denoting the verificationAlerts relation/edge.
+	VerificationAlertsColumn = "project_id"
 )
 
 // Columns holds all SQL columns for project fields.
 var Columns = []string{
 	FieldID,
+	FieldDeletedAt,
 	FieldName,
 	FieldDescription,
 	FieldOrganizationId,
@@ -369,7 +406,6 @@ var Columns = []string{
 	FieldActiveNativeDeploymentId,
 	FieldCreatedAt,
 	FieldUpdatedAt,
-	FieldDeletedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -388,6 +424,11 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByDeletedAt orders the results by the deletedAt field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
 // ByName orders the results by the name field.
@@ -428,11 +469,6 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updatedAt field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
-}
-
-// ByDeletedAt orders the results by the deletedAt field.
-func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
 // ByOrganizationField orders the results by organization field.
@@ -896,6 +932,62 @@ func ByCanonicalBuildJobs(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOptio
 		sqlgraph.OrderByNeighborTerms(s, newCanonicalBuildJobsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByVerificationRunsCount orders the results by verificationRuns count.
+func ByVerificationRunsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newVerificationRunsStep(), opts...)
+	}
+}
+
+// ByVerificationRuns orders the results by verificationRuns terms.
+func ByVerificationRuns(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newVerificationRunsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByVerificationTelemetryCount orders the results by verificationTelemetry count.
+func ByVerificationTelemetryCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newVerificationTelemetryStep(), opts...)
+	}
+}
+
+// ByVerificationTelemetry orders the results by verificationTelemetry terms.
+func ByVerificationTelemetry(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newVerificationTelemetryStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByVerificationRollupsCount orders the results by verificationRollups count.
+func ByVerificationRollupsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newVerificationRollupsStep(), opts...)
+	}
+}
+
+// ByVerificationRollups orders the results by verificationRollups terms.
+func ByVerificationRollups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newVerificationRollupsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByVerificationAlertsCount orders the results by verificationAlerts count.
+func ByVerificationAlertsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newVerificationAlertsStep(), opts...)
+	}
+}
+
+// ByVerificationAlerts orders the results by verificationAlerts terms.
+func ByVerificationAlerts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newVerificationAlertsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOrganizationStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1146,5 +1238,33 @@ func newCanonicalBuildJobsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CanonicalBuildJobsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, CanonicalBuildJobsTable, CanonicalBuildJobsColumn),
+	)
+}
+func newVerificationRunsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(VerificationRunsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, VerificationRunsTable, VerificationRunsColumn),
+	)
+}
+func newVerificationTelemetryStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(VerificationTelemetryInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, VerificationTelemetryTable, VerificationTelemetryColumn),
+	)
+}
+func newVerificationRollupsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(VerificationRollupsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, VerificationRollupsTable, VerificationRollupsColumn),
+	)
+}
+func newVerificationAlertsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(VerificationAlertsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, VerificationAlertsTable, VerificationAlertsColumn),
 	)
 }

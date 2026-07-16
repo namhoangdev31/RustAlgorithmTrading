@@ -75,6 +75,66 @@ export const BundleDeliveryMode = {
 export type BundleDeliveryMode = (typeof BundleDeliveryMode)[keyof typeof BundleDeliveryMode]
 
 
+export const VerificationRunStatus = {
+  queued: 'queued',
+  running: 'running',
+  scoring: 'scoring',
+  evaluating: 'evaluating',
+  completed: 'completed',
+  incomplete: 'incomplete',
+  cancelled: 'cancelled'
+} as const
+
+export type VerificationRunStatus = (typeof VerificationRunStatus)[keyof typeof VerificationRunStatus]
+
+
+export const VerificationDecision = {
+  allow: 'allow',
+  warn: 'warn',
+  review: 'review',
+  reject: 'reject'
+} as const
+
+export type VerificationDecision = (typeof VerificationDecision)[keyof typeof VerificationDecision]
+
+
+export const VerificationTaskStatus = {
+  queued: 'queued',
+  ready: 'ready',
+  dispatched: 'dispatched',
+  running: 'running',
+  succeeded: 'succeeded',
+  bundle_failed: 'bundle_failed',
+  infrastructure_failed: 'infrastructure_failed',
+  timed_out: 'timed_out',
+  cancelled: 'cancelled',
+  dead_lettered: 'dead_lettered'
+} as const
+
+export type VerificationTaskStatus = (typeof VerificationTaskStatus)[keyof typeof VerificationTaskStatus]
+
+
+export const VerificationAttemptStatus = {
+  dispatched: 'dispatched',
+  running: 'running',
+  succeeded: 'succeeded',
+  failed: 'failed',
+  timed_out: 'timed_out',
+  cancelled: 'cancelled'
+} as const
+
+export type VerificationAttemptStatus = (typeof VerificationAttemptStatus)[keyof typeof VerificationAttemptStatus]
+
+
+export const VerificationEnforcementMode = {
+  legacy: 'legacy',
+  shadow: 'shadow',
+  enforce: 'enforce'
+} as const
+
+export type VerificationEnforcementMode = (typeof VerificationEnforcementMode)[keyof typeof VerificationEnforcementMode]
+
+
 export const LedgerEntryDirection = {
   debit: 'debit',
   credit: 'credit'
@@ -89,3 +149,59 @@ export const OrganizationType = {
 } as const
 
 export type OrganizationType = (typeof OrganizationType)[keyof typeof OrganizationType]
+
+
+export const QuantAssetClass = {
+  equity: 'equity',
+  crypto: 'crypto',
+  forex: 'forex',
+  index: 'index',
+  commodity_future: 'commodity_future'
+} as const
+
+export type QuantAssetClass = (typeof QuantAssetClass)[keyof typeof QuantAssetClass]
+
+
+export const QuantTradingMode = {
+  paper: 'paper',
+  live: 'live'
+} as const
+
+export type QuantTradingMode = (typeof QuantTradingMode)[keyof typeof QuantTradingMode]
+
+
+export const QuantSupportLevel = {
+  unavailable: 'unavailable',
+  view_only: 'view_only',
+  paper: 'paper',
+  live: 'live'
+} as const
+
+export type QuantSupportLevel = (typeof QuantSupportLevel)[keyof typeof QuantSupportLevel]
+
+
+export const QuantOrderType = {
+  market: 'market',
+  limit: 'limit',
+  stop: 'stop',
+  stop_limit: 'stop_limit',
+  bracket: 'bracket',
+  trailing_stop: 'trailing_stop'
+} as const
+
+export type QuantOrderType = (typeof QuantOrderType)[keyof typeof QuantOrderType]
+
+
+export const QuantStrategyLifecycle = {
+  draft: 'draft',
+  backtesting: 'backtesting',
+  paper_ready: 'paper_ready',
+  paper_active: 'paper_active',
+  live_ready: 'live_ready',
+  live_active: 'live_active',
+  paused: 'paused',
+  failed: 'failed',
+  archived: 'archived'
+} as const
+
+export type QuantStrategyLifecycle = (typeof QuantStrategyLifecycle)[keyof typeof QuantStrategyLifecycle]

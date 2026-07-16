@@ -86,6 +86,81 @@ func (BundleDeliveryMode) Values() []string {
 	return []string{"none", "rollout", "experiment"}
 }
 
+type VerificationRunStatus string
+
+const (
+	VerificationRunStatusQueued     VerificationRunStatus = "queued"
+	VerificationRunStatusRunning    VerificationRunStatus = "running"
+	VerificationRunStatusScoring    VerificationRunStatus = "scoring"
+	VerificationRunStatusEvaluating VerificationRunStatus = "evaluating"
+	VerificationRunStatusCompleted  VerificationRunStatus = "completed"
+	VerificationRunStatusIncomplete VerificationRunStatus = "incomplete"
+	VerificationRunStatusCancelled  VerificationRunStatus = "cancelled"
+)
+
+func (VerificationRunStatus) Values() []string {
+	return []string{"queued", "running", "scoring", "evaluating", "completed", "incomplete", "cancelled"}
+}
+
+type VerificationDecision string
+
+const (
+	VerificationDecisionAllow  VerificationDecision = "allow"
+	VerificationDecisionWarn   VerificationDecision = "warn"
+	VerificationDecisionReview VerificationDecision = "review"
+	VerificationDecisionReject VerificationDecision = "reject"
+)
+
+func (VerificationDecision) Values() []string {
+	return []string{"allow", "warn", "review", "reject"}
+}
+
+type VerificationTaskStatus string
+
+const (
+	VerificationTaskStatusQueued               VerificationTaskStatus = "queued"
+	VerificationTaskStatusReady                VerificationTaskStatus = "ready"
+	VerificationTaskStatusDispatched           VerificationTaskStatus = "dispatched"
+	VerificationTaskStatusRunning              VerificationTaskStatus = "running"
+	VerificationTaskStatusSucceeded            VerificationTaskStatus = "succeeded"
+	VerificationTaskStatusBundleFailed         VerificationTaskStatus = "bundle_failed"
+	VerificationTaskStatusInfrastructureFailed VerificationTaskStatus = "infrastructure_failed"
+	VerificationTaskStatusTimedOut             VerificationTaskStatus = "timed_out"
+	VerificationTaskStatusCancelled            VerificationTaskStatus = "cancelled"
+	VerificationTaskStatusDeadLettered         VerificationTaskStatus = "dead_lettered"
+)
+
+func (VerificationTaskStatus) Values() []string {
+	return []string{"queued", "ready", "dispatched", "running", "succeeded", "bundle_failed", "infrastructure_failed", "timed_out", "cancelled", "dead_lettered"}
+}
+
+type VerificationAttemptStatus string
+
+const (
+	VerificationAttemptStatusDispatched VerificationAttemptStatus = "dispatched"
+	VerificationAttemptStatusRunning    VerificationAttemptStatus = "running"
+	VerificationAttemptStatusSucceeded  VerificationAttemptStatus = "succeeded"
+	VerificationAttemptStatusFailed     VerificationAttemptStatus = "failed"
+	VerificationAttemptStatusTimedOut   VerificationAttemptStatus = "timed_out"
+	VerificationAttemptStatusCancelled  VerificationAttemptStatus = "cancelled"
+)
+
+func (VerificationAttemptStatus) Values() []string {
+	return []string{"dispatched", "running", "succeeded", "failed", "timed_out", "cancelled"}
+}
+
+type VerificationEnforcementMode string
+
+const (
+	VerificationEnforcementModeLegacy  VerificationEnforcementMode = "legacy"
+	VerificationEnforcementModeShadow  VerificationEnforcementMode = "shadow"
+	VerificationEnforcementModeEnforce VerificationEnforcementMode = "enforce"
+)
+
+func (VerificationEnforcementMode) Values() []string {
+	return []string{"legacy", "shadow", "enforce"}
+}
+
 type LedgerEntryDirection string
 
 const (
@@ -106,4 +181,75 @@ const (
 
 func (OrganizationType) Values() []string {
 	return []string{"personal", "corporate"}
+}
+
+type QuantAssetClass string
+
+const (
+	QuantAssetClassEquity          QuantAssetClass = "equity"
+	QuantAssetClassCrypto          QuantAssetClass = "crypto"
+	QuantAssetClassForex           QuantAssetClass = "forex"
+	QuantAssetClassIndex           QuantAssetClass = "index"
+	QuantAssetClassCommodityFuture QuantAssetClass = "commodity_future"
+)
+
+func (QuantAssetClass) Values() []string {
+	return []string{"equity", "crypto", "forex", "index", "commodity_future"}
+}
+
+type QuantTradingMode string
+
+const (
+	QuantTradingModePaper QuantTradingMode = "paper"
+	QuantTradingModeLive  QuantTradingMode = "live"
+)
+
+func (QuantTradingMode) Values() []string {
+	return []string{"paper", "live"}
+}
+
+type QuantSupportLevel string
+
+const (
+	QuantSupportLevelUnavailable QuantSupportLevel = "unavailable"
+	QuantSupportLevelViewOnly    QuantSupportLevel = "view_only"
+	QuantSupportLevelPaper       QuantSupportLevel = "paper"
+	QuantSupportLevelLive        QuantSupportLevel = "live"
+)
+
+func (QuantSupportLevel) Values() []string {
+	return []string{"unavailable", "view_only", "paper", "live"}
+}
+
+type QuantOrderType string
+
+const (
+	QuantOrderTypeMarket       QuantOrderType = "market"
+	QuantOrderTypeLimit        QuantOrderType = "limit"
+	QuantOrderTypeStop         QuantOrderType = "stop"
+	QuantOrderTypeStopLimit    QuantOrderType = "stop_limit"
+	QuantOrderTypeBracket      QuantOrderType = "bracket"
+	QuantOrderTypeTrailingStop QuantOrderType = "trailing_stop"
+)
+
+func (QuantOrderType) Values() []string {
+	return []string{"market", "limit", "stop", "stop_limit", "bracket", "trailing_stop"}
+}
+
+type QuantStrategyLifecycle string
+
+const (
+	QuantStrategyLifecycleDraft       QuantStrategyLifecycle = "draft"
+	QuantStrategyLifecycleBacktesting QuantStrategyLifecycle = "backtesting"
+	QuantStrategyLifecyclePaperReady  QuantStrategyLifecycle = "paper_ready"
+	QuantStrategyLifecyclePaperActive QuantStrategyLifecycle = "paper_active"
+	QuantStrategyLifecycleLiveReady   QuantStrategyLifecycle = "live_ready"
+	QuantStrategyLifecycleLiveActive  QuantStrategyLifecycle = "live_active"
+	QuantStrategyLifecyclePaused      QuantStrategyLifecycle = "paused"
+	QuantStrategyLifecycleFailed      QuantStrategyLifecycle = "failed"
+	QuantStrategyLifecycleArchived    QuantStrategyLifecycle = "archived"
+)
+
+func (QuantStrategyLifecycle) Values() []string {
+	return []string{"draft", "backtesting", "paper_ready", "paper_active", "live_ready", "live_active", "paused", "failed", "archived"}
 }

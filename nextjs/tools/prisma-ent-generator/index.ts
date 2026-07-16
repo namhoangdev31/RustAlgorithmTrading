@@ -69,6 +69,8 @@ function renderDefault(field: DMMFField): string[] {
       result.push("Default(func() pq.StringArray { return pq.StringArray{} })");
     } else if (field.type === "Json" && typeof value === "string") {
       result.push(`Default(func() json.RawMessage { return json.RawMessage(${quote(value)}) })`);
+    } else if (field.type === "Decimal" && ["string", "number"].includes(typeof value)) {
+      result.push(`Default(decimal.RequireFromString(${quote(String(value))}))`);
     } else if (typeof value === "string" && ["Int", "BigInt", "Float"].includes(String(field.type)) && /^-?\d+(\.\d+)?$/.test(value)) {
       result.push(`Default(${value})`);
     } else if (typeof value === "string") {

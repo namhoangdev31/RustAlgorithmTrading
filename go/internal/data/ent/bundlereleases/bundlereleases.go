@@ -39,6 +39,8 @@ const (
 	FieldApprovedAt = "approved_at"
 	// FieldActivatedAt holds the string denoting the activatedat field in the database.
 	FieldActivatedAt = "activated_at"
+	// FieldEligibleVerificationRunId holds the string denoting the eligibleverificationrunid field in the database.
+	FieldEligibleVerificationRunId = "eligible_verification_run_id"
 	// FieldCreatedAt holds the string denoting the createdat field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updatedat field in the database.
@@ -73,6 +75,10 @@ const (
 	EdgeCrashEvents = "crashEvents"
 	// EdgeBundleAbTestExposures holds the string denoting the bundleabtestexposures edge name in mutations.
 	EdgeBundleAbTestExposures = "bundleAbTestExposures"
+	// EdgeVerificationRuns holds the string denoting the verificationruns edge name in mutations.
+	EdgeVerificationRuns = "verificationRuns"
+	// EdgeEligibleVerificationRun holds the string denoting the eligibleverificationrun edge name in mutations.
+	EdgeEligibleVerificationRun = "eligibleVerificationRun"
 	// Table holds the table name of the bundlereleases in the database.
 	Table = "bundle_releases"
 	// BundleTable is the table that holds the bundle relation/edge.
@@ -180,6 +186,20 @@ const (
 	BundleAbTestExposuresInverseTable = "bundle_ab_test_exposures"
 	// BundleAbTestExposuresColumn is the table column denoting the bundleAbTestExposures relation/edge.
 	BundleAbTestExposuresColumn = "assigned_release_id"
+	// VerificationRunsTable is the table that holds the verificationRuns relation/edge.
+	VerificationRunsTable = "verification_runs"
+	// VerificationRunsInverseTable is the table name for the VerificationRuns entity.
+	// It exists in this package in order to avoid circular dependency with the "verificationruns" package.
+	VerificationRunsInverseTable = "verification_runs"
+	// VerificationRunsColumn is the table column denoting the verificationRuns relation/edge.
+	VerificationRunsColumn = "release_id"
+	// EligibleVerificationRunTable is the table that holds the eligibleVerificationRun relation/edge.
+	EligibleVerificationRunTable = "bundle_releases"
+	// EligibleVerificationRunInverseTable is the table name for the VerificationRuns entity.
+	// It exists in this package in order to avoid circular dependency with the "verificationruns" package.
+	EligibleVerificationRunInverseTable = "verification_runs"
+	// EligibleVerificationRunColumn is the table column denoting the eligibleVerificationRun relation/edge.
+	EligibleVerificationRunColumn = "eligible_verification_run_id"
 )
 
 // Columns holds all SQL columns for bundlereleases fields.
@@ -197,6 +217,7 @@ var Columns = []string{
 	FieldSubmittedAt,
 	FieldApprovedAt,
 	FieldActivatedAt,
+	FieldEligibleVerificationRunId,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -294,6 +315,11 @@ func ByApprovedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByActivatedAt orders the results by the activatedAt field.
 func ByActivatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldActivatedAt, opts...).ToFunc()
+}
+
+// ByEligibleVerificationRunId orders the results by the eligibleVerificationRunId field.
+func ByEligibleVerificationRunId(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEligibleVerificationRunId, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the createdAt field.
@@ -501,6 +527,27 @@ func ByBundleAbTestExposures(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOp
 		sqlgraph.OrderByNeighborTerms(s, newBundleAbTestExposuresStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByVerificationRunsCount orders the results by verificationRuns count.
+func ByVerificationRunsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newVerificationRunsStep(), opts...)
+	}
+}
+
+// ByVerificationRuns orders the results by verificationRuns terms.
+func ByVerificationRuns(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newVerificationRunsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByEligibleVerificationRunField orders the results by eligibleVerificationRun field.
+func ByEligibleVerificationRunField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEligibleVerificationRunStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newBundleStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -604,5 +651,19 @@ func newBundleAbTestExposuresStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(BundleAbTestExposuresInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, BundleAbTestExposuresTable, BundleAbTestExposuresColumn),
+	)
+}
+func newVerificationRunsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(VerificationRunsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, VerificationRunsTable, VerificationRunsColumn),
+	)
+}
+func newEligibleVerificationRunStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EligibleVerificationRunInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, true, EligibleVerificationRunTable, EligibleVerificationRunColumn),
 	)
 }

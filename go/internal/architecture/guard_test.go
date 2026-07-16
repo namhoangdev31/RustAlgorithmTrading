@@ -67,7 +67,10 @@ func TestModularArchitectureBoundaries(t *testing.T) {
 				t.Errorf("%s contains a raw SQL statement outside the QuestDB adapter", path)
 			}
 		}
-		if strings.Contains(filepath.ToSlash(path), "/domain/") && (strings.Contains(text, "`json:") || strings.Contains(text, "`form:")) {
+		// Verification documents are immutable, versioned boundary contracts shared
+		// by Redis, policy snapshots and reports; their wire names are part of the domain.
+		verificationContract := strings.Contains(filepath.ToSlash(path), "/internal/modules/verification/domain/")
+		if strings.Contains(filepath.ToSlash(path), "/domain/") && !verificationContract && (strings.Contains(text, "`json:") || strings.Contains(text, "`form:")) {
 			t.Errorf("domain file %s contains transport tags", path)
 		}
 		file, err := parser.ParseFile(token.NewFileSet(), path, content, parser.ImportsOnly)
@@ -137,7 +140,8 @@ func rawSQLAllowed(path string) bool {
 	path = filepath.ToSlash(path)
 	return strings.Contains(path, "/internal/modules/operations/adapter/questdb/") ||
 		strings.Contains(path, "/internal/modules/quantant/adapter/questdb/") ||
-		strings.Contains(path, "/internal/modules/quantant/adapter/postgres/")
+		strings.Contains(path, "/internal/modules/quantant/adapter/postgres/") ||
+		strings.Contains(path, "/internal/modules/verification/adapter/postgres/")
 }
 
 func databaseSQLAllowed(path string) bool {
