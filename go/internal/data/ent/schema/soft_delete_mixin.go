@@ -4,15 +4,11 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/dialect"
-	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
 )
 
 type SoftDeleteMixin struct{ mixin.Schema }
 
 func (SoftDeleteMixin) Fields() []ent.Field {
-	return []ent.Field{
-		field.Time("deletedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("deleted_at").Optional().Nillable(),
-	}
+	return nil
 }

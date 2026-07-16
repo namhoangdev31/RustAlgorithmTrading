@@ -57,11 +57,6 @@ func IDLTE(id uuid.UUID) predicate.Bundles {
 	return predicate.Bundles(sql.FieldLTE(FieldID, id))
 }
 
-// DeletedAt applies equality check predicate on the "deletedAt" field. It's identical to DeletedAtEQ.
-func DeletedAt(v time.Time) predicate.Bundles {
-	return predicate.Bundles(sql.FieldEQ(FieldDeletedAt, v))
-}
-
 // BundleKey applies equality check predicate on the "bundleKey" field. It's identical to BundleKeyEQ.
 func BundleKey(v string) predicate.Bundles {
 	return predicate.Bundles(sql.FieldEQ(FieldBundleKey, v))
@@ -272,54 +267,9 @@ func ActiveRolloutId(v uuid.UUID) predicate.Bundles {
 	return predicate.Bundles(sql.FieldEQ(FieldActiveRolloutId, v))
 }
 
-// DeletedAtEQ applies the EQ predicate on the "deletedAt" field.
-func DeletedAtEQ(v time.Time) predicate.Bundles {
+// DeletedAt applies equality check predicate on the "deletedAt" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.Bundles {
 	return predicate.Bundles(sql.FieldEQ(FieldDeletedAt, v))
-}
-
-// DeletedAtNEQ applies the NEQ predicate on the "deletedAt" field.
-func DeletedAtNEQ(v time.Time) predicate.Bundles {
-	return predicate.Bundles(sql.FieldNEQ(FieldDeletedAt, v))
-}
-
-// DeletedAtIn applies the In predicate on the "deletedAt" field.
-func DeletedAtIn(vs ...time.Time) predicate.Bundles {
-	return predicate.Bundles(sql.FieldIn(FieldDeletedAt, vs...))
-}
-
-// DeletedAtNotIn applies the NotIn predicate on the "deletedAt" field.
-func DeletedAtNotIn(vs ...time.Time) predicate.Bundles {
-	return predicate.Bundles(sql.FieldNotIn(FieldDeletedAt, vs...))
-}
-
-// DeletedAtGT applies the GT predicate on the "deletedAt" field.
-func DeletedAtGT(v time.Time) predicate.Bundles {
-	return predicate.Bundles(sql.FieldGT(FieldDeletedAt, v))
-}
-
-// DeletedAtGTE applies the GTE predicate on the "deletedAt" field.
-func DeletedAtGTE(v time.Time) predicate.Bundles {
-	return predicate.Bundles(sql.FieldGTE(FieldDeletedAt, v))
-}
-
-// DeletedAtLT applies the LT predicate on the "deletedAt" field.
-func DeletedAtLT(v time.Time) predicate.Bundles {
-	return predicate.Bundles(sql.FieldLT(FieldDeletedAt, v))
-}
-
-// DeletedAtLTE applies the LTE predicate on the "deletedAt" field.
-func DeletedAtLTE(v time.Time) predicate.Bundles {
-	return predicate.Bundles(sql.FieldLTE(FieldDeletedAt, v))
-}
-
-// DeletedAtIsNil applies the IsNil predicate on the "deletedAt" field.
-func DeletedAtIsNil() predicate.Bundles {
-	return predicate.Bundles(sql.FieldIsNull(FieldDeletedAt))
-}
-
-// DeletedAtNotNil applies the NotNil predicate on the "deletedAt" field.
-func DeletedAtNotNil() predicate.Bundles {
-	return predicate.Bundles(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // BundleKeyEQ applies the EQ predicate on the "bundleKey" field.
@@ -2820,6 +2770,56 @@ func ActiveDeliveryModeNotIn(vs ...schema.BundleDeliveryMode) predicate.Bundles 
 		v[i] = vs[i]
 	}
 	return predicate.Bundles(sql.FieldNotIn(FieldActiveDeliveryMode, v...))
+}
+
+// DeletedAtEQ applies the EQ predicate on the "deletedAt" field.
+func DeletedAtEQ(v time.Time) predicate.Bundles {
+	return predicate.Bundles(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtNEQ applies the NEQ predicate on the "deletedAt" field.
+func DeletedAtNEQ(v time.Time) predicate.Bundles {
+	return predicate.Bundles(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deletedAt" field.
+func DeletedAtIn(vs ...time.Time) predicate.Bundles {
+	return predicate.Bundles(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deletedAt" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.Bundles {
+	return predicate.Bundles(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deletedAt" field.
+func DeletedAtGT(v time.Time) predicate.Bundles {
+	return predicate.Bundles(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deletedAt" field.
+func DeletedAtGTE(v time.Time) predicate.Bundles {
+	return predicate.Bundles(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deletedAt" field.
+func DeletedAtLT(v time.Time) predicate.Bundles {
+	return predicate.Bundles(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deletedAt" field.
+func DeletedAtLTE(v time.Time) predicate.Bundles {
+	return predicate.Bundles(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deletedAt" field.
+func DeletedAtIsNil() predicate.Bundles {
+	return predicate.Bundles(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deletedAt" field.
+func DeletedAtNotNil() predicate.Bundles {
+	return predicate.Bundles(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // HasProject applies the HasEdge predicate on the "project" edge.

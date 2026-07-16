@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nats-io/nats.go"
 	"github.com/redis/go-redis/v9"
 
 	operationsalerts "trading/control-gateway/internal/modules/operations/adapter/alerts"
@@ -20,7 +19,7 @@ import (
 	operationsws "trading/control-gateway/internal/modules/operations/adapter/ws"
 	operationsapp "trading/control-gateway/internal/modules/operations/application"
 	quantanthttp "trading/control-gateway/internal/modules/quantant/adapter/http"
-	quantantnats "trading/control-gateway/internal/modules/quantant/adapter/nats"
+	quantantredis "trading/control-gateway/internal/modules/quantant/adapter/redis"
 	quantantpostgres "trading/control-gateway/internal/modules/quantant/adapter/postgres"
 	quantantquestdb "trading/control-gateway/internal/modules/quantant/adapter/questdb"
 	quantantws "trading/control-gateway/internal/modules/quantant/adapter/ws"
@@ -56,7 +55,6 @@ type Component struct {
 	postgres        *database.Postgres
 	questdb         *database.QuestDB
 	redis           *redis.Client
-	nats            *nats.Conn
 	closeOnce       sync.Once
 }
 
@@ -103,19 +101,11 @@ func Build(ctx context.Context, cfg *config.Config) (*Component, error) {
 
 	var quantAntHandler *quantanthttp.Handler
 	var quantAntService *quantantapp.Service
-	var quantAntPublisher *quantantnats.Publisher
+	var quantAntPublisher *quantantredis.Publisher
 	var quantAntWebSocket *quantantws.Hub
-	var quantAntNATS *nats.Conn
 	if cfg.QuantAnt.Enabled {
-		quantAntNATS, err = nats.Connect(cfg.Events.NATSURL)
-		if err != nil {
-			_ = questdb.Close()
-			_ = postgres.Close()
-			return nil, fmt.Errorf("connect QuantAnt NATS: %w", err)
-		}
-		publisher, publisherErr := quantantnats.New(quantAntNATS, cfg.QuantAnt.ExecutionSubject, cfg.QuantAnt.CommandStream)
+		publisher, publisherErr := quantantredis.New(redisClient, cfg.QuantAnt.CommandStream)
 		if publisherErr != nil {
-			quantAntNATS.Close()
 			_ = questdb.Close()
 			_ = postgres.Close()
 			return nil, publisherErr
@@ -128,9 +118,8 @@ func Build(ctx context.Context, cfg *config.Config) (*Component, error) {
 			StrategyLiveEnabled: cfg.QuantAnt.StrategyLiveEnabled, LiveSessionTTL: cfg.QuantAnt.LiveSessionTTL,
 		})
 		quantAntHandler = quantanthttp.New(quantAntService)
-		quantAntWebSocket, err = quantantws.New(quantAntNATS)
+		quantAntWebSocket, err = quantantws.New(redisClient)
 		if err != nil {
-			quantAntNATS.Close()
 			_ = questdb.Close()
 			_ = postgres.Close()
 			return nil, fmt.Errorf("initialize QuantAnt websocket: %w", err)
@@ -141,7 +130,7 @@ func Build(ctx context.Context, cfg *config.Config) (*Component, error) {
 		{Name: "quant_questdb", Required: true, Check: questdb.Ping},
 	}
 	if quantAntPublisher != nil {
-		checks = append(checks, health.DependencyCheck{Name: "quantant_jetstream", Required: true, Check: func() error {
+		checks = append(checks, health.DependencyCheck{Name: "quantant_redis_streams", Required: true, Check: func() error {
 			return quantAntPublisher.Check(context.Background())
 		}})
 	}
@@ -157,7 +146,7 @@ func Build(ctx context.Context, cfg *config.Config) (*Component, error) {
 		collector:  operationsworker.New(metricRepo, wsManager),
 		websocket:  wsManager,
 		checks:     checks,
-		postgres:   postgres, questdb: questdb, redis: redisClient, nats: quantAntNATS,
+		postgres:   postgres, questdb: questdb, redis: redisClient,
 	}, nil
 }
 
@@ -200,9 +189,6 @@ func (c *Component) Close() error {
 	c.closeOnce.Do(func() {
 		if c.quantAntWS != nil {
 			c.quantAntWS.Close()
-		}
-		if c.nats != nil {
-			c.nats.Close()
 		}
 		if c.redis != nil {
 			closeErr = errors.Join(closeErr, c.redis.Close())

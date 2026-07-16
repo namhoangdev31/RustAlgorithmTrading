@@ -57,11 +57,6 @@ func IDLTE(id uuid.UUID) predicate.Organization {
 	return predicate.Organization(sql.FieldLTE(FieldID, id))
 }
 
-// DeletedAt applies equality check predicate on the "deletedAt" field. It's identical to DeletedAtEQ.
-func DeletedAt(v time.Time) predicate.Organization {
-	return predicate.Organization(sql.FieldEQ(FieldDeletedAt, v))
-}
-
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldName, v))
@@ -82,54 +77,9 @@ func UpdatedAt(v time.Time) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// DeletedAtEQ applies the EQ predicate on the "deletedAt" field.
-func DeletedAtEQ(v time.Time) predicate.Organization {
+// DeletedAt applies equality check predicate on the "deletedAt" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldDeletedAt, v))
-}
-
-// DeletedAtNEQ applies the NEQ predicate on the "deletedAt" field.
-func DeletedAtNEQ(v time.Time) predicate.Organization {
-	return predicate.Organization(sql.FieldNEQ(FieldDeletedAt, v))
-}
-
-// DeletedAtIn applies the In predicate on the "deletedAt" field.
-func DeletedAtIn(vs ...time.Time) predicate.Organization {
-	return predicate.Organization(sql.FieldIn(FieldDeletedAt, vs...))
-}
-
-// DeletedAtNotIn applies the NotIn predicate on the "deletedAt" field.
-func DeletedAtNotIn(vs ...time.Time) predicate.Organization {
-	return predicate.Organization(sql.FieldNotIn(FieldDeletedAt, vs...))
-}
-
-// DeletedAtGT applies the GT predicate on the "deletedAt" field.
-func DeletedAtGT(v time.Time) predicate.Organization {
-	return predicate.Organization(sql.FieldGT(FieldDeletedAt, v))
-}
-
-// DeletedAtGTE applies the GTE predicate on the "deletedAt" field.
-func DeletedAtGTE(v time.Time) predicate.Organization {
-	return predicate.Organization(sql.FieldGTE(FieldDeletedAt, v))
-}
-
-// DeletedAtLT applies the LT predicate on the "deletedAt" field.
-func DeletedAtLT(v time.Time) predicate.Organization {
-	return predicate.Organization(sql.FieldLT(FieldDeletedAt, v))
-}
-
-// DeletedAtLTE applies the LTE predicate on the "deletedAt" field.
-func DeletedAtLTE(v time.Time) predicate.Organization {
-	return predicate.Organization(sql.FieldLTE(FieldDeletedAt, v))
-}
-
-// DeletedAtIsNil applies the IsNil predicate on the "deletedAt" field.
-func DeletedAtIsNil() predicate.Organization {
-	return predicate.Organization(sql.FieldIsNull(FieldDeletedAt))
-}
-
-// DeletedAtNotNil applies the NotNil predicate on the "deletedAt" field.
-func DeletedAtNotNil() predicate.Organization {
-	return predicate.Organization(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -325,6 +275,56 @@ func UpdatedAtLT(v time.Time) predicate.Organization {
 // UpdatedAtLTE applies the LTE predicate on the "updatedAt" field.
 func UpdatedAtLTE(v time.Time) predicate.Organization {
 	return predicate.Organization(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// DeletedAtEQ applies the EQ predicate on the "deletedAt" field.
+func DeletedAtEQ(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtNEQ applies the NEQ predicate on the "deletedAt" field.
+func DeletedAtNEQ(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deletedAt" field.
+func DeletedAtIn(vs ...time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deletedAt" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deletedAt" field.
+func DeletedAtGT(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deletedAt" field.
+func DeletedAtGTE(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deletedAt" field.
+func DeletedAtLT(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deletedAt" field.
+func DeletedAtLTE(v time.Time) predicate.Organization {
+	return predicate.Organization(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deletedAt" field.
+func DeletedAtIsNil() predicate.Organization {
+	return predicate.Organization(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deletedAt" field.
+func DeletedAtNotNil() predicate.Organization {
+	return predicate.Organization(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

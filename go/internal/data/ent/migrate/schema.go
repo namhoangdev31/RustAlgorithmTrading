@@ -3617,7 +3617,6 @@ var (
 	// BundlesColumns holds the columns for the "bundles" table.
 	BundlesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "bundle_key", Type: field.TypeString, Unique: true, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "slug", Type: field.TypeString, Unique: true, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
@@ -3658,6 +3657,7 @@ var (
 		{Name: "vercel_deployment_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "vercel_deployment_url", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "active_delivery_mode", Type: field.TypeEnum, Enums: []string{"none", "rollout", "experiment"}, Default: "none"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "active_ab_test_id", Type: field.TypeUUID, Unique: true, Nullable: true},
 		{Name: "active_rollout_id", Type: field.TypeUUID, Unique: true, Nullable: true},
 		{Name: "primary_release_track_id", Type: field.TypeUUID, Unique: true, Nullable: true},
@@ -3698,17 +3698,17 @@ var (
 			{
 				Name:    "bundles_category_status",
 				Unique:  false,
-				Columns: []*schema.Column{BundlesColumns[17], BundlesColumns[29]},
+				Columns: []*schema.Column{BundlesColumns[16], BundlesColumns[28]},
 			},
 			{
 				Name:    "bundles_created_at",
 				Unique:  false,
-				Columns: []*schema.Column{BundlesColumns[37]},
+				Columns: []*schema.Column{BundlesColumns[36]},
 			},
 			{
 				Name:    "bundles_status",
 				Unique:  false,
-				Columns: []*schema.Column{BundlesColumns[29]},
+				Columns: []*schema.Column{BundlesColumns[28]},
 			},
 		},
 	}
@@ -5117,7 +5117,6 @@ var (
 	// NotificationsColumns holds the columns for the "notifications" table.
 	NotificationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "title", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "body", Type: field.TypeString, Nullable: true},
 		{Name: "type", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(50)"}},
@@ -5128,6 +5127,7 @@ var (
 		{Name: "metadata", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "deletedAt", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "actor_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "recipient_id", Type: field.TypeUUID},
 	}
@@ -5172,11 +5172,11 @@ var (
 	// OrganizationsColumns holds the columns for the "organizations" table.
 	OrganizationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"personal", "corporate"}},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "user_id", Type: field.TypeUUID},
 	}
 	// OrganizationsTable holds the schema information for the "organizations" table.
@@ -5196,7 +5196,7 @@ var (
 			{
 				Name:    "organization_user_id_type",
 				Unique:  true,
-				Columns: []*schema.Column{OrganizationsColumns[6], OrganizationsColumns[3]},
+				Columns: []*schema.Column{OrganizationsColumns[6], OrganizationsColumns[2]},
 			},
 		},
 	}
@@ -5298,13 +5298,13 @@ var (
 	// ProjectsColumns holds the columns for the "projects" table.
 	ProjectsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "name", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "vercel_project_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "vercel_project_name", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "active_native_deployment_id", Type: field.TypeString, Nullable: true},
 		{Name: "organization_id", Type: field.TypeUUID},
 	}
@@ -5480,10 +5480,10 @@ var (
 	// SessionsColumns holds the columns for the "sessions" table.
 	SessionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "hash", Type: field.TypeString, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "deletedAt", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "user_id", Type: field.TypeUUID},
 	}
 	// SessionsTable holds the schema information for the "sessions" table.
@@ -5530,22 +5530,22 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "password", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "provider", Type: field.TypeString, Default: "email", SchemaType: map[string]string{"postgres": "varchar(255)"}},
-		{Name: "social_id", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
-		{Name: "first_name", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
-		{Name: "last_name", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
-		{Name: "full_name", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "socialId", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "firstName", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "lastName", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
+		{Name: "fullName", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
 		{Name: "phone", Type: field.TypeString, Unique: true, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(255)"}},
-		{Name: "date_of_birth", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "dateOfBirth", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
 		{Name: "gender", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(50)"}},
-		{Name: "user_type", Type: field.TypeString, Default: "individual", SchemaType: map[string]string{"postgres": "varchar(50)"}},
-		{Name: "register_type", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(50)"}},
-		{Name: "created_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
-		{Name: "updated_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
-		{Name: "photo_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "userType", Type: field.TypeString, Default: "individual", SchemaType: map[string]string{"postgres": "varchar(50)"}},
+		{Name: "registerType", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"postgres": "varchar(50)"}},
+		{Name: "createdAt", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "updatedAt", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "deletedAt", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"postgres": "timestamp(6)"}},
+		{Name: "photoId", Type: field.TypeUUID, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

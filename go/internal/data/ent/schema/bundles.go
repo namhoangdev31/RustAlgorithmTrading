@@ -70,6 +70,7 @@ func (Bundles) Fields() []ent.Field {
 		field.UUID("activeAbTestId", uuid.UUID{}).StorageKey("active_ab_test_id").Optional().Nillable(),
 		field.UUID("activeRolloutId", uuid.UUID{}).StorageKey("active_rollout_id").Optional().Nillable(),
 		field.Enum("activeDeliveryMode").GoType(BundleDeliveryMode("")).StorageKey("active_delivery_mode").Default("none"),
+		field.Time("deletedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("deleted_at").Optional().Nillable(),
 	}
 }
 

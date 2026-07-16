@@ -56,11 +56,6 @@ func IDLTE(id uuid.UUID) predicate.Notifications {
 	return predicate.Notifications(sql.FieldLTE(FieldID, id))
 }
 
-// DeletedAt applies equality check predicate on the "deletedAt" field. It's identical to DeletedAtEQ.
-func DeletedAt(v time.Time) predicate.Notifications {
-	return predicate.Notifications(sql.FieldEQ(FieldDeletedAt, v))
-}
-
 // Title applies equality check predicate on the "title" field. It's identical to TitleEQ.
 func Title(v string) predicate.Notifications {
 	return predicate.Notifications(sql.FieldEQ(FieldTitle, v))
@@ -121,54 +116,9 @@ func UpdatedAt(v time.Time) predicate.Notifications {
 	return predicate.Notifications(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// DeletedAtEQ applies the EQ predicate on the "deletedAt" field.
-func DeletedAtEQ(v time.Time) predicate.Notifications {
+// DeletedAt applies equality check predicate on the "deletedAt" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.Notifications {
 	return predicate.Notifications(sql.FieldEQ(FieldDeletedAt, v))
-}
-
-// DeletedAtNEQ applies the NEQ predicate on the "deletedAt" field.
-func DeletedAtNEQ(v time.Time) predicate.Notifications {
-	return predicate.Notifications(sql.FieldNEQ(FieldDeletedAt, v))
-}
-
-// DeletedAtIn applies the In predicate on the "deletedAt" field.
-func DeletedAtIn(vs ...time.Time) predicate.Notifications {
-	return predicate.Notifications(sql.FieldIn(FieldDeletedAt, vs...))
-}
-
-// DeletedAtNotIn applies the NotIn predicate on the "deletedAt" field.
-func DeletedAtNotIn(vs ...time.Time) predicate.Notifications {
-	return predicate.Notifications(sql.FieldNotIn(FieldDeletedAt, vs...))
-}
-
-// DeletedAtGT applies the GT predicate on the "deletedAt" field.
-func DeletedAtGT(v time.Time) predicate.Notifications {
-	return predicate.Notifications(sql.FieldGT(FieldDeletedAt, v))
-}
-
-// DeletedAtGTE applies the GTE predicate on the "deletedAt" field.
-func DeletedAtGTE(v time.Time) predicate.Notifications {
-	return predicate.Notifications(sql.FieldGTE(FieldDeletedAt, v))
-}
-
-// DeletedAtLT applies the LT predicate on the "deletedAt" field.
-func DeletedAtLT(v time.Time) predicate.Notifications {
-	return predicate.Notifications(sql.FieldLT(FieldDeletedAt, v))
-}
-
-// DeletedAtLTE applies the LTE predicate on the "deletedAt" field.
-func DeletedAtLTE(v time.Time) predicate.Notifications {
-	return predicate.Notifications(sql.FieldLTE(FieldDeletedAt, v))
-}
-
-// DeletedAtIsNil applies the IsNil predicate on the "deletedAt" field.
-func DeletedAtIsNil() predicate.Notifications {
-	return predicate.Notifications(sql.FieldIsNull(FieldDeletedAt))
-}
-
-// DeletedAtNotNil applies the NotNil predicate on the "deletedAt" field.
-func DeletedAtNotNil() predicate.Notifications {
-	return predicate.Notifications(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // TitleEQ applies the EQ predicate on the "title" field.
@@ -764,6 +714,56 @@ func UpdatedAtLT(v time.Time) predicate.Notifications {
 // UpdatedAtLTE applies the LTE predicate on the "updatedAt" field.
 func UpdatedAtLTE(v time.Time) predicate.Notifications {
 	return predicate.Notifications(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// DeletedAtEQ applies the EQ predicate on the "deletedAt" field.
+func DeletedAtEQ(v time.Time) predicate.Notifications {
+	return predicate.Notifications(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtNEQ applies the NEQ predicate on the "deletedAt" field.
+func DeletedAtNEQ(v time.Time) predicate.Notifications {
+	return predicate.Notifications(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deletedAt" field.
+func DeletedAtIn(vs ...time.Time) predicate.Notifications {
+	return predicate.Notifications(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deletedAt" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.Notifications {
+	return predicate.Notifications(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deletedAt" field.
+func DeletedAtGT(v time.Time) predicate.Notifications {
+	return predicate.Notifications(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deletedAt" field.
+func DeletedAtGTE(v time.Time) predicate.Notifications {
+	return predicate.Notifications(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deletedAt" field.
+func DeletedAtLT(v time.Time) predicate.Notifications {
+	return predicate.Notifications(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deletedAt" field.
+func DeletedAtLTE(v time.Time) predicate.Notifications {
+	return predicate.Notifications(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deletedAt" field.
+func DeletedAtIsNil() predicate.Notifications {
+	return predicate.Notifications(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deletedAt" field.
+func DeletedAtNotNil() predicate.Notifications {
+	return predicate.Notifications(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // HasActor applies the HasEdge predicate on the "actor" edge.

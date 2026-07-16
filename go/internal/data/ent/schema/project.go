@@ -33,6 +33,7 @@ func (Project) Fields() []ent.Field {
 		field.String("activeNativeDeploymentId").StorageKey("active_native_deployment_id").Optional().Nillable(),
 		field.Time("createdAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("created_at"),
 		field.Time("updatedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("updated_at"),
+		field.Time("deletedAt").SchemaType(map[string]string{dialect.Postgres: "timestamp(6)"}).StorageKey("deleted_at").Optional().Nillable(),
 	}
 }
 

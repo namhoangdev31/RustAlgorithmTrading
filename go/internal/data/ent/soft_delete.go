@@ -32,7 +32,7 @@ func SoftDeleteInterceptor() baseent.Interceptor {
 		}
 		switch q := query.(type) {
 		case *UserQuery:
-			q.Where(sql.FieldIsNull("deleted_at"))
+			q.Where(sql.FieldIsNull("deletedAt"))
 		case *OrganizationQuery:
 			q.Where(sql.FieldIsNull("deleted_at"))
 		case *ProjectQuery:
@@ -40,9 +40,9 @@ func SoftDeleteInterceptor() baseent.Interceptor {
 		case *BundlesQuery:
 			q.Where(sql.FieldIsNull("deleted_at"))
 		case *NotificationsQuery:
-			q.Where(sql.FieldIsNull("deleted_at"))
+			q.Where(sql.FieldIsNull("deletedAt"))
 		case *SessionQuery:
-			q.Where(sql.FieldIsNull("deleted_at"))
+			q.Where(sql.FieldIsNull("deletedAt"))
 		}
 		return nil
 	})

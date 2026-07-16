@@ -65,26 +65,6 @@ func (_u *ProjectUpdate) Where(ps ...predicate.Project) *ProjectUpdate {
 	return _u
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (_u *ProjectUpdate) SetDeletedAt(v time.Time) *ProjectUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_u *ProjectUpdate) SetNillableDeletedAt(v *time.Time) *ProjectUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (_u *ProjectUpdate) ClearDeletedAt() *ProjectUpdate {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetName sets the "name" field.
 func (_u *ProjectUpdate) SetName(v string) *ProjectUpdate {
 	_u.mutation.SetName(v)
@@ -218,6 +198,26 @@ func (_u *ProjectUpdate) SetNillableUpdatedAt(v *time.Time) *ProjectUpdate {
 	if v != nil {
 		_u.SetUpdatedAt(*v)
 	}
+	return _u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_u *ProjectUpdate) SetDeletedAt(v time.Time) *ProjectUpdate {
+	_u.mutation.SetDeletedAt(v)
+	return _u
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_u *ProjectUpdate) SetNillableDeletedAt(v *time.Time) *ProjectUpdate {
+	if v != nil {
+		_u.SetDeletedAt(*v)
+	}
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (_u *ProjectUpdate) ClearDeletedAt() *ProjectUpdate {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -1501,12 +1501,6 @@ func (_u *ProjectUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(project.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(project.FieldName, field.TypeString, value)
 	}
@@ -1533,6 +1527,12 @@ func (_u *ProjectUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(project.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -3080,26 +3080,6 @@ type ProjectUpdateOne struct {
 	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (_u *ProjectUpdateOne) SetDeletedAt(v time.Time) *ProjectUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_u *ProjectUpdateOne) SetNillableDeletedAt(v *time.Time) *ProjectUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (_u *ProjectUpdateOne) ClearDeletedAt() *ProjectUpdateOne {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetName sets the "name" field.
 func (_u *ProjectUpdateOne) SetName(v string) *ProjectUpdateOne {
 	_u.mutation.SetName(v)
@@ -3233,6 +3213,26 @@ func (_u *ProjectUpdateOne) SetNillableUpdatedAt(v *time.Time) *ProjectUpdateOne
 	if v != nil {
 		_u.SetUpdatedAt(*v)
 	}
+	return _u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_u *ProjectUpdateOne) SetDeletedAt(v time.Time) *ProjectUpdateOne {
+	_u.mutation.SetDeletedAt(v)
+	return _u
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_u *ProjectUpdateOne) SetNillableDeletedAt(v *time.Time) *ProjectUpdateOne {
+	if v != nil {
+		_u.SetDeletedAt(*v)
+	}
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (_u *ProjectUpdateOne) ClearDeletedAt() *ProjectUpdateOne {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -4546,12 +4546,6 @@ func (_u *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err er
 			}
 		}
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(project.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(project.FieldName, field.TypeString, value)
 	}
@@ -4578,6 +4572,12 @@ func (_u *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err er
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(project.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{

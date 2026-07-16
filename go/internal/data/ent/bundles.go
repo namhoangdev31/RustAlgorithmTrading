@@ -31,8 +31,6 @@ type Bundles struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
-	// DeletedAt holds the value of the "deletedAt" field.
-	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	// BundleKey holds the value of the "bundleKey" field.
 	BundleKey *string `json:"bundleKey,omitempty"`
 	// Name holds the value of the "name" field.
@@ -121,6 +119,8 @@ type Bundles struct {
 	ActiveRolloutId *uuid.UUID `json:"activeRolloutId,omitempty"`
 	// ActiveDeliveryMode holds the value of the "activeDeliveryMode" field.
 	ActiveDeliveryMode schema.BundleDeliveryMode `json:"activeDeliveryMode,omitempty"`
+	// DeletedAt holds the value of the "deletedAt" field.
+	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BundlesQuery when eager-loading is set.
 	Edges        BundlesEdges `json:"edges"`
@@ -932,7 +932,7 @@ func (*Bundles) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case bundles.FieldBundleKey, bundles.FieldName, bundles.FieldSlug, bundles.FieldVersion, bundles.FieldIconUrl, bundles.FieldBannerUrl, bundles.FieldShortDescription, bundles.FieldDescription, bundles.FieldPrivacyPolicyUrl, bundles.FieldSupportUrl, bundles.FieldWebsiteUrl, bundles.FieldDeveloperName, bundles.FieldDeveloperEmail, bundles.FieldCategory, bundles.FieldSubCategory, bundles.FieldStoragePath, bundles.FieldBucket, bundles.FieldChecksum, bundles.FieldCurrency, bundles.FieldStatus, bundles.FieldRejectionReason, bundles.FieldChangelog, bundles.FieldReleaseNotes, bundles.FieldAgeRating, bundles.FieldContentAdvisory, bundles.FieldVercelDeploymentId, bundles.FieldVercelDeploymentUrl, bundles.FieldActiveDeliveryMode:
 			values[i] = new(sql.NullString)
-		case bundles.FieldDeletedAt, bundles.FieldPublishedAt, bundles.FieldExpiresAt, bundles.FieldCreatedAt, bundles.FieldUpdatedAt:
+		case bundles.FieldPublishedAt, bundles.FieldExpiresAt, bundles.FieldCreatedAt, bundles.FieldUpdatedAt, bundles.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		case bundles.FieldID:
 			values[i] = new(uuid.UUID)
@@ -956,13 +956,6 @@ func (_m *Bundles) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
 				_m.ID = *value
-			}
-		case bundles.FieldDeletedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field deletedAt", values[i])
-			} else if value.Valid {
-				_m.DeletedAt = new(time.Time)
-				*_m.DeletedAt = value.Time
 			}
 		case bundles.FieldBundleKey:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -1258,6 +1251,13 @@ func (_m *Bundles) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field activeDeliveryMode", values[i])
 			} else if value.Valid {
 				_m.ActiveDeliveryMode = schema.BundleDeliveryMode(value.String)
+			}
+		case bundles.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deletedAt", values[i])
+			} else if value.Valid {
+				_m.DeletedAt = new(time.Time)
+				*_m.DeletedAt = value.Time
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -1640,11 +1640,6 @@ func (_m *Bundles) String() string {
 	var builder strings.Builder
 	builder.WriteString("Bundles(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
-	if v := _m.DeletedAt; v != nil {
-		builder.WriteString("deletedAt=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
-	builder.WriteString(", ")
 	if v := _m.BundleKey; v != nil {
 		builder.WriteString("bundleKey=")
 		builder.WriteString(*v)
@@ -1838,6 +1833,11 @@ func (_m *Bundles) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("activeDeliveryMode=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ActiveDeliveryMode))
+	builder.WriteString(", ")
+	if v := _m.DeletedAt; v != nil {
+		builder.WriteString("deletedAt=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

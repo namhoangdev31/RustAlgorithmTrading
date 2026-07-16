@@ -12,8 +12,6 @@ const (
 	Label = "notifications"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldDeletedAt holds the string denoting the deletedat field in the database.
-	FieldDeletedAt = "deleted_at"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
 	// FieldBody holds the string denoting the body field in the database.
@@ -38,6 +36,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updatedat field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldDeletedAt holds the string denoting the deletedat field in the database.
+	FieldDeletedAt = "deletedAt"
 	// EdgeActor holds the string denoting the actor edge name in mutations.
 	EdgeActor = "actor"
 	// EdgeRecipient holds the string denoting the recipient edge name in mutations.
@@ -63,7 +63,6 @@ const (
 // Columns holds all SQL columns for notifications fields.
 var Columns = []string{
 	FieldID,
-	FieldDeletedAt,
 	FieldTitle,
 	FieldBody,
 	FieldType,
@@ -76,6 +75,7 @@ var Columns = []string{
 	FieldMetadata,
 	FieldCreatedAt,
 	FieldUpdatedAt,
+	FieldDeletedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -99,11 +99,6 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
-}
-
-// ByDeletedAt orders the results by the deletedAt field.
-func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
 // ByTitle orders the results by the title field.
@@ -164,6 +159,11 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedAt orders the results by the updatedAt field.
 func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDeletedAt orders the results by the deletedAt field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
 // ByActorField orders the results by actor field.

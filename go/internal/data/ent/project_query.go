@@ -1562,12 +1562,12 @@ func (_q *ProjectQuery) WithCanonicalBuildJobs(opts ...func(*BundleBuildJobsQuer
 // Example:
 //
 //	var v []struct {
-//		DeletedAt time.Time `json:"deletedAt,omitempty"`
+//		Name string `json:"name,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Project.Query().
-//		GroupBy(project.FieldDeletedAt).
+//		GroupBy(project.FieldName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *ProjectQuery) GroupBy(field string, fields ...string) *ProjectGroupBy {
@@ -1585,11 +1585,11 @@ func (_q *ProjectQuery) GroupBy(field string, fields ...string) *ProjectGroupBy 
 // Example:
 //
 //	var v []struct {
-//		DeletedAt time.Time `json:"deletedAt,omitempty"`
+//		Name string `json:"name,omitempty"`
 //	}
 //
 //	client.Project.Query().
-//		Select(project.FieldDeletedAt).
+//		Select(project.FieldName).
 //		Scan(ctx, &v)
 func (_q *ProjectQuery) Select(fields ...string) *ProjectSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

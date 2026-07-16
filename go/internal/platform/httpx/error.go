@@ -1,6 +1,7 @@
 package httpx
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,7 @@ import (
 )
 
 func WriteError(c *gin.Context, err error) {
+	log.Printf("[HTTPX_ERROR] Handler failed with error: %+v", err)
 	status := http.StatusInternalServerError
 	message := "internal server error"
 	switch {

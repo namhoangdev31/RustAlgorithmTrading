@@ -791,6 +791,7 @@ dependencies = [
  "metrics",
  "mockall",
  "rand 0.8.5",
+ "redis",
  "reqwest",
  "risk-manager",
  "serde",

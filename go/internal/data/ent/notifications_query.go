@@ -337,12 +337,12 @@ func (_q *NotificationsQuery) WithRecipient(opts ...func(*UserQuery)) *Notificat
 // Example:
 //
 //	var v []struct {
-//		DeletedAt time.Time `json:"deletedAt,omitempty"`
+//		Title string `json:"title,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Notifications.Query().
-//		GroupBy(notifications.FieldDeletedAt).
+//		GroupBy(notifications.FieldTitle).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *NotificationsQuery) GroupBy(field string, fields ...string) *NotificationsGroupBy {
@@ -360,11 +360,11 @@ func (_q *NotificationsQuery) GroupBy(field string, fields ...string) *Notificat
 // Example:
 //
 //	var v []struct {
-//		DeletedAt time.Time `json:"deletedAt,omitempty"`
+//		Title string `json:"title,omitempty"`
 //	}
 //
 //	client.Notifications.Query().
-//		Select(notifications.FieldDeletedAt).
+//		Select(notifications.FieldTitle).
 //		Scan(ctx, &v)
 func (_q *NotificationsQuery) Select(fields ...string) *NotificationsSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

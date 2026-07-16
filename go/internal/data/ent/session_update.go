@@ -31,26 +31,6 @@ func (_u *SessionUpdate) Where(ps ...predicate.Session) *SessionUpdate {
 	return _u
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (_u *SessionUpdate) SetDeletedAt(v time.Time) *SessionUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_u *SessionUpdate) SetNillableDeletedAt(v *time.Time) *SessionUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (_u *SessionUpdate) ClearDeletedAt() *SessionUpdate {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetUserId sets the "userId" field.
 func (_u *SessionUpdate) SetUserId(v uuid.UUID) *SessionUpdate {
 	_u.mutation.SetUserId(v)
@@ -104,6 +84,26 @@ func (_u *SessionUpdate) SetNillableUpdatedAt(v *time.Time) *SessionUpdate {
 	if v != nil {
 		_u.SetUpdatedAt(*v)
 	}
+	return _u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_u *SessionUpdate) SetDeletedAt(v time.Time) *SessionUpdate {
+	_u.mutation.SetDeletedAt(v)
+	return _u
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_u *SessionUpdate) SetNillableDeletedAt(v *time.Time) *SessionUpdate {
+	if v != nil {
+		_u.SetDeletedAt(*v)
+	}
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (_u *SessionUpdate) ClearDeletedAt() *SessionUpdate {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -182,12 +182,6 @@ func (_u *SessionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(session.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(session.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.Hash(); ok {
 		_spec.SetField(session.FieldHash, field.TypeString, value)
 	}
@@ -196,6 +190,12 @@ func (_u *SessionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(session.FieldDeletedAt, field.TypeTime, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(session.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -246,26 +246,6 @@ type SessionUpdateOne struct {
 	hooks     []Hook
 	mutation  *SessionMutation
 	modifiers []func(*sql.UpdateBuilder)
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (_u *SessionUpdateOne) SetDeletedAt(v time.Time) *SessionUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_u *SessionUpdateOne) SetNillableDeletedAt(v *time.Time) *SessionUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (_u *SessionUpdateOne) ClearDeletedAt() *SessionUpdateOne {
-	_u.mutation.ClearDeletedAt()
-	return _u
 }
 
 // SetUserId sets the "userId" field.
@@ -321,6 +301,26 @@ func (_u *SessionUpdateOne) SetNillableUpdatedAt(v *time.Time) *SessionUpdateOne
 	if v != nil {
 		_u.SetUpdatedAt(*v)
 	}
+	return _u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_u *SessionUpdateOne) SetDeletedAt(v time.Time) *SessionUpdateOne {
+	_u.mutation.SetDeletedAt(v)
+	return _u
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_u *SessionUpdateOne) SetNillableDeletedAt(v *time.Time) *SessionUpdateOne {
+	if v != nil {
+		_u.SetDeletedAt(*v)
+	}
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (_u *SessionUpdateOne) ClearDeletedAt() *SessionUpdateOne {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -429,12 +429,6 @@ func (_u *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err er
 			}
 		}
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(session.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(session.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.Hash(); ok {
 		_spec.SetField(session.FieldHash, field.TypeString, value)
 	}
@@ -443,6 +437,12 @@ func (_u *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err er
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(session.FieldDeletedAt, field.TypeTime, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(session.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

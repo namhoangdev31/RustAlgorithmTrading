@@ -1,6 +1,6 @@
 pub mod broker;
 pub mod command;
-pub mod nats_consumer;
+pub mod redis_consumer;
 pub mod reconciliation;
 pub mod retry;
 /// Execution Engine Component

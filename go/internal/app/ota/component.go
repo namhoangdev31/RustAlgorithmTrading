@@ -8,7 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nats-io/nats.go"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/sync/errgroup"
 
@@ -52,7 +51,6 @@ type Component struct {
 	checks          []health.DependencyCheck
 	postgres        *database.Postgres
 	redis           *redis.Client
-	nats            *nats.Conn
 	closeOnce       sync.Once
 }
 
@@ -83,13 +81,9 @@ func Build(ctx context.Context, cfg *config.Config) (*Component, error) {
 		}
 	}
 
-	var jetStream *events.JetStreamPublisher
-	if cfg.Events.NATSURL != "" {
-		component.nats, err = nats.Connect(cfg.Events.NATSURL)
-		if err != nil {
-			return nil, fmt.Errorf("connect ota nats: %w", err)
-		}
-		jetStream, err = events.NewJetStreamPublisher(component.nats, cfg.Events.SubjectPrefix, cfg.Events.StreamName)
+	var redisStreamPublisher *events.RedisPublisher
+	if component.redis != nil {
+		redisStreamPublisher, err = events.NewRedisPublisher(component.redis, cfg.Events.StreamName)
 		if err != nil {
 			return nil, err
 		}
@@ -122,8 +116,8 @@ func Build(ctx context.Context, cfg *config.Config) (*Component, error) {
 
 	localBus := events.NewLocalBus()
 	var remote events.Publisher
-	if jetStream != nil {
-		remote = jetStream
+	if redisStreamPublisher != nil {
+		remote = redisStreamPublisher
 	}
 	component.dispatcher = events.NewDispatcher(events.NewOutboxStore(postgres), events.NewCompositePublisher(localBus, remote), events.DispatcherConfig{
 		Interval: cfg.Events.OutboxInterval, LeaseTTL: cfg.Events.OutboxLeaseTTL,
@@ -146,12 +140,9 @@ func Build(ctx context.Context, cfg *config.Config) (*Component, error) {
 			return component.redis.Ping(context.Background()).Err()
 		}})
 	}
-	if cfg.Events.NATSURL != "" {
-		component.checks = append(component.checks, health.DependencyCheck{Name: "ota_jetstream", Required: true, Check: func() error {
-			if component.nats == nil || !component.nats.IsConnected() || jetStream == nil {
-				return errors.New("jetstream not connected")
-			}
-			return jetStream.Check(context.Background())
+	if redisStreamPublisher != nil {
+		component.checks = append(component.checks, health.DependencyCheck{Name: "ota_redis_streams", Required: true, Check: func() error {
+			return redisStreamPublisher.Check(context.Background())
 		}})
 	}
 	if cfg.Storefront.Enabled {
@@ -234,9 +225,6 @@ func (c *Component) Run(ctx context.Context) error {
 func (c *Component) Close() error {
 	var closeErr error
 	c.closeOnce.Do(func() {
-		if c.nats != nil {
-			c.nats.Close()
-		}
 		if c.redis != nil {
 			closeErr = errors.Join(closeErr, c.redis.Close())
 		}

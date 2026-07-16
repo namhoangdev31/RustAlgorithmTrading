@@ -483,12 +483,12 @@ func (_q *OrganizationQuery) WithProviderConnections(opts ...func(*WorkspaceProv
 // Example:
 //
 //	var v []struct {
-//		DeletedAt time.Time `json:"deletedAt,omitempty"`
+//		Name string `json:"name,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Organization.Query().
-//		GroupBy(organization.FieldDeletedAt).
+//		GroupBy(organization.FieldName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *OrganizationQuery) GroupBy(field string, fields ...string) *OrganizationGroupBy {
@@ -506,11 +506,11 @@ func (_q *OrganizationQuery) GroupBy(field string, fields ...string) *Organizati
 // Example:
 //
 //	var v []struct {
-//		DeletedAt time.Time `json:"deletedAt,omitempty"`
+//		Name string `json:"name,omitempty"`
 //	}
 //
 //	client.Organization.Query().
-//		Select(organization.FieldDeletedAt).
+//		Select(organization.FieldName).
 //		Scan(ctx, &v)
 func (_q *OrganizationQuery) Select(fields ...string) *OrganizationSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

@@ -223,8 +223,8 @@ func (c *Config) ValidateQuant() error {
 		if !c.Storefront.Enabled {
 			return errors.New("QUANTANT_ENABLED requires STOREFRONT_API_ENABLED for JWT identity")
 		}
-		if strings.TrimSpace(c.Events.NATSURL) == "" {
-			return errors.New("QUANTANT_ENABLED requires NATS_URL")
+		if strings.TrimSpace(c.Storage.RedisURL) == "" {
+			return errors.New("QUANTANT_ENABLED requires REDIS_URL")
 		}
 		if c.QuantAnt.LiveEnabled && c.QuantAnt.LiveSessionTTL > 5*time.Minute {
 			return errors.New("QUANTANT_LIVE_SESSION_TTL must not exceed 5m")

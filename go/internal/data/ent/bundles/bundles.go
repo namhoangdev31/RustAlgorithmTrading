@@ -15,8 +15,6 @@ const (
 	Label = "bundles"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldDeletedAt holds the string denoting the deletedat field in the database.
-	FieldDeletedAt = "deleted_at"
 	// FieldBundleKey holds the string denoting the bundlekey field in the database.
 	FieldBundleKey = "bundle_key"
 	// FieldName holds the string denoting the name field in the database.
@@ -105,6 +103,8 @@ const (
 	FieldActiveRolloutId = "active_rollout_id"
 	// FieldActiveDeliveryMode holds the string denoting the activedeliverymode field in the database.
 	FieldActiveDeliveryMode = "active_delivery_mode"
+	// FieldDeletedAt holds the string denoting the deletedat field in the database.
+	FieldDeletedAt = "deleted_at"
 	// EdgeProject holds the string denoting the project edge name in mutations.
 	EdgeProject = "project"
 	// EdgeAbTests holds the string denoting the abtests edge name in mutations.
@@ -733,7 +733,6 @@ const (
 // Columns holds all SQL columns for bundles fields.
 var Columns = []string{
 	FieldID,
-	FieldDeletedAt,
 	FieldBundleKey,
 	FieldName,
 	FieldSlug,
@@ -778,6 +777,7 @@ var Columns = []string{
 	FieldActiveAbTestId,
 	FieldActiveRolloutId,
 	FieldActiveDeliveryMode,
+	FieldDeletedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -835,11 +835,6 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
-}
-
-// ByDeletedAt orders the results by the deletedAt field.
-func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
 // ByBundleKey orders the results by the bundleKey field.
@@ -1060,6 +1055,11 @@ func ByActiveRolloutId(opts ...sql.OrderTermOption) OrderOption {
 // ByActiveDeliveryMode orders the results by the activeDeliveryMode field.
 func ByActiveDeliveryMode(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldActiveDeliveryMode, opts...).ToFunc()
+}
+
+// ByDeletedAt orders the results by the deletedAt field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
 // ByProjectField orders the results by project field.

@@ -25,20 +25,6 @@ type SessionCreate struct {
 	conflict []sql.ConflictOption
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (_c *SessionCreate) SetDeletedAt(v time.Time) *SessionCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_c *SessionCreate) SetNillableDeletedAt(v *time.Time) *SessionCreate {
-	if v != nil {
-		_c.SetDeletedAt(*v)
-	}
-	return _c
-}
-
 // SetUserId sets the "userId" field.
 func (_c *SessionCreate) SetUserId(v uuid.UUID) *SessionCreate {
 	_c.mutation.SetUserId(v)
@@ -60,6 +46,20 @@ func (_c *SessionCreate) SetCreatedAt(v time.Time) *SessionCreate {
 // SetUpdatedAt sets the "updatedAt" field.
 func (_c *SessionCreate) SetUpdatedAt(v time.Time) *SessionCreate {
 	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_c *SessionCreate) SetDeletedAt(v time.Time) *SessionCreate {
+	_c.mutation.SetDeletedAt(v)
+	return _c
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_c *SessionCreate) SetNillableDeletedAt(v *time.Time) *SessionCreate {
+	if v != nil {
+		_c.SetDeletedAt(*v)
+	}
 	return _c
 }
 
@@ -165,10 +165,6 @@ func (_c *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(session.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
-	}
 	if value, ok := _c.mutation.Hash(); ok {
 		_spec.SetField(session.FieldHash, field.TypeString, value)
 		_node.Hash = value
@@ -180,6 +176,10 @@ func (_c *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := _c.mutation.DeletedAt(); ok {
+		_spec.SetField(session.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = &value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -205,7 +205,7 @@ func (_c *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Session.Create().
-//		SetDeletedAt(v).
+//		SetUserId(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -214,7 +214,7 @@ func (_c *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.SessionUpsert) {
-//			SetDeletedAt(v+v).
+//			SetUserId(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *SessionCreate) OnConflict(opts ...sql.ConflictOption) *SessionUpsertOne {
@@ -249,24 +249,6 @@ type (
 		*sql.UpdateSet
 	}
 )
-
-// SetDeletedAt sets the "deletedAt" field.
-func (u *SessionUpsert) SetDeletedAt(v time.Time) *SessionUpsert {
-	u.Set(session.FieldDeletedAt, v)
-	return u
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *SessionUpsert) UpdateDeletedAt() *SessionUpsert {
-	u.SetExcluded(session.FieldDeletedAt)
-	return u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *SessionUpsert) ClearDeletedAt() *SessionUpsert {
-	u.SetNull(session.FieldDeletedAt)
-	return u
-}
 
 // SetUserId sets the "userId" field.
 func (u *SessionUpsert) SetUserId(v uuid.UUID) *SessionUpsert {
@@ -316,6 +298,24 @@ func (u *SessionUpsert) UpdateUpdatedAt() *SessionUpsert {
 	return u
 }
 
+// SetDeletedAt sets the "deletedAt" field.
+func (u *SessionUpsert) SetDeletedAt(v time.Time) *SessionUpsert {
+	u.Set(session.FieldDeletedAt, v)
+	return u
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *SessionUpsert) UpdateDeletedAt() *SessionUpsert {
+	u.SetExcluded(session.FieldDeletedAt)
+	return u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *SessionUpsert) ClearDeletedAt() *SessionUpsert {
+	u.SetNull(session.FieldDeletedAt)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -362,27 +362,6 @@ func (u *SessionUpsertOne) Update(set func(*SessionUpsert)) *SessionUpsertOne {
 		set(&SessionUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetDeletedAt sets the "deletedAt" field.
-func (u *SessionUpsertOne) SetDeletedAt(v time.Time) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetDeletedAt(v)
-	})
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *SessionUpsertOne) UpdateDeletedAt() *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateDeletedAt()
-	})
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *SessionUpsertOne) ClearDeletedAt() *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.ClearDeletedAt()
-	})
 }
 
 // SetUserId sets the "userId" field.
@@ -438,6 +417,27 @@ func (u *SessionUpsertOne) SetUpdatedAt(v time.Time) *SessionUpsertOne {
 func (u *SessionUpsertOne) UpdateUpdatedAt() *SessionUpsertOne {
 	return u.Update(func(s *SessionUpsert) {
 		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *SessionUpsertOne) SetDeletedAt(v time.Time) *SessionUpsertOne {
+	return u.Update(func(s *SessionUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *SessionUpsertOne) UpdateDeletedAt() *SessionUpsertOne {
+	return u.Update(func(s *SessionUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *SessionUpsertOne) ClearDeletedAt() *SessionUpsertOne {
+	return u.Update(func(s *SessionUpsert) {
+		s.ClearDeletedAt()
 	})
 }
 
@@ -576,7 +576,7 @@ func (_c *SessionCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.SessionUpsert) {
-//			SetDeletedAt(v+v).
+//			SetUserId(v+v).
 //		}).
 //		Exec(ctx)
 func (_c *SessionCreateBulk) OnConflict(opts ...sql.ConflictOption) *SessionUpsertBulk {
@@ -655,27 +655,6 @@ func (u *SessionUpsertBulk) Update(set func(*SessionUpsert)) *SessionUpsertBulk 
 	return u
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (u *SessionUpsertBulk) SetDeletedAt(v time.Time) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetDeletedAt(v)
-	})
-}
-
-// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
-func (u *SessionUpsertBulk) UpdateDeletedAt() *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateDeletedAt()
-	})
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (u *SessionUpsertBulk) ClearDeletedAt() *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.ClearDeletedAt()
-	})
-}
-
 // SetUserId sets the "userId" field.
 func (u *SessionUpsertBulk) SetUserId(v uuid.UUID) *SessionUpsertBulk {
 	return u.Update(func(s *SessionUpsert) {
@@ -729,6 +708,27 @@ func (u *SessionUpsertBulk) SetUpdatedAt(v time.Time) *SessionUpsertBulk {
 func (u *SessionUpsertBulk) UpdateUpdatedAt() *SessionUpsertBulk {
 	return u.Update(func(s *SessionUpsert) {
 		s.UpdateUpdatedAt()
+	})
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (u *SessionUpsertBulk) SetDeletedAt(v time.Time) *SessionUpsertBulk {
+	return u.Update(func(s *SessionUpsert) {
+		s.SetDeletedAt(v)
+	})
+}
+
+// UpdateDeletedAt sets the "deletedAt" field to the value that was provided on create.
+func (u *SessionUpsertBulk) UpdateDeletedAt() *SessionUpsertBulk {
+	return u.Update(func(s *SessionUpsert) {
+		s.UpdateDeletedAt()
+	})
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (u *SessionUpsertBulk) ClearDeletedAt() *SessionUpsertBulk {
+	return u.Update(func(s *SessionUpsert) {
+		s.ClearDeletedAt()
 	})
 }
 

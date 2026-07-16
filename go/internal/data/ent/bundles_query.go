@@ -2747,12 +2747,12 @@ func (_q *BundlesQuery) WithSdkTokens(opts ...func(*BundleSDKTokensQuery)) *Bund
 // Example:
 //
 //	var v []struct {
-//		DeletedAt time.Time `json:"deletedAt,omitempty"`
+//		BundleKey string `json:"bundleKey,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Bundles.Query().
-//		GroupBy(bundles.FieldDeletedAt).
+//		GroupBy(bundles.FieldBundleKey).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *BundlesQuery) GroupBy(field string, fields ...string) *BundlesGroupBy {
@@ -2770,11 +2770,11 @@ func (_q *BundlesQuery) GroupBy(field string, fields ...string) *BundlesGroupBy 
 // Example:
 //
 //	var v []struct {
-//		DeletedAt time.Time `json:"deletedAt,omitempty"`
+//		BundleKey string `json:"bundleKey,omitempty"`
 //	}
 //
 //	client.Bundles.Query().
-//		Select(bundles.FieldDeletedAt).
+//		Select(bundles.FieldBundleKey).
 //		Scan(ctx, &v)
 func (_q *BundlesQuery) Select(fields ...string) *BundlesSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

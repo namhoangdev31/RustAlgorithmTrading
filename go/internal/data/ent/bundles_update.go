@@ -96,26 +96,6 @@ func (_u *BundlesUpdate) Where(ps ...predicate.Bundles) *BundlesUpdate {
 	return _u
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (_u *BundlesUpdate) SetDeletedAt(v time.Time) *BundlesUpdate {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_u *BundlesUpdate) SetNillableDeletedAt(v *time.Time) *BundlesUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (_u *BundlesUpdate) ClearDeletedAt() *BundlesUpdate {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetBundleKey sets the "bundleKey" field.
 func (_u *BundlesUpdate) SetBundleKey(v string) *BundlesUpdate {
 	_u.mutation.SetBundleKey(v)
@@ -936,6 +916,26 @@ func (_u *BundlesUpdate) SetNillableActiveDeliveryMode(v *schema.BundleDeliveryM
 	if v != nil {
 		_u.SetActiveDeliveryMode(*v)
 	}
+	return _u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_u *BundlesUpdate) SetDeletedAt(v time.Time) *BundlesUpdate {
+	_u.mutation.SetDeletedAt(v)
+	return _u
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_u *BundlesUpdate) SetNillableDeletedAt(v *time.Time) *BundlesUpdate {
+	if v != nil {
+		_u.SetDeletedAt(*v)
+	}
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (_u *BundlesUpdate) ClearDeletedAt() *BundlesUpdate {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -3356,12 +3356,6 @@ func (_u *BundlesUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			}
 		}
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(bundles.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(bundles.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.BundleKey(); ok {
 		_spec.SetField(bundles.FieldBundleKey, field.TypeString, value)
 	}
@@ -3571,6 +3565,12 @@ func (_u *BundlesUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.ActiveDeliveryMode(); ok {
 		_spec.SetField(bundles.FieldActiveDeliveryMode, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(bundles.FieldDeletedAt, field.TypeTime, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(bundles.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.ProjectCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -6507,26 +6507,6 @@ type BundlesUpdateOne struct {
 	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetDeletedAt sets the "deletedAt" field.
-func (_u *BundlesUpdateOne) SetDeletedAt(v time.Time) *BundlesUpdateOne {
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
-func (_u *BundlesUpdateOne) SetNillableDeletedAt(v *time.Time) *BundlesUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// ClearDeletedAt clears the value of the "deletedAt" field.
-func (_u *BundlesUpdateOne) ClearDeletedAt() *BundlesUpdateOne {
-	_u.mutation.ClearDeletedAt()
-	return _u
-}
-
 // SetBundleKey sets the "bundleKey" field.
 func (_u *BundlesUpdateOne) SetBundleKey(v string) *BundlesUpdateOne {
 	_u.mutation.SetBundleKey(v)
@@ -7347,6 +7327,26 @@ func (_u *BundlesUpdateOne) SetNillableActiveDeliveryMode(v *schema.BundleDelive
 	if v != nil {
 		_u.SetActiveDeliveryMode(*v)
 	}
+	return _u
+}
+
+// SetDeletedAt sets the "deletedAt" field.
+func (_u *BundlesUpdateOne) SetDeletedAt(v time.Time) *BundlesUpdateOne {
+	_u.mutation.SetDeletedAt(v)
+	return _u
+}
+
+// SetNillableDeletedAt sets the "deletedAt" field if the given value is not nil.
+func (_u *BundlesUpdateOne) SetNillableDeletedAt(v *time.Time) *BundlesUpdateOne {
+	if v != nil {
+		_u.SetDeletedAt(*v)
+	}
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deletedAt" field.
+func (_u *BundlesUpdateOne) ClearDeletedAt() *BundlesUpdateOne {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -9797,12 +9797,6 @@ func (_u *BundlesUpdateOne) sqlSave(ctx context.Context) (_node *Bundles, err er
 			}
 		}
 	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(bundles.FieldDeletedAt, field.TypeTime, value)
-	}
-	if _u.mutation.DeletedAtCleared() {
-		_spec.ClearField(bundles.FieldDeletedAt, field.TypeTime)
-	}
 	if value, ok := _u.mutation.BundleKey(); ok {
 		_spec.SetField(bundles.FieldBundleKey, field.TypeString, value)
 	}
@@ -10012,6 +10006,12 @@ func (_u *BundlesUpdateOne) sqlSave(ctx context.Context) (_node *Bundles, err er
 	}
 	if value, ok := _u.mutation.ActiveDeliveryMode(); ok {
 		_spec.SetField(bundles.FieldActiveDeliveryMode, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.DeletedAt(); ok {
+		_spec.SetField(bundles.FieldDeletedAt, field.TypeTime, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(bundles.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.ProjectCleared() {
 		edge := &sqlgraph.EdgeSpec{

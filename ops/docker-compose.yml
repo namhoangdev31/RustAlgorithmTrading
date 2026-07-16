@@ -79,23 +79,6 @@ services:
           cpus: '0.1'
           memory: 128M
 
-  nats:
-    image: nats:2.11.6-alpine
-    restart: unless-stopped
-    command: [ "-js", "-sd", "/data", "-m", "8222" ]
-    ports:
-      - "${NATS_CLIENT_PORT:-4222}:4222"
-      - "${NATS_MONITOR_PORT:-8222}:8222"
-    volumes:
-      - nats-data:/data
-    networks:
-      - private
-    healthcheck:
-      test: [ "CMD-SHELL", "wget -qO- http://127.0.0.1:8222/healthz >/dev/null" ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
 
   questdb:
     image: questdb/questdb:9.4.3
@@ -156,18 +139,6 @@ services:
       questdb:
         condition: service_healthy
 
-  postgres-schema-init:
-    image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-frontend:${IMAGE_TAG:-development}
-    build:
-      context: ..
-      dockerfile: ops/deployment/nextjs.Dockerfile
-      target: runner
-    restart: "no"
-    command: [ "npx", "prisma", "db", "push" ]
-    environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql://local_app:local-postgres-password@postgres:5432/rust_algorithm_trading}
-    networks:
-      - private
 
   postgres-integration:
     image: postgres:17-alpine
@@ -261,8 +232,6 @@ services:
     <<: *rust-service
     depends_on:
       redis:
-        condition: service_healthy
-      nats:
         condition: service_healthy
       questdb-schema-init:
         condition: service_completed_successfully
@@ -433,13 +402,8 @@ services:
       - "${EDGE_HTTP_PORT:-8088}:${EDGE_PORT:-8088}"
       - "${EDGE_TLS_PORT:-8443}:${TLS_PORT:-8443}"
     depends_on:
-      postgres-schema-init:
-        condition: service_completed_successfully
       redis:
         condition: service_healthy
-      nats:
-        condition: service_healthy
-
       questdb:
         condition: service_healthy
       trading-core:
@@ -575,8 +539,6 @@ services:
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     depends_on:
-      postgres-schema-init:
-        condition: service_completed_successfully
       redis:
         condition: service_healthy
     healthcheck:
@@ -603,6 +565,5 @@ networks:
 
 volumes:
   questdb-data:
-  nats-data:
   edge-artifact-data:
   redis-data:

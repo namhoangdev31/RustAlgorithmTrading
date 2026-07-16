@@ -1,17 +1,17 @@
 package ws
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
-	"github.com/nats-io/nats.go"
+	redisclient "github.com/redis/go-redis/v9"
 )
 
 type envelope struct {
@@ -30,22 +30,29 @@ type Hub struct {
 	clients  map[*websocket.Conn]chan []byte
 	history  []envelope
 	sequence atomic.Int64
-	sub      *nats.Subscription
+	pubsub   *redisclient.PubSub
 }
 
 var upgrader = websocket.Upgrader{CheckOrigin: func(*http.Request) bool { return true }}
 
-func New(connection *nats.Conn) (*Hub, error) {
+func New(client *redisclient.Client) (*Hub, error) {
 	hub := &Hub{clients: make(map[*websocket.Conn]chan []byte), history: make([]envelope, 0, 2048)}
-	if connection == nil {
+	if client == nil {
 		return hub, nil
 	}
-	sub, err := connection.Subscribe("quantant.>", hub.onMessage)
-	if err != nil {
-		return nil, err
-	}
-	hub.sub = sub
+	pubsub := client.Subscribe(context.Background(), "quantant:events")
+	hub.pubsub = pubsub
+
+	go hub.listenPubSub()
+
 	return hub, nil
+}
+
+func (h *Hub) listenPubSub() {
+	ch := h.pubsub.Channel()
+	for msg := range ch {
+		h.onMessage(msg.Payload)
+	}
 }
 
 func (h *Hub) ServeHTTP(response http.ResponseWriter, request *http.Request) {
@@ -70,21 +77,26 @@ func (h *Hub) ServeHTTP(response http.ResponseWriter, request *http.Request) {
 	go h.reader(connection)
 }
 
-func (h *Hub) onMessage(message *nats.Msg) {
+func (h *Hub) onMessage(dataStr string) {
+	data := []byte(dataStr)
 	sequence := h.sequence.Add(1)
 	item := envelope{
 		SchemaVersion: 1, EventID: uuid.NewString(), Sequence: sequence,
-		Type: strings.TrimPrefix(message.Subject, "quantant."), OccurredAt: time.Now().UTC(),
-		Payload: append(json.RawMessage(nil), message.Data...),
+		Type: "execution", OccurredAt: time.Now().UTC(),
+		Payload: append(json.RawMessage(nil), data...),
 	}
 	var command struct {
 		CommandID string `json:"command_id"`
+		Type      string `json:"type"`
 		Payload   struct {
 			AccountID string `json:"account_id"`
 		} `json:"payload"`
 	}
-	if json.Unmarshal(message.Data, &command) == nil {
+	if json.Unmarshal(data, &command) == nil {
 		item.AggregateID, item.AccountID = command.CommandID, command.Payload.AccountID
+		if command.Type != "" {
+			item.Type = command.Type
+		}
 	}
 	payload, err := json.Marshal(item)
 	if err != nil {
@@ -155,8 +167,8 @@ func (h *Hub) remove(connection *websocket.Conn) {
 }
 
 func (h *Hub) Close() {
-	if h.sub != nil {
-		_ = h.sub.Unsubscribe()
+	if h.pubsub != nil {
+		_ = h.pubsub.Close()
 	}
 	h.mu.Lock()
 	defer h.mu.Unlock()
