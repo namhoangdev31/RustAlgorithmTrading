@@ -1,14 +1,14 @@
 import Foundation
 
 enum AppConfig {
-    static let apiBaseUrl = "https://lepos.vidub.ai/api/v1/"
+    static let apiBaseUrl = "http://192.168.1.53:8081/api/v1/"
     static let quantAntBaseURL = configuredURL(
         key: "QUANTANT_CONTROL_PLANE_URL",
-        fallback: "https://lepos.vidub.ai"
+        fallback: "http://192.168.1.53:8081"
     )
     static let quantAntWebSocketURL = configuredURL(
         key: "QUANTANT_WEBSOCKET_URL",
-        fallback: "wss://lepos.vidub.ai/ws/v1/quantant"
+        fallback: "ws://192.168.1.53:8081/ws/v1/quantant"
     )
     static let environment = "development"
 
