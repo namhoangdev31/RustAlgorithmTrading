@@ -3,6 +3,7 @@ package gateway
 import (
 	"context"
 	"errors"
+	"os"
 
 	"golang.org/x/sync/errgroup"
 
@@ -22,7 +23,7 @@ type App struct{ runners []Runner }
 func Build(ctx context.Context, cfg *config.Config) (*App, error) {
 	runners := make([]Runner, 0, 4)
 	var edge *edgeapp.App
-	workerRole := cfg.RunMode == "lepoship-worker" || cfg.RunMode == "both" || cfg.RunMode == "control-plane"
+	workerRole := (cfg.RunMode == "lepoship-worker" || cfg.RunMode == "both" || cfg.RunMode == "control-plane") && os.Getenv("LEPOSHIP_DISABLE_WORKER") != "true"
 	workerConfigured := cfg.Storage.RedisURL != "" && cfg.Storefront.ArtifactEndpoint != "" && cfg.Storefront.ArtifactBucket != "" && cfg.Storefront.ArtifactAccessKeyID != "" && cfg.Storefront.ArtifactSecretKey != ""
 	if workerRole && workerConfigured {
 		worker, err := leposhipapp.Build(ctx, cfg)

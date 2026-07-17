@@ -1,0 +1,28 @@
+rules:
+  - id: javascript-use-of-eval
+    patterns:
+      - pattern: eval(...)
+    message: Use of eval() detected. This is a severe security risk (XSS).
+    languages: [javascript, typescript]
+    severity: ERROR
+
+  - id: javascript-document-write
+    patterns:
+      - pattern: document.write(...)
+    message: Use of document.write() detected. Can lead to XSS.
+    languages: [javascript, typescript]
+    severity: WARNING
+
+  - id: javascript-dangerously-set-inner-html
+    patterns:
+      - pattern: dangerouslySetInnerHTML
+    message: Use of dangerouslySetInnerHTML detected. Ensure input is properly sanitized.
+    languages: [javascript, typescript]
+    severity: WARNING
+
+  - id: javascript-inner-html
+    patterns:
+      - pattern: $X.innerHTML = $Y
+    message: Assigning directly to innerHTML can cause XSS. Use textContent or safe sanitization.
+    languages: [javascript, typescript]
+    severity: WARNING

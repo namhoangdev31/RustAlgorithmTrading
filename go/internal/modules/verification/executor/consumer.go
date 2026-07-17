@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -38,7 +39,20 @@ func NewWorker(redisClient *redis.Client, service *verificationapp.Service, runn
 	if host == "" {
 		host = "lepoship-worker"
 	}
-	return &Worker{redis: redisClient, service: service, runner: runner, builds: builds, consumer: host + ":" + uuid.NewString(), heavy: make(chan struct{}, 1)}
+	limit := 1
+	if limitStr := os.Getenv("LEPOSHIP_CONCURRENCY_LIMIT"); limitStr != "" {
+		if val, err := strconv.Atoi(limitStr); err == nil && val > 0 {
+			limit = val
+		}
+	}
+	return &Worker{
+		redis:    redisClient,
+		service:  service,
+		runner:   runner,
+		builds:   builds,
+		consumer: host + ":" + uuid.NewString(),
+		heavy:    make(chan struct{}, limit),
+	}
 }
 
 func (w *Worker) Run(ctx context.Context) error {

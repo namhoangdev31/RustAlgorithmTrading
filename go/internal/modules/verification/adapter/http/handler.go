@@ -34,8 +34,8 @@ func (h *Handler) MapRoutes(router *gin.Engine) {
 	router.GET("/api/v1/verification-runs/:runId/tasks", h.signed(h.tasks))
 	router.GET("/api/v1/verification-runs/:runId/findings", h.signed(h.findings))
 	router.GET("/api/v1/verification-runs/:runId/report", h.signed(h.report))
-	router.POST("/api/v1/releases/:releaseId/verification:retry", h.signed(h.retry))
-	router.POST("/api/v1/verification-runs/:runId:cancel", h.signed(h.cancel))
+	router.POST("/api/v1/releases/:releaseId/verification/retry", h.signed(h.retry))
+	router.POST("/api/v1/verification-runs/:runId/cancel", h.signed(h.cancel))
 	router.POST("/api/internal/v1/verification/attempts/:attemptId/result", h.signed(h.result))
 	router.POST("/api/internal/v1/verification/attempts/:attemptId/heartbeat", h.signed(h.heartbeat))
 }

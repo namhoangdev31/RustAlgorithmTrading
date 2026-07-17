@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -64,6 +65,14 @@ func (s *Service) Run(ctx context.Context) error {
 	}
 	consumerErrors := make(chan error, 1)
 	go func() { consumerErrors <- s.consume(ctx) }()
+
+	batchSize := 10
+	if val := os.Getenv("LEPOSHIP_SCHEDULER_BATCH_SIZE"); val != "" {
+		if limit, err := strconv.Atoi(val); err == nil && limit > 0 {
+			batchSize = limit
+		}
+	}
+
 	scheduleTicker := time.NewTicker(time.Second)
 	recoveryTicker := time.NewTicker(30 * time.Second)
 	defer scheduleTicker.Stop()
@@ -75,7 +84,7 @@ func (s *Service) Run(ctx context.Context) error {
 		case err := <-consumerErrors:
 			return err
 		case <-scheduleTicker.C:
-			if _, err := s.repository.ClaimReady(ctx, s.consumer, 1); err != nil {
+			if _, err := s.repository.ClaimReady(ctx, s.consumer, batchSize); err != nil {
 				slog.Error("verification_dispatch_failed", "error", err)
 			}
 		case <-recoveryTicker.C:

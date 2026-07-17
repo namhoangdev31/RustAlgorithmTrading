@@ -3,7 +3,7 @@
 
 FROM debian:bookworm-slim AS verification-tools
 ARG TARGETARCH=amd64
-ARG TRIVY_VERSION=0.66.0
+ARG TRIVY_VERSION=0.72.0
 ARG SYFT_VERSION=1.33.0
 ARG GITLEAKS_VERSION=8.28.0
 ARG OSV_SCANNER_VERSION=2.2.3
@@ -33,7 +33,7 @@ WORKDIR /workspace/go
 COPY go/go.mod go/go.sum* ./
 RUN go mod download
 COPY go ./
-RUN GOGC=50 CGO_ENABLED=1 GOOS=linux go build -p 2 -trimpath -ldflags="-s -w" \
+RUN GOGC=20 CGO_ENABLED=1 GOOS=linux go build -p 1 -trimpath -ldflags="-s -w" \
     -o /out/gateway ./cmd/gateway/main.go
 
 FROM node:22-bookworm-slim
@@ -51,13 +51,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     wget \
     zip \
+    && freshclam || true \
     && python3 -m venv /opt/semgrep \
     && /opt/semgrep/bin/pip install --no-cache-dir semgrep==1.136.0 \
-    && npm install --global yarn@1.22.22 pnpm@10.15.1 --ignore-scripts --no-audit --no-fund \
+    && npm install --global --force yarn@1.22.22 pnpm@10.15.1 --ignore-scripts --no-audit --no-fund \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --system --uid 10001 --gid nogroup appuser \
-    && mkdir -p /data /var/lib/lepos /opt/lepoship \
-    && chown -R appuser:nogroup /data /var/lib/lepos /opt/lepoship
+    && mkdir -p /data /var/lib/lepos /opt/lepoship /var/lib/clamav \
+    && chown -R appuser:nogroup /data /var/lib/lepos /opt/lepoship /var/lib/clamav
 
 WORKDIR /workspace
 COPY --from=builder /out/gateway /usr/local/bin/gateway
@@ -67,12 +68,13 @@ COPY --from=verification-tools /usr/local/bin/gitleaks /usr/local/bin/gitleaks
 COPY --from=verification-tools /usr/local/bin/osv-scanner /usr/local/bin/osv-scanner
 COPY --from=browser-deps /opt/lepoship/node_modules /opt/lepoship/node_modules
 COPY ops/deployment/lepoship-browser-runner.mjs /opt/lepoship/browser-runner.mjs
+COPY ops/deployment/semgrep-rules.yaml /opt/lepoship/semgrep-rules.yaml
 
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 ENV PATH="/opt/lepoship/node_modules/.bin:/opt/semgrep/bin:${PATH}"
 
 RUN /opt/lepoship/node_modules/.bin/playwright install --with-deps chromium \
-    && chown -R appuser:nogroup /ms-playwright /opt/lepoship /opt/semgrep
+    && chown -R appuser:nogroup /ms-playwright /opt/lepoship /opt/semgrep /var/lib/clamav
 
 ENV PORT=8081
 ENV HOST=0.0.0.0

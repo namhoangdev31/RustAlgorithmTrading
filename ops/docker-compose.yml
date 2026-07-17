@@ -334,6 +334,7 @@ services:
       LEPOS_CONTROL_PLANE_URL: ${LEPOS_CONTROL_PLANE_URL:-http://nextjs-frontend:3000}
       GO_CONTROL_PLANE_PUBLIC_URL: ${GO_CONTROL_PLANE_PUBLIC_URL:-http://localhost:8081}
       LEPOS_SCHEDULER_ENABLED: ${LEPOS_SCHEDULER_ENABLED:-true}
+      LEPOSHIP_DISABLE_WORKER: "true"
       TELEMETRY_DEVICE_PEPPER: ${TELEMETRY_DEVICE_PEPPER:-local-telemetry-device-pepper}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:-local-encryption-key-32-bytes-minimum}
       LEPOS_ARTIFACT_PROVIDER: ${LEPOS_ARTIFACT_PROVIDER:-minio}
@@ -409,6 +410,94 @@ services:
     labels:
       com.rustalgorithmtrading.role: public-edge-gateway
       com.rustalgorithmtrading.audience: developer,trader,regular
+
+  verification-worker:
+    image: ${TRADING_IMAGE_REGISTRY:-trading}/gateway:${IMAGE_TAG:-development}
+    build:
+      context: ..
+      dockerfile: ops/deployment/gateway.Dockerfile
+    restart: unless-stopped
+    init: true
+    networks:
+      - public
+      - private
+    volumes:
+      - edge-artifact-data:/var/lib/lepos
+      - ../reactjs-ts-firebase-adminsdk-rfdnk-dfa3ebe25c.json:/run/secrets/firebase-service-account.json:ro
+    environment:
+      <<: *saas-env
+      SERVICE_NAME: verification-worker
+      GATEWAY_RUN_MODE: lepoship-worker
+      LEPOSHIP_DISABLE_WORKER: "false"
+      LEPOSHIP_CONCURRENCY_LIMIT: ${LEPOSHIP_CONCURRENCY_LIMIT:-4}
+      PORT: ${GATEWAY_PORT:-8081}
+      EDGE_PORT: ${EDGE_PORT:-8088}
+      TLS_PORT: ${TLS_PORT:-8443}
+      HOST: ${GATEWAY_HOST:-0.0.0.0}
+      HOSTNAME: verification-worker
+      DATABASE_URL: ${DATABASE_URL:-postgresql://local_app:local-postgres-password@postgres:5432/rust_algorithm_trading}
+      QUESTDB_PG_URL: postgresql://${QUESTDB_USER:-admin}:${QUESTDB_PASSWORD:-local-questdb-password}@questdb:8812/qdb
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      ALPACA_BASE_URL: ${ALPACA_BASE_URL:-https://paper-api.alpaca.markets}
+      ALPACA_DATA_BASE_URL: ${ALPACA_DATA_BASE_URL:-https://data.alpaca.markets}
+      ALPACA_API_KEY: ${ALPACA_API_KEY:-local-alpaca-key-not-configured}
+      ALPACA_SECRET_KEY: ${ALPACA_SECRET_KEY:-local-alpaca-secret-not-configured}
+      QUANTANT_ENABLED: ${QUANTANT_ENABLED:-false}
+      QUANTANT_LIVE_ENABLED: ${QUANTANT_LIVE_ENABLED:-false}
+      QUANTANT_STRATEGY_LIVE_ENABLED: ${QUANTANT_STRATEGY_LIVE_ENABLED:-false}
+      QUANTANT_COMMAND_STREAM: ${QUANTANT_COMMAND_STREAM:-QUANTANT_COMMANDS}
+      QUANTANT_EXECUTION_SUBJECT: ${QUANTANT_EXECUTION_SUBJECT:-quantant.execution}
+      QUANTANT_LIVE_SESSION_TTL: ${QUANTANT_LIVE_SESSION_TTL:-15m}
+      TELEMETRY_API_KEY: ${TELEMETRY_API_KEY:-local-telemetry-api-key}
+      OTEL_SERVICE_NAME: verification-worker
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      TRACING_ENABLED: ${TRACING_ENABLED:-true}
+      METRICS_ENABLED: ${METRICS_ENABLED:-true}
+      MARKET_DATA_METRICS_URL: ${MARKET_DATA_METRICS_URL:-http://trading-core:9090/metrics}
+      EXECUTION_METRICS_URL: ${EXECUTION_METRICS_URL:-http://trading-core:9090/metrics}
+      RISK_METRICS_URL: ${RISK_METRICS_URL:-http://trading-core:9090/metrics}
+      LEPOS_STORAGE_ROOT: ${LEPOS_STORAGE_ROOT:-/var/lib/lepos/artifacts}
+      LEPOS_CONTROL_PLANE_URL: ${LEPOS_CONTROL_PLANE_URL:-http://nextjs-frontend:3000}
+      GO_CONTROL_PLANE_PUBLIC_URL: ${GO_CONTROL_PLANE_PUBLIC_URL:-http://localhost:8081}
+      LEPOS_SCHEDULER_ENABLED: "false"
+      TELEMETRY_DEVICE_PEPPER: ${TELEMETRY_DEVICE_PEPPER:-local-telemetry-device-pepper}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-local-encryption-key-32-bytes-minimum}
+      LEPOS_ARTIFACT_PROVIDER: ${LEPOS_ARTIFACT_PROVIDER:-minio}
+      LEPOS_ARTIFACT_BUCKET: ${LEPOS_ARTIFACT_BUCKET:-lepoship-artifacts}
+      LEPOS_ARTIFACT_PUBLIC_URL: ${LEPOS_ARTIFACT_PUBLIC_URL:-${MINIO_PROTOCOL:-http}://${MINIO_ENDPOINT:-localhost}:${MINIO_PORT:-9000}/lepoship-artifacts}
+      LEPOS_ARTIFACT_ENDPOINT: ${LEPOS_ARTIFACT_ENDPOINT:-${MINIO_PROTOCOL:-http}://${MINIO_ENDPOINT:-minio}:${MINIO_PORT:-9000}}
+      LEPOS_ARTIFACT_REGION: ${LEPOS_ARTIFACT_REGION:-us-east-1}
+      LEPOS_ARTIFACT_ACCESS_KEY_ID: ${LEPOS_ARTIFACT_ACCESS_KEY_ID:-${MINIO_ACCESS_KEY:-local_minio}}
+      LEPOS_ARTIFACT_SECRET_ACCESS_KEY: ${LEPOS_ARTIFACT_SECRET_ACCESS_KEY:-${MINIO_SECRET_KEY:-local-minio-password}}
+      LEPOS_ARTIFACT_FORCE_PATH_STYLE: ${LEPOS_ARTIFACT_FORCE_PATH_STYLE:-true}
+      FIREBASE_CREDENTIALS_FILE: ${FIREBASE_CREDENTIALS_FILE:-/run/secrets/firebase-service-account.json}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/run/secrets/firebase-service-account.json}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-reactjs-ts}
+      STOREFRONT_API_ENABLED: "false"
+      STOREFRONT_MOCK_PAYMENTS_ENABLED: "false"
+      STOREFRONT_JWT_SECRET: ${STOREFRONT_JWT_SECRET:-local-storefront-jwt-secret-at-least-32-bytes}
+      STOREFRONT_JWT_ISSUER: ${STOREFRONT_JWT_ISSUER:-control-gateway}
+      STOREFRONT_JWT_AUDIENCE: ${STOREFRONT_JWT_AUDIENCE:-ios-storefront}
+      STOREFRONT_ACCESS_TTL: ${STOREFRONT_ACCESS_TTL:-15m}
+      STOREFRONT_REFRESH_TTL: ${STOREFRONT_REFRESH_TTL:-720h}
+    depends_on:
+      redis:
+        condition: service_healthy
+      questdb:
+        condition: service_healthy
+      trading-core:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 3G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    labels:
+      com.rustalgorithmtrading.role: verification-worker
+      com.rustalgorithmtrading.audience: internal
 
   nextjs-frontend:
     image: ${TRADING_IMAGE_REGISTRY:-trading}/nextjs-frontend:${IMAGE_TAG:-development}

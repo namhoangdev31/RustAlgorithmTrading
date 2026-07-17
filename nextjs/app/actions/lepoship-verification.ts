@@ -19,7 +19,7 @@ export async function retryVerificationAction(formData: FormData) {
   const projectId = String(formData.get("projectId") ?? "");
   const releaseId = String(formData.get("releaseId") ?? "");
   const user = await authorizeProject(projectId);
-  const response = await signedGoControlPlaneFetch(`/api/v1/releases/${releaseId}/verification:retry`, {
+  const response = await signedGoControlPlaneFetch(`/api/v1/releases/${releaseId}/verification/retry`, {
     method: "POST", userId: user.id, idempotencyKey: crypto.randomUUID(),
   });
   if (!response.ok) throw new Error(`VERIFICATION_RETRY_FAILED:${response.status}:${await response.text()}`);
@@ -30,7 +30,7 @@ export async function cancelVerificationAction(formData: FormData) {
   const projectId = String(formData.get("projectId") ?? "");
   const runId = String(formData.get("runId") ?? "");
   const user = await authorizeProject(projectId);
-  const response = await signedGoControlPlaneFetch(`/api/v1/verification-runs/${runId}:cancel`, {
+  const response = await signedGoControlPlaneFetch(`/api/v1/verification-runs/${runId}/cancel`, {
     method: "POST", userId: user.id, idempotencyKey: crypto.randomUUID(),
   });
   if (!response.ok) throw new Error(`VERIFICATION_CANCEL_FAILED:${response.status}:${await response.text()}`);

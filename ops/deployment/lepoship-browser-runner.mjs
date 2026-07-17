@@ -43,6 +43,18 @@ try {
 
 async function runtime(browser, baseURL, workspace) {
   const context = await browser.newContext({ serviceWorkers: "block", viewport: { width: 1280, height: 720 } });
+  await context.addInitScript(() => {
+    window.webkit = {
+      messageHandlers: {
+        LepoShip: {
+          postMessage: (msg) => {
+            console.log("Mock iOS Native call:", JSON.stringify(msg));
+            return Promise.resolve({ status: "success" });
+          }
+        }
+      }
+    };
+  });
   await restrictNetwork(context, baseURL);
   const page = await context.newPage();
   const findings = [];
@@ -57,6 +69,41 @@ async function runtime(browser, baseURL, workspace) {
     try {
       await page.goto(target, { waitUntil: "networkidle", timeout: 30_000 });
       visited.add(target);
+
+      // Autofill forms
+      const inputs = await page.locator("input").all();
+      for (const input of inputs) {
+        try {
+          const type = await input.getAttribute("type") || "text";
+          if (type === "email") {
+            await input.fill("test-verification@lepoship.com", { timeout: 1000 });
+          } else if (type === "password") {
+            await input.fill("SecurePass123!", { timeout: 1000 });
+          } else if (type === "number") {
+            await input.fill("123", { timeout: 1000 });
+          } else {
+            await input.fill("Verification Test Data", { timeout: 1000 });
+          }
+        } catch (err) {
+          // Ignore non-editable
+        }
+      }
+
+      // Monkey clicks
+      const clickables = await page.locator("button, a, input[type=submit]").all();
+      if (clickables.length > 0) {
+        const clicksCount = Math.min(5, clickables.length);
+        for (let i = 0; i < clicksCount; i++) {
+          const randomIndex = Math.floor(Math.random() * clickables.length);
+          try {
+            await clickables[randomIndex].click({ timeout: 1000 });
+            await page.waitForTimeout(200);
+          } catch (err) {
+            // Ignore click error
+          }
+        }
+      }
+
       const links = await page.locator("a[href]").evaluateAll((items) => items.map((item) => item.href));
       for (const link of links.sort()) if (allowed(link, baseURL) && !visited.has(link)) queue.push(link);
     } catch (error) {

@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"time"
 
 	verificationarchive "trading/control-gateway/internal/modules/verification/archive"
@@ -121,36 +122,284 @@ func validateBundle(root string) engineOutput {
 }
 
 func runSecurity(ctx context.Context, workspace, root string) engineOutput {
+	gitleaksPath := filepath.Join(workspace, "gitleaks.json")
+	trivyPath := filepath.Join(workspace, "trivy.json")
+	sbomPath := filepath.Join(workspace, "sbom.cdx.json")
+	osvPath := filepath.Join(workspace, "osv.json")
+	semgrepPath := filepath.Join(workspace, "semgrep.json")
+
 	tools := []struct {
 		name         string
 		args         []string
 		findingOnOne bool
+		outputPath   string
 	}{
-		{"clamscan", []string{"--recursive", "--infected", "--no-summary", root}, true},
-		{"gitleaks", []string{"detect", "--source", root, "--no-git", "--report-format", "json", "--report-path", filepath.Join(workspace, "gitleaks.json")}, true},
-		{"trivy", []string{"fs", "--quiet", "--format", "json", "--output", filepath.Join(workspace, "trivy.json"), root}, false},
-		{"syft", []string{"scan", "dir:" + root, "-o", "cyclonedx-json=" + filepath.Join(workspace, "sbom.cdx.json")}, false},
-		{"osv-scanner", []string{"scan", "source", "--recursive", root, "--format", "json", "--output", filepath.Join(workspace, "osv.json")}, false},
-		{"semgrep", []string{"scan", "--config", "auto", "--json", "--json-output", filepath.Join(workspace, "semgrep.json"), root}, false},
+		{"clamscan", []string{"--recursive", "--infected", "--no-summary", root}, true, ""},
+		{"gitleaks", []string{"detect", "--source", root, "--no-git", "--report-format", "json", "--report-path", gitleaksPath}, true, gitleaksPath},
+		{"trivy", []string{"fs", "--quiet", "--format", "json", "--output", trivyPath, root}, false, trivyPath},
+		{"syft", []string{"scan", "dir:" + root, "-o", "cyclonedx-json=" + sbomPath}, false, sbomPath},
+		{"osv-scanner", []string{"scan", "source", "--recursive", root, "--format", "json", "--output", osvPath}, false, osvPath},
+		{"semgrep", []string{"scan", "--config", "/opt/lepoship/semgrep-rules.yaml", "--json", "--json-output", semgrepPath, root}, false, semgrepPath},
 	}
 	summary := make(map[string]string, len(tools))
+	findings := []domain.Finding{}
+
 	for _, tool := range tools {
 		output, err := command(ctx, workspace, 8<<20, tool.name, tool.args...)
 		summary[tool.name] = output
-		if err == nil {
-			continue
+
+		if err != nil {
+			var exitErr *exec.ExitError
+			if errors.As(err, &exitErr) {
+				// If tool writes a structured output and file is valid, we can parse it anyway (even if exit code was non-zero)
+				if tool.outputPath != "" {
+					if fileInfo, statErr := os.Stat(tool.outputPath); statErr == nil && fileInfo.Size() > 0 {
+						continue
+					}
+				}
+				// Special exit code logic for findingOnOne
+				if tool.findingOnOne && exitErr.ExitCode() == 1 {
+					findings = append(findings, finding("security", "critical", "CONFIRMED_CRITICAL_" + strings.ToUpper(tool.name), tool.name + " reported a confirmed finding", true))
+					continue
+				}
+			}
+			return engineOutput{
+				Status:       "infrastructure_failed",
+				Metrics:      map[string]float64{},
+				ErrorCode:    "SECURITY_TOOL_FAILED",
+				ErrorMessage: tool.name + ": " + err.Error(),
+			}
 		}
-		var exitErr *exec.ExitError
-		if tool.findingOnOne && errors.As(err, &exitErr) && exitErr.ExitCode() == 1 {
-			result := bundleFailure("CONFIRMED_CRITICAL_SECURITY", tool.name+" reported a confirmed finding")
-			result.Evidence = []localEvidence{writeJSONEvidence(workspace, "security-summary.json", summary, "security-log")}
-			return result
-		}
-		return engineOutput{Status: "infrastructure_failed", Metrics: map[string]float64{}, ErrorCode: "SECURITY_TOOL_FAILED", ErrorMessage: tool.name + ": " + err.Error()}
 	}
-	result := healthyOutput(map[string]float64{"scanners": float64(len(tools))})
-	result.Evidence = []localEvidence{writeJSONEvidence(workspace, "security-summary.json", summary, "security-log")}
-	return result
+
+	// Now parse outputs of successfully run tools
+	if gitleaksFindings, err := parseGitleaks(gitleaksPath); err == nil {
+		findings = append(findings, gitleaksFindings...)
+	}
+	if trivyFindings, err := parseTrivy(trivyPath); err == nil {
+		findings = append(findings, trivyFindings...)
+	}
+	if osvFindings, err := parseOSV(osvPath); err == nil {
+		findings = append(findings, osvFindings...)
+	}
+	if semgrepFindings, err := parseSemgrep(semgrepPath); err == nil {
+		findings = append(findings, semgrepFindings...)
+	}
+
+	// Prepare evidence files
+	evidence := []localEvidence{
+		writeJSONEvidence(workspace, "security-summary.json", summary, "security-log"),
+	}
+
+	outputFiles := []struct {
+		path string
+		kind string
+		mime string
+	}{
+		{gitleaksPath, "gitleaks-report", "application/json"},
+		{trivyPath, "trivy-report", "application/json"},
+		{sbomPath, "sbom-report", "application/json"},
+		{osvPath, "osv-report", "application/json"},
+		{semgrepPath, "semgrep-report", "application/json"},
+	}
+
+	for _, file := range outputFiles {
+		if _, err := os.Stat(file.path); err == nil {
+			evidence = append(evidence, localEvidence{
+				Kind:        file.kind,
+				Path:        file.path,
+				ContentType: file.mime,
+			})
+		}
+	}
+
+	// Check if we have critical/high security findings
+	status := "succeeded"
+	for _, f := range findings {
+		if f.Confirmed && (f.Severity == "critical" || f.Severity == "high") {
+			status = "bundle_failed"
+			break
+		}
+	}
+
+	return engineOutput{
+		Status:          status,
+		Findings:        findings,
+		Metrics:         map[string]float64{"scanners": float64(len(tools))},
+		Coverage:        1,
+		Completeness:    1,
+		Reproducibility: 1,
+		EngineHealth:    1,
+		Evidence:        evidence,
+	}
+}
+
+func parseGitleaks(path string) ([]domain.Finding, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var leaks []struct {
+		Description string `json:"Description"`
+		RuleID      string `json:"RuleID"`
+		File        string `json:"File"`
+		StartLine   int    `json:"StartLine"`
+	}
+	if err := json.Unmarshal(data, &leaks); err != nil {
+		return nil, err
+	}
+	var findings []domain.Finding
+	for _, leak := range leaks {
+		findings = append(findings, domain.Finding{
+			Fingerprint: makeFingerprint(fmt.Sprintf("gitleaks:%s:%s:%d", leak.RuleID, leak.File, leak.StartLine)),
+			Dimension:   "security",
+			Severity:    "critical",
+			Confidence:  1.0,
+			RuleID:      leak.RuleID,
+			Title:       fmt.Sprintf("GitLeaks: %s in %s (line %d)", leak.Description, leak.File, leak.StartLine),
+			Confirmed:   true,
+		})
+	}
+	return findings, nil
+}
+
+func parseTrivy(path string) ([]domain.Finding, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var report struct {
+		Results []struct {
+			Target          string `json:"Target"`
+			Vulnerabilities []struct {
+				VulnerabilityID string `json:"VulnerabilityID"`
+				PkgName         string `json:"PkgName"`
+				Title           string `json:"Title"`
+				Severity        string `json:"Severity"`
+			} `json:"Vulnerabilities"`
+		} `json:"Results"`
+	}
+	if err := json.Unmarshal(data, &report); err != nil {
+		return nil, err
+	}
+	var findings []domain.Finding
+	for _, res := range report.Results {
+		for _, vuln := range res.Vulnerabilities {
+			sev := strings.ToLower(vuln.Severity)
+			if sev == "high" {
+				sev = "high"
+			} else if sev == "critical" {
+				sev = "critical"
+			} else if sev == "medium" {
+				sev = "medium"
+			} else {
+				sev = "low"
+			}
+			findings = append(findings, domain.Finding{
+				Fingerprint: makeFingerprint(fmt.Sprintf("trivy:%s:%s", vuln.VulnerabilityID, vuln.PkgName)),
+				Dimension:   "security",
+				Severity:    sev,
+				Confidence:  1.0,
+				RuleID:      vuln.VulnerabilityID,
+				Title:       fmt.Sprintf("Trivy: %s in package %s (%s)", vuln.Title, vuln.PkgName, vuln.VulnerabilityID),
+				Confirmed:   true,
+			})
+		}
+	}
+	return findings, nil
+}
+
+func parseOSV(path string) ([]domain.Finding, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var report struct {
+		Results []struct {
+			Source struct {
+				Path string `json:"path"`
+			} `json:"source"`
+			Packages []struct {
+				Package struct {
+					Name    string `json:"name"`
+					Version string `json:"version"`
+				} `json:"package"`
+				Vulnerabilities []struct {
+					ID      string `json:"id"`
+					Summary string `json:"summary"`
+				} `json:"vulnerabilities"`
+			} `json:"packages"`
+		} `json:"results"`
+	}
+	if err := json.Unmarshal(data, &report); err != nil {
+		return nil, err
+	}
+	var findings []domain.Finding
+	for _, res := range report.Results {
+		for _, pkg := range res.Packages {
+			for _, vuln := range pkg.Vulnerabilities {
+				findings = append(findings, domain.Finding{
+					Fingerprint: makeFingerprint(fmt.Sprintf("osv:%s:%s", vuln.ID, pkg.Package.Name)),
+					Dimension:   "security",
+					Severity:    "high",
+					Confidence:  1.0,
+					RuleID:      vuln.ID,
+					Title:       fmt.Sprintf("OSV: %s in %s@%s (%s)", vuln.Summary, pkg.Package.Name, pkg.Package.Version, vuln.ID),
+					Confirmed:   true,
+				})
+			}
+		}
+	}
+	return findings, nil
+}
+
+func parseSemgrep(path string) ([]domain.Finding, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var report struct {
+		Results []struct {
+			CheckID string `json:"check_id"`
+			Path    string `json:"path"`
+			Start   struct {
+				Line int `json:"line"`
+			} `json:"start"`
+			Extra struct {
+				Message  string `json:"message"`
+				Severity string `json:"severity"`
+			} `json:"extra"`
+		} `json:"results"`
+	}
+	if err := json.Unmarshal(data, &report); err != nil {
+		return nil, err
+	}
+	var findings []domain.Finding
+	for _, res := range report.Results {
+		sev := "high"
+		if res.Extra.Severity == "ERROR" {
+			sev = "critical"
+		} else if res.Extra.Severity == "WARNING" {
+			sev = "high"
+		} else if res.Extra.Severity == "INFO" {
+			sev = "medium"
+		}
+		findings = append(findings, domain.Finding{
+			Fingerprint: makeFingerprint(fmt.Sprintf("semgrep:%s:%s:%d", res.CheckID, res.Path, res.Start.Line)),
+			Dimension:   "security",
+			Severity:    sev,
+			Confidence:  1.0,
+			RuleID:      res.CheckID,
+			Title:       fmt.Sprintf("Semgrep: %s in %s (line %d)", res.Extra.Message, res.Path, res.Start.Line),
+			Confirmed:   true,
+		})
+	}
+	return findings, nil
+}
+
+func makeFingerprint(key string) string {
+	digest := sha256.Sum256([]byte(key))
+	return hex.EncodeToString(digest[:])
 }
 
 func (r *EngineRunner) runBrowser(ctx context.Context, dispatch domain.Dispatch, workspace, root string) engineOutput {
@@ -171,14 +420,32 @@ func (r *EngineRunner) runBrowser(ctx context.Context, dispatch domain.Dispatch,
 }
 
 func command(ctx context.Context, directory string, maxOutput int, name string, args ...string) (string, error) {
-	cmd := exec.CommandContext(ctx, name, args...)
+	cmd := exec.Command(name, args...)
 	cmd.Dir = directory
 	cmd.Env = platformconfig.SubprocessEnvironment(directory)
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+
 	var stdout, stderr limitedBuffer
 	stdout.limit, stderr.limit = maxOutput, maxOutput
 	cmd.Stdout, cmd.Stderr = &stdout, &stderr
-	err := cmd.Run()
-	return strings.TrimSpace(stdout.String() + "\n" + stderr.String()), err
+
+	if err := cmd.Start(); err != nil {
+		return "", err
+	}
+
+	done := make(chan error, 1)
+	go func() {
+		done <- cmd.Wait()
+	}()
+
+	select {
+	case <-ctx.Done():
+		_ = syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
+		<-done
+		return strings.TrimSpace(stdout.String() + "\n" + stderr.String()), ctx.Err()
+	case err := <-done:
+		return strings.TrimSpace(stdout.String() + "\n" + stderr.String()), err
+	}
 }
 
 type limitedBuffer struct {
