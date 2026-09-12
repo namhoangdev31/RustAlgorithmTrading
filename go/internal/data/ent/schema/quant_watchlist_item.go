@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type QuantWatchlistItem struct{ ent.Schema }
+type QuantWatchlistItem struct { ent.Schema }
 
 func (QuantWatchlistItem) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_watchlist_items"}}

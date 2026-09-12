@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-type FirewallRule struct{ ent.Schema }
+type FirewallRule struct { ent.Schema }
 
 func (FirewallRule) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "firewall_rules"}}
@@ -39,5 +39,7 @@ func (FirewallRule) Edges() []ent.Edge {
 }
 
 func (FirewallRule) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

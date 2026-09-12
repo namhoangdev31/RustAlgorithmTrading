@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleAbuseSignals struct{ ent.Schema }
+type BundleAbuseSignals struct { ent.Schema }
 
 func (BundleAbuseSignals) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_abuse_signals"}}

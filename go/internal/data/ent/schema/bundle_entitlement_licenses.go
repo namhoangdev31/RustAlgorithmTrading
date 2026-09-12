@@ -14,7 +14,7 @@ import (
 	"github.com/lib/pq"
 )
 
-type BundleEntitlementLicenses struct{ ent.Schema }
+type BundleEntitlementLicenses struct { ent.Schema }
 
 func (BundleEntitlementLicenses) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_entitlement_licenses"}}

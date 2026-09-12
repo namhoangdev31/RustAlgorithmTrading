@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type OrganizationMembership struct{ ent.Schema }
+type OrganizationMembership struct { ent.Schema }
 
 func (OrganizationMembership) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "organization_memberships"}}

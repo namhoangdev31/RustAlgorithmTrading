@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Project struct{ ent.Schema }
+type Project struct { ent.Schema }
 
 func (Project) Mixin() []ent.Mixin {
 	return []ent.Mixin{SoftDeleteMixin{}}
@@ -82,5 +82,7 @@ func (Project) Edges() []ent.Edge {
 }
 
 func (Project) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

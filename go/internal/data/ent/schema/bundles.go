@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Bundles struct{ ent.Schema }
+type Bundles struct { ent.Schema }
 
 func (Bundles) Mixin() []ent.Mixin {
 	return []ent.Mixin{SoftDeleteMixin{}}

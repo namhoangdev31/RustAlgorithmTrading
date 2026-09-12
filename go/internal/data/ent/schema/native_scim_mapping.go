@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeScimMapping struct{ ent.Schema }
+type NativeScimMapping struct { ent.Schema }
 
 func (NativeScimMapping) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_scim_mappings"}}

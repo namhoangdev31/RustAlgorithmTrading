@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-type NativeServiceTrustPolicy struct{ ent.Schema }
+type NativeServiceTrustPolicy struct { ent.Schema }
 
 func (NativeServiceTrustPolicy) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_service_trust_policies"}}

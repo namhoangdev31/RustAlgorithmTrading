@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleReleaseOverrides struct{ ent.Schema }
+type BundleReleaseOverrides struct { ent.Schema }
 
 func (BundleReleaseOverrides) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_release_overrides"}}
@@ -32,7 +32,9 @@ func (BundleReleaseOverrides) Fields() []ent.Field {
 }
 
 func (BundleReleaseOverrides) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (BundleReleaseOverrides) Indexes() []ent.Index {

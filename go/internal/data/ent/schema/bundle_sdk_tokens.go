@@ -14,7 +14,7 @@ import (
 	"github.com/lib/pq"
 )
 
-type BundleSDKTokens struct{ ent.Schema }
+type BundleSDKTokens struct { ent.Schema }
 
 func (BundleSDKTokens) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_sdk_tokens"}}

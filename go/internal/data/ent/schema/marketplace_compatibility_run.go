@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-type MarketplaceCompatibilityRun struct{ ent.Schema }
+type MarketplaceCompatibilityRun struct { ent.Schema }
 
 func (MarketplaceCompatibilityRun) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "marketplace_compatibility_runs"}}
@@ -31,9 +31,13 @@ func (MarketplaceCompatibilityRun) Fields() []ent.Field {
 }
 
 func (MarketplaceCompatibilityRun) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (MarketplaceCompatibilityRun) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

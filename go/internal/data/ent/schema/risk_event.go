@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-type RiskEvent struct{ ent.Schema }
+type RiskEvent struct { ent.Schema }
 
 func (RiskEvent) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "risk_events"}}
@@ -29,9 +29,13 @@ func (RiskEvent) Fields() []ent.Field {
 }
 
 func (RiskEvent) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (RiskEvent) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

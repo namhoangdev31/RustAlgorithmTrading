@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleAdConfigurations struct{ ent.Schema }
+type BundleAdConfigurations struct { ent.Schema }
 
 func (BundleAdConfigurations) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_ad_configurations"}}
@@ -43,5 +43,7 @@ func (BundleAdConfigurations) Edges() []ent.Edge {
 }
 
 func (BundleAdConfigurations) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

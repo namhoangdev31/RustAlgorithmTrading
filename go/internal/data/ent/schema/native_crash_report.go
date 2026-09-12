@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeCrashReport struct{ ent.Schema }
+type NativeCrashReport struct { ent.Schema }
 
 func (NativeCrashReport) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_crash_reports"}}

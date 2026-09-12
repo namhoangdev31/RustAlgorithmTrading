@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type QuantInstrument struct{ ent.Schema }
+type QuantInstrument struct { ent.Schema }
 
 func (QuantInstrument) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_instruments"}}

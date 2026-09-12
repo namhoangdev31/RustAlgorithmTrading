@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Session struct{ ent.Schema }
+type Session struct { ent.Schema }
 
 func (Session) Mixin() []ent.Mixin {
 	return []ent.Mixin{SoftDeleteMixin{}}
@@ -39,5 +39,7 @@ func (Session) Edges() []ent.Edge {
 }
 
 func (Session) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleUpdatePhases struct{ ent.Schema }
+type BundleUpdatePhases struct { ent.Schema }
 
 func (BundleUpdatePhases) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_update_phases"}}

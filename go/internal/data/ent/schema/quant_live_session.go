@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type QuantLiveSession struct{ ent.Schema }
+type QuantLiveSession struct { ent.Schema }
 
 func (QuantLiveSession) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_live_sessions"}}

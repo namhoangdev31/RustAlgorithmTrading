@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleLedgerTransactions struct{ ent.Schema }
+type BundleLedgerTransactions struct { ent.Schema }
 
 func (BundleLedgerTransactions) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_ledger_transactions"}}

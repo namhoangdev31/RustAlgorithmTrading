@@ -15,7 +15,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-type BundleFinancialLedgerEntries struct{ ent.Schema }
+type BundleFinancialLedgerEntries struct { ent.Schema }
 
 func (BundleFinancialLedgerEntries) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_financial_ledger_entries"}}

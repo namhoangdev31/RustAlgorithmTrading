@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type QuantOperatorGrant struct{ ent.Schema }
+type QuantOperatorGrant struct { ent.Schema }
 
 func (QuantOperatorGrant) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_operator_grants"}}

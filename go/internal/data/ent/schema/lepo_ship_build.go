@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type LepoShipBuild struct{ ent.Schema }
+type LepoShipBuild struct { ent.Schema }
 
 func (LepoShipBuild) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "lepoship_builds"}}
@@ -44,5 +44,7 @@ func (LepoShipBuild) Edges() []ent.Edge {
 }
 
 func (LepoShipBuild) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

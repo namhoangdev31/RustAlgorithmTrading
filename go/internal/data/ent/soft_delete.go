@@ -18,31 +18,25 @@ const (
 	withHardDeleteKey
 )
 
-func WithDeleted(ctx context.Context) context.Context {
-	return context.WithValue(ctx, withDeletedKey, true)
-}
-func WithHardDelete(ctx context.Context) context.Context {
-	return context.WithValue(ctx, withHardDeleteKey, true)
-}
+func WithDeleted(ctx context.Context) context.Context { return context.WithValue(ctx, withDeletedKey, true) }
+func WithHardDelete(ctx context.Context) context.Context { return context.WithValue(ctx, withHardDeleteKey, true) }
 
 func SoftDeleteInterceptor() baseent.Interceptor {
 	return baseent.TraverseFunc(func(ctx context.Context, query baseent.Query) error {
-		if enabled, _ := ctx.Value(withDeletedKey).(bool); enabled {
-			return nil
-		}
+		if enabled, _ := ctx.Value(withDeletedKey).(bool); enabled { return nil }
 		switch q := query.(type) {
-		case *UserQuery:
-			q.Where(sql.FieldIsNull("deleted_at"))
-		case *OrganizationQuery:
-			q.Where(sql.FieldIsNull("deleted_at"))
-		case *ProjectQuery:
-			q.Where(sql.FieldIsNull("deleted_at"))
-		case *BundlesQuery:
-			q.Where(sql.FieldIsNull("deleted_at"))
-		case *NotificationsQuery:
-			q.Where(sql.FieldIsNull("deleted_at"))
-		case *SessionQuery:
-			q.Where(sql.FieldIsNull("deleted_at"))
+	case *UserQuery:
+		q.Where(sql.FieldIsNull("deleted_at"))
+	case *OrganizationQuery:
+		q.Where(sql.FieldIsNull("deleted_at"))
+	case *ProjectQuery:
+		q.Where(sql.FieldIsNull("deleted_at"))
+	case *BundlesQuery:
+		q.Where(sql.FieldIsNull("deleted_at"))
+	case *NotificationsQuery:
+		q.Where(sql.FieldIsNull("deleted_at"))
+	case *SessionQuery:
+		q.Where(sql.FieldIsNull("deleted_at"))
 		}
 		return nil
 	})
@@ -52,27 +46,13 @@ func SoftDeleteHook() baseent.Hook {
 	softDeleteTypes := map[string]struct{}{"User": {}, "Organization": {}, "Project": {}, "Bundles": {}, "Notifications": {}, "Session": {}}
 	return func(next baseent.Mutator) baseent.Mutator {
 		return baseent.MutateFunc(func(ctx context.Context, mutation baseent.Mutation) (baseent.Value, error) {
-			if !mutation.Op().Is(baseent.OpDeleteOne | baseent.OpDelete) {
-				return next.Mutate(ctx, mutation)
-			}
-			if hard, _ := ctx.Value(withHardDeleteKey).(bool); hard {
-				return next.Mutate(ctx, mutation)
-			}
-			if _, ok := softDeleteTypes[mutation.Type()]; !ok {
-				return next.Mutate(ctx, mutation)
-			}
+			if !mutation.Op().Is(baseent.OpDeleteOne|baseent.OpDelete) { return next.Mutate(ctx, mutation) }
+			if hard, _ := ctx.Value(withHardDeleteKey).(bool); hard { return next.Mutate(ctx, mutation) }
+			if _, ok := softDeleteTypes[mutation.Type()]; !ok { return next.Mutate(ctx, mutation) }
 			setter, ok := mutation.(interface{ SetOp(baseent.Op) })
-			if !ok {
-				return nil, errors.New("soft-delete mutation does not support SetOp")
-			}
-			if mutation.Op().Is(baseent.OpDeleteOne) {
-				setter.SetOp(baseent.OpUpdateOne)
-			} else {
-				setter.SetOp(baseent.OpUpdate)
-			}
-			if err := mutation.SetField("deletedAt", time.Now().UTC()); err != nil {
-				return nil, err
-			}
+			if !ok { return nil, errors.New("soft-delete mutation does not support SetOp") }
+			if mutation.Op().Is(baseent.OpDeleteOne) { setter.SetOp(baseent.OpUpdateOne) } else { setter.SetOp(baseent.OpUpdate) }
+			if err := mutation.SetField("deletedAt", time.Now().UTC()); err != nil { return nil, err }
 			return next.Mutate(ctx, mutation)
 		})
 	}

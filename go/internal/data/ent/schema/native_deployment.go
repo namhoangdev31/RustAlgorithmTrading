@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeDeployment struct{ ent.Schema }
+type NativeDeployment struct { ent.Schema }
 
 func (NativeDeployment) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_deployments"}}

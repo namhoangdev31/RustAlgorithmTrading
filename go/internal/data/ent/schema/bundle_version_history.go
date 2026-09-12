@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleVersionHistory struct{ ent.Schema }
+type BundleVersionHistory struct { ent.Schema }
 
 func (BundleVersionHistory) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_version_history"}}

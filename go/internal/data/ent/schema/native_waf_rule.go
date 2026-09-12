@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type NativeWAFRule struct{ ent.Schema }
+type NativeWAFRule struct { ent.Schema }
 
 func (NativeWAFRule) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_waf_rules"}}

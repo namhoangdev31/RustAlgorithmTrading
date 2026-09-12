@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type QuantPosition struct{ ent.Schema }
+type QuantPosition struct { ent.Schema }
 
 func (QuantPosition) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_positions"}}

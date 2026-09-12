@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type QuantStrategy struct{ ent.Schema }
+type QuantStrategy struct { ent.Schema }
 
 func (QuantStrategy) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_strategies"}}

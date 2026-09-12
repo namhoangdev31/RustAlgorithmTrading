@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type QuantBacktestRun struct{ ent.Schema }
+type QuantBacktestRun struct { ent.Schema }
 
 func (QuantBacktestRun) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_backtest_runs"}}

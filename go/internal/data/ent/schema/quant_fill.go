@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type QuantFill struct{ ent.Schema }
+type QuantFill struct { ent.Schema }
 
 func (QuantFill) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_fills"}}

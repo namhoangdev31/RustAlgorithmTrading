@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type PersonalAccessToken struct{ ent.Schema }
+type PersonalAccessToken struct { ent.Schema }
 
 func (PersonalAccessToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "personal_access_tokens"}}
@@ -41,5 +41,7 @@ func (PersonalAccessToken) Edges() []ent.Edge {
 }
 
 func (PersonalAccessToken) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

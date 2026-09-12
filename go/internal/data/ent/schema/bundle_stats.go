@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleStats struct{ ent.Schema }
+type BundleStats struct { ent.Schema }
 
 func (BundleStats) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_stats"}}
@@ -42,5 +42,7 @@ func (BundleStats) Edges() []ent.Edge {
 }
 
 func (BundleStats) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

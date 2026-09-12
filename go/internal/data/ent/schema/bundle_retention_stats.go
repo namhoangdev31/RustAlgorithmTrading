@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleRetentionStats struct{ ent.Schema }
+type BundleRetentionStats struct { ent.Schema }
 
 func (BundleRetentionStats) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_retention_stats"}}

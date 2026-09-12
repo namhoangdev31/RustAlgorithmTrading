@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleReleaseOverrideApprovals struct{ ent.Schema }
+type BundleReleaseOverrideApprovals struct { ent.Schema }
 
 func (BundleReleaseOverrideApprovals) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_release_override_approvals"}}

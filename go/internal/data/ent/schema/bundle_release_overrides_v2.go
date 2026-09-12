@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleReleaseOverridesV2 struct{ ent.Schema }
+type BundleReleaseOverridesV2 struct { ent.Schema }
 
 func (BundleReleaseOverridesV2) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_release_overrides_v2"}}

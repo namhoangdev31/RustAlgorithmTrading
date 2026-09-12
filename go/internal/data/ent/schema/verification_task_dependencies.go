@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type VerificationTaskDependencies struct{ ent.Schema }
+type VerificationTaskDependencies struct { ent.Schema }
 
 func (VerificationTaskDependencies) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "verification_task_dependencies"}}

@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundlePayouts struct{ ent.Schema }
+type BundlePayouts struct { ent.Schema }
 
 func (BundlePayouts) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_payouts"}}

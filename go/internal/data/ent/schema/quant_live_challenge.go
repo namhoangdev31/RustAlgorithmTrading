@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-type QuantLiveChallenge struct{ ent.Schema }
+type QuantLiveChallenge struct { ent.Schema }
 
 func (QuantLiveChallenge) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_live_challenges"}}
@@ -33,7 +33,9 @@ func (QuantLiveChallenge) Fields() []ent.Field {
 }
 
 func (QuantLiveChallenge) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (QuantLiveChallenge) Indexes() []ent.Index {

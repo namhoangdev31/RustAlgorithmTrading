@@ -14,7 +14,7 @@ import (
 	"github.com/lib/pq"
 )
 
-type BundleCollaborators struct{ ent.Schema }
+type BundleCollaborators struct { ent.Schema }
 
 func (BundleCollaborators) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_collaborators"}}

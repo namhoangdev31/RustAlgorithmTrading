@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type VerificationPolicyEvaluations struct{ ent.Schema }
+type VerificationPolicyEvaluations struct { ent.Schema }
 
 func (VerificationPolicyEvaluations) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "verification_policy_evaluations"}}
@@ -39,5 +39,7 @@ func (VerificationPolicyEvaluations) Edges() []ent.Edge {
 }
 
 func (VerificationPolicyEvaluations) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

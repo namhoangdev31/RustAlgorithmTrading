@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type UserSecrets struct{ ent.Schema }
+type UserSecrets struct { ent.Schema }
 
 func (UserSecrets) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "user_secrets"}}

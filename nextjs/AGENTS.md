@@ -67,6 +67,15 @@ Lock files · Build output · Generated Prisma client · node_modules · Secret 
 
 ## Standalone Rules
 
+### MCP Enforcement Rules — STRICT
+
+MANDATORY: Agents MUST actively utilize available MCP tools instead of guessing or using ad-hoc fallbacks:
+- **`firecrawl`**: Mandatory for external web scraping, crawling, live data extraction, and financial/documentation search.
+- **`playwright` & `chrome-devtools-mcp`**: Mandatory for browser automation, DOM inspection, console auditing, and visual screenshot verification.
+- **`shadcn-ui` / `mantine`**: Mandatory to query and fetch component specs, blocks, and themes before building UI.
+- **`StitchMCP`**: Mandatory for screen design generation, variants, and design system synchronization.
+- **`github`**: Mandatory for repository operations, PRs, issues, and remote code lookup.
+
 ### Risk
 
 | Level | Action |

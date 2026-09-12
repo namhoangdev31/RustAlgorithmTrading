@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type VerificationInbox struct{ ent.Schema }
+type VerificationInbox struct { ent.Schema }
 
 func (VerificationInbox) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "verification_inbox"}}
@@ -29,7 +29,9 @@ func (VerificationInbox) Fields() []ent.Field {
 }
 
 func (VerificationInbox) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (VerificationInbox) Indexes() []ent.Index {

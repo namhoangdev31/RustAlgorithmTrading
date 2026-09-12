@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeAnalyticsReplay struct{ ent.Schema }
+type NativeAnalyticsReplay struct { ent.Schema }
 
 func (NativeAnalyticsReplay) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_analytics_replays"}}

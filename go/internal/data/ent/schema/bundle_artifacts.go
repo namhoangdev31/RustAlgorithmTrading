@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleArtifacts struct{ ent.Schema }
+type BundleArtifacts struct { ent.Schema }
 
 func (BundleArtifacts) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_artifacts"}}

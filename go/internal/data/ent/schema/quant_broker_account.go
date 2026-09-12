@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type QuantBrokerAccount struct{ ent.Schema }
+type QuantBrokerAccount struct { ent.Schema }
 
 func (QuantBrokerAccount) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_broker_accounts"}}

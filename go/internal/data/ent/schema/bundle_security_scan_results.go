@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleSecurityScanResults struct{ ent.Schema }
+type BundleSecurityScanResults struct { ent.Schema }
 
 func (BundleSecurityScanResults) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_security_scan_results"}}

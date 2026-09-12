@@ -226,7 +226,10 @@ export const ModelName = {
   QuantLiveChallenge: 'QuantLiveChallenge',
   QuantIdempotencyKey: 'QuantIdempotencyKey',
   QuantOutboxEvent: 'QuantOutboxEvent',
-  QuantAuditEvent: 'QuantAuditEvent'
+  QuantAuditEvent: 'QuantAuditEvent',
+  BfxpsTradingPlan: 'BfxpsTradingPlan',
+  BfxpsLiveLedger: 'BfxpsLiveLedger',
+  BfxpsMarketSnapshot: 'BfxpsMarketSnapshot'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -3237,6 +3240,70 @@ export const QuantAuditEventScalarFieldEnum = {
 } as const
 
 export type QuantAuditEventScalarFieldEnum = (typeof QuantAuditEventScalarFieldEnum)[keyof typeof QuantAuditEventScalarFieldEnum]
+
+
+export const BfxpsTradingPlanScalarFieldEnum = {
+  id: 'id',
+  date: 'date',
+  engine: 'engine',
+  profile: 'profile',
+  horizon: 'horizon',
+  side: 'side',
+  entryPrice: 'entryPrice',
+  tpPrice: 'tpPrice',
+  slPrice: 'slPrice',
+  maxCap: 'maxCap',
+  r5State: 'r5State',
+  status: 'status',
+  isCanonical: 'isCanonical',
+  exitPrice: 'exitPrice',
+  exitType: 'exitType',
+  exitMinute: 'exitMinute',
+  pnlPoints: 'pnlPoints',
+  isWin: 'isWin',
+  notes: 'notes',
+  settledAt: 'settledAt',
+  createdAt: 'createdAt'
+} as const
+
+export type BfxpsTradingPlanScalarFieldEnum = (typeof BfxpsTradingPlanScalarFieldEnum)[keyof typeof BfxpsTradingPlanScalarFieldEnum]
+
+
+export const BfxpsLiveLedgerScalarFieldEnum = {
+  id: 'id',
+  date: 'date',
+  engine: 'engine',
+  side: 'side',
+  avgEntry: 'avgEntry',
+  exitPrice: 'exitPrice',
+  exitType: 'exitType',
+  pnlPoints: 'pnlPoints',
+  pnlStatus: 'pnlStatus',
+  size: 'size',
+  isSettled: 'isSettled',
+  notes: 'notes',
+  createdAt: 'createdAt'
+} as const
+
+export type BfxpsLiveLedgerScalarFieldEnum = (typeof BfxpsLiveLedgerScalarFieldEnum)[keyof typeof BfxpsLiveLedgerScalarFieldEnum]
+
+
+export const BfxpsMarketSnapshotScalarFieldEnum = {
+  id: 'id',
+  timestamp: 'timestamp',
+  open: 'open',
+  high: 'high',
+  low: 'low',
+  current: 'current',
+  volume: 'volume',
+  oi: 'oi',
+  basis: 'basis',
+  foreignBuy: 'foreignBuy',
+  foreignSell: 'foreignSell',
+  source: 'source'
+} as const
+
+export type BfxpsMarketSnapshotScalarFieldEnum = (typeof BfxpsMarketSnapshotScalarFieldEnum)[keyof typeof BfxpsMarketSnapshotScalarFieldEnum]
 
 
 export const SortOrder = {

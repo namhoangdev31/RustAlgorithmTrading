@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Organization struct{ ent.Schema }
+type Organization struct { ent.Schema }
 
 func (Organization) Mixin() []ent.Mixin {
 	return []ent.Mixin{SoftDeleteMixin{}}

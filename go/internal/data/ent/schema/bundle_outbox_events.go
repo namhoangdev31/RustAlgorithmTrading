@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleOutboxEvents struct{ ent.Schema }
+type BundleOutboxEvents struct { ent.Schema }
 
 func (BundleOutboxEvents) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_outbox_events"}}
@@ -39,7 +39,9 @@ func (BundleOutboxEvents) Fields() []ent.Field {
 }
 
 func (BundleOutboxEvents) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (BundleOutboxEvents) Indexes() []ent.Index {

@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-type LepoShipLocalConfig struct{ ent.Schema }
+type LepoShipLocalConfig struct { ent.Schema }
 
 func (LepoShipLocalConfig) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "lepoship_local_configs"}}
@@ -41,5 +41,7 @@ func (LepoShipLocalConfig) Edges() []ent.Edge {
 }
 
 func (LepoShipLocalConfig) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

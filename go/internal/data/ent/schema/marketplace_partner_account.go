@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type MarketplacePartnerAccount struct{ ent.Schema }
+type MarketplacePartnerAccount struct { ent.Schema }
 
 func (MarketplacePartnerAccount) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "marketplace_partner_accounts"}}
@@ -30,9 +30,13 @@ func (MarketplacePartnerAccount) Fields() []ent.Field {
 }
 
 func (MarketplacePartnerAccount) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (MarketplacePartnerAccount) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

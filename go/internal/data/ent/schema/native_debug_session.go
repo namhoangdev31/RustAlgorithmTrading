@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type NativeDebugSession struct{ ent.Schema }
+type NativeDebugSession struct { ent.Schema }
 
 func (NativeDebugSession) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_debug_sessions"}}

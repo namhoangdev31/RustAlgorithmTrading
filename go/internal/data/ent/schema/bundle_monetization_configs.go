@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleMonetizationConfigs struct{ ent.Schema }
+type BundleMonetizationConfigs struct { ent.Schema }
 
 func (BundleMonetizationConfigs) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_monetization_configs"}}
@@ -41,5 +41,7 @@ func (BundleMonetizationConfigs) Edges() []ent.Edge {
 }
 
 func (BundleMonetizationConfigs) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

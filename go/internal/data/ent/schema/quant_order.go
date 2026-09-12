@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type QuantOrder struct{ ent.Schema }
+type QuantOrder struct { ent.Schema }
 
 func (QuantOrder) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_orders"}}

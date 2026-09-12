@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleStripeWebhookEvents struct{ ent.Schema }
+type BundleStripeWebhookEvents struct { ent.Schema }
 
 func (BundleStripeWebhookEvents) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_stripe_webhook_events"}}

@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleWebhooks struct{ ent.Schema }
+type BundleWebhooks struct { ent.Schema }
 
 func (BundleWebhooks) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_webhooks"}}

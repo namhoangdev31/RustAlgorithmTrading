@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type ProjectMembership struct{ ent.Schema }
+type ProjectMembership struct { ent.Schema }
 
 func (ProjectMembership) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "project_memberships"}}

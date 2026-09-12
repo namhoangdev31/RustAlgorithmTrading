@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleStateTransitions struct{ ent.Schema }
+type BundleStateTransitions struct { ent.Schema }
 
 func (BundleStateTransitions) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_state_transitions"}}

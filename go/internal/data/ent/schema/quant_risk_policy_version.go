@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type QuantRiskPolicyVersion struct{ ent.Schema }
+type QuantRiskPolicyVersion struct { ent.Schema }
 
 func (QuantRiskPolicyVersion) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_risk_policy_versions"}}

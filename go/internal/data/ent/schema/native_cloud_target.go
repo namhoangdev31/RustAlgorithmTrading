@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeCloudTarget struct{ ent.Schema }
+type NativeCloudTarget struct { ent.Schema }
 
 func (NativeCloudTarget) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_cloud_targets"}}

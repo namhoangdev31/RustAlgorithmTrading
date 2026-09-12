@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-type CronJob struct{ ent.Schema }
+type CronJob struct { ent.Schema }
 
 func (CronJob) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "cron_jobs"}}
@@ -39,5 +39,7 @@ func (CronJob) Edges() []ent.Edge {
 }
 
 func (CronJob) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

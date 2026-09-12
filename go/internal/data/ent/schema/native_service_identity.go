@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-type NativeServiceIdentity struct{ ent.Schema }
+type NativeServiceIdentity struct { ent.Schema }
 
 func (NativeServiceIdentity) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_service_identities"}}

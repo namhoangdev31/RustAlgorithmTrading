@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleInstallEvents struct{ ent.Schema }
+type BundleInstallEvents struct { ent.Schema }
 
 func (BundleInstallEvents) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_install_events"}}

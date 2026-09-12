@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type QuantIdempotencyKey struct{ ent.Schema }
+type QuantIdempotencyKey struct { ent.Schema }
 
 func (QuantIdempotencyKey) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_idempotency_keys"}}
@@ -36,7 +36,9 @@ func (QuantIdempotencyKey) Fields() []ent.Field {
 }
 
 func (QuantIdempotencyKey) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (QuantIdempotencyKey) Indexes() []ent.Index {

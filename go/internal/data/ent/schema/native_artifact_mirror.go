@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeArtifactMirror struct{ ent.Schema }
+type NativeArtifactMirror struct { ent.Schema }
 
 func (NativeArtifactMirror) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_artifact_mirrors"}}

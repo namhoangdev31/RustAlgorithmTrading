@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type LepoShipIdempotencyKeys struct{ ent.Schema }
+type LepoShipIdempotencyKeys struct { ent.Schema }
 
 func (LepoShipIdempotencyKeys) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "lepoship_idempotency_keys"}}
@@ -37,7 +37,9 @@ func (LepoShipIdempotencyKeys) Fields() []ent.Field {
 }
 
 func (LepoShipIdempotencyKeys) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (LepoShipIdempotencyKeys) Indexes() []ent.Index {

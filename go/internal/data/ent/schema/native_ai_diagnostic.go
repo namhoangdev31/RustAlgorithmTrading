@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeAiDiagnostic struct{ ent.Schema }
+type NativeAiDiagnostic struct { ent.Schema }
 
 func (NativeAiDiagnostic) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_ai_diagnostics"}}

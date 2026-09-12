@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeConnectedDevice struct{ ent.Schema }
+type NativeConnectedDevice struct { ent.Schema }
 
 func (NativeConnectedDevice) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_connected_devices"}}

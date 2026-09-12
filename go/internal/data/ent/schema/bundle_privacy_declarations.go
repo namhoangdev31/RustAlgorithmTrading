@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundlePrivacyDeclarations struct{ ent.Schema }
+type BundlePrivacyDeclarations struct { ent.Schema }
 
 func (BundlePrivacyDeclarations) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_privacy_declarations"}}
@@ -44,5 +44,7 @@ func (BundlePrivacyDeclarations) Edges() []ent.Edge {
 }
 
 func (BundlePrivacyDeclarations) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

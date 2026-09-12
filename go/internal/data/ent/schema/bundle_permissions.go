@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundlePermissions struct{ ent.Schema }
+type BundlePermissions struct { ent.Schema }
 
 func (BundlePermissions) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_permissions"}}

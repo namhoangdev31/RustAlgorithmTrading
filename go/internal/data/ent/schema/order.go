@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-type Order struct{ ent.Schema }
+type Order struct { ent.Schema }
 
 func (Order) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "orders"}}
@@ -31,9 +31,13 @@ func (Order) Fields() []ent.Field {
 }
 
 func (Order) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (Order) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

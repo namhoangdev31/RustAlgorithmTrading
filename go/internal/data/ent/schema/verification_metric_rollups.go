@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type VerificationMetricRollups struct{ ent.Schema }
+type VerificationMetricRollups struct { ent.Schema }
 
 func (VerificationMetricRollups) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "verification_metric_rollups"}}

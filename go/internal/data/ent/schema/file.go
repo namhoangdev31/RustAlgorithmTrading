@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type File struct{ ent.Schema }
+type File struct { ent.Schema }
 
 func (File) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "files"}}
@@ -37,5 +37,7 @@ func (File) Edges() []ent.Edge {
 }
 
 func (File) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type QuantAuditEvent struct{ ent.Schema }
+type QuantAuditEvent struct { ent.Schema }
 
 func (QuantAuditEvent) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_audit_events"}}
@@ -42,7 +42,9 @@ func (QuantAuditEvent) Fields() []ent.Field {
 }
 
 func (QuantAuditEvent) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (QuantAuditEvent) Indexes() []ent.Index {

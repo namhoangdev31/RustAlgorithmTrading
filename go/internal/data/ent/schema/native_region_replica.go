@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeRegionReplica struct{ ent.Schema }
+type NativeRegionReplica struct { ent.Schema }
 
 func (NativeRegionReplica) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_region_replicas"}}

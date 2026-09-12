@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Notifications struct{ ent.Schema }
+type Notifications struct { ent.Schema }
 
 func (Notifications) Mixin() []ent.Mixin {
 	return []ent.Mixin{SoftDeleteMixin{}}
@@ -48,5 +48,7 @@ func (Notifications) Edges() []ent.Edge {
 }
 
 func (Notifications) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

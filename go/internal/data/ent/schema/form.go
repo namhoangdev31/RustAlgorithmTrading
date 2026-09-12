@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type Form struct{ ent.Schema }
+type Form struct { ent.Schema }
 
 func (Form) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "forms"}}
@@ -44,5 +44,7 @@ func (Form) Edges() []ent.Edge {
 }
 
 func (Form) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

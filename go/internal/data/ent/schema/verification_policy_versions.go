@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type VerificationPolicyVersions struct{ ent.Schema }
+type VerificationPolicyVersions struct { ent.Schema }
 
 func (VerificationPolicyVersions) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "verification_policy_versions"}}

@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type ProjectProviderBinding struct{ ent.Schema }
+type ProjectProviderBinding struct { ent.Schema }
 
 func (ProjectProviderBinding) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "project_provider_bindings"}}

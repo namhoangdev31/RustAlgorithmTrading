@@ -4,12 +4,12 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
+	"entgo.io/ent/dialect"
 )
 
-type SoftDeleteMixin struct{ mixin.Schema }
+type SoftDeleteMixin struct { mixin.Schema }
 
 func (SoftDeleteMixin) Fields() []ent.Field {
 	return []ent.Field{

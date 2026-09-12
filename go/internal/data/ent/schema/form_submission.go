@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-type FormSubmission struct{ ent.Schema }
+type FormSubmission struct { ent.Schema }
 
 func (FormSubmission) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "form_submissions"}}
@@ -38,5 +38,7 @@ func (FormSubmission) Edges() []ent.Edge {
 }
 
 func (FormSubmission) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

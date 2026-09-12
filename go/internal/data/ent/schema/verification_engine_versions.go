@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type VerificationEngineVersions struct{ ent.Schema }
+type VerificationEngineVersions struct { ent.Schema }
 
 func (VerificationEngineVersions) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "verification_engine_versions"}}

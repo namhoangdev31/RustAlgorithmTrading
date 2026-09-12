@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-type FormWebhookDelivery struct{ ent.Schema }
+type FormWebhookDelivery struct { ent.Schema }
 
 func (FormWebhookDelivery) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "form_webhook_deliveries"}}

@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeDomainConfig struct{ ent.Schema }
+type NativeDomainConfig struct { ent.Schema }
 
 func (NativeDomainConfig) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_domain_configs"}}

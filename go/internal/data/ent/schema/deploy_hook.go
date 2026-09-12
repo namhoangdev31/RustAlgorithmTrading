@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-type DeployHook struct{ ent.Schema }
+type DeployHook struct { ent.Schema }
 
 func (DeployHook) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "deploy_hooks"}}
@@ -38,5 +38,7 @@ func (DeployHook) Edges() []ent.Edge {
 }
 
 func (DeployHook) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

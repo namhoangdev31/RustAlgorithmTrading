@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-type RiskLimits struct{ ent.Schema }
+type RiskLimits struct { ent.Schema }
 
 func (RiskLimits) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "risk_limits"}}
@@ -76,9 +76,13 @@ func (RiskLimits) Fields() []ent.Field {
 }
 
 func (RiskLimits) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (RiskLimits) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

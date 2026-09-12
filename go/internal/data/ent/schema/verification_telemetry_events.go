@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type VerificationTelemetryEvents struct{ ent.Schema }
+type VerificationTelemetryEvents struct { ent.Schema }
 
 func (VerificationTelemetryEvents) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "verification_telemetry_events"}}

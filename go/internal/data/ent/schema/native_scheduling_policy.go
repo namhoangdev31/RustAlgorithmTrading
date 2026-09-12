@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type NativeSchedulingPolicy struct{ ent.Schema }
+type NativeSchedulingPolicy struct { ent.Schema }
 
 func (NativeSchedulingPolicy) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_scheduling_policies"}}
@@ -47,5 +47,7 @@ func (NativeSchedulingPolicy) Edges() []ent.Edge {
 }
 
 func (NativeSchedulingPolicy) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

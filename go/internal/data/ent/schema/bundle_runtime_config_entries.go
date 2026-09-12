@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleRuntimeConfigEntries struct{ ent.Schema }
+type BundleRuntimeConfigEntries struct { ent.Schema }
 
 func (BundleRuntimeConfigEntries) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_runtime_config_entries"}}

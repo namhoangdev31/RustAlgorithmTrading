@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-type SsoConfig struct{ ent.Schema }
+type SsoConfig struct { ent.Schema }
 
 func (SsoConfig) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "sso_configs"}}
@@ -41,5 +41,7 @@ func (SsoConfig) Edges() []ent.Edge {
 }
 
 func (SsoConfig) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

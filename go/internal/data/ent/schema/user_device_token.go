@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type UserDeviceToken struct{ ent.Schema }
+type UserDeviceToken struct { ent.Schema }
 
 func (UserDeviceToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "user_device_token"}}
@@ -39,5 +39,7 @@ func (UserDeviceToken) Edges() []ent.Edge {
 }
 
 func (UserDeviceToken) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

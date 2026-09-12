@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type NativePlugin struct{ ent.Schema }
+type NativePlugin struct { ent.Schema }
 
 func (NativePlugin) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_plugins"}}
@@ -43,5 +43,7 @@ func (NativePlugin) Edges() []ent.Edge {
 }
 
 func (NativePlugin) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-type MarketplaceInstallEvent struct{ ent.Schema }
+type MarketplaceInstallEvent struct { ent.Schema }
 
 func (MarketplaceInstallEvent) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "marketplace_install_events"}}
@@ -31,9 +31,13 @@ func (MarketplaceInstallEvent) Fields() []ent.Field {
 }
 
 func (MarketplaceInstallEvent) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (MarketplaceInstallEvent) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

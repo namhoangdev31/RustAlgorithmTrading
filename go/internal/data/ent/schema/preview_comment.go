@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-type PreviewComment struct{ ent.Schema }
+type PreviewComment struct { ent.Schema }
 
 func (PreviewComment) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "preview_comments"}}
@@ -41,5 +41,7 @@ func (PreviewComment) Edges() []ent.Edge {
 }
 
 func (PreviewComment) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

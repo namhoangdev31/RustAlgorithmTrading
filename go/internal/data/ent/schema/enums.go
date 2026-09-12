@@ -5,11 +5,11 @@ package schema
 type BundleCatalogStatus string
 
 const (
-	BundleCatalogStatusDraft     BundleCatalogStatus = "draft"
+	BundleCatalogStatusDraft BundleCatalogStatus = "draft"
 	BundleCatalogStatusSubmitted BundleCatalogStatus = "submitted"
 	BundleCatalogStatusPublished BundleCatalogStatus = "published"
 	BundleCatalogStatusSuspended BundleCatalogStatus = "suspended"
-	BundleCatalogStatusRemoved   BundleCatalogStatus = "removed"
+	BundleCatalogStatusRemoved BundleCatalogStatus = "removed"
 )
 
 func (BundleCatalogStatus) Values() []string {
@@ -19,15 +19,15 @@ func (BundleCatalogStatus) Values() []string {
 type BundleReleaseStatus string
 
 const (
-	BundleReleaseStatusQueued        BundleReleaseStatus = "queued"
-	BundleReleaseStatusBuilding      BundleReleaseStatus = "building"
-	BundleReleaseStatusScanning      BundleReleaseStatus = "scanning"
+	BundleReleaseStatusQueued BundleReleaseStatus = "queued"
+	BundleReleaseStatusBuilding BundleReleaseStatus = "building"
+	BundleReleaseStatusScanning BundleReleaseStatus = "scanning"
 	BundleReleaseStatusPendingReview BundleReleaseStatus = "pending_review"
-	BundleReleaseStatusApproved      BundleReleaseStatus = "approved"
-	BundleReleaseStatusActive        BundleReleaseStatus = "active"
-	BundleReleaseStatusRejected      BundleReleaseStatus = "rejected"
-	BundleReleaseStatusFailed        BundleReleaseStatus = "failed"
-	BundleReleaseStatusRolledBack    BundleReleaseStatus = "rolled_back"
+	BundleReleaseStatusApproved BundleReleaseStatus = "approved"
+	BundleReleaseStatusActive BundleReleaseStatus = "active"
+	BundleReleaseStatusRejected BundleReleaseStatus = "rejected"
+	BundleReleaseStatusFailed BundleReleaseStatus = "failed"
+	BundleReleaseStatusRolledBack BundleReleaseStatus = "rolled_back"
 )
 
 func (BundleReleaseStatus) Values() []string {
@@ -37,11 +37,11 @@ func (BundleReleaseStatus) Values() []string {
 type BundleArtifactKind string
 
 const (
-	BundleArtifactKindFull      BundleArtifactKind = "full"
-	BundleArtifactKindDelta     BundleArtifactKind = "delta"
+	BundleArtifactKindFull BundleArtifactKind = "full"
+	BundleArtifactKindDelta BundleArtifactKind = "delta"
 	BundleArtifactKindSourceMap BundleArtifactKind = "source_map"
-	BundleArtifactKindSbom      BundleArtifactKind = "sbom"
-	BundleArtifactKindBuildLog  BundleArtifactKind = "build_log"
+	BundleArtifactKindSbom BundleArtifactKind = "sbom"
+	BundleArtifactKindBuildLog BundleArtifactKind = "build_log"
 )
 
 func (BundleArtifactKind) Values() []string {
@@ -51,10 +51,10 @@ func (BundleArtifactKind) Values() []string {
 type BundleBuildStatus string
 
 const (
-	BundleBuildStatusQueued    BundleBuildStatus = "queued"
-	BundleBuildStatusRunning   BundleBuildStatus = "running"
+	BundleBuildStatusQueued BundleBuildStatus = "queued"
+	BundleBuildStatusRunning BundleBuildStatus = "running"
 	BundleBuildStatusSucceeded BundleBuildStatus = "succeeded"
-	BundleBuildStatusFailed    BundleBuildStatus = "failed"
+	BundleBuildStatusFailed BundleBuildStatus = "failed"
 	BundleBuildStatusCancelled BundleBuildStatus = "cancelled"
 )
 
@@ -66,8 +66,8 @@ type BundleApprovalKind string
 
 const (
 	BundleApprovalKindModeration BundleApprovalKind = "moderation"
-	BundleApprovalKindPrivacy    BundleApprovalKind = "privacy"
-	BundleApprovalKindSecurity   BundleApprovalKind = "security"
+	BundleApprovalKindPrivacy BundleApprovalKind = "privacy"
+	BundleApprovalKindSecurity BundleApprovalKind = "security"
 )
 
 func (BundleApprovalKind) Values() []string {
@@ -77,8 +77,8 @@ func (BundleApprovalKind) Values() []string {
 type BundleDeliveryMode string
 
 const (
-	BundleDeliveryModeNone       BundleDeliveryMode = "none"
-	BundleDeliveryModeRollout    BundleDeliveryMode = "rollout"
+	BundleDeliveryModeNone BundleDeliveryMode = "none"
+	BundleDeliveryModeRollout BundleDeliveryMode = "rollout"
 	BundleDeliveryModeExperiment BundleDeliveryMode = "experiment"
 )
 
@@ -89,13 +89,13 @@ func (BundleDeliveryMode) Values() []string {
 type VerificationRunStatus string
 
 const (
-	VerificationRunStatusQueued     VerificationRunStatus = "queued"
-	VerificationRunStatusRunning    VerificationRunStatus = "running"
-	VerificationRunStatusScoring    VerificationRunStatus = "scoring"
+	VerificationRunStatusQueued VerificationRunStatus = "queued"
+	VerificationRunStatusRunning VerificationRunStatus = "running"
+	VerificationRunStatusScoring VerificationRunStatus = "scoring"
 	VerificationRunStatusEvaluating VerificationRunStatus = "evaluating"
-	VerificationRunStatusCompleted  VerificationRunStatus = "completed"
+	VerificationRunStatusCompleted VerificationRunStatus = "completed"
 	VerificationRunStatusIncomplete VerificationRunStatus = "incomplete"
-	VerificationRunStatusCancelled  VerificationRunStatus = "cancelled"
+	VerificationRunStatusCancelled VerificationRunStatus = "cancelled"
 )
 
 func (VerificationRunStatus) Values() []string {
@@ -105,8 +105,8 @@ func (VerificationRunStatus) Values() []string {
 type VerificationDecision string
 
 const (
-	VerificationDecisionAllow  VerificationDecision = "allow"
-	VerificationDecisionWarn   VerificationDecision = "warn"
+	VerificationDecisionAllow VerificationDecision = "allow"
+	VerificationDecisionWarn VerificationDecision = "warn"
 	VerificationDecisionReview VerificationDecision = "review"
 	VerificationDecisionReject VerificationDecision = "reject"
 )
@@ -118,16 +118,16 @@ func (VerificationDecision) Values() []string {
 type VerificationTaskStatus string
 
 const (
-	VerificationTaskStatusQueued               VerificationTaskStatus = "queued"
-	VerificationTaskStatusReady                VerificationTaskStatus = "ready"
-	VerificationTaskStatusDispatched           VerificationTaskStatus = "dispatched"
-	VerificationTaskStatusRunning              VerificationTaskStatus = "running"
-	VerificationTaskStatusSucceeded            VerificationTaskStatus = "succeeded"
-	VerificationTaskStatusBundleFailed         VerificationTaskStatus = "bundle_failed"
+	VerificationTaskStatusQueued VerificationTaskStatus = "queued"
+	VerificationTaskStatusReady VerificationTaskStatus = "ready"
+	VerificationTaskStatusDispatched VerificationTaskStatus = "dispatched"
+	VerificationTaskStatusRunning VerificationTaskStatus = "running"
+	VerificationTaskStatusSucceeded VerificationTaskStatus = "succeeded"
+	VerificationTaskStatusBundleFailed VerificationTaskStatus = "bundle_failed"
 	VerificationTaskStatusInfrastructureFailed VerificationTaskStatus = "infrastructure_failed"
-	VerificationTaskStatusTimedOut             VerificationTaskStatus = "timed_out"
-	VerificationTaskStatusCancelled            VerificationTaskStatus = "cancelled"
-	VerificationTaskStatusDeadLettered         VerificationTaskStatus = "dead_lettered"
+	VerificationTaskStatusTimedOut VerificationTaskStatus = "timed_out"
+	VerificationTaskStatusCancelled VerificationTaskStatus = "cancelled"
+	VerificationTaskStatusDeadLettered VerificationTaskStatus = "dead_lettered"
 )
 
 func (VerificationTaskStatus) Values() []string {
@@ -138,11 +138,11 @@ type VerificationAttemptStatus string
 
 const (
 	VerificationAttemptStatusDispatched VerificationAttemptStatus = "dispatched"
-	VerificationAttemptStatusRunning    VerificationAttemptStatus = "running"
-	VerificationAttemptStatusSucceeded  VerificationAttemptStatus = "succeeded"
-	VerificationAttemptStatusFailed     VerificationAttemptStatus = "failed"
-	VerificationAttemptStatusTimedOut   VerificationAttemptStatus = "timed_out"
-	VerificationAttemptStatusCancelled  VerificationAttemptStatus = "cancelled"
+	VerificationAttemptStatusRunning VerificationAttemptStatus = "running"
+	VerificationAttemptStatusSucceeded VerificationAttemptStatus = "succeeded"
+	VerificationAttemptStatusFailed VerificationAttemptStatus = "failed"
+	VerificationAttemptStatusTimedOut VerificationAttemptStatus = "timed_out"
+	VerificationAttemptStatusCancelled VerificationAttemptStatus = "cancelled"
 )
 
 func (VerificationAttemptStatus) Values() []string {
@@ -152,8 +152,8 @@ func (VerificationAttemptStatus) Values() []string {
 type VerificationEnforcementMode string
 
 const (
-	VerificationEnforcementModeLegacy  VerificationEnforcementMode = "legacy"
-	VerificationEnforcementModeShadow  VerificationEnforcementMode = "shadow"
+	VerificationEnforcementModeLegacy VerificationEnforcementMode = "legacy"
+	VerificationEnforcementModeShadow VerificationEnforcementMode = "shadow"
 	VerificationEnforcementModeEnforce VerificationEnforcementMode = "enforce"
 )
 
@@ -164,7 +164,7 @@ func (VerificationEnforcementMode) Values() []string {
 type LedgerEntryDirection string
 
 const (
-	LedgerEntryDirectionDebit  LedgerEntryDirection = "debit"
+	LedgerEntryDirectionDebit LedgerEntryDirection = "debit"
 	LedgerEntryDirectionCredit LedgerEntryDirection = "credit"
 )
 
@@ -175,7 +175,7 @@ func (LedgerEntryDirection) Values() []string {
 type OrganizationType string
 
 const (
-	OrganizationTypePersonal  OrganizationType = "personal"
+	OrganizationTypePersonal OrganizationType = "personal"
 	OrganizationTypeCorporate OrganizationType = "corporate"
 )
 
@@ -186,10 +186,10 @@ func (OrganizationType) Values() []string {
 type QuantAssetClass string
 
 const (
-	QuantAssetClassEquity          QuantAssetClass = "equity"
-	QuantAssetClassCrypto          QuantAssetClass = "crypto"
-	QuantAssetClassForex           QuantAssetClass = "forex"
-	QuantAssetClassIndex           QuantAssetClass = "index"
+	QuantAssetClassEquity QuantAssetClass = "equity"
+	QuantAssetClassCrypto QuantAssetClass = "crypto"
+	QuantAssetClassForex QuantAssetClass = "forex"
+	QuantAssetClassIndex QuantAssetClass = "index"
 	QuantAssetClassCommodityFuture QuantAssetClass = "commodity_future"
 )
 
@@ -201,7 +201,7 @@ type QuantTradingMode string
 
 const (
 	QuantTradingModePaper QuantTradingMode = "paper"
-	QuantTradingModeLive  QuantTradingMode = "live"
+	QuantTradingModeLive QuantTradingMode = "live"
 )
 
 func (QuantTradingMode) Values() []string {
@@ -212,9 +212,9 @@ type QuantSupportLevel string
 
 const (
 	QuantSupportLevelUnavailable QuantSupportLevel = "unavailable"
-	QuantSupportLevelViewOnly    QuantSupportLevel = "view_only"
-	QuantSupportLevelPaper       QuantSupportLevel = "paper"
-	QuantSupportLevelLive        QuantSupportLevel = "live"
+	QuantSupportLevelViewOnly QuantSupportLevel = "view_only"
+	QuantSupportLevelPaper QuantSupportLevel = "paper"
+	QuantSupportLevelLive QuantSupportLevel = "live"
 )
 
 func (QuantSupportLevel) Values() []string {
@@ -224,11 +224,11 @@ func (QuantSupportLevel) Values() []string {
 type QuantOrderType string
 
 const (
-	QuantOrderTypeMarket       QuantOrderType = "market"
-	QuantOrderTypeLimit        QuantOrderType = "limit"
-	QuantOrderTypeStop         QuantOrderType = "stop"
-	QuantOrderTypeStopLimit    QuantOrderType = "stop_limit"
-	QuantOrderTypeBracket      QuantOrderType = "bracket"
+	QuantOrderTypeMarket QuantOrderType = "market"
+	QuantOrderTypeLimit QuantOrderType = "limit"
+	QuantOrderTypeStop QuantOrderType = "stop"
+	QuantOrderTypeStopLimit QuantOrderType = "stop_limit"
+	QuantOrderTypeBracket QuantOrderType = "bracket"
 	QuantOrderTypeTrailingStop QuantOrderType = "trailing_stop"
 )
 
@@ -239,15 +239,15 @@ func (QuantOrderType) Values() []string {
 type QuantStrategyLifecycle string
 
 const (
-	QuantStrategyLifecycleDraft       QuantStrategyLifecycle = "draft"
+	QuantStrategyLifecycleDraft QuantStrategyLifecycle = "draft"
 	QuantStrategyLifecycleBacktesting QuantStrategyLifecycle = "backtesting"
-	QuantStrategyLifecyclePaperReady  QuantStrategyLifecycle = "paper_ready"
+	QuantStrategyLifecyclePaperReady QuantStrategyLifecycle = "paper_ready"
 	QuantStrategyLifecyclePaperActive QuantStrategyLifecycle = "paper_active"
-	QuantStrategyLifecycleLiveReady   QuantStrategyLifecycle = "live_ready"
-	QuantStrategyLifecycleLiveActive  QuantStrategyLifecycle = "live_active"
-	QuantStrategyLifecyclePaused      QuantStrategyLifecycle = "paused"
-	QuantStrategyLifecycleFailed      QuantStrategyLifecycle = "failed"
-	QuantStrategyLifecycleArchived    QuantStrategyLifecycle = "archived"
+	QuantStrategyLifecycleLiveReady QuantStrategyLifecycle = "live_ready"
+	QuantStrategyLifecycleLiveActive QuantStrategyLifecycle = "live_active"
+	QuantStrategyLifecyclePaused QuantStrategyLifecycle = "paused"
+	QuantStrategyLifecycleFailed QuantStrategyLifecycle = "failed"
+	QuantStrategyLifecycleArchived QuantStrategyLifecycle = "archived"
 )
 
 func (QuantStrategyLifecycle) Values() []string {

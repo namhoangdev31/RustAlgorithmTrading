@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeTelemetryEnvelope struct{ ent.Schema }
+type NativeTelemetryEnvelope struct { ent.Schema }
 
 func (NativeTelemetryEnvelope) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_telemetry_envelopes"}}

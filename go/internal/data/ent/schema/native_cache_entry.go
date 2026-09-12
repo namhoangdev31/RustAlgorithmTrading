@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeCacheEntry struct{ ent.Schema }
+type NativeCacheEntry struct { ent.Schema }
 
 func (NativeCacheEntry) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_cache_entries"}}

@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleRuntimeConfig struct{ ent.Schema }
+type BundleRuntimeConfig struct { ent.Schema }
 
 func (BundleRuntimeConfig) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_runtime_config"}}
@@ -38,5 +38,7 @@ func (BundleRuntimeConfig) Edges() []ent.Edge {
 }
 
 func (BundleRuntimeConfig) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

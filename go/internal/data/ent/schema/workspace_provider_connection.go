@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type WorkspaceProviderConnection struct{ ent.Schema }
+type WorkspaceProviderConnection struct { ent.Schema }
 
 func (WorkspaceProviderConnection) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "workspace_provider_connections"}}

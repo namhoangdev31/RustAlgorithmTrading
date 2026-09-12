@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeSchedulingSignal struct{ ent.Schema }
+type NativeSchedulingSignal struct { ent.Schema }
 
 func (NativeSchedulingSignal) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_scheduling_signals"}}

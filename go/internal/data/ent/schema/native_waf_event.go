@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeWAFEvent struct{ ent.Schema }
+type NativeWAFEvent struct { ent.Schema }
 
 func (NativeWAFEvent) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_waf_events"}}

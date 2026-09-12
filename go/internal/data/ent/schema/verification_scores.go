@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type VerificationScores struct{ ent.Schema }
+type VerificationScores struct { ent.Schema }
 
 func (VerificationScores) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "verification_scores"}}
@@ -38,5 +38,7 @@ func (VerificationScores) Edges() []ent.Edge {
 }
 
 func (VerificationScores) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type BundleArtifactManifests struct{ ent.Schema }
+type BundleArtifactManifests struct { ent.Schema }
 
 func (BundleArtifactManifests) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_artifact_manifests"}}

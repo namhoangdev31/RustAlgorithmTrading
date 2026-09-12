@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type QuantAlert struct{ ent.Schema }
+type QuantAlert struct { ent.Schema }
 
 func (QuantAlert) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_alerts"}}
@@ -38,7 +38,9 @@ func (QuantAlert) Fields() []ent.Field {
 }
 
 func (QuantAlert) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (QuantAlert) Indexes() []ent.Index {

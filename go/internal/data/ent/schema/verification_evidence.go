@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type VerificationEvidence struct{ ent.Schema }
+type VerificationEvidence struct { ent.Schema }
 
 func (VerificationEvidence) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "verification_evidence"}}

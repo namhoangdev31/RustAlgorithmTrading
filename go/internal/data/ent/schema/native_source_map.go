@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeSourceMap struct{ ent.Schema }
+type NativeSourceMap struct { ent.Schema }
 
 func (NativeSourceMap) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_source_maps"}}

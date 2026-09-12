@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type VerificationAlerts struct{ ent.Schema }
+type VerificationAlerts struct { ent.Schema }
 
 func (VerificationAlerts) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "verification_alerts"}}

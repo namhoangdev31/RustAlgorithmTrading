@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type NativePluginInstallation struct{ ent.Schema }
+type NativePluginInstallation struct { ent.Schema }
 
 func (NativePluginInstallation) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_plugin_installations"}}

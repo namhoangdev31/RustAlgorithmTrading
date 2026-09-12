@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeRoutingPolicy struct{ ent.Schema }
+type NativeRoutingPolicy struct { ent.Schema }
 
 func (NativeRoutingPolicy) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_routing_policies"}}
@@ -47,5 +47,7 @@ func (NativeRoutingPolicy) Edges() []ent.Edge {
 }
 
 func (NativeRoutingPolicy) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

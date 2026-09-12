@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type WorkspaceAuditEvent struct{ ent.Schema }
+type WorkspaceAuditEvent struct { ent.Schema }
 
 func (WorkspaceAuditEvent) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "workspace_audit_events"}}
@@ -35,9 +35,13 @@ func (WorkspaceAuditEvent) Fields() []ent.Field {
 }
 
 func (WorkspaceAuditEvent) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (WorkspaceAuditEvent) Indexes() []ent.Index {
-	return []ent.Index{}
+	return []ent.Index{
+
+	}
 }

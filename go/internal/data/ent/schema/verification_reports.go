@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type VerificationReports struct{ ent.Schema }
+type VerificationReports struct { ent.Schema }
 
 func (VerificationReports) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "verification_reports"}}

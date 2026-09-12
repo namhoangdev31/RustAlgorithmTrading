@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-type NativeRemediationRun struct{ ent.Schema }
+type NativeRemediationRun struct { ent.Schema }
 
 func (NativeRemediationRun) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_remediation_runs"}}

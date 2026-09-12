@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type QuantOutboxEvent struct{ ent.Schema }
+type QuantOutboxEvent struct { ent.Schema }
 
 func (QuantOutboxEvent) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_outbox_events"}}
@@ -38,7 +38,9 @@ func (QuantOutboxEvent) Fields() []ent.Field {
 }
 
 func (QuantOutboxEvent) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (QuantOutboxEvent) Indexes() []ent.Index {

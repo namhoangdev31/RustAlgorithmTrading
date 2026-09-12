@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-type NativeEdgeFunction struct{ ent.Schema }
+type NativeEdgeFunction struct { ent.Schema }
 
 func (NativeEdgeFunction) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "native_edge_functions"}}

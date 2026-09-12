@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type QuantDevice struct{ ent.Schema }
+type QuantDevice struct { ent.Schema }
 
 func (QuantDevice) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_devices"}}
@@ -37,7 +37,9 @@ func (QuantDevice) Fields() []ent.Field {
 }
 
 func (QuantDevice) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (QuantDevice) Indexes() []ent.Index {

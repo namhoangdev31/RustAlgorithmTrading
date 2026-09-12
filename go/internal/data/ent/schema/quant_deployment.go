@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type QuantDeployment struct{ ent.Schema }
+type QuantDeployment struct { ent.Schema }
 
 func (QuantDeployment) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "quant_deployments"}}

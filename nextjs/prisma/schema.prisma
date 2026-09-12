@@ -3909,3 +3909,70 @@ model QuantAuditEvent {
   @@index([correlationId])
   @@map("quant_audit_events")
 }
+
+model BfxpsTradingPlan {
+  id          String    @id @default(uuid()) @db.Uuid
+  date        DateTime  @db.Date
+  engine      String    @db.VarChar(64)
+  profile     String?   @db.VarChar(64)
+  horizon     String    @db.VarChar(16)
+  side        String    @db.VarChar(16)
+  entryPrice  Decimal   @map("entry_price") @db.Decimal(8, 2)
+  tpPrice     Decimal   @map("tp_price") @db.Decimal(8, 2)
+  slPrice     Decimal   @map("sl_price") @db.Decimal(8, 2)
+  maxCap      Decimal   @default(0.3) @map("max_cap") @db.Decimal(4, 2)
+  r5State     String    @default("PRE_OPEN") @map("r5_state") @db.VarChar(32)
+  status      String    @default("PENDING") @db.VarChar(32)
+  isCanonical Boolean   @default(true) @map("is_canonical")
+  exitPrice   Decimal?  @map("exit_price") @db.Decimal(8, 2)
+  exitType    String?   @map("exit_type") @db.VarChar(32)
+  exitMinute  String?   @map("exit_minute") @db.VarChar(16)
+  pnlPoints   Decimal?  @map("pnl_points") @db.Decimal(8, 2)
+  isWin       Boolean?  @map("is_win")
+  notes       String?   @db.Text
+  settledAt   DateTime? @map("settled_at") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([date, engine])
+  @@index([date, status])
+  @@map("bfxps_trading_plans")
+}
+
+model BfxpsLiveLedger {
+  id         String    @id @default(uuid()) @db.Uuid
+  date       DateTime  @db.Date
+  engine     String    @db.VarChar(64)
+  side       String    @db.VarChar(16)
+  avgEntry   Decimal   @map("avg_entry") @db.Decimal(8, 2)
+  exitPrice  Decimal?  @map("exit_price") @db.Decimal(8, 2)
+  exitType   String?   @map("exit_type") @db.VarChar(32)
+  pnlPoints  Decimal?  @map("pnl_points") @db.Decimal(8, 2)
+  pnlStatus  String?   @map("pnl_status") @db.VarChar(16)
+  size       Decimal   @default(0.3) @db.Decimal(4, 2)
+  isSettled  Boolean   @default(false) @map("is_settled")
+  notes      String?   @db.Text
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([date, engine])
+  @@index([date(sort: Desc)])
+  @@map("bfxps_live_ledgers")
+}
+
+model BfxpsMarketSnapshot {
+  id          String   @id @default(uuid()) @db.Uuid
+  timestamp   DateTime @default(now()) @map("timestamp") @db.Timestamptz(6)
+  open        Decimal  @db.Decimal(8, 2)
+  high        Decimal  @db.Decimal(8, 2)
+  low         Decimal  @db.Decimal(8, 2)
+  current     Decimal  @db.Decimal(8, 2)
+  volume      Decimal  @db.Decimal(12, 2)
+  oi          Decimal? @db.Decimal(12, 2)
+  basis       Decimal? @db.Decimal(8, 2)
+  foreignBuy  Decimal? @map("foreign_buy") @db.Decimal(12, 2)
+  foreignSell Decimal? @map("foreign_sell") @db.Decimal(12, 2)
+  source      String   @db.VarChar(64)
+
+  @@index([timestamp(sort: Desc)])
+  @@map("bfxps_market_snapshots")
+}
+

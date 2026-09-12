@@ -15,7 +15,7 @@ import (
 	"github.com/lib/pq"
 )
 
-type BundleAbTests struct{ ent.Schema }
+type BundleAbTests struct { ent.Schema }
 
 func (BundleAbTests) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "bundle_ab_tests"}}

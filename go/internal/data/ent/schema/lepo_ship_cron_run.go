@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type LepoShipCronRun struct{ ent.Schema }
+type LepoShipCronRun struct { ent.Schema }
 
 func (LepoShipCronRun) Annotations() []schema.Annotation {
 	return []schema.Annotation{entsql.Annotation{Table: "lepoship_cron_runs"}}
@@ -35,7 +35,9 @@ func (LepoShipCronRun) Fields() []ent.Field {
 }
 
 func (LepoShipCronRun) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+
+	}
 }
 
 func (LepoShipCronRun) Indexes() []ent.Index {
