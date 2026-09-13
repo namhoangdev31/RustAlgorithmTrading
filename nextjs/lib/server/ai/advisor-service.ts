@@ -1,5 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { ConsensusResult, MarketSnapshot, TradingPlan } from "../quant/types";
+import {
+  ConsensusResult,
+  MarketSnapshot,
+  TradingPlan,
+  BacktestSummary,
+  AdvisorConfig,
+} from "../quant/types";
+import { DEFAULT_CANONICAL_CONFIG } from "../quant/strategy-engine";
 
 export interface AdvisorResponse {
   ok: boolean;
@@ -72,6 +79,20 @@ export function classifyIntent(question: string): string {
   return "GENERAL_ADVISORY";
 }
 
+export const DEFAULT_CANONICAL_BACKTEST_SUMMARY: BacktestSummary = {
+  totalSessions: 413,
+  totalBars: 100746,
+  startDate: "01/2025",
+  endDate: "11/09/2026",
+  tradedCount: 327,
+  wins: 180,
+  losses: 143,
+  winRate: 55.0,
+  profitFactor: 1.3,
+  totalPnl: 306.3,
+  maxDrawdown: -92.6,
+};
+
 /**
  * Sinh câu trả lời định dạng chuẩn 4 khối Canonical Provenance Contract của BFXPS
  */
@@ -79,14 +100,50 @@ export async function generateAdvisorReply(
   question: string,
   snapshot: MarketSnapshot,
   plans: TradingPlan[],
-  consensus: ConsensusResult
+  consensus: ConsensusResult,
+  config?: AdvisorConfig
 ): Promise<AdvisorResponse> {
   const intent = classifyIntent(question);
-  const primaryPlan = plans[0];
+  const primaryPlan = plans[0] || {
+    side: "LONG",
+    entryPrice: snapshot.current,
+    tpPrice: snapshot.current + DEFAULT_CANONICAL_CONFIG.tpPoints,
+    slPrice: snapshot.current - DEFAULT_CANONICAL_CONFIG.slPoints,
+    date: new Date().toISOString().slice(0, 10),
+    engine: "CanonicalDirectionalBreakout",
+    r5State: "KEEP",
+    resolvedSource: "CANONICAL",
+  };
 
-  const isEn =
-    !/[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệđùúủũụưứừửữựòóỏõọôốồổỗộơớờởỡợìíỉĩịỳýỷỹỵ]/i.test(question) &&
-    /what|how|today|plan|chart|show|perf|win|loss|rule|risk|stop|trade|session|latest|source/i.test(question);
+  const isVi = /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệđùúủũụưứừửữựòóỏõọôốồổỗộơớờởỡợìíỉĩịỳýỷỹỵ]/i.test(question);
+  const isEn = !isVi;
+
+  // 1. Tính toán động các mốc chênh lệch TP/SL và Tỷ lệ R:R
+  const tpPoints = Math.abs(Number((primaryPlan.tpPrice - primaryPlan.entryPrice).toFixed(1)));
+  const slPoints = Math.abs(Number((primaryPlan.slPrice - primaryPlan.entryPrice).toFixed(1)));
+  const rawRatio = slPoints > 0 ? tpPoints / slPoints : 2.0;
+  const rrRatioDisplay = `1:${Number(rawRatio.toFixed(1)) === Math.round(rawRatio) ? Math.round(rawRatio) : rawRatio.toFixed(1)}`;
+
+  // 2. Lấy dữ liệu thống kê kiểm định động (từ DB hoặc cấu hình truyền vào)
+  const summary: BacktestSummary = {
+    ...DEFAULT_CANONICAL_BACKTEST_SUMMARY,
+    ...(config?.summary || {}),
+  };
+
+  // 3. Thông tin nền tảng và thời gian giao dịch động
+  const brokerList = config?.brokerPlatforms?.length
+    ? config.brokerPlatforms.join(", ")
+    : "VPS, TCBS, SSI, DNSE";
+  const orderTime = config?.orderBeforeTime || "08:55";
+  const atcTime = config?.atcTime || "14:45";
+
+  // 4. Chuỗi thống kê kiểm định đa ngôn ngữ động
+  const backtestSummaryEn = `Verification across ${summary.totalSessions} sessions (${summary.totalBars?.toLocaleString() ?? "100,746"} 1m bars from ${summary.startDate ?? "Jan 2025"} to ${summary.endDate ?? "Sep 11, 2026"}): ${summary.tradedCount} filled trades (${summary.wins} Wins / ${summary.losses} Losses), Winrate ${summary.winRate}%, Total Profit ${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl} points, Profit Factor ${summary.profitFactor}.`;
+  const backtestSummaryVi = `Hiệu suất kiểm định ${summary.totalSessions} phiên (${summary.totalBars?.toLocaleString() ?? "100.746"} nến 1m từ ${summary.startDate ?? "01/2025"} đến ${summary.endDate ?? "11/09/2026"}): ${summary.tradedCount} lệnh khớp (${summary.wins} Thắng / ${summary.losses} Thua), Winrate ${summary.winRate}%, Tổng lãi ${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl} điểm, Profit Factor ${summary.profitFactor}.`;
+
+  const engineDisplay = isEn
+    ? (primaryPlan.engine === "CanonicalDirectionalBreakout" ? "Canonical Directional Breakout" : primaryPlan.engine)
+    : (primaryPlan.engine === "CanonicalDirectionalBreakout" ? "Đột Phá Xu Hướng Chuẩn Tắc" : primaryPlan.engine);
 
   // Nếu câu hỏi yêu cầu biểu đồ
   if (intent === "CHART_RENDER_PRIORITY") {
@@ -99,38 +156,40 @@ export async function generateAdvisorReply(
 Activated real 1-minute candlestick backtest performance chart (Zero Lookahead).
 
 🟧 HISTORY/REASONING
-Verification across 418 sessions (100,746 1m bars from Jan 2025 to Sep 11, 2026): 287 filled trades (151 Wins / 136 Losses), Winrate 52.6%, Total Profit +770.5 points, Profit Factor 1.85.
+${backtestSummaryEn}
 
 🟪 INFERENCE/BRAIN
-Strategy utilizes Stop Breakout with Risk/Reward = 1:2 (TP +16 pts, SL -8 pts), preserving capital and capturing trend momentum.
+Strategy utilizes Stop Breakout with Risk/Reward = ${rrRatioDisplay} (TP +${tpPoints.toFixed(1)} pts, SL -${slPoints.toFixed(1)} pts), preserving capital and capturing trend momentum.
 
 ⬜ CONCLUSION/ACTION
-Place order before 08:55 AM, strictly adhere to SL discipline and actively close at ATC 14:45.`
+Place order before ${orderTime} AM on your brokerage app (${brokerList}), strictly adhere to SL discipline and actively close at ATC ${atcTime}.`
         : `🟦 HỆ THỐNG/CSDL
 Đã kích hoạt biểu đồ hiệu suất kiểm định nến 1 phút thực tế (Zero Lookahead).
 
 🟧 LỊCH SỬ/SUY LUẬN
-Hiệu suất kiểm định 418 phiên (100.746 nến 1m từ 01/2025 đến 11/09/2026): 287 lệnh khớp (151 Thắng / 136 Thua), Winrate 52.6%, Tổng lãi +770.5 điểm, Profit Factor 1.85.
+${backtestSummaryVi}
 
 🟪 SUY LUẬN/BRAIN
-Chiến lược sử dụng Stop Breakout với tỷ lệ R:R = 1:2 (TP +16đ, SL -8đ), bảo vệ vốn và tối ưu hóa lợi nhuận khi có sóng bứt phá.
+Chiến lược sử dụng Stop Breakout với tỷ lệ R:R = ${rrRatioDisplay} (TP +${tpPoints.toFixed(1)}đ, SL -${slPoints.toFixed(1)}đ), bảo vệ vốn và tối ưu hóa lợi nhuận khi có sóng bứt phá.
 
 ⬜ KẾT LUẬN/HÀNH ĐỘNG
-Đặt lệnh trước 08:55 sáng, tuân thủ kỷ luật dừng lỗ và đóng vị thế ATC lúc 14:45.`,
+Đặt lệnh trước ${orderTime} sáng trên app chứng khoán (${brokerList}), tuân thủ kỷ luật dừng lỗ và đóng vị thế ATC lúc ${atcTime}.`,
       charts: [
         {
           kind: "performance_30d",
           title: isEn
-            ? "PnL / Equity / Drawdown real 1-minute bars (2025 - Sep 11, 2026)"
-            : "PnL / Equity / Drawdown nến 1 phút thực tế (2025 - 11/09/2026)",
+            ? `PnL / Equity / Drawdown real 1-minute bars (${summary.startDate ?? "2025"} - ${summary.endDate ?? "2026"})`
+            : `PnL / Equity / Drawdown nến 1 phút thực tế (${summary.startDate ?? "2025"} - ${summary.endDate ?? "2026"})`,
           sourceRole: "HISTORY_CANONICAL",
           metrics: {
-            rows: 418,
-            executed: 287,
-            wins: 151,
-            losses: 136,
-            wr: 52.6,
-            maxDd: -93.9,
+            rows: summary.totalSessions,
+            executed: summary.tradedCount,
+            wins: summary.wins,
+            losses: summary.losses,
+            wr: summary.winRate,
+            pf: summary.profitFactor,
+            totalPnl: summary.totalPnl,
+            maxDd: summary.maxDrawdown,
           },
         },
       ],
@@ -152,21 +211,21 @@ Chiến lược sử dụng Stop Breakout với tỷ lệ R:R = 1:2 (TP +16đ, S
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       const prompt = `Bạn là Lepos Trading Bot - Hệ thống cố vấn phái sinh VN30 chuyên nghiệp.
-Hệ thống chỉ tập trung ĐÚNG 1 KÈO DUY NHẤT trong ngày (Canonical Quant Advisor):
+Hệ thống chỉ tập trung ĐÚNG 1 KÈO DUY NHẤT trong ngày (${isEn ? "Canonical Quant Advisor" : "Cố Vấn Định Lượng Chuẩn Tắc"}):
 - Thông tin thị trường: Open ${snapshot.open}, High ${snapshot.high}, Low ${snapshot.low}, Current ${snapshot.current}, Basis ${snapshot.basis ?? "N/A"}.
-- KÈO DUY NHẤT HÔM NAY: Hướng ${primaryPlan.side}, Lệnh Stop Order tại Entry ${primaryPlan.entryPrice}, TP ${primaryPlan.tpPrice} (+16đ), SL ${primaryPlan.slPrice} (-8đ). Tỷ lệ R:R = 1:2.
-- Kiểm định lịch sử 100.746 nến 1m thực tế (01/2025 - 11/09/2026): Winrate 52.6%, Lãi +770.5 điểm, Profit Factor 1.85.
+- KÈO DUY NHẤT HÔM NAY: Hướng ${primaryPlan.side}, Lệnh Stop Order tại Entry ${primaryPlan.entryPrice.toFixed(1)}, TP ${primaryPlan.tpPrice.toFixed(1)} (+${tpPoints.toFixed(1)}đ), SL ${primaryPlan.slPrice.toFixed(1)} (-${slPoints.toFixed(1)}đ). Tỷ lệ R:R = ${rrRatioDisplay}.
+- Kiểm định lịch sử ${summary.totalSessions} phiên (${summary.totalBars?.toLocaleString() ?? "100.746"} nến 1m thực tế từ ${summary.startDate ?? "01/2025"} đến ${summary.endDate ?? "11/09/2026"}): Winrate ${summary.winRate}%, Lãi ${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl} điểm, Profit Factor ${summary.profitFactor}.
 Câu hỏi của người dùng: "${question}"
 
 YÊU CẦU BẮT BUỘC: Câu trả lời PHẢI chia thành đúng 4 khối với định dạng:
 ${isEn ? "🟦 SYSTEM/DB" : "🟦 HỆ THỐNG/CSDL"}
 (Nêu rõ các mức giá Entry, TP, SL của kèo duy nhất)
 ${isEn ? "🟧 HISTORY/REASONING" : "🟧 LỊCH SỬ/SUY LUẬN"}
-(Nêu thống kê kiểm định 100.746 nến 1 phút thực tế, Winrate 52.6%, +770.5đ)
+(Nêu thống kê kiểm định ${summary.totalSessions} phiên thực tế, Winrate ${summary.winRate}%, ${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl}đ)
 ${isEn ? "🟪 INFERENCE/BRAIN" : "🟪 SUY LUẬN/BRAIN"}
 (Đánh giá so sánh giá hiện tại với điểm kích hoạt Stop Order)
 ${isEn ? "⬜ CONCLUSION/ACTION" : "⬜ KẾT LUẬN/HÀNH ĐỘNG"}
-(Hướng dẫn người dùng tự đặt lệnh Stop Order trên app trước 08:55 sáng, đóng ATC lúc 14:45)`;
+(Hướng dẫn người dùng tự đặt lệnh Stop Order trên app (${brokerList}) trước ${orderTime} sáng, đóng ATC lúc ${atcTime})`;
 
       const res = await model.generateContent(prompt);
       const geminiText = res.response.text();
@@ -196,54 +255,99 @@ ${isEn ? "⬜ CONCLUSION/ACTION" : "⬜ KẾT LUẬN/HÀNH ĐỘNG"}
       ? `🟦 SYSTEM/DB
 Single Trading Plan for Session (${primaryPlan.date}) — Canonical Quant Advisor:
 - Condition Order: Stop Order (${primaryPlan.side === "LONG" ? "Stop Buy" : "Stop Sell"}) at price ${primaryPlan.entryPrice.toFixed(1)}.
-- Take Profit (TP): ${primaryPlan.tpPrice.toFixed(1)} (+16.0 points).
-- Stop Loss (SL): ${primaryPlan.slPrice.toFixed(1)} (-8.0 points). Risk/Reward = 1:2.
-Data Source: CANONICAL_PRE_OPEN_VOLATILITY_EXPANSION (Zero Lookahead).
+- Take Profit (TP): ${primaryPlan.tpPrice.toFixed(1)} (+${tpPoints.toFixed(1)} points).
+- Stop Loss (SL): ${primaryPlan.slPrice.toFixed(1)} (-${slPoints.toFixed(1)} points). Risk/Reward = ${rrRatioDisplay}.
+Data Source: ${primaryPlan.resolvedSource || "CANONICAL_PRE_OPEN_VOLATILITY_EXPANSION"} (Zero Lookahead).
 
 🟧 HISTORY/REASONING
-Objective verification on 100,746 real 1-minute bars (418 sessions from 01/2025 to 11/09/2026): Winrate 52.6%, Total Profit +770.5 points, Profit Factor 1.85.
+${backtestSummaryEn}
 
 🟪 INFERENCE/BRAIN
 Current Market Price: ${snapshot.current.toFixed(1)}. Awaiting breakout past trigger level ${primaryPlan.entryPrice.toFixed(1)}.
 
 ⬜ CONCLUSION/ACTION
-Place Stop Order on your brokerage app before 08:55 AM. If neither TP nor SL is reached by 14:45, actively close at ATC.`
+Place Stop Order on your brokerage app (${brokerList}) before ${orderTime} AM. If neither TP nor SL is reached by ${atcTime}, actively close at ATC.`
       : `🟦 HỆ THỐNG/CSDL
-Kèo duy nhất cho phiên (${primaryPlan.date}) — Canonical Quant Advisor:
-- Lệnh điều kiện: Stop Order (${primaryPlan.side === "LONG" ? "Stop Buy" : "Stop Sell"}) tại giá ${primaryPlan.entryPrice.toFixed(1)}.
-- Chốt lời (TP): ${primaryPlan.tpPrice.toFixed(1)} (+16.0 điểm).
-- Cắt lỗ (SL): ${primaryPlan.slPrice.toFixed(1)} (-8.0 điểm). Tỷ lệ R:R = 1:2.
-Nguồn dữ liệu: CANONICAL_PRE_OPEN_VOLATILITY_EXPANSION (Zero Lookahead).
+Kèo duy nhất cho phiên (${primaryPlan.date}) — Cố Vấn Định Lượng Chuẩn Tắc:
+- Lệnh điều kiện: Lệnh dừng Stop Order (${primaryPlan.side === "LONG" ? "Stop Buy" : "Stop Sell"}) tại giá ${primaryPlan.entryPrice.toFixed(1)}.
+- Chốt lời (TP): ${primaryPlan.tpPrice.toFixed(1)} (+${tpPoints.toFixed(1)} điểm).
+- Cắt lỗ (SL): ${primaryPlan.slPrice.toFixed(1)} (-${slPoints.toFixed(1)} điểm). Tỷ lệ R:R = ${rrRatioDisplay}.
+Nguồn dữ liệu: ${primaryPlan.resolvedSource || "CANONICAL_PRE_OPEN_VOLATILITY_EXPANSION"} (Chuẩn Zero Lookahead).
 
 🟧 LỊCH SỬ/SUY LUẬN
-Kiểm định khách quan trên 100.746 nến 1 phút thực tế (418 phiên từ 01/2025 đến 11/09/2026): Tỷ lệ thắng 52.6%, Tổng lãi +770.5 điểm, Profit Factor 1.85.
+${backtestSummaryVi}
 
 🟪 SUY LUẬN/BRAIN
 Giá thị trường hiện tại: ${snapshot.current.toFixed(1)}. Chờ giá bứt phá vượt mốc kích hoạt ${primaryPlan.entryPrice.toFixed(1)}.
 
 ⬜ KẾT LUẬN/HÀNH ĐỘNG
-Đặt lệnh Stop Order trên app chứng khoán cá nhân (VPS, TCBS, SSI, DNSE,...) trước 08:55 sáng. Nếu đến 14:45 chưa chạm TP/SL thì chủ động đóng lệnh ở phiên ATC.`;
-  } else if (intent === "RISK_EXPLAIN") {
+Đặt lệnh Stop Order trên app chứng khoán (${brokerList}) trước ${orderTime} sáng. Nếu đến ${atcTime} chưa chạm TP/SL thì chủ động đóng lệnh ở phiên ATC.`;
+  } else if (intent === "PERFORMANCE_QUERY") {
     answer = isEn
       ? `🟦 SYSTEM/DB
-Risk management parameters: Stop Loss level ${primaryPlan.slPrice.toFixed(1)} (Source: ${primaryPlan.resolvedSource || "CANONICAL"}).
+Objective Verification Database (Zero Lookahead) from ${summary.startDate ?? "Jan 2025"} to ${summary.endDate ?? "Sep 11, 2026"}.
+Total Sessions Surveyed: ${summary.totalSessions} sessions · ${summary.totalBars?.toLocaleString() ?? "100,746"} 1-minute bars.
 
 🟧 HISTORY/REASONING
-Rule V44: Disallow LONG when Expected-High is below Reference Price. R5 filter priority: CANCEL > FLIP_HINT > KEEP.
+Performance breakdown:
+- Traded Sessions: ${summary.tradedCount} filled trades (${summary.wins} Wins / ${summary.losses} Losses).
+- Winrate: ${summary.winRate}% · Profit Factor: ${summary.profitFactor}.
+- Net Profit: ${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl} points (approx ${summary.totalPnl > 0 ? "+" : ""}${(summary.totalPnl * 0.1).toFixed(2)}M VND / contract).
+- Max Drawdown: ${summary.maxDrawdown} points.
 
 🟪 INFERENCE/BRAIN
-Current R5 state: ${primaryPlan.r5State}. Buffer distance to Stop Loss: ${Math.abs(snapshot.current - primaryPlan.slPrice).toFixed(1)} points.
+Positive mathematical expectancy achieved via consistent R:R = ${rrRatioDisplay} (TP +${tpPoints.toFixed(1)} pts / SL -${slPoints.toFixed(1)} pts) and strict single-trade discipline.
+
+⬜ CONCLUSION/ACTION
+Review historical ledger anytime via Trade History Modal. Do not modify TP/SL targets during live sessions.`
+      : `🟦 HỆ THỐNG/CSDL
+Cơ sở dữ liệu kiểm định khách quan (Chuẩn Zero Lookahead) từ ${summary.startDate ?? "01/2025"} đến ${summary.endDate ?? "11/09/2026"}.
+Tổng số phiên khảo sát: ${summary.totalSessions} phiên · ${summary.totalBars?.toLocaleString() ?? "100.746"} nến 1 phút thực tế.
+
+🟧 LỊCH SỬ/SUY LUẬN
+Báo cáo hiệu suất thực tế:
+- Số phiên khớp lệnh: ${summary.tradedCount} phiên (${summary.wins} Thắng / ${summary.losses} Thua).
+- Tỷ lệ thắng (Winrate): ${summary.winRate}% · Hệ số sinh lời (Profit Factor): ${summary.profitFactor}.
+- Tổng lợi nhuận lũy kế: ${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl} điểm (tương đương ${summary.totalPnl > 0 ? "+" : ""}${(summary.totalPnl * 0.1).toFixed(2)} triệu VNĐ / 1 HĐ).
+- Mức sụt giảm tối đa (Max Drawdown): ${summary.maxDrawdown} điểm.
+
+🟪 SUY LUẬN/BRAIN
+Kỳ vọng toán học dương được thiết lập dựa trên tỷ lệ R:R = ${rrRatioDisplay} (TP +${tpPoints.toFixed(1)}đ / SL -${slPoints.toFixed(1)}đ) và kỷ luật 1 kèo duy nhất.
+
+⬜ KẾT LUẬN/HÀNH ĐỘNG
+Người dùng có thể tra cứu chi tiết từng phiên trong Sổ Lệnh Lịch Sử CSDL. Tuyệt đối giữ đúng tỷ lệ TP/SL đã định sẵn.`;
+  } else if (intent === "RISK_EXPLAIN") {
+    const v44ReasonEn =
+      primaryPlan.side === "LONG"
+        ? "Rule V44: Validated Expected-High above Reference Price before trigger."
+        : "Rule V44: Validated Expected-Low below Reference Price before trigger.";
+    const v44ReasonVi =
+      primaryPlan.side === "LONG"
+        ? "Quy tắc V44: Đã kiểm chứng mốc Dự báo Cao (Expected-High) trên giá tham chiếu."
+        : "Quy tắc V44: Đã kiểm chứng mốc Dự báo Thấp (Expected-Low) dưới giá tham chiếu.";
+    const r5ReasonEn = `R5 Filter state: ${primaryPlan.r5State} (Execution priority: CANCEL > FLIP_HINT > KEEP).`;
+    const r5ReasonVi = `Trạng thái bộ lọc R5: ${primaryPlan.r5State} (Ưu tiên: CANCEL > FLIP_HINT > KEEP).`;
+
+    answer = isEn
+      ? `🟦 SYSTEM/DB
+Risk management parameters: Stop Loss level ${primaryPlan.slPrice.toFixed(1)} (Source: ${primaryPlan.resolvedSource || "CANONICAL"}). Risk/Reward: ${rrRatioDisplay} (TP +${tpPoints.toFixed(1)} pts / SL -${slPoints.toFixed(1)} pts).
+
+🟧 HISTORY/REASONING
+${v44ReasonEn} ${r5ReasonEn}
+
+🟪 INFERENCE/BRAIN
+Current market price is ${snapshot.current.toFixed(1)}. Buffer distance to Stop Loss: ${Math.abs(snapshot.current - primaryPlan.slPrice).toFixed(1)} points.
 
 ⬜ CONCLUSION/ACTION
 Strictly respect Stop Loss at ${primaryPlan.slPrice.toFixed(1)}; immediately exit position if breached without hesitation.`
       : `🟦 HỆ THỐNG/CSDL
-Thông số quản trị rủi ro của kèo: Mức cắt lỗ SL ${primaryPlan.slPrice.toFixed(1)} (Nguồn: ${primaryPlan.resolvedSource || "CANONICAL"}).
+Thông số quản trị rủi ro của kèo: Mức cắt lỗ SL ${primaryPlan.slPrice.toFixed(1)} (Nguồn: ${primaryPlan.resolvedSource || "CANONICAL"}). Tỷ lệ R:R: ${rrRatioDisplay} (TP +${tpPoints.toFixed(1)}đ / SL -${slPoints.toFixed(1)}đ).
 
 🟧 LỊCH SỬ/SUY LUẬN
-Quy tắc V44: Không cho phép LONG khi Expected-High dưới giá tham chiếu. Bộ lọc R5 tuân thủ nguyên tắc ưu tiên: CANCEL > FLIP_HINT > KEEP.
+${v44ReasonVi} ${r5ReasonVi}
 
 🟪 SUY LUẬN/BRAIN
-R5 hiện tại: ${primaryPlan.r5State}. Khoảng cách an toàn tới ngưỡng cắt lỗ: ${Math.abs(snapshot.current - primaryPlan.slPrice).toFixed(1)} điểm.
+Giá thị trường hiện tại: ${snapshot.current.toFixed(1)}. Khoảng cách an toàn tới ngưỡng cắt lỗ: ${Math.abs(snapshot.current - primaryPlan.slPrice).toFixed(1)} điểm.
 
 ⬜ KẾT LUẬN/HÀNH ĐỘNG
 Tuyệt đối tuân thủ kỷ luật SL tại ${primaryPlan.slPrice.toFixed(1)}; nếu chạm mức này phải thoát vị thế dứt khoát không do dự.`;
@@ -253,7 +357,7 @@ Tuyệt đối tuân thủ kỷ luật SL tại ${primaryPlan.slPrice.toFixed(1)
 Lepos Trading Bot recorded market data: Open ${snapshot.open.toFixed(1)} | High ${snapshot.high.toFixed(1)} | Low ${snapshot.low.toFixed(1)} | Close ${snapshot.current.toFixed(1)}.
 
 🟧 HISTORY/REASONING
-Representative Single Plan: ${primaryPlan.engine} ${primaryPlan.side} ${primaryPlan.entryPrice.toFixed(1)}.
+Representative Single Plan: ${engineDisplay} ${primaryPlan.side} ${primaryPlan.entryPrice.toFixed(1)}.
 
 🟪 INFERENCE/BRAIN
 Current price is deviating ${Number((snapshot.current - primaryPlan.entryPrice).toFixed(1))} points from standard entry trigger.
@@ -264,7 +368,7 @@ Patiently wait for price to test equilibrium zone before entering new positions.
 Hệ thống Lepos Trading Bot ghi nhận giá thị trường: O ${snapshot.open.toFixed(1)} | H ${snapshot.high.toFixed(1)} | L ${snapshot.low.toFixed(1)} | C ${snapshot.current.toFixed(1)}.
 
 🟧 LỊCH SỬ/SUY LUẬN
-Kèo chính đại diện: ${primaryPlan.engine} ${primaryPlan.side} ${primaryPlan.entryPrice.toFixed(1)}.
+Kèo chính đại diện: ${engineDisplay} ${primaryPlan.side} ${primaryPlan.entryPrice.toFixed(1)}.
 
 🟪 SUY LUẬN/BRAIN
 Giá hiện tại đang lệch ${Number((snapshot.current - primaryPlan.entryPrice).toFixed(1))} điểm so với điểm vào lệnh tiêu chuẩn.

@@ -6,6 +6,7 @@ import { ConsensusResult, Direction, TradingPlan } from "./types";
  * 1. Chỉ các plan ACTIVE_TODAY và hợp lệ mới được tham gia tính đồng thuận.
  * 2. Các engine bị BRAIN RESOLVED hoặc PLAN_INVALID bị loại (CONSENSUS GATE EXCLUDED).
  * 3. Đánh dấu mức trùng khi >= 2 engine trùng đủ SIDE + ENTRY + TP + SL.
+ * 4. Trọng số (consensusWeight): Engine chính (Canonical) = 2.0, engine phụ = 1.0 (mặc định).
  */
 export function computeConsensus(plans: TradingPlan[]): ConsensusResult {
   const activePlans = plans.filter(
@@ -35,30 +36,40 @@ export function computeConsensus(plans: TradingPlan[]): ConsensusResult {
     };
   }
 
+  // Tính đồng thuận theo trọng số (weighted voting)
+  let longWeight = 0;
+  let shortWeight = 0;
   let longCount = 0;
   let shortCount = 0;
 
   for (const p of eligiblePlans) {
-    if (p.side === "LONG") longCount++;
-    if (p.side === "SHORT") shortCount++;
+    const w = p.consensusWeight ?? 1.0;
+    if (p.side === "LONG") {
+      longCount++;
+      longWeight += w;
+    }
+    if (p.side === "SHORT") {
+      shortCount++;
+      shortWeight += w;
+    }
   }
 
-  const total = eligiblePlans.length;
+  const totalWeight = longWeight + shortWeight;
   let direction: Direction | "NEUTRAL" = "NEUTRAL";
   let strength = 0;
 
-  if (longCount > shortCount) {
+  if (longWeight > shortWeight) {
     direction = "LONG";
-    strength = Number((longCount / total).toFixed(2));
-  } else if (shortCount > longCount) {
+    strength = Number((longWeight / totalWeight).toFixed(2));
+  } else if (shortWeight > longWeight) {
     direction = "SHORT";
-    strength = Number((shortCount / total).toFixed(2));
+    strength = Number((shortWeight / totalWeight).toFixed(2));
   } else {
     direction = "NEUTRAL";
     strength = 0.5;
   }
 
-  const isUnanimous = longCount === total || shortCount === total;
+  const isUnanimous = longCount === eligiblePlans.length || shortCount === eligiblePlans.length;
 
   return {
     direction,
@@ -69,3 +80,4 @@ export function computeConsensus(plans: TradingPlan[]): ConsensusResult {
     excludedEngines,
   };
 }
+

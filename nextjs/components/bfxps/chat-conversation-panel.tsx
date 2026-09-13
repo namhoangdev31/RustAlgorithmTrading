@@ -15,7 +15,7 @@ interface Message {
 }
 
 interface ChatPanelProps {
-  snapshot: MarketSnapshot;
+  snapshot?: MarketSnapshot | null;
   onSendQuestion: (
     question: string,
     ohlcOverrides?: { open?: number; high?: number; low?: number; close?: number }
@@ -33,7 +33,7 @@ export function ChatConversationPanel({
   const t = useTranslations("Bfxps.chat");
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: "m0",
+      id: "msg_welcome",
       role: "bot",
       content: t("intro_message"),
     },
@@ -44,16 +44,16 @@ export function ChatConversationPanel({
   const [showCustomOhlc, setShowCustomOhlc] = useState(false);
 
   // Manual OHLC fields
-  const [openVal, setOpenVal] = useState(String(snapshot.open));
-  const [highVal, setHighVal] = useState(String(snapshot.high));
-  const [lowVal, setLowVal] = useState(String(snapshot.low));
-  const [closeVal, setCloseVal] = useState(String(snapshot.current));
+  const [openVal, setOpenVal] = useState(snapshot ? String(snapshot.open) : "");
+  const [highVal, setHighVal] = useState(snapshot ? String(snapshot.high) : "");
+  const [lowVal, setLowVal] = useState(snapshot ? String(snapshot.low) : "");
+  const [closeVal, setCloseVal] = useState(snapshot ? String(snapshot.current) : "");
   const [isAutoLive, setIsAutoLive] = useState(true);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isAutoLive) {
+    if (isAutoLive && snapshot) {
       setOpenVal(String(snapshot.open));
       setHighVal(String(snapshot.high));
       setLowVal(String(snapshot.low));
@@ -137,24 +137,24 @@ export function ChatConversationPanel({
 
           let borderClass = "border border-white/10 bg-white/[0.03]";
           let badgeClass = "bg-white/10 text-slate-300 border-white/15";
-          let badgeText = "PHÂN TÍCH";
+          let badgeText = t("badge_analysis");
 
           if (trimmed.startsWith("🟦")) {
             borderClass = "border border-sky-500/30 bg-sky-950/30 text-sky-100";
             badgeClass = "bg-sky-500/20 text-sky-300 border-sky-500/30";
-            badgeText = "HỆ THỐNG / CSDL";
+            badgeText = t("badge_system");
           } else if (trimmed.startsWith("🟧")) {
             borderClass = "border border-amber-500/30 bg-amber-950/30 text-amber-100";
             badgeClass = "bg-amber-500/20 text-amber-300 border-amber-500/30";
-            badgeText = "LỊCH SỬ / SUY LUẬN";
+            badgeText = t("badge_history");
           } else if (trimmed.startsWith("🟪")) {
             borderClass = "border border-purple-500/30 bg-purple-950/30 text-purple-100";
             badgeClass = "bg-purple-500/20 text-purple-300 border-purple-500/30";
-            badgeText = "SUY LUẬN / BRAIN";
+            badgeText = t("badge_inference");
           } else if (trimmed.startsWith("⬜")) {
             borderClass = "border border-emerald-500/30 bg-emerald-950/30 text-emerald-100";
             badgeClass = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
-            badgeText = "KẾT LUẬN / HÀNH ĐỘNG";
+            badgeText = t("badge_conclusion");
           }
 
           return (
@@ -172,11 +172,11 @@ export function ChatConversationPanel({
     );
   };
 
-  const QUICK_PROMPTS = [
-    "Kèo hôm nay thế nào?",
-    "Phân tích R5",
-    "Công thức V44",
-    "Hiệu quả 30 phiên",
+  const quickPrompts = [
+    t("quick_today"),
+    t("quick_r5"),
+    t("quick_v44"),
+    t("quick_perf"),
   ];
 
   return (
@@ -223,7 +223,7 @@ export function ChatConversationPanel({
         {/* Quick prompt suggestions */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
           <Sparkles className="h-3 w-3 text-amber-400 shrink-0" />
-          {QUICK_PROMPTS.map((qp, idx) => (
+          {quickPrompts.map((qp, idx) => (
             <button
               key={idx}
               type="button"

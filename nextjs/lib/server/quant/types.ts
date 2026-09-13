@@ -19,13 +19,24 @@ export interface MarketSnapshot {
   source: string;
 }
 
+export interface LadderStep {
+  offsetPoints: number; // Bước lệch so với entryPrice (vd: 0, 1.0, 2.0)
+  size: number;         // Khối lượng / tỷ trọng tại nấc này (vd: 0.1)
+}
+
+export interface LadderConfig {
+  enabled: boolean;
+  steps: LadderStep[];
+}
+
 export interface TradingPlan {
   id: string;
   date: string; // YYYY-MM-DD
-  engine: "simcarrry6" | "AllDaysLadder_CAP0.3" | "12K_AllDay" | string;
+  engine: "simcarrry6" | "AllDaysLadder_CAP0.3" | "12K_AllDay" | "CanonicalDirectionalBreakout" | string;
   profile?: string;
   horizon: "t" | "t+1" | "t+2";
   side: Direction;
+  orderType?: "STOP" | "LIMIT";
   entryPrice: number;
   tpPrice: number;
   slPrice: number;
@@ -33,10 +44,13 @@ export interface TradingPlan {
   r5State: R5Action;
   status: PlanStatus;
   isCanonical: boolean;
+  consensusWeight?: number; // Trọng số đồng thuận (mặc định 1.0). Engine chính = 2.0, engine phụ = 1.0
   breakevenTrigger?: number; // Khóa hòa vốn khi giá đi đúng >= X điểm
   expectedHigh?: number;
   expectedLow?: number;
   resolvedSource?: string;
+  ladderConfig?: LadderConfig;
+  trailingConfig?: TrailingConfig;
 }
 
 export interface ConsensusResult {
@@ -55,7 +69,7 @@ export interface ExecutionState {
   filledSize: number; // e.g. 0.1, 0.2, 0.3
   avgEntryPrice: number;
   livePnlPoints: number;
-  status: "WAIT_ENTRY" | "FILLED" | "TP_EXIT" | "EXIT_SL" | "ATC_EXIT";
+  status: "WAIT_ENTRY" | "FILLED" | "TP_EXIT" | "EXIT_SL" | "ATC_EXIT" | "TRAIL_EXIT" | "BE_EXIT";
   exitPrice?: number;
   exitTime?: string;
   settled: boolean;
@@ -71,3 +85,54 @@ export interface HistoricalPerformance {
   maxDrawdown: number;
   cancelCount: number;
 }
+
+export interface BacktestSummary {
+  totalSessions: number;
+  totalBars?: number;
+  startDate?: string;
+  endDate?: string;
+  tradedCount: number;
+  wins: number;
+  losses: number;
+  winRate: number;
+  profitFactor: number;
+  totalPnl: number;
+  maxDrawdown: number;
+}
+
+export interface AdvisorConfig {
+  summary?: BacktestSummary | null;
+  brokerPlatforms?: string[];
+  orderBeforeTime?: string;
+  atcTime?: string;
+}
+
+export interface TrailingConfig {
+  enabled: boolean;
+  beTriggerPoints?: number;    // Khóa hòa vốn khi lãi >= X điểm (mặc định 6.0đ)
+  trailTriggerPoints?: number; // Kích hoạt Trailing Stop khi lãi >= X điểm (mặc định 12.0đ)
+  trailDistance?: number;      // Khoảng cách Trailing Stop bám đỉnh/đáy (mặc định 5.0đ)
+}
+
+export interface QuantStrategyConfig {
+  atrEntryMultiplier?: number; // Hệ số mở rộng biên (mặc định 0.10)
+  tpPoints?: number;           // Mức chốt lời kỳ vọng sóng lớn (mặc định 24.0)
+  slPoints?: number;           // Mức cắt lỗ điểm tuyệt đối (mặc định 8.0)
+  maxCap?: number;             // Tỷ trọng tối đa (mặc định 1.0)
+  trailing?: TrailingConfig;   // Cấu hình Trailing Stop & Khóa hòa vốn
+}
+
+export interface LadderStrategyConfig {
+  side?: Direction;            // Hướng lệnh (mặc định tự động nhận diện theo giá vs Ref)
+  tpPoints?: number;           // Mức chốt lời ngắn hạn (mặc định 4.1)
+  maxCap?: number;             // Khống chế tỷ trọng NAV (mặc định 0.3)
+}
+
+export interface SimCarryConfig {
+  basisThreshold?: number;      // Ngưỡng Basis (mặc định -5.0)
+  atrMultiplier?: number;       // Hệ số ATR (mặc định 0.15)
+  tpPoints?: number;            // Mức chốt lời (mặc định 22.0)
+  maxCap?: number;              // Tỷ trọng tối đa (mặc định 1.0)
+  trailing?: TrailingConfig;    // Cấu hình Trailing Stop & Khóa hòa vốn cho Swing
+}
+

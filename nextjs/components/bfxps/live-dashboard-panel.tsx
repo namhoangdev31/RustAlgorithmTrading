@@ -6,9 +6,9 @@ import { RefreshCw, TrendingUp, ShieldAlert, ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface LiveDashboardPanelProps {
-  snapshot: MarketSnapshot;
+  snapshot?: MarketSnapshot | null;
   plans: TradingPlan[];
-  consensus: ConsensusResult;
+  consensus?: ConsensusResult | null;
   summary?: any;
   onRefresh: () => void;
   isLoading: boolean;
@@ -25,7 +25,26 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
   onOpenHistory,
 }) => {
   const t = useTranslations("Bfxps.live");
+  const tEngines = useTranslations("Bfxps.engines");
   const plan = plans[0];
+
+  const getEngineTitle = (engineName?: string) => {
+    if (!engineName) return "";
+    return tEngines.has(engineName as any) ? tEngines(engineName as any) : engineName;
+  };
+
+  const tpDiff =
+    plan?.tpPrice != null && plan?.entryPrice != null
+      ? Math.abs(plan.tpPrice - plan.entryPrice)
+      : null;
+  const slDiff =
+    plan?.slPrice != null && plan?.entryPrice != null
+      ? Math.abs(plan.slPrice - plan.entryPrice)
+      : null;
+  const rrRatio =
+    tpDiff != null && slDiff != null && slDiff > 0
+      ? `1:${(tpDiff / slDiff).toFixed(1)}`
+      : "1:2";
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.08] bg-[#0b0f17]/90 shadow-2xl backdrop-blur-xl text-slate-100">
@@ -62,17 +81,22 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
               </div>
               <span className="text-xs tracking-wide uppercase">{t("recommendation_title")}</span>
             </div>
-            <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-300 border border-emerald-500/30">
-              {plan?.side || "LONG"} 100%
-            </span>
+            {plan && (
+              <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-300 border border-emerald-500/30">
+                {plan.side} 100%
+              </span>
+            )}
           </div>
           <p className="mt-2 text-xs leading-relaxed text-emerald-100/90 font-medium">
-            {t("recommendation_desc", {
-              side: plan?.side || "LONG",
-              price: plan?.entryPrice?.toFixed(1) || "1945.3",
-              tp: Math.abs((plan?.tpPrice || 0) - (plan?.entryPrice || 0)).toFixed(1),
-              sl: Math.abs((plan?.slPrice || 0) - (plan?.entryPrice || 0)).toFixed(1),
-            })}
+            {plan
+              ? t("recommendation_desc", {
+                  side: plan.side || "LONG",
+                  price: plan.entryPrice?.toFixed(1) || "--",
+                  rr: rrRatio,
+                  tp: tpDiff != null ? tpDiff.toFixed(1) : "--",
+                  sl: slDiff != null ? slDiff.toFixed(1) : "--",
+                })
+              : t("awaiting_plan")}
           </p>
         </div>
 
@@ -84,13 +108,13 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
               {t("ohlc_title")}
             </span>
             <div className="mt-1.5 font-mono text-xs font-bold text-white tracking-tight">
-              <span className="text-slate-300">{snapshot.open}</span>
+              <span className="text-slate-300">{snapshot?.open?.toFixed(1) ?? "--"}</span>
               <span className="text-slate-500 mx-1">/</span>
-              <span className="text-emerald-400">{snapshot.high}</span>
+              <span className="text-emerald-400">{snapshot?.high?.toFixed(1) ?? "--"}</span>
               <span className="text-slate-500 mx-1">/</span>
-              <span className="text-rose-400">{snapshot.low}</span>
+              <span className="text-rose-400">{snapshot?.low?.toFixed(1) ?? "--"}</span>
               <span className="text-slate-500 mx-1">/</span>
-              <span className="text-sky-300 font-extrabold">{snapshot.current}</span>
+              <span className="text-sky-300 font-extrabold">{snapshot?.current?.toFixed(1) ?? "--"}</span>
             </div>
           </div>
 
@@ -101,17 +125,17 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
             </span>
             <div className="mt-1.5 flex items-center justify-between">
               <span className="font-mono text-xs font-bold text-sky-400">
-                {consensus.direction} · {Math.round(consensus.strength * 100)}%
+                {consensus ? `${consensus.direction} · ${Math.round(consensus.strength * 100)}%` : "--"}
               </span>
               <span className="rounded bg-sky-500/10 px-1.5 py-0.2 text-[10px] font-mono text-sky-300 border border-sky-500/20">
-                {plan?.side === "LONG" ? "1L/0S" : "0L/1S"}
+                {plan?.side === "LONG" ? "1L/0S" : (plan?.side === "SHORT" ? "0L/1S" : "--")}
               </span>
             </div>
             {/* Mini Progress Bar */}
             <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
               <div
                 className="h-full bg-gradient-to-r from-sky-400 to-emerald-400 rounded-full"
-                style={{ width: `${Math.round(consensus.strength * 100)}%` }}
+                style={{ width: consensus ? `${Math.round(consensus.strength * 100)}%` : "0%" }}
               />
             </div>
           </div>
@@ -122,12 +146,12 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
               {t("basis_nn_title")}
             </span>
             <div className="mt-1.5 flex items-center gap-1.5 font-mono text-xs font-bold">
-              <span className={snapshot.basis && snapshot.basis < 0 ? "text-rose-400" : "text-emerald-400"}>
-                {snapshot.basis ?? "N/A"}{t("pts_unit")}
+              <span className={snapshot?.basis && snapshot.basis < 0 ? "text-rose-400" : "text-emerald-400"}>
+                {snapshot?.basis != null ? `${snapshot.basis > 0 ? "+" : ""}${snapshot.basis.toFixed(1)}${t("pts_unit")}` : "--"}
               </span>
               <span className="text-slate-500">/</span>
               <span className="text-slate-200">
-                {snapshot.foreignNet ?? "N/A"} {t("contracts_unit")}
+                {snapshot?.foreignNet != null ? `${snapshot.foreignNet > 0 ? "+" : ""}${snapshot.foreignNet} ${t("contracts_unit")}` : "--"}
               </span>
             </div>
           </div>
@@ -143,15 +167,19 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
                 {t("perf_title")}
               </span>
               <span className="text-[10px] text-sky-400 font-bold group-hover:underline flex items-center gap-0.5">
-                {t("view_history", { count: summary?.totalSessions ?? 413 })}
+                {summary?.totalSessions != null
+                  ? t("view_history", { count: summary.totalSessions })
+                  : t("view_history_loading")}
                 <ArrowUpRight className="h-2.5 w-2.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </span>
             </div>
             <div className="mt-1.5 font-mono text-xs font-black text-emerald-400">
-              {t("perf_summary", {
-                winrate: summary?.winRate != null ? `${summary.winRate}%` : "52.6%",
-                pnl: summary?.totalPnl != null ? `${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl}` : "+770.5",
-              })}
+              {summary?.winRate != null && summary?.totalPnl != null
+                ? t("perf_summary", {
+                    winrate: `${summary.winRate}%`,
+                    pnl: `${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl}`,
+                  })
+                : "--"}
             </div>
           </div>
         </div>
@@ -161,7 +189,9 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
           <div className="rounded-xl border border-sky-500/30 bg-gradient-to-b from-[#0e1626]/90 to-[#090d16]/90 p-3.5 shadow-xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="font-bold text-white text-xs">{plan.engine}</span>
+                <span className="font-bold text-white text-xs" title={plan.engine}>
+                  {getEngineTitle(plan.engine)}
+                </span>
                 <span className="rounded-full bg-sky-500/20 border border-sky-500/40 px-2 py-0.5 text-[10px] font-bold text-sky-300">
                   {t("single_plan_badge")}
                 </span>
@@ -183,21 +213,21 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
               <div className="rounded-lg bg-white/[0.03] border border-white/10 p-2 shadow-inner">
                 <span className="block text-[9px] text-slate-400 uppercase font-bold">{t("stop_entry")}</span>
                 <span className="mt-1 block text-xs font-black text-white font-mono">
-                  {plan.entryPrice?.toFixed(1)}
+                  {plan.entryPrice?.toFixed(1) ?? "--"}
                 </span>
               </div>
 
               <div className="rounded-lg bg-sky-500/10 border border-sky-500/30 p-2 shadow-inner">
                 <span className="block text-[9px] text-sky-300/80 uppercase font-bold">{t("tp_label")}</span>
                 <span className="mt-1 block text-xs font-black text-sky-400 font-mono">
-                  {plan.tpPrice?.toFixed(1)}
+                  {plan.tpPrice?.toFixed(1) ?? "--"}
                 </span>
               </div>
 
               <div className="rounded-lg bg-rose-500/10 border border-rose-500/30 p-2 shadow-inner">
                 <span className="block text-[9px] text-rose-300/80 uppercase font-bold">{t("sl_label")}</span>
                 <span className="mt-1 block text-xs font-black text-rose-400 font-mono">
-                  {plan.slPrice?.toFixed(1)}
+                  {plan.slPrice?.toFixed(1) ?? "--"}
                 </span>
               </div>
             </div>
@@ -210,7 +240,7 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
                   <span>{t("order_guide_title")}</span>
                 </b>
                 <span className="text-slate-300 text-[11px] leading-normal block">
-                  {t("order_guide_desc", { price: plan.entryPrice?.toFixed(1) })}
+                  {t("order_guide_desc", { price: plan.entryPrice?.toFixed(1) ?? "--" })}
                 </span>
               </div>
 
@@ -220,8 +250,8 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
                   <span>{t("rules_title")}</span>
                 </b>
                 <div className="text-slate-300 text-[11px] space-y-0.5">
-                  <p>• {t("rule_tp", { price: plan.tpPrice?.toFixed(1) })}</p>
-                  <p>• {t("rule_sl", { price: plan.slPrice?.toFixed(1) })}</p>
+                  <p>• {t("rule_tp", { price: plan.tpPrice?.toFixed(1) ?? "--", tp: tpDiff != null ? tpDiff.toFixed(1) : "16.0" })}</p>
+                  <p>• {t("rule_sl", { price: plan.slPrice?.toFixed(1) ?? "--", sl: slDiff != null ? slDiff.toFixed(1) : "8.0" })}</p>
                   <p className="text-emerald-300/90 font-medium">• {t("rule_atc")}</p>
                 </div>
               </div>
@@ -232,7 +262,15 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
                   <span>{t("verification_title")}</span>
                 </b>
                 <span className="text-slate-300 text-[11px] leading-normal block">
-                  {t("verification_desc")}
+                  {t("verification_desc", {
+                    sessions: summary?.totalSessions ?? "--",
+                    bars: summary?.totalBars?.toLocaleString() ?? "100.746",
+                    winrate: summary?.winRate != null ? `${summary.winRate}%` : "--",
+                    pnl: summary?.totalPnl != null ? `${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl}` : "--",
+                    pf: summary?.profitFactor ?? "--",
+                    startDate: summary?.startDate ?? "01/2025",
+                    endDate: summary?.endDate ?? "11/09/2026",
+                  })}
                 </span>
               </div>
             </div>

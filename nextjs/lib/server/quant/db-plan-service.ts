@@ -16,10 +16,12 @@ export interface TradeSettlementResult {
   side: "LONG" | "SHORT";
   entryPrice: number;
   exitPrice: number;
-  exitType: "TP" | "SL" | "ATC" | "NO_FILL";
+  exitType: "TP" | "SL" | "ATC" | "NO_FILL" | "TRAIL" | "BE";
   exitMinute: string;
   pnl: number;
   isWin: boolean;
+  tpPrice?: number;
+  slPrice?: number;
   notes?: string;
 }
 
@@ -114,8 +116,8 @@ export async function settleDailyPlanAtEod(result: TradeSettlementResult) {
       horizon: "INTRADAY",
       side: result.side,
       entryPrice: new Prisma.Decimal(result.entryPrice),
-      tpPrice: new Prisma.Decimal(result.isWin ? result.exitPrice : result.entryPrice + 16),
-      slPrice: new Prisma.Decimal(result.entryPrice - 8),
+      tpPrice: new Prisma.Decimal(result.tpPrice ?? result.exitPrice),
+      slPrice: new Prisma.Decimal(result.slPrice ?? result.entryPrice),
       exitPrice: new Prisma.Decimal(result.exitPrice),
       exitType: result.exitType,
       exitMinute: result.exitMinute,
@@ -198,13 +200,14 @@ export async function getTradingHistoryFromDb() {
       const m = dateStr.slice(0, 7);
       monthlyPnl[m] = (monthlyPnl[m] || 0) + pnl;
 
-      if (p.isWin || pnl > 0) {
+      if (pnl > 0) {
         wins++;
         totalWinPoints += pnl;
       } else if (pnl < 0) {
         losses++;
         totalLossPoints += Math.abs(pnl);
       }
+      // pnl === 0 → Break-Even (BE_EXIT), đếm vào tradedCount nhưng không đếm thắng/thua
 
       cumulativePnl += pnl;
       if (cumulativePnl > peak) peak = cumulativePnl;
@@ -232,9 +235,15 @@ export async function getTradingHistoryFromDb() {
   const winRate = tradedCount > 0 ? Number(((wins / tradedCount) * 100).toFixed(1)) : 0;
   const profitFactor = totalLossPoints > 0 ? Number((totalWinPoints / totalLossPoints).toFixed(2)) : (totalWinPoints > 0 ? 99.0 : 0);
 
+  const startDate = plans[0]?.date ? plans[0].date.toISOString().slice(0, 10) : undefined;
+  const endDate = plans[plans.length - 1]?.date ? plans[plans.length - 1].date.toISOString().slice(0, 10) : undefined;
+
   return {
     summary: {
       totalSessions: plans.length,
+      totalBars: undefined, // Tính từ nguồn dữ liệu thực tế, không ước lượng
+      startDate,
+      endDate,
       tradedCount,
       wins,
       losses,

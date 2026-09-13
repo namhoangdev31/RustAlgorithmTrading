@@ -97,7 +97,8 @@ export function evaluateV44(
 export function resolveCutloss(
   side: Direction,
   swingLow5d: number,
-  previousFailureCutloss?: number
+  previousFailureCutloss?: number,
+  swingHigh5d?: number
 ): number {
   if (side === "LONG") {
     if (previousFailureCutloss && previousFailureCutloss > 0) {
@@ -105,6 +106,11 @@ export function resolveCutloss(
     }
     return swingLow5d;
   } else {
-    return swingLow5d;
+    // SHORT: SL phải nằm CAO HƠN entry → dùng swingHigh5d (đỉnh 5 ngày)
+    const baseHigh = swingHigh5d ?? swingLow5d;
+    if (previousFailureCutloss && previousFailureCutloss > 0) {
+      return Math.max(baseHigh, previousFailureCutloss);
+    }
+    return baseHigh;
   }
 }
