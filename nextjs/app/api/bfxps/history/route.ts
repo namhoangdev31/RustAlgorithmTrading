@@ -6,15 +6,19 @@ import path from "path";
 export async function GET() {
   try {
     // 1. Ưu tiên lấy từ Database
-    const dbHistory = await getTradingHistoryFromDb();
-    if (dbHistory && dbHistory.trades.length > 0) {
-      return NextResponse.json({
-        ok: true,
-        source: "DATABASE_POSTGRESQL",
-        summary: dbHistory.summary,
-        monthlyPnl: dbHistory.monthlyPnl,
-        trades: dbHistory.trades,
-      });
+    try {
+      const dbHistory = await getTradingHistoryFromDb();
+      if (dbHistory && dbHistory.trades.length > 0) {
+        return NextResponse.json({
+          ok: true,
+          source: "DATABASE_POSTGRESQL",
+          summary: dbHistory.summary,
+          monthlyPnl: dbHistory.monthlyPnl,
+          trades: dbHistory.trades,
+        });
+      }
+    } catch (dbErr) {
+      // Fallback sang canonical cache nếu DB serverless không khả dụng
     }
 
     // 2. Fallback sang file canonical_1plan_report.json nếu DB chưa có
