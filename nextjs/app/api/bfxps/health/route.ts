@@ -6,6 +6,8 @@ import {
 import { computeConsensus } from "@/lib/server/quant/consensus";
 import { saveDailyPlanToDb, getTradingHistoryFromDb } from "@/lib/server/quant/db-plan-service";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const snapshot = await getLatestMarketSnapshot();

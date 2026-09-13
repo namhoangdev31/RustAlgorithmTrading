@@ -3,6 +3,8 @@ import { getTradingHistoryFromDb } from "@/lib/server/quant/db-plan-service";
 import fs from "fs";
 import path from "path";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     // 1. Ưu tiên lấy từ Database
