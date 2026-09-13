@@ -1278,8 +1278,14 @@
       "rr_ratio": "R:R 1:2",
       "tp_pts": "+16đ",
       "sl_pts": "-8đ",
-      "history_button_tooltip": "Bấm để xem chi tiết toàn bộ 413 phiên lịch sử trong CSDL PostgreSQL",
-      "qa_toggle_tooltip": "Bật/Tắt hiển thị cột Thư Viện Câu Hỏi Kiểm Định"
+      "history_button_tooltip": "Bấm để xem chi tiết toàn bộ các phiên lịch sử trong CSDL PostgreSQL",
+      "qa_toggle_tooltip": "Bật/Tắt hiển thị cột Thư Viện Câu Hỏi Kiểm Định",
+      "mode_split": "Chart + Sidebar",
+      "mode_three_cols": "Mở rộng 3 Cột",
+      "tab_chart": "Biểu đồ",
+      "tab_advisor": "Kèo Quant",
+      "tab_copilot": "AI Chat",
+      "tab_qa": "Hỏi Đáp"
     },
     "live": {
       "title": "KÈO DUY NHẤT TRONG NGÀY · CANONICAL QUANT ADVISOR",

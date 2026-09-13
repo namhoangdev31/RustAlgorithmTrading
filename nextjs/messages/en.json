@@ -1278,8 +1278,14 @@
       "rr_ratio": "R:R 1:2",
       "tp_pts": "+16 pts",
       "sl_pts": "-8 pts",
-      "history_button_tooltip": "Click to view detailed ledger of all 413 historical sessions in PostgreSQL",
-      "qa_toggle_tooltip": "Toggle QA Library panel visibility"
+      "history_button_tooltip": "Click to view detailed ledger of all historical sessions in PostgreSQL",
+      "qa_toggle_tooltip": "Toggle QA Library panel visibility",
+      "mode_split": "Chart + Sidebar",
+      "mode_three_cols": "3 Columns",
+      "tab_chart": "Chart",
+      "tab_advisor": "Quant Plan",
+      "tab_copilot": "AI Chat",
+      "tab_qa": "Q&A"
     },
     "live": {
       "title": "TODAY'S SINGLE PLAN · CANONICAL QUANT ADVISOR",

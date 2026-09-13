@@ -17,7 +17,17 @@ import {
   TradingPlan,
   ConsensusResult,
 } from "@/lib/server/quant/types";
-import { Activity, ShieldCheck, Database, HelpCircle, Bot } from "lucide-react";
+import {
+  Activity,
+  ShieldCheck,
+  Database,
+  HelpCircle,
+  Bot,
+  BarChart2,
+  Zap,
+  Columns3,
+  LayoutGrid,
+} from "lucide-react";
 
 export default function LeposTradingBotPage({
   params,
@@ -73,7 +83,11 @@ export default function LeposTradingBotPage({
   const [isLoading, setIsLoading] = useState(false);
   const [activeQuestion, setActiveQuestion] = useState<string>("");
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [showQaLibrary, setShowQaLibrary] = useState(false);
+
+  // Responsive & Tab states
+  const [mobileTab, setMobileTab] = useState<"chart" | "advisor" | "chat" | "qa">("chart");
+  const [sidebarTab, setSidebarTab] = useState<"advisor" | "chat" | "qa">("advisor");
+  const [layoutMode, setLayoutMode] = useState<"split" | "three_columns">("split");
   const [activeRightTab, setActiveRightTab] = useState<"chat" | "qa">("chat");
 
   const fetchHealth = async (isBackground = false) => {
@@ -96,6 +110,7 @@ export default function LeposTradingBotPage({
 
   useEffect(() => {
     fetchHealth(false);
+    // Background polling every 8s
     const interval = setInterval(() => {
       fetchHealth(true);
     }, 8000);
@@ -143,15 +158,15 @@ export default function LeposTradingBotPage({
   return (
     <div className="flex h-screen w-full flex-col bg-[#070a0f] text-slate-100 antialiased selection:bg-sky-500/30 selection:text-white overflow-hidden">
       {/* Top Banner Consensus Bar */}
-      <header className="border-b border-white/[0.08] bg-[#090d16]/90 backdrop-blur-xl px-4 py-2.5 z-20 shadow-lg">
-        <div className="flex items-center justify-between gap-4">
+      <header className="border-b border-white/[0.08] bg-[#090d16]/90 backdrop-blur-xl px-3 sm:px-4 py-2 sm:py-2.5 z-20 shadow-lg shrink-0">
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
           {/* Brand Identity */}
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="relative flex h-3 w-3 items-center justify-center">
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <div className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3 items-center justify-center">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></span>
+              <span className="relative inline-flex h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <span className="font-black tracking-wider text-white text-xs sm:text-sm bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
                 {tHeader("title")}
               </span>
@@ -161,7 +176,7 @@ export default function LeposTradingBotPage({
             </div>
           </div>
 
-          {/* Canonical Strategy Ticker Pills */}
+          {/* Canonical Strategy Ticker Pills - Visible on sm and up */}
           <div className="hidden md:flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
             <div className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.12)]">
               <span className="text-[11px] text-emerald-300/80">
@@ -176,85 +191,80 @@ export default function LeposTradingBotPage({
             <div className="flex items-center gap-1.5 rounded-lg border border-sky-500/30 bg-sky-500/10 px-2.5 py-1 text-sky-400 font-semibold shadow-[0_0_15px_rgba(56,189,248,0.1)]">
               <span className="text-[11px] text-sky-300/80">TP:</span>
               <span className="font-mono font-bold text-white tracking-tight">
-                {currentPlan?.tpPrice?.toFixed(1) || "1961.3"} (
-                {tHeader("tp_pts")})
+                {currentPlan?.tpPrice?.toFixed(1) || "1961.3"}
               </span>
             </div>
 
             <div className="flex items-center gap-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 px-2.5 py-1 text-rose-400 font-semibold shadow-[0_0_15px_rgba(244,63,94,0.1)]">
               <span className="text-[11px] text-rose-300/80">SL:</span>
               <span className="font-mono font-bold text-white tracking-tight">
-                {currentPlan?.slPrice?.toFixed(1) || "1937.3"} (
-                {tHeader("sl_pts")})
-              </span>
-            </div>
-
-            <div className="hidden xl:flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/[0.03] px-2.5 py-1 text-[11px] text-slate-300 font-mono">
-              <span className="text-slate-400">{tHeader("rr_ratio")}</span>
-              <span className="text-slate-600">·</span>
-              <span className="text-emerald-400 font-bold">
-                {tHeader("atc_close")}
+                {currentPlan?.slPrice?.toFixed(1) || "1937.3"}
               </span>
             </div>
           </div>
 
-          {/* Action Suite & Audit Proof */}
-          <div className="flex items-center gap-2 shrink-0 text-xs">
+          {/* Action Suite & Controls */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs">
+            {/* Desktop Layout Mode Switcher (Visible on desktop/laptop) */}
+            <div className="hidden lg:flex items-center gap-0.5 rounded-lg border border-white/10 bg-white/[0.03] p-0.5 font-mono text-[11px]">
+              <button
+                onClick={() => setLayoutMode("split")}
+                className={`flex items-center gap-1 rounded-md px-2 py-1 font-bold transition-all cursor-pointer ${
+                  layoutMode === "split"
+                    ? "bg-sky-500/20 text-sky-300 shadow-sm border border-sky-500/30"
+                    : "text-slate-400 hover:text-white"
+                }`}
+                title="Bố cục chuẩn Laptop: Chart rộng 65% + Sidebar thông minh 35%"
+              >
+                <LayoutGrid className="h-3 w-3" />
+                <span>{tHeader("mode_split")}</span>
+              </button>
+              <button
+                onClick={() => setLayoutMode("three_columns")}
+                className={`flex items-center gap-1 rounded-md px-2 py-1 font-bold transition-all cursor-pointer ${
+                  layoutMode === "three_columns"
+                    ? "bg-sky-500/20 text-sky-300 shadow-sm border border-sky-500/30"
+                    : "text-slate-400 hover:text-white"
+                }`}
+                title="Mở rộng 3 cột song song cho màn hình lớn"
+              >
+                <Columns3 className="h-3 w-3" />
+                <span>{tHeader("mode_three_cols")}</span>
+              </button>
+            </div>
+
+            {/* Sổ Lệnh Lịch Sử Button - Lấy dữ liệu THẬT */}
             <button
               onClick={() => setIsHistoryOpen(true)}
-              className="group flex items-center gap-2 rounded-lg border border-sky-500/30 bg-sky-500/10 px-2.5 sm:px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/20 hover:border-sky-400/60 transition-all shadow-[0_0_15px_rgba(56,189,248,0.12)] cursor-pointer"
+              className="group flex items-center gap-1.5 sm:gap-2 rounded-lg border border-sky-500/30 bg-sky-500/10 px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/20 hover:border-sky-400/60 transition-all shadow-[0_0_15px_rgba(56,189,248,0.12)] cursor-pointer"
               title={tHeader("history_button_tooltip")}
             >
               <Database className="h-3.5 w-3.5 text-sky-400 group-hover:scale-110 transition-transform" />
-              <span>
+              <span className="hidden sm:inline">
                 {tHeader("history_button", {
-                  count: summary?.totalSessions ?? 413,
+                  count: summary?.totalSessions ?? 414,
                 })}
               </span>
-              <span className="hidden sm:inline-block rounded-full bg-emerald-500/20 px-1.5 py-0.2 text-[10px] font-mono text-emerald-300 border border-emerald-500/30 font-bold">
-                +770.5đ
+              <span className="sm:hidden">
+                {summary?.totalSessions ?? 414}P
+              </span>
+              <span className="rounded-full bg-emerald-500/20 px-1.5 py-0.2 text-[10px] font-mono text-emerald-300 border border-emerald-500/30 font-bold">
+                {summary?.totalPnl !== undefined
+                  ? `${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl.toFixed(1)}đ`
+                  : "+770.5đ"}
               </span>
             </button>
-
-            <button
-              onClick={() => setShowQaLibrary(!showQaLibrary)}
-              className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
-                showQaLibrary
-                  ? "border-amber-400/50 bg-amber-400/15 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.2)]"
-                  : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white hover:border-white/20 hover:bg-white/[0.08]"
-              }`}
-              title={tHeader("qa_toggle_tooltip")}
-            >
-              <HelpCircle className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">
-                {showQaLibrary
-                  ? tHeader("qa_toggle_visible")
-                  : tHeader("qa_toggle_hidden")}
-              </span>
-            </button>
-
-            <div className="hidden 2xl:flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/[0.02] px-2.5 py-1.5 text-[11px] text-slate-400 font-mono">
-              <ShieldCheck className="h-3.5 w-3.5 text-sky-400" />
-              <span>{tHeader("zero_lookahead")}</span>
-            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Split Workspace */}
-      <main className="flex-1 overflow-hidden p-2.5 sm:p-3">
-        <ResizablePanelGroup
-          direction="horizontal"
-          className="h-full w-full gap-2.5"
-        >
-          {/* Panel 1: Live Dashboard Kèo Duy Nhất (Cột Trái - Tỷ lệ Max Chiều Rộng) */}
-          <ResizablePanel
-            id="p1-dashboard"
-            defaultSize={showQaLibrary ? "30%" : "34%"}
-            minSize="22%"
-            maxSize="42%"
-            className="h-full"
-          >
+      {/* MOBILE WORKSPACE (< 768px): Dedicated Full-Screen Tab View */}
+      <div className="flex md:hidden flex-1 overflow-hidden p-2 pb-16">
+        <div className="h-full w-full">
+          {mobileTab === "chart" && (
+            <TradingViewPanel snapshot={snapshot} plan={currentPlan} />
+          )}
+          {mobileTab === "advisor" && (
             <LiveDashboardPanel
               snapshot={snapshot}
               plans={plans}
@@ -264,118 +274,305 @@ export default function LeposTradingBotPage({
               isLoading={isLoading}
               onOpenHistory={() => setIsHistoryOpen(true)}
             />
-          </ResizablePanel>
+          )}
+          {mobileTab === "chat" && (
+            <div className="h-full w-full rounded-xl border border-white/[0.08] bg-[#0b0f17]/90 shadow-2xl backdrop-blur-xl overflow-hidden">
+              <ChatConversationPanel
+                snapshot={snapshot}
+                onSendQuestion={handleSendChat}
+                externalQuestion={activeQuestion}
+                onQuestionConsumed={() => setActiveQuestion("")}
+              />
+            </div>
+          )}
+          {mobileTab === "qa" && (
+            <div className="h-full w-full rounded-xl border border-white/[0.08] bg-[#0b0f17]/90 shadow-2xl backdrop-blur-xl overflow-hidden">
+              <QaLibraryPanel
+                onSelectQuestion={(q) => {
+                  setActiveQuestion(q);
+                  setMobileTab("chat");
+                }}
+              />
+            </div>
+          )}
+        </div>
 
-          <ResizableHandle
-            withHandle
-            className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full"
-          />
-
-          {/* Panel 2: TradingView Center Panel (Cột Giữa) */}
-          <ResizablePanel
-            id="p2-tradingview"
-            defaultSize={showQaLibrary ? "38%" : "48%"}
-            minSize="30%"
-            maxSize="70%"
-            className="h-full"
+        {/* Fixed Bottom Navigation Dock for Mobile */}
+        <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-white/[0.08] bg-[#070a0f]/95 backdrop-blur-xl px-2 py-1.5 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+          <button
+            onClick={() => setMobileTab("chart")}
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg text-[10px] font-bold transition-all ${
+              mobileTab === "chart"
+                ? "text-emerald-400 bg-emerald-500/10"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
           >
-            <TradingViewPanel snapshot={snapshot} plan={currentPlan} />
-          </ResizablePanel>
+            <BarChart2 className="h-4 w-4" />
+            <span>{tHeader("tab_chart")}</span>
+          </button>
 
-          <ResizableHandle
-            withHandle
-            className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full"
-          />
-
-          {/* Panel 3: Chat Advisor Thay Vào Chỗ Thư Viện (Cột Phải - Tỷ lệ Min Chiều Rộng) */}
-          <ResizablePanel
-            id="p3-chat"
-            defaultSize={showQaLibrary ? "16%" : "18%"}
-            minSize="16%"
-            maxSize="38%"
-            className="h-full"
+          <button
+            onClick={() => setMobileTab("advisor")}
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg text-[10px] font-bold transition-all ${
+              mobileTab === "advisor"
+                ? "text-sky-400 bg-sky-500/10"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
           >
-            <div className="flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.08] bg-[#0b0f17]/90 shadow-2xl backdrop-blur-xl">
-              {/* Tabs Switcher Chat / QA */}
-              <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#090d16]/80 px-3 py-2">
-                <div className="flex items-center gap-1 rounded-lg border border-white/5 bg-white/[0.03] p-0.5">
-                  <button
-                    onClick={() => setActiveRightTab("chat")}
-                    className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition-all ${
-                      activeRightTab === "chat"
-                        ? "bg-sky-500/20 text-sky-400 shadow-sm border border-sky-500/30"
-                        : "text-slate-400 hover:text-white"
-                    }`}
-                  >
-                    <Bot className="h-3.5 w-3.5" />
-                    <span>{tChat("tab_advisor")}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveRightTab("qa")}
-                    className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition-all ${
-                      activeRightTab === "qa"
-                        ? "bg-sky-500/20 text-sky-400 shadow-sm border border-sky-500/30"
-                        : "text-slate-400 hover:text-white"
-                    }`}
-                  >
-                    <HelpCircle className="h-3.5 w-3.5" />
-                    <span>{tChat("tab_qa")}</span>
-                  </button>
+            <Zap className="h-4 w-4" />
+            <span>{tHeader("tab_advisor")}</span>
+          </button>
+
+          <button
+            onClick={() => setMobileTab("chat")}
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg text-[10px] font-bold transition-all ${
+              mobileTab === "chat"
+                ? "text-sky-400 bg-sky-500/10"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <Bot className="h-4 w-4" />
+            <span>{tHeader("tab_copilot")}</span>
+          </button>
+
+          <button
+            onClick={() => setMobileTab("qa")}
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg text-[10px] font-bold transition-all ${
+              mobileTab === "qa"
+                ? "text-amber-400 bg-amber-500/10"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <HelpCircle className="h-4 w-4" />
+            <span>{tHeader("tab_qa")}</span>
+          </button>
+        </nav>
+      </div>
+
+      {/* LAPTOP & DESKTOP WORKSPACE (>= 768px) */}
+      <main className="hidden md:flex flex-1 overflow-hidden p-2.5 sm:p-3">
+        {layoutMode === "split" ? (
+          // LAPTOP PRO PRIMARY FOCUS (Chart 65% + Smart Pro Sidebar 35%)
+          <ResizablePanelGroup
+            direction="horizontal"
+            className="h-full w-full gap-2.5"
+          >
+            {/* Primary Center Workspace: Candlestick Chart (Thoáng đãng, rộng rãi) */}
+            <ResizablePanel
+              id="lap-chart"
+              defaultSize="64%"
+              minSize="50%"
+              maxSize="75%"
+              className="h-full"
+            >
+              <TradingViewPanel snapshot={snapshot} plan={currentPlan} />
+            </ResizablePanel>
+
+            <ResizableHandle
+              withHandle
+              className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full"
+            />
+
+            {/* Secondary Workspace: Smart Tabbed Sidebar (Kèo Quant / AI Copilot / QA) */}
+            <ResizablePanel
+              id="lap-sidebar"
+              defaultSize="36%"
+              minSize="25%"
+              maxSize="50%"
+              className="h-full"
+            >
+              <div className="flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.08] bg-[#0b0f17]/90 shadow-2xl backdrop-blur-xl">
+                {/* Pro Sidebar Tab Switcher */}
+                <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#090d16]/80 px-3 py-2 shrink-0">
+                  <div className="flex items-center gap-1 rounded-lg border border-white/5 bg-white/[0.03] p-0.5">
+                    <button
+                      onClick={() => setSidebarTab("advisor")}
+                      className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition-all cursor-pointer ${
+                        sidebarTab === "advisor"
+                          ? "bg-emerald-500/20 text-emerald-300 shadow-sm border border-emerald-500/30"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <Zap className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>{tHeader("tab_advisor")}</span>
+                    </button>
+
+                    <button
+                      onClick={() => setSidebarTab("chat")}
+                      className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition-all cursor-pointer ${
+                        sidebarTab === "chat"
+                          ? "bg-sky-500/20 text-sky-400 shadow-sm border border-sky-500/30"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <Bot className="h-3.5 w-3.5 text-sky-400" />
+                      <span>{tHeader("tab_copilot")}</span>
+                    </button>
+
+                    <button
+                      onClick={() => setSidebarTab("qa")}
+                      className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition-all cursor-pointer ${
+                        sidebarTab === "qa"
+                          ? "bg-amber-500/20 text-amber-300 shadow-sm border border-amber-500/30"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <HelpCircle className="h-3.5 w-3.5 text-amber-400" />
+                      <span>{tHeader("tab_qa")}</span>
+                    </button>
+                  </div>
+
+                  <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-mono text-slate-400 border border-white/5">
+                    {sidebarTab === "advisor"
+                      ? "CANONICAL"
+                      : sidebarTab === "chat"
+                      ? tChat("analysis_badge")
+                      : tChat("qa_count_badge")}
+                  </span>
                 </div>
 
-                <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-mono text-slate-400 border border-white/5">
-                  {activeRightTab === "chat"
-                    ? tChat("analysis_badge")
-                    : tChat("qa_count_badge")}
-                </span>
+                {/* Sidebar Active Tab Content */}
+                <div className="flex-1 overflow-hidden">
+                  {sidebarTab === "advisor" && (
+                    <LiveDashboardPanel
+                      snapshot={snapshot}
+                      plans={plans}
+                      consensus={consensus}
+                      summary={summary}
+                      onRefresh={fetchHealth}
+                      isLoading={isLoading}
+                      onOpenHistory={() => setIsHistoryOpen(true)}
+                    />
+                  )}
+                  {sidebarTab === "chat" && (
+                    <ChatConversationPanel
+                      snapshot={snapshot}
+                      onSendQuestion={handleSendChat}
+                      externalQuestion={activeQuestion}
+                      onQuestionConsumed={() => setActiveQuestion("")}
+                    />
+                  )}
+                  {sidebarTab === "qa" && (
+                    <QaLibraryPanel
+                      onSelectQuestion={(q) => {
+                        setActiveQuestion(q);
+                        setSidebarTab("chat");
+                      }}
+                    />
+                  )}
+                </div>
               </div>
-
-              {/* Body Content Cột Phải */}
-              <div className="flex-1 overflow-hidden">
-                {activeRightTab === "chat" ? (
-                  <ChatConversationPanel
-                    snapshot={snapshot}
-                    onSendQuestion={handleSendChat}
-                    externalQuestion={activeQuestion}
-                    onQuestionConsumed={() => setActiveQuestion("")}
-                  />
-                ) : (
-                  <QaLibraryPanel
-                    onSelectQuestion={(q) => {
-                      setActiveQuestion(q);
-                      setActiveRightTab("chat"); // Chuyển sang chat xem bot trả lời
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-          </ResizablePanel>
-
-          {/* Panel 4: Cột Thư Viện QA Mở Rộng Khi Người Dùng Bật */}
-          {showQaLibrary && (
-            <>
-              <ResizableHandle
-                withHandle
-                className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full"
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        ) : (
+          // DESKTOP 3-COLUMN EXPANDED MODE (Balanced: 28% / 44% / 28%)
+          <ResizablePanelGroup
+            direction="horizontal"
+            className="h-full w-full gap-2.5"
+          >
+            {/* Panel 1: Live Dashboard Kèo Duy Nhất */}
+            <ResizablePanel
+              id="p1-dashboard"
+              defaultSize="28%"
+              minSize="22%"
+              maxSize="35%"
+              className="h-full"
+            >
+              <LiveDashboardPanel
+                snapshot={snapshot}
+                plans={plans}
+                consensus={consensus}
+                summary={summary}
+                onRefresh={fetchHealth}
+                isLoading={isLoading}
+                onOpenHistory={() => setIsHistoryOpen(true)}
               />
-              <ResizablePanel
-                id="p4-qa-dock"
-                defaultSize="18%"
-                minSize="14%"
-                maxSize="30%"
-                className="h-full"
-              >
-                <QaLibraryPanel
-                  onSelectQuestion={(q) => {
-                    setActiveQuestion(q);
-                    setActiveRightTab("chat");
-                  }}
-                  onClose={() => setShowQaLibrary(false)}
-                />
-              </ResizablePanel>
-            </>
-          )}
-        </ResizablePanelGroup>
+            </ResizablePanel>
+
+            <ResizableHandle
+              withHandle
+              className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full"
+            />
+
+            {/* Panel 2: TradingView Center Panel */}
+            <ResizablePanel
+              id="p2-tradingview"
+              defaultSize="44%"
+              minSize="35%"
+              maxSize="55%"
+              className="h-full"
+            >
+              <TradingViewPanel snapshot={snapshot} plan={currentPlan} />
+            </ResizablePanel>
+
+            <ResizableHandle
+              withHandle
+              className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full"
+            />
+
+            {/* Panel 3: Chat Advisor & QA */}
+            <ResizablePanel
+              id="p3-chat"
+              defaultSize="28%"
+              minSize="22%"
+              maxSize="35%"
+              className="h-full"
+            >
+              <div className="flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.08] bg-[#0b0f17]/90 shadow-2xl backdrop-blur-xl">
+                <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#090d16]/80 px-3 py-2 shrink-0">
+                  <div className="flex items-center gap-1 rounded-lg border border-white/5 bg-white/[0.03] p-0.5">
+                    <button
+                      onClick={() => setActiveRightTab("chat")}
+                      className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition-all cursor-pointer ${
+                        activeRightTab === "chat"
+                          ? "bg-sky-500/20 text-sky-400 shadow-sm border border-sky-500/30"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <Bot className="h-3.5 w-3.5" />
+                      <span>{tChat("tab_advisor")}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveRightTab("qa")}
+                      className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition-all cursor-pointer ${
+                        activeRightTab === "qa"
+                          ? "bg-sky-500/20 text-sky-400 shadow-sm border border-sky-500/30"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <HelpCircle className="h-3.5 w-3.5" />
+                      <span>{tChat("tab_qa")}</span>
+                    </button>
+                  </div>
+
+                  <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-mono text-slate-400 border border-white/5">
+                    {activeRightTab === "chat"
+                      ? tChat("analysis_badge")
+                      : tChat("qa_count_badge")}
+                  </span>
+                </div>
+
+                <div className="flex-1 overflow-hidden">
+                  {activeRightTab === "chat" ? (
+                    <ChatConversationPanel
+                      snapshot={snapshot}
+                      onSendQuestion={handleSendChat}
+                      externalQuestion={activeQuestion}
+                      onQuestionConsumed={() => setActiveQuestion("")}
+                    />
+                  ) : (
+                    <QaLibraryPanel
+                      onSelectQuestion={(q) => {
+                        setActiveQuestion(q);
+                        setActiveRightTab("chat");
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        )}
       </main>
 
       {/* Sổ Lệnh Lịch Sử Kiểm Định & Thực Chiến (Database PostgreSQL) */}
