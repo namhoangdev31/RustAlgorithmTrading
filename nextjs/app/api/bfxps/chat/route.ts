@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getLatestMarketSnapshot } from "@/lib/server/market/market-service";
 import {
   generateCanonicalQuantPlan,
+  getVietnamTradingDate,
 } from "@/lib/server/quant/strategy-engine";
 import { computeConsensus } from "@/lib/server/quant/consensus";
 import { generateAdvisorReply } from "@/lib/server/ai/advisor-service";
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
     if (body.session_low != null) snapshot.low = Number(body.session_low);
     if (body.live_price != null) snapshot.current = Number(body.live_price);
 
-    const todayStr = new Date().toISOString().split("T")[0];
+    const todayStr = getVietnamTradingDate();
     const canonicalPlan = generateCanonicalQuantPlan(
       todayStr,
       snapshot.current || 1940.0,
