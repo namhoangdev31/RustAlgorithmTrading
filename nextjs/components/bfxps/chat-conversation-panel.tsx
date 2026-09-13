@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Play, Pause, BarChart2 } from "lucide-react";
+import { Send, Bot, User, Play, Pause, BarChart2, SlidersHorizontal, Sparkles } from "lucide-react";
 import { DynamicPnlChart } from "./dynamic-pnl-chart";
 import { MarketSnapshot } from "@/lib/server/quant/types";
 import { useTranslations } from "next-intl";
@@ -41,6 +41,7 @@ export function ChatConversationPanel({
   const [inputText, setInputText] = useState("");
   const [isBusy, setIsBusy] = useState(false);
   const [showChart, setShowChart] = useState(false);
+  const [showCustomOhlc, setShowCustomOhlc] = useState(false);
 
   // Manual OHLC fields
   const [openVal, setOpenVal] = useState(String(snapshot.open));
@@ -129,32 +130,41 @@ export function ChatConversationPanel({
     }
 
     return (
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         {blocks.map((block, i) => {
           const trimmed = block.trim();
           if (!trimmed) return null;
 
-          let borderClass = "border-l-4 border-gray-600 bg-[#161b22]";
-          let titleColor = "text-gray-300";
+          let borderClass = "border border-white/10 bg-white/[0.03]";
+          let badgeClass = "bg-white/10 text-slate-300 border-white/15";
+          let badgeText = "PHÂN TÍCH";
 
           if (trimmed.startsWith("🟦")) {
-            borderClass = "border-l-4 border-[#2f81f7] bg-[#102a43]";
-            titleColor = "text-[#60a5fa]";
+            borderClass = "border border-sky-500/30 bg-sky-950/30 text-sky-100";
+            badgeClass = "bg-sky-500/20 text-sky-300 border-sky-500/30";
+            badgeText = "HỆ THỐNG / CSDL";
           } else if (trimmed.startsWith("🟧")) {
-            borderClass = "border-l-4 border-[#fbbf24] bg-[#2d2212]";
-            titleColor = "text-[#fbbf24]";
+            borderClass = "border border-amber-500/30 bg-amber-950/30 text-amber-100";
+            badgeClass = "bg-amber-500/20 text-amber-300 border-amber-500/30";
+            badgeText = "LỊCH SỬ / SUY LUẬN";
           } else if (trimmed.startsWith("🟪")) {
-            borderClass = "border-l-4 border-[#a78bfa] bg-[#2b1f3f]";
-            titleColor = "text-[#c4b5fd]";
+            borderClass = "border border-purple-500/30 bg-purple-950/30 text-purple-100";
+            badgeClass = "bg-purple-500/20 text-purple-300 border-purple-500/30";
+            badgeText = "SUY LUẬN / BRAIN";
           } else if (trimmed.startsWith("⬜")) {
-            borderClass = "border-l-4 border-[#36d399] bg-[#0d3026]";
-            titleColor = "text-[#36d399]";
+            borderClass = "border border-emerald-500/30 bg-emerald-950/30 text-emerald-100";
+            badgeClass = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+            badgeText = "KẾT LUẬN / HÀNH ĐỘNG";
           }
 
           return (
-            <div key={i} className={`rounded-r-lg p-2 text-xs leading-relaxed ${borderClass}`}>
-              <span className={`block font-bold mb-1 ${titleColor}`}>{trimmed.slice(0, 20)}</span>
-              <p className="whitespace-pre-wrap text-[#e6edf3]">{trimmed.replace(/^[🟦🟧🟪⬜]\s*[^\n]+\n?/, "")}</p>
+            <div key={i} className={`rounded-xl p-3 text-xs leading-relaxed shadow-sm ${borderClass}`}>
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className={`rounded-md px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider border ${badgeClass}`}>
+                  {badgeText}
+                </span>
+              </div>
+              <p className="whitespace-pre-wrap font-sans text-slate-200 text-xs">{trimmed.replace(/^[🟦🟧🟪⬜]\s*[^\n]+\n?/, "")}</p>
             </div>
           );
         })}
@@ -162,25 +172,19 @@ export function ChatConversationPanel({
     );
   };
 
-  return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-[#30363d] bg-[#171b23] text-[#e6edf3]">
-      {/* Header */}
-      <div className="border-b border-[#30363d] bg-[#111722] px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Bot className="h-4 w-4 text-[#2f81f7]" />
-            <b className="text-sm tracking-wide text-white">{t("advisor_title")}</b>
-          </div>
-          <span className="rounded-full border border-[#30363d] bg-[#0d1117] px-2.5 py-0.5 text-[11px] text-[#9aa4b2]">
-            {t("source_badge")}
-          </span>
-        </div>
-      </div>
+  const QUICK_PROMPTS = [
+    "Kèo hôm nay thế nào?",
+    "Phân tích R5",
+    "Công thức V44",
+    "Hiệu quả 30 phiên",
+  ];
 
-      {/* Vùng chat & biểu đồ */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+  return (
+    <div className="flex h-full flex-col overflow-hidden bg-[#0b0f17] text-slate-100">
+      {/* Vùng tin nhắn chat & biểu đồ */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar">
         {showChart && (
-          <div className="mb-4">
+          <div className="mb-3">
             <DynamicPnlChart />
           </div>
         )}
@@ -191,21 +195,21 @@ export function ChatConversationPanel({
             className={`flex items-start gap-2.5 ${m.role === "user" ? "justify-end" : "justify-start"}`}
           >
             {m.role === "bot" && (
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#2f81f7]/20 text-[#2f81f7]">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sky-500/20 border border-sky-500/30 text-sky-400">
                 <Bot className="h-4 w-4" />
               </div>
             )}
             <div
-              className={`max-w-[85%] rounded-2xl p-3 text-xs leading-relaxed shadow-sm ${
+              className={`max-w-[88%] rounded-2xl p-3 text-xs leading-relaxed shadow-sm ${
                 m.role === "user"
-                  ? "rounded-tr-none bg-[#2f81f7] text-white font-medium"
-                  : "rounded-tl-none border border-[#30363d] bg-[#222833]"
+                  ? "rounded-tr-none bg-gradient-to-r from-sky-600 to-blue-600 text-white font-medium shadow-[0_0_15px_rgba(37,99,235,0.2)]"
+                  : "rounded-tl-none border border-white/[0.08] bg-white/[0.03] text-slate-200 backdrop-blur-md"
               }`}
             >
               {m.role === "user" ? m.content : renderMessageContent(m.content)}
             </div>
             {m.role === "user" && (
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#2f81f7] text-white">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sky-600 text-white shadow-sm">
                 <User className="h-4 w-4" />
               </div>
             )}
@@ -215,75 +219,120 @@ export function ChatConversationPanel({
       </div>
 
       {/* Khung điều khiển OHLC & Input */}
-      <div className="border-t border-[#30363d] bg-[#111722] p-3 space-y-2.5">
-        {/* Controls Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-1.5">
-            <input
-              type="number"
-              step="0.1"
-              value={openVal}
-              disabled={isAutoLive}
-              onChange={(e) => setOpenVal(e.target.value)}
-              placeholder={t("field_open")}
-              className="w-16 rounded border border-[#30363d] bg-[#171b23] px-1.5 py-1 text-center font-mono text-[11px] disabled:opacity-60"
-            />
-            <input
-              type="number"
-              step="0.1"
-              value={highVal}
-              disabled={isAutoLive}
-              onChange={(e) => setHighVal(e.target.value)}
-              placeholder={t("field_high")}
-              className="w-16 rounded border border-[#30363d] bg-[#171b23] px-1.5 py-1 text-center font-mono text-[11px] disabled:opacity-60"
-            />
-            <input
-              type="number"
-              step="0.1"
-              value={lowVal}
-              disabled={isAutoLive}
-              onChange={(e) => setLowVal(e.target.value)}
-              placeholder={t("field_low")}
-              className="w-16 rounded border border-[#30363d] bg-[#171b23] px-1.5 py-1 text-center font-mono text-[11px] disabled:opacity-60"
-            />
-            <input
-              type="number"
-              step="0.1"
-              value={closeVal}
-              disabled={isAutoLive}
-              onChange={(e) => setCloseVal(e.target.value)}
-              placeholder={t("field_close")}
-              className="w-16 rounded border border-[#30363d] bg-[#171b23] px-1.5 py-1 text-center font-mono text-[11px] disabled:opacity-60"
-            />
-          </div>
+      <div className="border-t border-white/[0.08] bg-[#090d16]/95 backdrop-blur-md p-2.5 space-y-2">
+        {/* Quick prompt suggestions */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+          <Sparkles className="h-3 w-3 text-amber-400 shrink-0" />
+          {QUICK_PROMPTS.map((qp, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => handleSend(qp)}
+              disabled={isBusy}
+              className="rounded-full border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] text-slate-300 hover:text-sky-300 hover:border-sky-500/40 hover:bg-sky-500/10 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              {qp}
+            </button>
+          ))}
+        </div>
 
-          <div className="flex items-center gap-2">
+        {/* Controls Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs">
+          <div className="flex items-center gap-1.5">
             <button
               type="button"
               onClick={() => setIsAutoLive(!isAutoLive)}
-              className={`flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-bold transition-colors ${
+              className={`flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold transition-all cursor-pointer ${
                 isAutoLive
-                  ? "bg-[#0d6b45] text-[#36d399] border border-[#36d399]/40"
-                  : "bg-[#222833] text-[#9aa4b2] border border-[#30363d]"
+                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                  : "bg-white/[0.04] text-slate-400 border border-white/10"
               }`}
             >
-              {isAutoLive ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
+              {isAutoLive ? <Play className="h-2.5 w-2.5 text-emerald-400" /> : <Pause className="h-2.5 w-2.5 text-slate-400" />}
               <span>{t("auto_live_label")}: {isAutoLive ? t("status_on") : t("status_off")}</span>
             </button>
 
             <button
               type="button"
-              onClick={() => setShowChart(!showChart)}
-              className="flex items-center gap-1 rounded-md border border-[#30363d] bg-[#222833] px-2 py-1 text-[11px] font-bold text-[#60a5fa] hover:border-[#60a5fa]"
+              onClick={() => setShowCustomOhlc(!showCustomOhlc)}
+              className={`flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold border transition-all cursor-pointer ${
+                showCustomOhlc || !isAutoLive
+                  ? "border-sky-500/40 bg-sky-500/15 text-sky-400"
+                  : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white"
+              }`}
+              title="Tùy chỉnh OHLC thủ công"
             >
-              <BarChart2 className="h-3 w-3" />
-              <span>{showChart ? t("btn_hide_chart") : t("btn_show_chart")}</span>
+              <SlidersHorizontal className="h-2.5 w-2.5" />
+              <span>OHLC</span>
             </button>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setShowChart(!showChart)}
+            className="flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.04] px-2 py-1 text-[10px] font-bold text-sky-400 hover:border-sky-500/40 hover:bg-sky-500/10 transition-all cursor-pointer"
+          >
+            <BarChart2 className="h-2.5 w-2.5" />
+            <span>{showChart ? t("btn_hide_chart") : t("btn_show_chart")}</span>
+          </button>
         </div>
 
+        {/* Collapsible OHLC input drawer */}
+        {(showCustomOhlc || !isAutoLive) && (
+          <div className="grid grid-cols-4 gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.02] p-1.5">
+            <div>
+              <span className="block text-[9px] text-slate-400 text-center font-mono font-medium">O</span>
+              <input
+                type="number"
+                step="0.1"
+                value={openVal}
+                disabled={isAutoLive}
+                onChange={(e) => setOpenVal(e.target.value)}
+                placeholder={t("field_open")}
+                className="w-full rounded border border-white/10 bg-black/40 px-1 py-0.5 text-center font-mono text-[11px] text-white disabled:opacity-60 focus:border-sky-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <span className="block text-[9px] text-slate-400 text-center font-mono font-medium">H</span>
+              <input
+                type="number"
+                step="0.1"
+                value={highVal}
+                disabled={isAutoLive}
+                onChange={(e) => setHighVal(e.target.value)}
+                placeholder={t("field_high")}
+                className="w-full rounded border border-white/10 bg-black/40 px-1 py-0.5 text-center font-mono text-[11px] text-white disabled:opacity-60 focus:border-sky-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <span className="block text-[9px] text-slate-400 text-center font-mono font-medium">L</span>
+              <input
+                type="number"
+                step="0.1"
+                value={lowVal}
+                disabled={isAutoLive}
+                onChange={(e) => setLowVal(e.target.value)}
+                placeholder={t("field_low")}
+                className="w-full rounded border border-white/10 bg-black/40 px-1 py-0.5 text-center font-mono text-[11px] text-white disabled:opacity-60 focus:border-sky-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <span className="block text-[9px] text-slate-400 text-center font-mono font-medium">C</span>
+              <input
+                type="number"
+                step="0.1"
+                value={closeVal}
+                disabled={isAutoLive}
+                onChange={(e) => setCloseVal(e.target.value)}
+                placeholder={t("field_close")}
+                className="w-full rounded border border-white/10 bg-black/40 px-1 py-0.5 text-center font-mono text-[11px] text-white disabled:opacity-60 focus:border-sky-500 focus:outline-none"
+              />
+            </div>
+          </div>
+        )}
+
         {/* Input box */}
-        <div className="flex items-end gap-2">
+        <div className="flex items-end gap-1.5">
           <textarea
             rows={2}
             value={inputText}
@@ -295,13 +344,13 @@ export function ChatConversationPanel({
               }
             }}
             placeholder={t("input_placeholder")}
-            className="flex-1 resize-none rounded-xl border border-[#30363d] bg-[#171b23] p-2.5 text-xs text-[#e6edf3] placeholder-[#9aa4b2] focus:border-[#2f81f7] focus:outline-none"
+            className="flex-1 resize-none rounded-xl border border-white/10 bg-white/[0.03] p-2 text-xs text-white placeholder-slate-500 focus:border-sky-500 focus:bg-white/[0.06] focus:outline-none transition-all"
           />
           <button
             type="button"
             onClick={() => handleSend()}
             disabled={isBusy || !inputText.trim()}
-            className="flex h-[52px] w-[52px] items-center justify-center rounded-xl bg-[#2f81f7] font-bold text-white transition-opacity hover:bg-[#1f6feb] disabled:opacity-50"
+            className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 font-bold text-white transition-all hover:opacity-90 disabled:opacity-40 cursor-pointer shadow-[0_0_15px_rgba(56,189,248,0.2)]"
           >
             <Send className="h-4 w-4" />
           </button>

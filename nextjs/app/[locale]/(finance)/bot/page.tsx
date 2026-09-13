@@ -128,71 +128,90 @@ export default function LeposTradingBotPage({
   const currentPlan = plans[0];
 
   return (
-    <div className="flex h-screen w-full flex-col bg-[#0e1117] text-[#e6edf3] antialiased">
+    <div className="flex h-screen w-full flex-col bg-[#070a0f] text-slate-100 antialiased selection:bg-sky-500/30 selection:text-white overflow-hidden">
       {/* Top Banner Consensus Bar */}
-      <header className="border-b border-[#30363d] bg-[#0b0f15] px-4 py-2.5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2 text-xs font-black tracking-wide">
-            <span className="flex items-center gap-1.5 text-white">
-              <Activity className="h-4 w-4 text-[#36d399]" />
-              {tHeader("title")}
-            </span>
-            <span className="text-[#6b7280]">·</span>
-            <span className="text-[#36d399]">
-              {tHeader("canonical_plan")} {currentPlan?.date || "14/09/2026"} · {currentPlan?.side || "LONG"}
-            </span>
-            <span className="text-[#6b7280]">·</span>
-            <span className="text-white">
-              {tHeader("stop_entry_label")} {currentPlan?.entryPrice?.toFixed(1) || "1945.3"}
-            </span>
-            <span className="text-[#6b7280]">·</span>
-            <span className="text-[#38bdf8]">
-              TP {currentPlan?.tpPrice?.toFixed(1) || "1961.3"} ({tHeader("tp_pts")})
-            </span>
-            <span className="text-[#6b7280]">·</span>
-            <span className="text-[#ff5a67]">
-              SL {currentPlan?.slPrice?.toFixed(1) || "1937.3"} ({tHeader("sl_pts")})
-            </span>
-            <span className="text-[#6b7280]">·</span>
-            <span className="text-[#36d399]">{tHeader("rr_ratio")} · {tHeader("atc_close")}</span>
+      <header className="border-b border-white/[0.08] bg-[#090d16]/90 backdrop-blur-xl px-4 py-2.5 z-20 shadow-lg">
+        <div className="flex items-center justify-between gap-4">
+          {/* Brand Identity */}
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="relative flex h-3 w-3 items-center justify-center">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-black tracking-wider text-white text-xs sm:text-sm bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                {tHeader("title")}
+              </span>
+              <span className="rounded-md bg-sky-500/10 px-1.5 py-0.5 font-mono text-[10px] font-bold text-sky-400 border border-sky-500/20">
+                VN30F1M
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs">
+          {/* Canonical Strategy Ticker Pills */}
+          <div className="hidden md:flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
+            <div className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.12)]">
+              <span className="text-[11px] text-emerald-300/80">{tHeader("canonical_plan")}:</span>
+              <span className="font-mono text-white tracking-tight">{currentPlan?.side || "LONG"} @ {currentPlan?.entryPrice?.toFixed(1) || "1945.3"}</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 rounded-lg border border-sky-500/30 bg-sky-500/10 px-2.5 py-1 text-sky-400 font-semibold shadow-[0_0_15px_rgba(56,189,248,0.1)]">
+              <span className="text-[11px] text-sky-300/80">TP:</span>
+              <span className="font-mono font-bold text-white tracking-tight">{currentPlan?.tpPrice?.toFixed(1) || "1961.3"} ({tHeader("tp_pts")})</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 px-2.5 py-1 text-rose-400 font-semibold shadow-[0_0_15px_rgba(244,63,94,0.1)]">
+              <span className="text-[11px] text-rose-300/80">SL:</span>
+              <span className="font-mono font-bold text-white tracking-tight">{currentPlan?.slPrice?.toFixed(1) || "1937.3"} ({tHeader("sl_pts")})</span>
+            </div>
+
+            <div className="hidden xl:flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/[0.03] px-2.5 py-1 text-[11px] text-slate-300 font-mono">
+              <span className="text-slate-400">{tHeader("rr_ratio")}</span>
+              <span className="text-slate-600">·</span>
+              <span className="text-emerald-400 font-bold">{tHeader("atc_close")}</span>
+            </div>
+          </div>
+
+          {/* Action Suite & Audit Proof */}
+          <div className="flex items-center gap-2 shrink-0 text-xs">
             <button
               onClick={() => setIsHistoryOpen(true)}
-              className="flex items-center gap-1.5 rounded-md border border-[#388bfd]/50 bg-[#1f6feb]/20 px-2.5 py-1 text-xs font-bold text-[#58a6ff] hover:bg-[#1f6feb]/30 hover:border-[#58a6ff] transition-all cursor-pointer shadow-sm"
+              className="group flex items-center gap-2 rounded-lg border border-sky-500/30 bg-sky-500/10 px-2.5 sm:px-3 py-1.5 text-xs font-bold text-sky-400 hover:bg-sky-500/20 hover:border-sky-400/60 transition-all shadow-[0_0_15px_rgba(56,189,248,0.12)] cursor-pointer"
               title={tHeader("history_button_tooltip")}
             >
-              <Database className="h-3.5 w-3.5 text-[#58a6ff]" />
-              {tHeader("history_button", { count: summary?.totalSessions ?? 413 })}
+              <Database className="h-3.5 w-3.5 text-sky-400 group-hover:scale-110 transition-transform" />
+              <span>{tHeader("history_button", { count: summary?.totalSessions ?? 413 })}</span>
+              <span className="hidden sm:inline-block rounded-full bg-emerald-500/20 px-1.5 py-0.2 text-[10px] font-mono text-emerald-300 border border-emerald-500/30 font-bold">
+                +770.5đ
+              </span>
             </button>
 
             <button
               onClick={() => setShowQaLibrary(!showQaLibrary)}
-              className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-bold transition-all cursor-pointer shadow-sm ${
+              className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                 showQaLibrary
-                  ? "border-[#e3b341] bg-[#d29922]/20 text-[#f2cc60]"
-                  : "border-[#30363d] bg-[#161b22] text-[#8b949e] hover:text-white hover:border-[#8b949e]"
+                  ? "border-amber-400/50 bg-amber-400/15 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+                  : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white hover:border-white/20 hover:bg-white/[0.08]"
               }`}
               title={tHeader("qa_toggle_tooltip")}
             >
               <HelpCircle className="h-3.5 w-3.5" />
-              {showQaLibrary ? tHeader("qa_toggle_visible") : tHeader("qa_toggle_hidden")}
+              <span className="hidden sm:inline">{showQaLibrary ? tHeader("qa_toggle_visible") : tHeader("qa_toggle_hidden")}</span>
             </button>
 
-            <span className="flex items-center gap-1 text-[#9aa4b2]">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#2f81f7]" />
-              {tHeader("zero_lookahead")} · {tHeader("bars_stats")}
-            </span>
+            <div className="hidden 2xl:flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/[0.02] px-2.5 py-1.5 text-[11px] text-slate-400 font-mono">
+              <ShieldCheck className="h-3.5 w-3.5 text-sky-400" />
+              <span>{tHeader("zero_lookahead")}</span>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Split Workspace: Cột 1 Live Dashboard, Cột 2 TradingView (Giữa), Cột 3 Chat Advisor (Phải) */}
-      <main className="flex-1 overflow-hidden p-3">
+      {/* Main Split Workspace */}
+      <main className="flex-1 overflow-hidden p-2.5 sm:p-3">
         <ResizablePanelGroup
           direction="horizontal"
-          className="h-full w-full gap-2"
+          className="h-full w-full gap-2.5"
         >
           {/* Panel 1: Live Dashboard Kèo Duy Nhất (Cột Trái - Tỷ lệ Max Chiều Rộng) */}
           <ResizablePanel
@@ -213,7 +232,7 @@ export default function LeposTradingBotPage({
             />
           </ResizablePanel>
 
-          <ResizableHandle withHandle className="w-1.5 bg-[#30363d] hover:bg-[#2f81f7] transition-colors" />
+          <ResizableHandle withHandle className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full" />
 
           {/* Panel 2: TradingView Center Panel (Cột Giữa) */}
           <ResizablePanel
@@ -229,7 +248,7 @@ export default function LeposTradingBotPage({
             />
           </ResizablePanel>
 
-          <ResizableHandle withHandle className="w-1.5 bg-[#30363d] hover:bg-[#2f81f7] transition-colors" />
+          <ResizableHandle withHandle className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full" />
 
           {/* Panel 3: Chat Advisor Thay Vào Chỗ Thư Viện (Cột Phải - Tỷ lệ Min Chiều Rộng) */}
           <ResizablePanel
@@ -239,16 +258,16 @@ export default function LeposTradingBotPage({
             maxSize="38%"
             className="h-full"
           >
-            <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-[#30363d] bg-[#171b23]">
+            <div className="flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.08] bg-[#0b0f17]/90 shadow-2xl backdrop-blur-xl">
               {/* Tabs Switcher Chat / QA */}
-              <div className="flex items-center justify-between border-b border-[#30363d] bg-[#111722] px-3 py-2">
-                <div className="flex items-center gap-1">
+              <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#090d16]/80 px-3 py-2">
+                <div className="flex items-center gap-1 rounded-lg border border-white/5 bg-white/[0.03] p-0.5">
                   <button
                     onClick={() => setActiveRightTab("chat")}
-                    className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-all ${
+                    className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition-all ${
                       activeRightTab === "chat"
-                        ? "bg-[#1f6feb] text-white"
-                        : "text-[#8b949e] hover:bg-[#222833] hover:text-white"
+                        ? "bg-sky-500/20 text-sky-400 shadow-sm border border-sky-500/30"
+                        : "text-slate-400 hover:text-white"
                     }`}
                   >
                     <Bot className="h-3.5 w-3.5" />
@@ -256,10 +275,10 @@ export default function LeposTradingBotPage({
                   </button>
                   <button
                     onClick={() => setActiveRightTab("qa")}
-                    className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-all ${
+                    className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold transition-all ${
                       activeRightTab === "qa"
-                        ? "bg-[#1f6feb] text-white"
-                        : "text-[#8b949e] hover:bg-[#222833] hover:text-white"
+                        ? "bg-sky-500/20 text-sky-400 shadow-sm border border-sky-500/30"
+                        : "text-slate-400 hover:text-white"
                     }`}
                   >
                     <HelpCircle className="h-3.5 w-3.5" />
@@ -267,7 +286,7 @@ export default function LeposTradingBotPage({
                   </button>
                 </div>
 
-                <span className="text-[10px] text-[#8b949e]">
+                <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-mono text-slate-400 border border-white/5">
                   {activeRightTab === "chat" ? tChat("analysis_badge") : tChat("qa_count_badge")}
                 </span>
               </div>
@@ -296,7 +315,7 @@ export default function LeposTradingBotPage({
           {/* Panel 4: Cột Thư Viện QA Mở Rộng Khi Người Dùng Bật */}
           {showQaLibrary && (
             <>
-              <ResizableHandle withHandle className="w-1.5 bg-[#30363d] hover:bg-[#2f81f7] transition-colors" />
+              <ResizableHandle withHandle className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full" />
               <ResizablePanel id="p4-qa-dock" defaultSize="18%" minSize="14%" maxSize="30%" className="h-full">
                 <QaLibraryPanel
                   onSelectQuestion={(q) => {

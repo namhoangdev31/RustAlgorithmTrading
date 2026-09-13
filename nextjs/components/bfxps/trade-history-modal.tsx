@@ -117,27 +117,27 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-150">
-      <div className="flex h-[90vh] w-full max-w-6xl flex-col rounded-xl border border-[#30363d] bg-[#0d1117] shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-200">
+      <div className="flex h-[90vh] w-full max-w-6xl flex-col rounded-2xl border border-white/10 bg-[#0b0f17] text-slate-100 shadow-2xl overflow-hidden">
         {/* Header Modal */}
-        <div className="flex items-center justify-between border-b border-[#30363d] bg-[#161b22] px-6 py-4">
+        <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#090d16]/90 px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1f6feb]/20 text-[#58a6ff]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/20 border border-sky-500/30 text-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.2)]">
               <Database className="h-5 w-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-white tracking-wide">
+                <h2 className="text-base font-black text-white tracking-wide">
                   {t("title")}
                 </h2>
-                <span className="rounded bg-[#238636]/20 px-2 py-0.5 text-[11px] font-bold text-[#3fb950] border border-[#238636]/40">
+                <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-bold text-emerald-400 border border-emerald-500/30 font-mono">
                   {t("db_badge")}
                 </span>
-                <span className="rounded bg-[#1f6feb]/20 px-2 py-0.5 text-[11px] font-medium text-[#58a6ff] border border-[#1f6feb]/40">
+                <span className="rounded-full bg-sky-500/15 px-2.5 py-0.5 text-[10px] font-bold text-sky-400 border border-sky-500/30 font-mono">
                   {t("zero_lookahead_badge")}
                 </span>
               </div>
-              <p className="text-xs text-[#8b949e]">
+              <p className="text-xs text-slate-400 mt-0.5">
                 {t("subtitle")}
               </p>
             </div>
@@ -145,7 +145,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
 
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-[#8b949e] hover:bg-[#21262d] hover:text-white transition-colors"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
             title={t("close")}
           >
             <X className="h-5 w-5" />
@@ -153,80 +153,81 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
         </div>
 
         {/* Thống kê Tổng quan (KPI Cards) */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 p-4 bg-[#161b22]/50 border-b border-[#30363d]">
-          <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
-            <div className="text-[11px] text-[#8b949e] uppercase font-bold">{t("kpi_total_pnl")}</div>
-            <div className="mt-1 text-lg font-black text-[#3fb950] flex items-center gap-1">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5 p-3.5 bg-white/[0.02] border-b border-white/[0.08]">
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-3 shadow-sm">
+            <div className="text-[10px] text-emerald-400/80 uppercase font-bold">{t("kpi_total_pnl")}</div>
+            <div className="mt-1 text-lg font-black text-emerald-400 flex items-center gap-1 font-mono">
               <TrendingUp className="h-4 w-4" />
               {summary?.totalPnl != null ? (summary.totalPnl > 0 ? `+${summary.totalPnl.toFixed(1)}` : summary.totalPnl.toFixed(1)) : "0.0"}{t("pts_unit")}
             </div>
-            <div className="text-[10px] text-[#8b949e]">{t("kpi_total_pnl_sub")}</div>
+            <div className="text-[10px] text-slate-400 font-mono">{t("kpi_total_pnl_sub")}</div>
           </div>
 
-          <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
-            <div className="text-[11px] text-[#8b949e] uppercase font-bold">{t("kpi_winrate")}</div>
-            <div className="mt-1 text-lg font-black text-white">
+          <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 shadow-sm">
+            <div className="text-[10px] text-slate-400 uppercase font-bold">{t("kpi_winrate")}</div>
+            <div className="mt-1 text-lg font-black text-white font-mono">
               {summary?.winRate != null ? `${summary.winRate}%` : "0.0%"}
             </div>
-            <div className="text-[10px] text-[#8b949e]">
+            <div className="text-[10px] text-slate-400 font-mono">
               {t("kpi_win_loss", { wins: summary?.wins ?? 0, losses: summary?.losses ?? 0 })}
             </div>
           </div>
 
-          <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
-            <div className="text-[11px] text-[#8b949e] uppercase font-bold">{t("kpi_pf")}</div>
-            <div className="mt-1 text-lg font-black text-[#58a6ff]">
+          <div className="rounded-xl border border-sky-500/30 bg-sky-950/20 p-3 shadow-sm">
+            <div className="text-[10px] text-sky-400/80 uppercase font-bold">{t("kpi_pf")}</div>
+            <div className="mt-1 text-lg font-black text-sky-400 font-mono">
               {summary?.profitFactor != null ? Number(summary.profitFactor).toFixed(2) : "0.00"}
             </div>
-            <div className="text-[10px] text-[#8b949e]">{t("kpi_pf_sub")}</div>
+            <div className="text-[10px] text-slate-400 font-mono">{t("kpi_pf_sub")}</div>
           </div>
 
-          <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
-            <div className="text-[11px] text-[#8b949e] uppercase font-bold">{t("kpi_mdd")}</div>
-            <div className="mt-1 text-lg font-black text-[#f85149]">
+          <div className="rounded-xl border border-rose-500/30 bg-rose-950/20 p-3 shadow-sm">
+            <div className="text-[10px] text-rose-400/80 uppercase font-bold">{t("kpi_mdd")}</div>
+            <div className="mt-1 text-lg font-black text-rose-400 font-mono">
               {summary?.maxDrawdown != null ? `${summary.maxDrawdown.toFixed(1)}${t("pts_unit")}` : `0.0${t("pts_unit")}`}
             </div>
-            <div className="text-[10px] text-[#8b949e]">{t("kpi_mdd_sub")}</div>
+            <div className="text-[10px] text-slate-400 font-mono">{t("kpi_mdd_sub")}</div>
           </div>
 
-          <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
-            <div className="text-[11px] text-[#8b949e] uppercase font-bold">{t("kpi_sessions")}</div>
-            <div className="mt-1 text-lg font-black text-[#d2a8ff]">
+          <div className="rounded-xl border border-purple-500/30 bg-purple-950/20 p-3 shadow-sm">
+            <div className="text-[10px] text-purple-300/80 uppercase font-bold">{t("kpi_sessions")}</div>
+            <div className="mt-1 text-lg font-black text-purple-300 font-mono">
               {summary?.totalSessions ?? trades.length} {t("kpi_sessions_unit")}
             </div>
-            <div className="text-[10px] text-[#8b949e]">
+            <div className="text-[10px] text-slate-400 font-mono">
               {t("kpi_filled_info", { filled: summary?.tradedCount ?? 0, noFill: Math.max(0, (summary?.totalSessions ?? trades.length) - (summary?.tradedCount ?? 0)) })}
             </div>
           </div>
         </div>
 
-        {/* Grid PnL 21 Tháng */}
-        <div className="px-4 py-2 bg-[#0b0e14] border-b border-[#30363d] overflow-x-auto">
-          <div className="text-[11px] font-bold text-[#8b949e] mb-1.5 flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5 text-[#58a6ff]" />
+        {/* Grid PnL Các Tháng */}
+        <div className="px-4 py-2 bg-black/30 border-b border-white/[0.08] overflow-x-auto custom-scrollbar">
+          <div className="text-[10px] font-bold text-slate-400 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider">
+            <Calendar className="h-3 w-3 text-sky-400" />
             {t("monthly_title")}
           </div>
           <div className="flex items-center gap-1.5 min-w-max pb-1">
             {Object.entries(monthlyPnl).map(([month, pnl]) => {
               const isPos = pnl > 0;
               const isZero = pnl === 0;
+              const isSelected = selectedMonth === month;
               return (
                 <div
                   key={month}
                   onClick={() => {
-                    setSelectedMonth(selectedMonth === month ? "ALL" : month);
+                    setSelectedMonth(isSelected ? "ALL" : month);
                     setCurrentPage(1);
                   }}
-                  className={`cursor-pointer rounded border px-2 py-1 text-center transition-all ${
-                    selectedMonth === month
-                      ? "border-[#58a6ff] bg-[#1f6feb]/20"
-                      : "border-[#30363d] bg-[#161b22] hover:border-[#8b949e]"
+                  className={`cursor-pointer rounded-lg border px-2.5 py-1 text-center transition-all ${
+                    isSelected
+                      ? "border-sky-400 bg-sky-500/20 shadow-[0_0_12px_rgba(56,189,248,0.2)]"
+                      : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.05]"
                   }`}
                 >
-                  <div className="text-[10px] font-mono text-[#8b949e]">{month}</div>
+                  <div className="text-[10px] font-mono text-slate-400">{month}</div>
                   <div
                     className={`text-xs font-bold font-mono ${
-                      isPos ? "text-[#3fb950]" : isZero ? "text-[#8b949e]" : "text-[#f85149]"
+                      isPos ? "text-emerald-400" : isZero ? "text-slate-400" : "text-rose-400"
                     }`}
                   >
                     {isPos ? `+${pnl.toFixed(1)}` : pnl.toFixed(1)}{t("pts_unit")}
@@ -238,7 +239,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
         </div>
 
         {/* Thanh công cụ tìm kiếm và lọc */}
-        <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-[#161b22] border-b border-[#30363d]">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-[#090d16] border-b border-white/[0.08]">
           {/* Bộ lọc loại lệnh */}
           <div className="flex items-center gap-1.5">
             {[
@@ -252,10 +253,10 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
                   setFilterType(tab.id as any);
                   setCurrentPage(1);
                 }}
-                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-all ${
+                className={`rounded-lg px-3 py-1 text-xs font-bold transition-all cursor-pointer ${
                   filterType === tab.id
-                    ? "bg-[#1f6feb] text-white"
-                    : "bg-[#21262d] text-[#8b949e] hover:bg-[#30363d] hover:text-white"
+                    ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-[0_0_12px_rgba(56,189,248,0.15)]"
+                    : "border border-white/10 bg-white/[0.02] text-slate-400 hover:text-white hover:bg-white/[0.05]"
                 }`}
               >
                 {tab.label}
@@ -263,53 +264,35 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
             ))}
           </div>
 
-          {/* Chọn tháng & Tìm kiếm */}
-          <div className="flex items-center gap-2">
-            <select
-              value={selectedMonth}
+          {/* Ô tìm kiếm */}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-500" />
+            <input
+              type="text"
+              value={searchTerm}
               onChange={(e) => {
-                setSelectedMonth(e.target.value);
+                setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="rounded-md border border-[#30363d] bg-[#0d1117] px-2.5 py-1 text-xs text-white focus:border-[#58a6ff] focus:outline-none"
-            >
-              <option value="ALL">{t("all_months")}</option>
-              {availableMonths.map((m) => (
-                <option key={m} value={m}>
-                  {t("month_label", { m })}
-                </option>
-              ))}
-            </select>
-
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#8b949e]" />
-              <input
-                type="text"
-                placeholder={t("search_placeholder")}
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-48 rounded-md border border-[#30363d] bg-[#0d1117] pl-8 pr-3 py-1 text-xs text-white placeholder-[#8b949e] focus:border-[#58a6ff] focus:outline-none"
-              />
-            </div>
+              placeholder={t("search_placeholder")}
+              className="w-48 rounded-lg border border-white/10 bg-white/[0.03] pl-8 pr-3 py-1 text-xs text-white placeholder-slate-500 focus:border-sky-500 focus:bg-white/[0.06] focus:outline-none transition-all font-mono"
+            />
           </div>
         </div>
 
         {/* Bảng Dữ Liệu Lịch Sử */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto custom-scrollbar">
           {loading ? (
-            <div className="flex h-full items-center justify-center text-sm text-[#8b949e]">
+            <div className="flex h-full items-center justify-center text-sm text-slate-400">
               {t("loading_db")}
             </div>
           ) : reversedFiltered.length === 0 ? (
-            <div className="flex h-full items-center justify-center text-sm text-[#8b949e]">
+            <div className="flex h-full items-center justify-center text-sm text-slate-400">
               {t("no_records")}
             </div>
           ) : (
             <table className="w-full border-collapse text-left text-xs">
-              <thead className="sticky top-0 z-10 border-b border-[#30363d] bg-[#161b22] text-[#8b949e]">
+              <thead className="sticky top-0 z-10 border-b border-white/10 bg-[#090d16] text-slate-400">
                 <tr>
                   <th className="py-2.5 px-3 font-semibold">{t("col_date")}</th>
                   <th className="py-2.5 px-3 font-semibold">{t("col_plan")}</th>
@@ -324,7 +307,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
                   <th className="py-2.5 px-3 font-semibold text-center">{t("col_status")}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#21262d] font-mono">
+              <tbody className="divide-y divide-white/[0.04] font-mono">
                 {paginatedTrades.map((trade) => {
                   const isLong = trade.side === "LONG";
                   const isNoFill = trade.exitType === "NO_FILL" || trade.exitType === "PENDING";
@@ -334,34 +317,34 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
                   return (
                     <tr
                       key={trade.date}
-                      className="hover:bg-[#161b22]/70 transition-colors"
+                      className="hover:bg-white/[0.03] transition-colors"
                     >
                       <td className="py-2.5 px-3 font-bold text-white">
                         {trade.date}
                         {trade.exitType === "PENDING" && (
-                          <span className="ml-1.5 rounded bg-[#1f6feb]/30 px-1.5 py-0.5 text-[10px] text-[#58a6ff] font-sans">
+                          <span className="ml-1.5 rounded-md bg-sky-500/20 px-1.5 py-0.5 text-[10px] text-sky-400 font-sans border border-sky-500/30">
                             {t("next_session")}
                           </span>
                         )}
                       </td>
                       <td className="py-2.5 px-3">
                         <span
-                          className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] font-bold ${
+                          className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-bold ${
                             isLong
-                              ? "bg-[#238636]/20 text-[#3fb950] border border-[#238636]/30"
-                              : "bg-[#da3633]/20 text-[#f85149] border border-[#da3633]/30"
+                              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                              : "bg-rose-500/15 text-rose-400 border border-rose-500/30"
                           }`}
                         >
                           {trade.side}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 text-[#e6edf3]">
+                      <td className="py-2.5 px-3 text-slate-200">
                         {trade.entryPrice ? trade.entryPrice.toFixed(1) : "—"}
                       </td>
-                      <td className="py-2.5 px-3 text-[#58a6ff]">
+                      <td className="py-2.5 px-3 text-sky-400">
                         {trade.tpPrice ? trade.tpPrice.toFixed(1) : "—"}
                       </td>
-                      <td className="py-2.5 px-3 text-[#f85149]">
+                      <td className="py-2.5 px-3 text-rose-400">
                         {trade.slPrice ? trade.slPrice.toFixed(1) : "—"}
                       </td>
                       <td className="py-2.5 px-3 text-white font-semibold">
@@ -369,16 +352,16 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
                       </td>
                       <td className="py-2.5 px-3 font-sans">
                         <span
-                          className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
+                          className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${
                             trade.exitType === "TP"
-                              ? "bg-[#238636]/30 text-[#3fb950]"
+                              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
                               : trade.exitType === "SL"
-                              ? "bg-[#da3633]/30 text-[#f85149]"
+                              ? "bg-rose-500/20 text-rose-400 border border-rose-500/30"
                               : trade.exitType === "ATC"
-                              ? "bg-[#d29922]/30 text-[#e3b341]"
+                              ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
                               : trade.exitType === "PENDING"
-                              ? "bg-[#1f6feb]/30 text-[#58a6ff]"
-                              : "bg-[#30363d] text-[#8b949e]"
+                              ? "bg-sky-500/20 text-sky-400 border border-sky-500/30"
+                              : "bg-white/10 text-slate-400 border border-white/10"
                           }`}
                         >
                           {trade.exitType === "NO_FILL"
@@ -388,18 +371,18 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
                             : trade.exitType}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 text-[#8b949e]">
+                      <td className="py-2.5 px-3 text-slate-400">
                         {trade.exitMinute || "—"}
                       </td>
                       <td
                         className={`py-2.5 px-3 text-right font-bold ${
                           isNoFill
-                            ? "text-[#8b949e]"
+                            ? "text-slate-500"
                             : isWin
-                            ? "text-[#3fb950]"
+                            ? "text-emerald-400"
                             : isLoss
-                            ? "text-[#f85149]"
-                            : "text-[#8b949e]"
+                            ? "text-rose-400"
+                            : "text-slate-400"
                         }`}
                       >
                         {isNoFill ? `0.0${t("pts_unit")}` : `${trade.pnl > 0 ? `+${trade.pnl.toFixed(1)}` : trade.pnl.toFixed(1)}${t("pts_unit")}`}
@@ -408,7 +391,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
                         {trade.cumulativePnl > 0 ? `+${trade.cumulativePnl.toFixed(1)}` : trade.cumulativePnl.toFixed(1)}{t("pts_unit")}
                       </td>
                       <td className="py-2.5 px-3 text-center font-sans">
-                        <span className="text-[10px] text-[#8b949e]">
+                        <span className="text-[10px] text-slate-400">
                           {trade.status || (isNoFill ? t("status_no_fill") : t("status_settled"))}
                         </span>
                       </td>
@@ -421,7 +404,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
         </div>
 
         {/* Footer Phân Trang */}
-        <div className="flex items-center justify-between border-t border-[#30363d] bg-[#161b22] px-6 py-3 text-xs text-[#8b949e]">
+        <div className="flex items-center justify-between border-t border-white/[0.08] bg-[#090d16] px-6 py-3 text-xs text-slate-400">
           <div>
             {t("pagination_showing", {
               from: reversedFiltered.length > 0 ? (currentPage - 1) * pageSize + 1 : 0,
@@ -434,7 +417,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="flex items-center gap-1 rounded-md border border-[#30363d] bg-[#21262d] px-2.5 py-1 font-medium text-white hover:bg-[#30363d] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.04] px-2.5 py-1 font-medium text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               <ChevronLeft className="h-3.5 w-3.5" /> {t("btn_prev")}
             </button>
@@ -444,7 +427,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="flex items-center gap-1 rounded-md border border-[#30363d] bg-[#21262d] px-2.5 py-1 font-medium text-white hover:bg-[#30363d] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.04] px-2.5 py-1 font-medium text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               {t("btn_next")} <ChevronRight className="h-3.5 w-3.5" />
             </button>

@@ -69,60 +69,60 @@ export function QaLibraryPanel({ onSelectQuestion, onClose }: QaLibraryProps) {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-[#30363d] bg-[#171b23] text-[#e6edf3]">
+    <div className="flex h-full flex-col overflow-hidden bg-[#0b0f17] text-slate-100">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#30363d] bg-[#111722] px-4 py-3">
+      <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#090d16]/90 px-4 py-2.5">
         <div className="flex items-center gap-2">
-          <HelpCircle className="h-4 w-4 text-[#2f81f7]" />
-          <b className="text-sm tracking-wide text-white">{t("title")}</b>
+          <HelpCircle className="h-4 w-4 text-sky-400" />
+          <b className="text-xs font-black tracking-wider uppercase text-white">{t("title")}</b>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-[#9aa4b2]">{t("click_to_run")}</span>
+          <span className="text-[10px] font-mono text-slate-400">{t("click_to_run")}</span>
           {onClose && (
             <button
               onClick={onClose}
-              className="rounded p-1 text-[#8b949e] hover:bg-[#222833] hover:text-white transition-colors"
+              className="rounded p-1 text-slate-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
               title={t("close")}
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
       </div>
 
       {/* Body List */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
+      <div className="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scrollbar">
         {QA_CATEGORIES.map((cat, idx) => {
           const isOpen = !!openSections[idx];
           return (
             <div
               key={idx}
-              className="rounded-xl border border-[#30363d] bg-[#111722] overflow-hidden"
+              className="rounded-xl border border-white/[0.08] bg-white/[0.02] overflow-hidden shadow-sm"
             >
               <button
                 type="button"
                 onClick={() => toggleSection(idx)}
-                className="flex w-full items-center justify-between px-3 py-2.5 text-left text-xs font-bold text-[#e6edf3] hover:bg-[#171b23]"
+                className="flex w-full items-center justify-between px-3 py-2 text-left text-xs font-bold text-slate-200 hover:bg-white/[0.04] transition-colors cursor-pointer"
               >
                 <span>{cat.title}</span>
                 {isOpen ? (
-                  <ChevronDown className="h-3.5 w-3.5 text-[#9aa4b2]" />
+                  <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
                 ) : (
-                  <ChevronRight className="h-3.5 w-3.5 text-[#9aa4b2]" />
+                  <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
                 )}
               </button>
 
               {isOpen && (
-                <div className="grid grid-cols-1 gap-1.5 p-2.5 border-t border-[#30363d] bg-[#0d1117]">
+                <div className="grid grid-cols-1 gap-1.5 p-2 border-t border-white/[0.06] bg-black/20">
                   {cat.questions.map((qItem, qIdx) => (
                     <button
                       key={qIdx}
                       type="button"
                       onClick={() => onSelectQuestion(qItem.q)}
-                      className="group flex items-center justify-between rounded-lg border border-[#30363d] bg-[#171b23] px-2.5 py-1.5 text-left text-[11px] text-[#9aa4b2] transition-colors hover:border-[#2f81f7] hover:bg-[#1d2a3b] hover:text-white"
+                      className="group flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-2.5 py-1.5 text-left text-[11px] text-slate-300 transition-all hover:border-sky-500/40 hover:bg-sky-500/10 hover:text-sky-300 cursor-pointer"
                     >
-                      <span className="font-medium">{qItem.label}</span>
-                      <Zap className="h-3 w-3 text-[#9aa4b2] opacity-0 group-hover:opacity-100 group-hover:text-[#2f81f7]" />
+                      <span className="font-medium leading-normal">{qItem.label}</span>
+                      <Zap className="h-3 w-3 text-slate-500 opacity-0 group-hover:opacity-100 group-hover:text-amber-400 transition-all shrink-0 ml-1" />
                     </button>
                   ))}
                 </div>

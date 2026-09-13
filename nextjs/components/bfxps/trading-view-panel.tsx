@@ -130,7 +130,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
     const height = rect.height;
 
     // Clear background
-    ctx.fillStyle = "#0e1117";
+    ctx.fillStyle = "#070a0f";
     ctx.fillRect(0, 0, width, height);
 
     const paddingRight = 65; // Price scale
@@ -164,9 +164,9 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
     const candleWidth = Math.max(2, candleSpacing * 0.7);
 
     // 1. Grid Lines & Price Labels
-    ctx.strokeStyle = "#1c2128";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
     ctx.lineWidth = 1;
-    ctx.fillStyle = "#8b949e";
+    ctx.fillStyle = "#94a3b8";
     ctx.font = "10px JetBrains Mono, monospace";
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
@@ -395,28 +395,28 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
 
   return (
     <div
-      className={`flex h-full flex-col overflow-hidden rounded-2xl border border-[#30363d] bg-[#0e1117] text-[#e6edf3] shadow-xl transition-all ${
-        isFullscreen ? "fixed inset-2 z-50 rounded-xl" : ""
+      className={`flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.08] bg-[#070a0f] text-slate-100 shadow-2xl backdrop-blur-xl transition-all ${
+        isFullscreen ? "fixed inset-2 z-50 rounded-xl shadow-2xl" : ""
       }`}
     >
       {/* Top Header Controls Bar */}
-      <div className="flex flex-wrap items-center justify-between border-b border-[#30363d] bg-[#111722] px-3 py-2 gap-2 text-xs">
+      <div className="flex flex-wrap items-center justify-between border-b border-white/[0.08] bg-[#090d16]/90 backdrop-blur-md px-3 py-2 gap-2 text-xs">
         {/* Chế độ Chart & Ticker Switcher */}
         <div className="flex flex-wrap items-center gap-2">
           {/* Badge: Nến Thật VN30F1M */}
-          <div className="flex items-center gap-1.5 rounded-lg border border-[#30363d] bg-[#171b23] px-2.5 py-1 font-bold text-white shadow">
-            <Activity className="h-3.5 w-3.5 text-[#3fb950]" />
+          <div className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 font-bold text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.12)]">
+            <Activity className="h-3.5 w-3.5 text-emerald-400" />
             <span>{t("real_candles")} ({timeframe})</span>
           </div>
 
           {/* Timeframe selector (15m vs 1m) */}
-          <div className="flex items-center gap-1 rounded-lg border border-[#30363d] bg-[#171b23] p-0.5 font-mono text-[11px]">
+          <div className="flex items-center gap-0.5 rounded-lg border border-white/10 bg-white/[0.03] p-0.5 font-mono text-[11px]">
             <button
               onClick={() => setTimeframe("15m")}
-              className={`rounded px-2 py-0.5 font-bold transition-all ${
+              className={`rounded-md px-2 py-0.5 font-bold transition-all cursor-pointer ${
                 timeframe === "15m"
-                  ? "bg-[#3fb950] text-black"
-                  : "text-[#8b949e] hover:bg-[#222833] hover:text-white"
+                  ? "bg-emerald-500 text-slate-950 font-extrabold shadow-sm"
+                  : "text-slate-400 hover:bg-white/[0.06] hover:text-white"
               }`}
               title={t("tf_15m_tooltip")}
             >
@@ -424,10 +424,10 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
             </button>
             <button
               onClick={() => setTimeframe("1m")}
-              className={`rounded px-2 py-0.5 font-bold transition-all ${
+              className={`rounded-md px-2 py-0.5 font-bold transition-all cursor-pointer ${
                 timeframe === "1m"
-                  ? "bg-[#3fb950] text-black"
-                  : "text-[#8b949e] hover:bg-[#222833] hover:text-white"
+                  ? "bg-emerald-500 text-slate-950 font-extrabold shadow-sm"
+                  : "text-slate-400 hover:bg-white/[0.06] hover:text-white"
               }`}
               title={t("tf_1m_tooltip")}
             >
@@ -436,24 +436,24 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
           </div>
 
           {/* Zoom controls cho Canvas */}
-          <div className="flex items-center gap-1 border-l border-[#30363d] pl-2 text-[#8b949e]">
+          <div className="flex items-center gap-0.5 border-l border-white/10 pl-2 text-slate-400">
             <button
               onClick={() => setVisibleCount((prev) => Math.max(20, prev - 15))}
-              className="rounded p-1 hover:bg-[#222833] hover:text-white"
+              className="rounded p-1 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
               title={t("zoom_in")}
             >
               <ZoomIn className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setVisibleCount((prev) => Math.min(180, prev + 15))}
-              className="rounded p-1 hover:bg-[#222833] hover:text-white"
+              className="rounded p-1 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
               title={t("zoom_out")}
             >
               <ZoomOut className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setVisibleCount(60)}
-              className="rounded p-1 hover:bg-[#222833] hover:text-white"
+              className="rounded p-1 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
               title={t("reset_zoom")}
             >
               <RotateCcw className="h-3 w-3" />
@@ -464,24 +464,24 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
         {/* Mốc Kèo Quant Overlay Chips */}
         <div className="flex items-center gap-1.5 font-mono text-[11px]">
           <span
-            className={`flex items-center gap-1 rounded px-2 py-0.5 font-bold ${
+            className={`flex items-center gap-1 rounded-md px-2 py-0.5 font-bold shadow-sm ${
               side === "LONG"
-                ? "bg-[#238636]/30 text-[#3fb950] border border-[#238636]/50"
-                : "bg-[#da3633]/30 text-[#f85149] border border-[#da3633]/50"
+                ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+                : "bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.1)]"
             }`}
           >
             {side} {t("stop_chip_label")}: {entryPrice.toFixed(1)}
           </span>
-          <span className="rounded bg-[#1f6feb]/30 px-2 py-0.5 font-bold text-[#58a6ff] border border-[#1f6feb]/50">
+          <span className="rounded-md bg-sky-500/15 px-2 py-0.5 font-bold text-sky-400 border border-sky-500/30 shadow-[0_0_10px_rgba(56,189,248,0.1)]">
             TP: {tpPrice.toFixed(1)} ({t("tp_pts_val")})
           </span>
-          <span className="rounded bg-[#da3633]/30 px-2 py-0.5 font-bold text-[#f85149] border border-[#da3633]/50">
+          <span className="rounded-md bg-rose-500/15 px-2 py-0.5 font-bold text-rose-400 border border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.1)]">
             SL: {slPrice.toFixed(1)} ({t("sl_pts_val")})
           </span>
 
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="ml-1 rounded p-1 text-[#8b949e] hover:bg-[#222833] hover:text-white transition-colors"
+            className="ml-1 rounded p-1 text-slate-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
             title={isFullscreen ? t("minimize") : t("fullscreen")}
           >
             {isFullscreen ? (
@@ -494,11 +494,11 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
       </div>
 
       {/* Main Chart Container */}
-      <div className="relative flex-1 w-full overflow-hidden bg-[#0e1117]">
+      <div className="relative flex-1 w-full overflow-hidden bg-[#070a0f]">
         <div className="relative h-full w-full">
           {isLoadingCandles && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0e1117]/80">
-              <div className="flex items-center gap-2 text-sm text-[#58a6ff]">
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#070a0f]/80 backdrop-blur-sm">
+              <div className="flex items-center gap-2 text-xs font-semibold text-sky-400">
                 <RefreshCw className="h-4 w-4 animate-spin" />
                 <span>{t("loading_candles", { tf: timeframe })}</span>
               </div>
@@ -514,51 +514,51 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
       </div>
 
       {/* Bottom Status Bar - Entrade Pro Market Strip */}
-      <div className="flex flex-col border-t border-[#30363d] bg-[#111722] text-[11px] text-[#8b949e]">
-        <div className="flex flex-wrap items-center justify-between px-3 py-1.5 border-b border-[#21262d]">
+      <div className="flex flex-col border-t border-white/[0.08] bg-[#090d16]/95 backdrop-blur-md text-[11px] text-slate-400">
+        <div className="flex flex-wrap items-center justify-between px-3 py-1.5 border-b border-white/[0.04]">
           <div className="flex flex-wrap items-center gap-2 sm:gap-4">
             <span className="flex items-center gap-1 font-bold text-white">
-              <span className="text-[#3fb950]">VN30F1M:</span>
-              <span className="font-mono text-[#3fb950] font-black text-xs">1,940.00</span>
-              <span className="text-[10px] text-[#f85149] font-mono font-medium">-2.00 (-0.10%)</span>
+              <span className="text-emerald-400">VN30F1M:</span>
+              <span className="font-mono text-emerald-400 font-black text-xs">1,940.00</span>
+              <span className="text-[10px] text-rose-400 font-mono font-medium">-2.00 (-0.10%)</span>
             </span>
-            <span className="text-[#484f58]">|</span>
+            <span className="text-white/10">|</span>
             <span className="flex items-center gap-1">
-              <span className="text-[#8b949e]">VN30-INDEX:</span>
-              <span className="font-mono font-bold text-[#f85149]">1,936.69</span>
-              <span className="text-[10px] text-[#f85149] font-mono">-40.13 (-2.03%)</span>
+              <span className="text-slate-400">VN30-INDEX:</span>
+              <span className="font-mono font-bold text-rose-400">1,936.69</span>
+              <span className="text-[10px] text-rose-400 font-mono">-40.13 (-2.03%)</span>
             </span>
-            <span className="text-[#484f58]">|</span>
-            <span className="rounded bg-[#21262d] px-1.5 py-0.5 text-[10px] font-semibold text-[#8b949e]">
-              {t("session_status_label")} <strong className="text-white">{t("market_status_closed")}</strong>
+            <span className="text-white/10">|</span>
+            <span className="rounded-md bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-semibold text-slate-300 border border-white/5">
+              {t("session_status_label")} <strong className="text-white font-bold">{t("market_status_closed")}</strong>
             </span>
-            <span className="text-[#484f58]">|</span>
+            <span className="text-white/10">|</span>
             <span className="hidden md:inline-flex items-center gap-2 text-[10px]">
-              <span>{t("floor_price_label")} <strong className="font-mono text-[#58a6ff]">1,837.3</strong></span>
-              <span>{t("ref_price_label")} <strong className="font-mono text-[#f1e05a]">1,975.5</strong></span>
-              <span>{t("ceiling_price_label")} <strong className="font-mono text-[#d2a8ff]">2,113.7</strong></span>
+              <span>{t("floor_price_label")} <strong className="font-mono text-sky-400">1,837.3</strong></span>
+              <span>{t("ref_price_label")} <strong className="font-mono text-amber-300">1,975.5</strong></span>
+              <span>{t("ceiling_price_label")} <strong className="font-mono text-purple-400">2,113.7</strong></span>
             </span>
           </div>
 
           <div className="flex items-center gap-3 text-[10px]">
-            <span className="text-[#8b949e]">{t("margin_collat", { amount: `103,799,680 ${t("currency_unit")}` })}</span>
-            <span className="flex items-center gap-1 text-[#3fb950]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#3fb950] animate-pulse"></span>
+            <span className="text-slate-400 font-mono">{t("margin_collat", { amount: `103,799,680 ${t("currency_unit")}` })}</span>
+            <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span>{t("datafeed_entrade")}</span>
             </span>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between px-3 py-1 bg-[#0d1117] text-[10px]">
-          <div className="flex items-center gap-2 text-[#8b949e]">
-            <CheckCircle2 className="h-3 w-3 text-[#3fb950]" />
+        <div className="flex flex-wrap items-center justify-between px-3 py-1 bg-[#070a0f] text-[10px]">
+          <div className="flex items-center gap-2 text-slate-400">
+            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
             <span>{t("loaded_candles", { tf: timeframe, count: candleCount.toLocaleString(), dateRange: "01/2025 → 11/09/2026 14:45 ATC" })}</span>
-            <span>·</span>
+            <span className="text-slate-600">·</span>
             <span>{t("atr_label")} <strong className="font-mono text-white">26.5</strong></span>
-            <span>·</span>
-            <span>{t("stop_trigger_label")} <strong className="font-mono text-[#58a6ff]">1945.3</strong></span>
+            <span className="text-slate-600">·</span>
+            <span>{t("stop_trigger_label")} <strong className="font-mono text-sky-400 font-bold">1945.3</strong></span>
           </div>
-          <div className="text-[#6e7681]">
+          <div className="text-slate-500 font-mono">
             {t("last_candle_atc")}
           </div>
         </div>
