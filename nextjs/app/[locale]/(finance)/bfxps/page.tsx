@@ -194,8 +194,14 @@ export default function BfxpsAdvisorPage({
           direction="horizontal"
           className="h-full w-full gap-2"
         >
-          {/* Panel 1: Live Dashboard Kèo Duy Nhất (Cột Trái) */}
-          <ResizablePanel id="p1-dashboard" defaultSize="24%" minSize="18%" maxSize="34%" className="h-full">
+          {/* Panel 1: Live Dashboard Kèo Duy Nhất (Cột Trái - Tỷ lệ Max Chiều Rộng) */}
+          <ResizablePanel
+            id="p1-dashboard"
+            defaultSize={showQaLibrary ? "30%" : "34%"}
+            minSize="22%"
+            maxSize="42%"
+            className="h-full"
+          >
             <LiveDashboardPanel
               snapshot={snapshot}
               plans={plans}
@@ -212,7 +218,7 @@ export default function BfxpsAdvisorPage({
           {/* Panel 2: TradingView Center Panel (Cột Giữa) */}
           <ResizablePanel
             id="p2-tradingview"
-            defaultSize={showQaLibrary ? "42%" : "48%"}
+            defaultSize={showQaLibrary ? "38%" : "48%"}
             minSize="30%"
             maxSize="70%"
             className="h-full"
@@ -225,12 +231,12 @@ export default function BfxpsAdvisorPage({
 
           <ResizableHandle withHandle className="w-1.5 bg-[#30363d] hover:bg-[#2f81f7] transition-colors" />
 
-          {/* Panel 3: Chat Advisor Thay Vào Chỗ Thư Viện (Cột Phải) */}
+          {/* Panel 3: Chat Advisor Thay Vào Chỗ Thư Viện (Cột Phải - Tỷ lệ Min Chiều Rộng) */}
           <ResizablePanel
             id="p3-chat"
-            defaultSize={showQaLibrary ? "20%" : "28%"}
-            minSize="18%"
-            maxSize="45%"
+            defaultSize={showQaLibrary ? "16%" : "18%"}
+            minSize="16%"
+            maxSize="38%"
             className="h-full"
           >
             <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-[#30363d] bg-[#171b23]">
