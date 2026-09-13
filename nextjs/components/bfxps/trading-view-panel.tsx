@@ -50,6 +50,23 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
   const [visibleCount, setVisibleCount] = useState<number>(60);
   const [hoveredBar, setHoveredBar] = useState<CandleBar | null>(null);
 
+  // Dynamic market metrics from snapshot & candles
+  const currentPrice =
+    snapshot?.current ||
+    (candles.length ? candles[candles.length - 1].close : 1940.0);
+  const openPrice =
+    snapshot?.open ||
+    (candles.length ? candles[0].open : currentPrice);
+  const priceDiff = currentPrice - openPrice;
+  const pricePct = openPrice > 0 ? (priceDiff / openPrice) * 100 : 0;
+  const isUp = priceDiff >= 0;
+  const basis = snapshot?.basis ?? null;
+  const volume =
+    snapshot?.volume ??
+    (candles.length ? candles[candles.length - 1].volume : 0);
+  const oi = snapshot?.oi ?? null;
+  const foreignNet = snapshot?.foreignNet ?? null;
+
   // Mốc Kèo Quant
   const entryPrice = plan?.entryPrice || 1945.3;
   const tpPrice = plan?.tpPrice || 1961.3;
@@ -70,7 +87,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
         setCandleCount(json.totalCount || (tf === "15m" ? 7259 : 100746));
       }
     } catch (err) {
-      console.error("Lỗi tải dữ liệu nến:", err);
+      console.error("Candle fetch error:", err);
     } finally {
       setIsLoadingCandles(false);
     }
@@ -80,11 +97,21 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
     fetchCandles(timeframe);
   }, [timeframe, fetchCandles]);
 
-  // Visible bars slice
+  // Visible bars slice - sync latest bar in real time with snapshot.current
   const displayedBars = useMemo(() => {
     if (!candles.length) return [];
-    return candles.slice(-visibleCount);
-  }, [candles, visibleCount]);
+    const sliced = candles.slice(-visibleCount);
+    if (!snapshot?.current) return sliced;
+
+    const bars = sliced.map((b) => ({ ...b }));
+    const last = bars[bars.length - 1];
+    if (last) {
+      last.close = snapshot.current;
+      if (snapshot.current > last.high) last.high = snapshot.current;
+      if (snapshot.current < last.low) last.low = snapshot.current;
+    }
+    return bars;
+  }, [candles, visibleCount, snapshot?.current]);
 
   // Tính toán EMA(5) và EMA(10)
   const calculateEMA = (data: CandleBar[], period: number) => {
@@ -213,13 +240,14 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
       ctx.restore();
     };
 
-    drawLevel(1940.0, "#484f58", `${t("ref_level_label")}: 1940.0`, true);
+    const refPrice = openPrice;
+    drawLevel(refPrice, "#484f58", `${t("ref_level_label")}: ${refPrice.toFixed(1)}`, true);
     drawLevel(entryPrice, "#3fb950", `${side} ${t("stop_entry_level")}: ${entryPrice.toFixed(1)}`, true);
-    drawLevel(tpPrice, "#58a6ff", `TP (${t("tp_pts_val")}): ${tpPrice.toFixed(1)}`, true);
-    drawLevel(slPrice, "#f85149", `SL (${t("sl_pts_val")}): ${slPrice.toFixed(1)}`, true);
+    drawLevel(tpPrice, "#58a6ff", `TP: ${tpPrice.toFixed(1)}`, true);
+    drawLevel(slPrice, "#f85149", `SL: ${slPrice.toFixed(1)}`, true);
 
-    // Entrade Current Close Line & Pill (1940.00)
-    const currentClose = displayedBars[displayedBars.length - 1]?.close || 1940.0;
+    // Live Close Line & Pill
+    const currentClose = currentPrice;
     const yCurrent = getY(currentClose);
     if (yCurrent >= paddingTop && yCurrent <= paddingTop + candleAreaHeight) {
       ctx.save();
@@ -360,10 +388,13 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
     tpPrice,
     entryPrice,
     side,
+    openPrice,
+    currentPrice,
     ema5,
     ema10,
     timeframe,
     hoveredBar,
+    t,
   ]);
 
   // Redraw when bars or window resize
@@ -473,10 +504,10 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
             {side} {t("stop_chip_label")}: {entryPrice.toFixed(1)}
           </span>
           <span className="rounded-md bg-sky-500/15 px-2 py-0.5 font-bold text-sky-400 border border-sky-500/30 shadow-[0_0_10px_rgba(56,189,248,0.1)]">
-            TP: {tpPrice.toFixed(1)} ({t("tp_pts_val")})
+            TP: {tpPrice.toFixed(1)}
           </span>
           <span className="rounded-md bg-rose-500/15 px-2 py-0.5 font-bold text-rose-400 border border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.1)]">
-            SL: {slPrice.toFixed(1)} ({t("sl_pts_val")})
+            SL: {slPrice.toFixed(1)}
           </span>
 
           <button
@@ -513,54 +544,104 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
         </div>
       </div>
 
-      {/* Bottom Status Bar - Entrade Pro Market Strip */}
-      <div className="flex flex-col border-t border-white/[0.08] bg-[#090d16]/95 backdrop-blur-md text-[11px] text-slate-400">
-        <div className="flex flex-wrap items-center justify-between px-3 py-1.5 border-b border-white/[0.04]">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-            <span className="flex items-center gap-1 font-bold text-white">
-              <span className="text-emerald-400">VN30F1M:</span>
-              <span className="font-mono text-emerald-400 font-black text-xs">1,940.00</span>
-              <span className="text-[10px] text-rose-400 font-mono font-medium">-2.00 (-0.10%)</span>
+      {/* Bottom Status Bar - Live Quant Stream */}
+      <div className="flex flex-wrap items-center justify-between border-t border-white/[0.08] bg-[#090d16]/95 backdrop-blur-md px-3 py-1.5 gap-2 text-[11px] text-slate-400">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          {/* Live Price VN30F1M */}
+          <span className="flex items-center gap-1.5 font-bold text-white">
+            <span className="text-emerald-400">VN30F1M:</span>
+            <span className="font-mono text-white font-black text-xs">
+              {currentPrice.toFixed(1)}
             </span>
-            <span className="text-white/10">|</span>
-            <span className="flex items-center gap-1">
-              <span className="text-slate-400">VN30-INDEX:</span>
-              <span className="font-mono font-bold text-rose-400">1,936.69</span>
-              <span className="text-[10px] text-rose-400 font-mono">-40.13 (-2.03%)</span>
+            <span
+              className={`text-[10px] font-mono font-bold ${
+                isUp ? "text-emerald-400" : "text-rose-400"
+              }`}
+            >
+              {isUp ? "+" : ""}
+              {priceDiff.toFixed(1)} ({isUp ? "+" : ""}
+              {pricePct.toFixed(2)}%)
             </span>
-            <span className="text-white/10">|</span>
-            <span className="rounded-md bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-semibold text-slate-300 border border-white/5">
-              {t("session_status_label")} <strong className="text-white font-bold">{t("market_status_closed")}</strong>
-            </span>
-            <span className="text-white/10">|</span>
-            <span className="hidden md:inline-flex items-center gap-2 text-[10px]">
-              <span>{t("floor_price_label")} <strong className="font-mono text-sky-400">1,837.3</strong></span>
-              <span>{t("ref_price_label")} <strong className="font-mono text-amber-300">1,975.5</strong></span>
-              <span>{t("ceiling_price_label")} <strong className="font-mono text-purple-400">2,113.7</strong></span>
-            </span>
-          </div>
+          </span>
 
-          <div className="flex items-center gap-3 text-[10px]">
-            <span className="text-slate-400 font-mono">{t("margin_collat", { amount: `103,799,680 ${t("currency_unit")}` })}</span>
-            <span className="flex items-center gap-1 text-emerald-400 font-semibold">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>{t("datafeed_entrade")}</span>
+          <span className="text-white/10">|</span>
+
+          {/* Basis */}
+          <span className="flex items-center gap-1">
+            <span className="text-slate-400">Basis:</span>
+            <span
+              className={`font-mono font-bold ${
+                basis !== null && basis >= 0
+                  ? "text-emerald-400"
+                  : "text-rose-400"
+              }`}
+            >
+              {basis !== null
+                ? `${basis > 0 ? "+" : ""}${basis.toFixed(1)}`
+                : "--"}
             </span>
-          </div>
+          </span>
+
+          <span className="text-white/10">|</span>
+
+          {/* Volume */}
+          <span className="flex items-center gap-1">
+            <span className="text-slate-400">Vol:</span>
+            <span className="font-mono font-bold text-white">
+              {volume > 0 ? volume.toLocaleString() : "--"}
+            </span>
+          </span>
+
+          {/* OI */}
+          {oi !== null && (
+            <>
+              <span className="text-white/10">|</span>
+              <span className="hidden sm:flex items-center gap-1">
+                <span className="text-slate-400">OI:</span>
+                <span className="font-mono font-bold text-sky-400">
+                  {oi.toLocaleString()}
+                </span>
+              </span>
+            </>
+          )}
+
+          {/* Foreign Net */}
+          {foreignNet !== null && (
+            <>
+              <span className="text-white/10">|</span>
+              <span className="hidden md:flex items-center gap-1">
+                <span className="text-slate-400">{t("foreign_net")}</span>
+                <span
+                  className={`font-mono font-bold ${
+                    foreignNet >= 0 ? "text-emerald-400" : "text-rose-400"
+                  }`}
+                >
+                  {foreignNet > 0 ? `+${foreignNet.toLocaleString()}` : foreignNet.toLocaleString()} HĐ
+                </span>
+              </span>
+            </>
+          )}
+
+          <span className="text-white/10">|</span>
+
+          {/* Quant Target Info */}
+          <span className="rounded-md bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-mono text-slate-300 border border-white/5">
+            <strong className={side === "LONG" ? "text-emerald-400" : "text-rose-400"}>
+              {side} @ {entryPrice.toFixed(1)}
+            </strong>
+            <span className="text-slate-500 mx-1">·</span>
+            <span>TP <strong className="text-sky-400">{tpPrice.toFixed(1)}</strong></span>
+            <span className="text-slate-500 mx-1">·</span>
+            <span>SL <strong className="text-rose-400">{slPrice.toFixed(1)}</strong></span>
+          </span>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between px-3 py-1 bg-[#070a0f] text-[10px]">
-          <div className="flex items-center gap-2 text-slate-400">
-            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-            <span>{t("loaded_candles", { tf: timeframe, count: candleCount.toLocaleString(), dateRange: "01/2025 → 11/09/2026 14:45 ATC" })}</span>
-            <span className="text-slate-600">·</span>
-            <span>{t("atr_label")} <strong className="font-mono text-white">26.5</strong></span>
-            <span className="text-slate-600">·</span>
-            <span>{t("stop_trigger_label")} <strong className="font-mono text-sky-400 font-bold">1945.3</strong></span>
-          </div>
-          <div className="text-slate-500 font-mono">
-            {t("last_candle_atc")}
-          </div>
+        {/* Live Feed Heartbeat */}
+        <div className="flex items-center gap-2 text-[10px]">
+          <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]"></span>
+            <span>{t("live_feed_active")}</span>
+          </span>
         </div>
       </div>
     </div>

@@ -12,7 +12,11 @@ import { TradingViewPanel } from "@/components/bfxps/trading-view-panel";
 import { ChatConversationPanel } from "@/components/bfxps/chat-conversation-panel";
 import { QaLibraryPanel } from "@/components/bfxps/qa-library-panel";
 import { TradeHistoryModal } from "@/components/bfxps/trade-history-modal";
-import { MarketSnapshot, TradingPlan, ConsensusResult } from "@/lib/server/quant/types";
+import {
+  MarketSnapshot,
+  TradingPlan,
+  ConsensusResult,
+} from "@/lib/server/quant/types";
 import { Activity, ShieldCheck, Database, HelpCircle, Bot } from "lucide-react";
 
 export default function LeposTradingBotPage({
@@ -72,8 +76,8 @@ export default function LeposTradingBotPage({
   const [showQaLibrary, setShowQaLibrary] = useState(false);
   const [activeRightTab, setActiveRightTab] = useState<"chat" | "qa">("chat");
 
-  const fetchHealth = async () => {
-    setIsLoading(true);
+  const fetchHealth = async (isBackground = false) => {
+    if (!isBackground) setIsLoading(true);
     try {
       const res = await fetch("/api/bfxps/health");
       if (res.ok) {
@@ -86,17 +90,26 @@ export default function LeposTradingBotPage({
     } catch (e) {
       // Ignore network errors
     } finally {
-      setIsLoading(false);
+      if (!isBackground) setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchHealth();
+    fetchHealth(false);
+    const interval = setInterval(() => {
+      fetchHealth(true);
+    }, 8000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleSendChat = async (
     question: string,
-    ohlcOverrides?: { open?: number; high?: number; low?: number; close?: number }
+    ohlcOverrides?: {
+      open?: number;
+      high?: number;
+      low?: number;
+      close?: number;
+    },
   ) => {
     const res = await fetch("/api/bfxps/chat", {
       method: "POST",
@@ -151,24 +164,37 @@ export default function LeposTradingBotPage({
           {/* Canonical Strategy Ticker Pills */}
           <div className="hidden md:flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
             <div className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.12)]">
-              <span className="text-[11px] text-emerald-300/80">{tHeader("canonical_plan")}:</span>
-              <span className="font-mono text-white tracking-tight">{currentPlan?.side || "LONG"} @ {currentPlan?.entryPrice?.toFixed(1) || "1945.3"}</span>
+              <span className="text-[11px] text-emerald-300/80">
+                {tHeader("canonical_plan")}:
+              </span>
+              <span className="font-mono text-white tracking-tight">
+                {currentPlan?.side || "LONG"} @{" "}
+                {currentPlan?.entryPrice?.toFixed(1) || "1945.3"}
+              </span>
             </div>
 
             <div className="flex items-center gap-1.5 rounded-lg border border-sky-500/30 bg-sky-500/10 px-2.5 py-1 text-sky-400 font-semibold shadow-[0_0_15px_rgba(56,189,248,0.1)]">
               <span className="text-[11px] text-sky-300/80">TP:</span>
-              <span className="font-mono font-bold text-white tracking-tight">{currentPlan?.tpPrice?.toFixed(1) || "1961.3"} ({tHeader("tp_pts")})</span>
+              <span className="font-mono font-bold text-white tracking-tight">
+                {currentPlan?.tpPrice?.toFixed(1) || "1961.3"} (
+                {tHeader("tp_pts")})
+              </span>
             </div>
 
             <div className="flex items-center gap-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 px-2.5 py-1 text-rose-400 font-semibold shadow-[0_0_15px_rgba(244,63,94,0.1)]">
               <span className="text-[11px] text-rose-300/80">SL:</span>
-              <span className="font-mono font-bold text-white tracking-tight">{currentPlan?.slPrice?.toFixed(1) || "1937.3"} ({tHeader("sl_pts")})</span>
+              <span className="font-mono font-bold text-white tracking-tight">
+                {currentPlan?.slPrice?.toFixed(1) || "1937.3"} (
+                {tHeader("sl_pts")})
+              </span>
             </div>
 
             <div className="hidden xl:flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/[0.03] px-2.5 py-1 text-[11px] text-slate-300 font-mono">
               <span className="text-slate-400">{tHeader("rr_ratio")}</span>
               <span className="text-slate-600">·</span>
-              <span className="text-emerald-400 font-bold">{tHeader("atc_close")}</span>
+              <span className="text-emerald-400 font-bold">
+                {tHeader("atc_close")}
+              </span>
             </div>
           </div>
 
@@ -180,7 +206,11 @@ export default function LeposTradingBotPage({
               title={tHeader("history_button_tooltip")}
             >
               <Database className="h-3.5 w-3.5 text-sky-400 group-hover:scale-110 transition-transform" />
-              <span>{tHeader("history_button", { count: summary?.totalSessions ?? 413 })}</span>
+              <span>
+                {tHeader("history_button", {
+                  count: summary?.totalSessions ?? 413,
+                })}
+              </span>
               <span className="hidden sm:inline-block rounded-full bg-emerald-500/20 px-1.5 py-0.2 text-[10px] font-mono text-emerald-300 border border-emerald-500/30 font-bold">
                 +770.5đ
               </span>
@@ -196,7 +226,11 @@ export default function LeposTradingBotPage({
               title={tHeader("qa_toggle_tooltip")}
             >
               <HelpCircle className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">{showQaLibrary ? tHeader("qa_toggle_visible") : tHeader("qa_toggle_hidden")}</span>
+              <span className="hidden sm:inline">
+                {showQaLibrary
+                  ? tHeader("qa_toggle_visible")
+                  : tHeader("qa_toggle_hidden")}
+              </span>
             </button>
 
             <div className="hidden 2xl:flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/[0.02] px-2.5 py-1.5 text-[11px] text-slate-400 font-mono">
@@ -232,7 +266,10 @@ export default function LeposTradingBotPage({
             />
           </ResizablePanel>
 
-          <ResizableHandle withHandle className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full" />
+          <ResizableHandle
+            withHandle
+            className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full"
+          />
 
           {/* Panel 2: TradingView Center Panel (Cột Giữa) */}
           <ResizablePanel
@@ -242,13 +279,13 @@ export default function LeposTradingBotPage({
             maxSize="70%"
             className="h-full"
           >
-            <TradingViewPanel
-              snapshot={snapshot}
-              plan={currentPlan}
-            />
+            <TradingViewPanel snapshot={snapshot} plan={currentPlan} />
           </ResizablePanel>
 
-          <ResizableHandle withHandle className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full" />
+          <ResizableHandle
+            withHandle
+            className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full"
+          />
 
           {/* Panel 3: Chat Advisor Thay Vào Chỗ Thư Viện (Cột Phải - Tỷ lệ Min Chiều Rộng) */}
           <ResizablePanel
@@ -287,7 +324,9 @@ export default function LeposTradingBotPage({
                 </div>
 
                 <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-mono text-slate-400 border border-white/5">
-                  {activeRightTab === "chat" ? tChat("analysis_badge") : tChat("qa_count_badge")}
+                  {activeRightTab === "chat"
+                    ? tChat("analysis_badge")
+                    : tChat("qa_count_badge")}
                 </span>
               </div>
 
@@ -315,8 +354,17 @@ export default function LeposTradingBotPage({
           {/* Panel 4: Cột Thư Viện QA Mở Rộng Khi Người Dùng Bật */}
           {showQaLibrary && (
             <>
-              <ResizableHandle withHandle className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full" />
-              <ResizablePanel id="p4-qa-dock" defaultSize="18%" minSize="14%" maxSize="30%" className="h-full">
+              <ResizableHandle
+                withHandle
+                className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded-full"
+              />
+              <ResizablePanel
+                id="p4-qa-dock"
+                defaultSize="18%"
+                minSize="14%"
+                maxSize="30%"
+                className="h-full"
+              >
                 <QaLibraryPanel
                   onSelectQuestion={(q) => {
                     setActiveQuestion(q);
