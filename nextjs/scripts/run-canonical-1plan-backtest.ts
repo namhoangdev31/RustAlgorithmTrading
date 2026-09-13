@@ -37,7 +37,7 @@ export interface TradeResult {
   slPrice: number;
   tpPrice: number;
   exitPrice: number;
-  exitType: "TP" | "SL" | "ATC" | "NO_FILL";
+  exitType: "TP" | "SL" | "ATC" | "NO_FILL" | "TRAIL" | "BE";
   exitMinute: string;
   pnl: number;
   isWin: boolean;
@@ -114,18 +114,19 @@ export function generateCanonicalPlan(dateStr: string, pastDays: DailyBar[]): Ca
   const isBull = ema5 >= ema10;
   const side: "LONG" | "SHORT" = isBull ? "LONG" : "SHORT";
 
-  // Bộ đệm bứt phá: 0.20 * ATR5
-  const delta = Number((0.20 * atr5).toFixed(1));
+  // Bộ đệm bứt phá tối ưu: 0.10 * ATR5 (Giảm từ 0.20 xuống 0.10 để tối đa hóa phiên khớp lệnh)
+  const delta = Number((0.10 * atr5).toFixed(1));
 
   const entryPrice = side === "LONG"
     ? Number((refPrice + delta).toFixed(1))
     : Number((refPrice - delta).toFixed(1));
 
-  // Chốt lời +16.0 điểm, Cắt lỗ -8.0 điểm (Risk:Reward = 1:2)
+  // Mục tiêu kỳ vọng sóng lớn (+24.0 điểm) kết hợp Trailing Stop ăn trọn sóng
   const tpPrice = side === "LONG"
-    ? Number((entryPrice + 16.0).toFixed(1))
-    : Number((entryPrice - 16.0).toFixed(1));
+    ? Number((entryPrice + 24.0).toFixed(1))
+    : Number((entryPrice - 24.0).toFixed(1));
 
+  // Cắt lỗ ban đầu -8.0 điểm
   const slPrice = side === "LONG"
     ? Number((entryPrice - 8.0).toFixed(1))
     : Number((entryPrice + 8.0).toFixed(1));
@@ -137,11 +138,11 @@ export function generateCanonicalPlan(dateStr: string, pastDays: DailyBar[]): Ca
     entryPrice,
     tpPrice,
     slPrice,
-    reason: `Kèo duy nhất theo xu hướng EMA5 ${isBull ? ">= EMA10 (Long Stop)" : "< EMA10 (Short Stop)"}`,
+    reason: `Kèo xu hướng EMA5 ${isBull ? ">= EMA10 (Long Stop)" : "< EMA10 (Short Stop)"} kết hợp Trailing Stop & BE Lock`,
   };
 }
 
-// 3. Chạy Replay từng phút một (Streaming Simulation)
+// 3. Chạy Replay từng phút một với Cơ chế Trailing Stop & Khóa Hòa Vốn (Break-Even)
 export function replaySingleDay(day: DailyBar, plan: CanonicalPlan): TradeResult {
   const mBars = day.bars1m;
   const { side, entryPrice, slPrice, tpPrice } = plan;
@@ -149,70 +150,128 @@ export function replaySingleDay(day: DailyBar, plan: CanonicalPlan): TradeResult
   let isFilled = false;
   let isClosed = false;
   let tradePnl = 0;
-  let exitType: "TP" | "SL" | "ATC" | "NO_FILL" = "NO_FILL";
+  let exitType: "TP" | "SL" | "ATC" | "NO_FILL" | "TRAIL" | "BE" = "NO_FILL";
   let exitPrice = 0;
   let exitMinute = "";
+
+  let actualEntryPrice = entryPrice;
+  let currentSl = slPrice;
+  let peakPrice = entryPrice;
+
+  const BE_TRIGGER = 6.0;      // Lãi >= 6.0đ -> Kéo SL về Entry + 0.5đ (Khóa hòa vốn)
+  const TRAIL_TRIGGER = 12.0;  // Lãi >= 12.0đ -> Kích hoạt Trailing Stop
+  const TRAIL_DIST = 5.0;      // Khoảng cách Trailing Stop bám đỉnh/đáy 5.0đ
 
   for (let m = 15; m < mBars.length; m++) {
     const mb = mBars[m];
     const timeStr = new Date((mb.time + 7 * 3600) * 1000).toISOString().slice(11, 16);
 
-    // Kiểm tra khớp lệnh Stop Breakout
+    // 1. Kiểm tra khớp lệnh Stop Breakout (có tính trượt giá Gap)
     if (!isFilled) {
       if (side === "LONG" && mb.high >= entryPrice) {
         isFilled = true;
+        actualEntryPrice = mb.open > entryPrice ? mb.open : entryPrice;
+        peakPrice = actualEntryPrice;
+        currentSl = Number((actualEntryPrice - (entryPrice - slPrice)).toFixed(1));
       } else if (side === "SHORT" && mb.low <= entryPrice) {
         isFilled = true;
+        actualEntryPrice = mb.open < entryPrice ? mb.open : entryPrice;
+        peakPrice = actualEntryPrice;
+        currentSl = Number((actualEntryPrice + (slPrice - entryPrice)).toFixed(1));
       }
     }
 
-    // Nếu đã khớp lệnh: Kiểm tra SL trước ở từng phút
+    // 2. Nếu đã khớp lệnh: Kiểm tra thoát lệnh TRƯỚC (Loại bỏ Lookahead Bias), sau đó mới dời Trailing Stop
     if (isFilled && !isClosed) {
+      const targetPoints = Math.abs(tpPrice - entryPrice);
+      const effectiveTp = tpPrice > 0
+        ? (side === "LONG" ? Number((actualEntryPrice + targetPoints).toFixed(1)) : Number((actualEntryPrice - targetPoints).toFixed(1)))
+        : 0;
+
       if (side === "LONG") {
-        if (mb.low <= slPrice) {
+        // 2.1. Kiểm tra chạm SL / Trailing Stop hiện hành trước
+        if (mb.low <= currentSl) {
           isClosed = true;
-          exitType = "SL";
-          exitPrice = slPrice;
+          // Xử lý Gap-down trượt giá dưới mức SL
+          const actualExit = mb.open < currentSl ? mb.open : currentSl;
+          exitPrice = actualExit;
           exitMinute = timeStr;
-          tradePnl = Number((slPrice - entryPrice).toFixed(1));
-          break;
-        } else if (mb.high >= tpPrice) {
-          isClosed = true;
-          exitType = "TP";
-          exitPrice = tpPrice;
-          exitMinute = timeStr;
-          tradePnl = Number((tpPrice - entryPrice).toFixed(1));
+          tradePnl = Number((actualExit - actualEntryPrice).toFixed(1));
+          exitType = actualExit > actualEntryPrice + 0.5 ? "TRAIL" : (actualExit >= actualEntryPrice - 0.1 ? "BE" : "SL");
           break;
         }
-      } else {
-        if (mb.high >= slPrice) {
+
+        // 2.2. Kiểm tra TP (nếu có)
+        if (effectiveTp > 0 && mb.high >= effectiveTp) {
           isClosed = true;
-          exitType = "SL";
-          exitPrice = slPrice;
+          const actualExit = mb.open > effectiveTp ? mb.open : effectiveTp;
+          exitPrice = actualExit;
           exitMinute = timeStr;
-          tradePnl = Number((entryPrice - slPrice).toFixed(1));
-          break;
-        } else if (mb.low <= tpPrice) {
-          isClosed = true;
+          tradePnl = Number((actualExit - actualEntryPrice).toFixed(1));
           exitType = "TP";
-          exitPrice = tpPrice;
-          exitMinute = timeStr;
-          tradePnl = Number((entryPrice - tpPrice).toFixed(1));
           break;
+        }
+
+        // 2.3. Nếu không chết SL/TP, mới cập nhật đỉnh và dời Trailing Stop cho phút sau
+        if (mb.high > peakPrice) peakPrice = mb.high;
+        const maxProfit = peakPrice - actualEntryPrice;
+
+        if (maxProfit >= TRAIL_TRIGGER) {
+          const newSl = Number((peakPrice - TRAIL_DIST).toFixed(1));
+          if (newSl > currentSl) currentSl = newSl;
+        } else if (maxProfit >= BE_TRIGGER) {
+          const beSl = Number((actualEntryPrice + 0.5).toFixed(1));
+          if (beSl > currentSl) currentSl = beSl;
+        }
+      } else {
+        // Chiều SHORT
+        // 2.1. Kiểm tra chạm SL / Trailing Stop hiện hành trước
+        if (mb.high >= currentSl) {
+          isClosed = true;
+          // Xử lý Gap-up trượt giá trên mức SL
+          const actualExit = mb.open > currentSl ? mb.open : currentSl;
+          exitPrice = actualExit;
+          exitMinute = timeStr;
+          tradePnl = Number((actualEntryPrice - actualExit).toFixed(1));
+          exitType = actualExit < actualEntryPrice - 0.5 ? "TRAIL" : (actualExit <= actualEntryPrice + 0.1 ? "BE" : "SL");
+          break;
+        }
+
+        // 2.2. Kiểm tra TP (nếu có)
+        if (effectiveTp > 0 && mb.low <= effectiveTp) {
+          isClosed = true;
+          const actualExit = mb.open < effectiveTp ? mb.open : effectiveTp;
+          exitPrice = actualExit;
+          exitMinute = timeStr;
+          tradePnl = Number((actualEntryPrice - actualExit).toFixed(1));
+          exitType = "TP";
+          break;
+        }
+
+        // 2.3. Cập nhật đáy và dời Trailing Stop cho phút sau
+        if (mb.low < peakPrice) peakPrice = mb.low;
+        const maxProfit = actualEntryPrice - peakPrice;
+
+        if (maxProfit >= TRAIL_TRIGGER) {
+          const newSl = Number((peakPrice + TRAIL_DIST).toFixed(1));
+          if (newSl < currentSl) currentSl = newSl;
+        } else if (maxProfit >= BE_TRIGGER) {
+          const beSl = Number((actualEntryPrice - 0.5).toFixed(1));
+          if (beSl < currentSl) currentSl = beSl;
         }
       }
     }
   }
 
-  // Nếu đến cuối phiên (14:45) chưa chạm SL/TP -> Đóng ATC
+  // 3. Nếu đến cuối phiên (14:45) chưa chạm SL/Trailing -> Đóng vị thế theo giá ATC
   if (isFilled && !isClosed) {
     const lastBar = mBars[mBars.length - 1];
     exitType = "ATC";
     exitPrice = lastBar.close;
     exitMinute = "14:45";
     tradePnl = side === "LONG"
-      ? Number((lastBar.close - entryPrice).toFixed(1))
-      : Number((entryPrice - lastBar.close).toFixed(1));
+      ? Number((lastBar.close - actualEntryPrice).toFixed(1))
+      : Number((actualEntryPrice - lastBar.close).toFixed(1));
   }
 
   return {
@@ -316,11 +375,13 @@ async function main() {
   console.log(`- Phiên gần nhất chốt   : ${lastSession.date} (Giá đóng cửa RefPrice: ${lastSession.close.toFixed(1)})`);
   console.log(`- Hướng khuyến nghị     : ${planNextDay.side}`);
   console.log(`- Loại lệnh             : Stop Order (${planNextDay.side === "LONG" ? "Stop Buy" : "Stop Sell"})`);
+  const tpDelta = Math.abs(Number((planNextDay.tpPrice - planNextDay.entryPrice).toFixed(1)));
+  const slDelta = Math.abs(Number((planNextDay.entryPrice - planNextDay.slPrice).toFixed(1)));
   console.log(`- Điểm kích hoạt Entry  : ${planNextDay.entryPrice.toFixed(1)}`);
-  console.log(`- Chốt lời (TP)         : ${planNextDay.tpPrice.toFixed(1)} (+16.0 điểm)`);
-  console.log(`- Cắt lỗ (SL)           : ${planNextDay.slPrice.toFixed(1)} (-8.0 điểm)`);
-  console.log(`- Tỷ lệ R:R             : 1:2`);
-  console.log(`- Cơ chế đóng vị thế    : 14:45 đóng lệnh theo giá ATC nếu chưa chạm TP hoặc SL`);
+  console.log(`- Mục tiêu sóng lớn (TP): ${planNextDay.tpPrice.toFixed(1)} (+${tpDelta}đ) kết hợp Trailing Stop ăn trọn sóng`);
+  console.log(`- Cắt lỗ ban đầu (SL)   : ${planNextDay.slPrice.toFixed(1)} (-${slDelta}đ)`);
+  console.log(`- Quản trị rủi ro       : Khóa hòa vốn khi lãi >= 6đ, Trailing Stop bám đỉnh khi lãi >= 12đ`);
+  console.log(`- Cơ chế đóng vị thế    : 14:45 đóng lệnh theo giá ATC nếu chưa chạm Trailing/SL`);
   console.log(`- Hướng dẫn thực chiến  : Đặt trước 08:55 sáng trên app VPS / TCBS / SSI / DNSE...`);
   console.log("==========================================================================================\n");
 

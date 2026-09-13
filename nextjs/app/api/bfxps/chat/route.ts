@@ -5,6 +5,7 @@ import {
 } from "@/lib/server/quant/strategy-engine";
 import { computeConsensus } from "@/lib/server/quant/consensus";
 import { generateAdvisorReply } from "@/lib/server/ai/advisor-service";
+import { getTradingHistoryFromDb } from "@/lib/server/quant/db-plan-service";
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,20 +29,36 @@ export async function POST(req: NextRequest) {
 
     const todayStr = new Date().toISOString().split("T")[0];
     const canonicalPlan = generateCanonicalQuantPlan(
-      "2026-09-14",
+      todayStr,
       snapshot.current || 1940.0,
       26.5,
       1944.0,
-      1938.0
+      1938.0,
+      undefined,
+      snapshot
     );
     const plans = [canonicalPlan];
     const consensus = computeConsensus(plans);
+
+    // Lấy thông số kiểm định động từ CSDL
+    let dynamicSummary = body.summary || null;
+    if (!dynamicSummary) {
+      try {
+        const dbHistory = await getTradingHistoryFromDb();
+        if (dbHistory?.summary) {
+          dynamicSummary = dbHistory.summary;
+        }
+      } catch (dbErr) {
+        // Fallback tự động trong advisor-service
+      }
+    }
 
     const reply = await generateAdvisorReply(
       question,
       snapshot,
       plans,
-      consensus
+      consensus,
+      { summary: dynamicSummary }
     );
 
     return NextResponse.json(reply);

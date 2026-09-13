@@ -23,7 +23,7 @@ export interface TradeItem {
   slPrice: number;
   tpPrice: number;
   exitPrice: number;
-  exitType: "TP" | "SL" | "ATC" | "NO_FILL" | "PENDING";
+  exitType: "TP" | "SL" | "ATC" | "NO_FILL" | "PENDING" | "TRAIL" | "BE" | string;
   exitMinute: string;
   pnl: number;
   isWin: boolean;
@@ -160,7 +160,11 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
               <TrendingUp className="h-4 w-4" />
               {summary?.totalPnl != null ? (summary.totalPnl > 0 ? `+${summary.totalPnl.toFixed(1)}` : summary.totalPnl.toFixed(1)) : "0.0"}{t("pts_unit")}
             </div>
-            <div className="text-[10px] text-slate-400 font-mono">{t("kpi_total_pnl_sub")}</div>
+            <div className="text-[10px] text-slate-400 font-mono">
+              {t("kpi_total_pnl_sub", {
+                vnd: summary?.totalPnl != null ? (summary.totalPnl > 0 ? `+${(summary.totalPnl / 10).toFixed(2)}` : (summary.totalPnl / 10).toFixed(2)) : "0.00"
+              })}
+            </div>
           </div>
 
           <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 shadow-sm">
@@ -353,8 +357,10 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
                       <td className="py-2.5 px-3 font-sans">
                         <span
                           className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${
-                            trade.exitType === "TP"
+                            trade.exitType === "TP" || trade.exitType === "TRAIL"
                               ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                              : trade.exitType === "BE"
+                              ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
                               : trade.exitType === "SL"
                               ? "bg-rose-500/20 text-rose-400 border border-rose-500/30"
                               : trade.exitType === "ATC"
@@ -368,6 +374,10 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
                             ? t("exit_no_fill")
                             : trade.exitType === "PENDING"
                             ? t("exit_pending")
+                            : trade.exitType === "BE"
+                            ? "BE (Hòa vốn)"
+                            : trade.exitType === "TRAIL"
+                            ? "TRAIL (Khóa lãi)"
                             : trade.exitType}
                         </span>
                       </td>

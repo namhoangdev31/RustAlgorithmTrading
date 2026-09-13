@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import { useState, useEffect, use } from "react";
 import { useTranslations } from "next-intl";
 import {
   ResizablePanelGroup,
@@ -18,8 +18,6 @@ import {
   ConsensusResult,
 } from "@/lib/server/quant/types";
 import {
-  Activity,
-  ShieldCheck,
   Database,
   HelpCircle,
   Bot,
@@ -36,58 +34,24 @@ export default function LeposTradingBotPage({
 }) {
   const { locale } = use(params);
 
-  const [snapshot, setSnapshot] = useState<MarketSnapshot>({
-    open: 1946.0,
-    high: 1948.5,
-    low: 1936.2,
-    current: 1940.0,
-    volume: 18450.0,
-    oi: 34210.0,
-    basis: -4.2,
-    foreignBuy: 450.0,
-    foreignSell: 380.0,
-    foreignNet: 70.0,
-    timestamp: "2026-09-11T14:45:00.000Z",
-    source: "DNSE_VN30F1M_2026_09_11",
-  });
-
-  const [plans, setPlans] = useState<TradingPlan[]>([
-    {
-      id: "CANONICAL_2026-09-14",
-      date: "2026-09-14",
-      engine: "CanonicalDirectionalBreakout",
-      profile: "M1_INTRADAY",
-      horizon: "t",
-      side: "LONG",
-      entryPrice: 1945.3,
-      tpPrice: 1961.3,
-      slPrice: 1937.3,
-      maxCap: 0.3,
-      r5State: "PRE_OPEN",
-      status: "ACTIVE_TODAY",
-      isCanonical: true,
-      resolvedSource: "CANONICAL_PRE_OPEN_VOLATILITY_EXPANSION",
-    },
-  ]);
-
-  const [consensus, setConsensus] = useState<ConsensusResult>({
-    direction: "LONG",
-    strength: 1.0,
-    longCount: 1,
-    shortCount: 0,
-    isUnanimous: true,
-    excludedEngines: [],
-  });
-
+  const [snapshot, setSnapshot] = useState<MarketSnapshot | null>(null);
+  const [plans, setPlans] = useState<TradingPlan[]>([]);
+  const [consensus, setConsensus] = useState<ConsensusResult | null>(null);
   const [summary, setSummary] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [activeQuestion, setActiveQuestion] = useState<string>("");
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   // Responsive & Tab states
-  const [mobileTab, setMobileTab] = useState<"chart" | "advisor" | "chat" | "qa">("chart");
-  const [sidebarTab, setSidebarTab] = useState<"advisor" | "chat" | "qa">("advisor");
-  const [layoutMode, setLayoutMode] = useState<"split" | "three_columns">("split");
+  const [mobileTab, setMobileTab] = useState<
+    "chart" | "advisor" | "chat" | "qa"
+  >("chart");
+  const [sidebarTab, setSidebarTab] = useState<"advisor" | "chat" | "qa">(
+    "advisor",
+  );
+  const [layoutMode, setLayoutMode] = useState<"split" | "three_columns">(
+    "split",
+  );
   const [activeRightTab, setActiveRightTab] = useState<"chat" | "qa">("chat");
 
   const fetchHealth = async (isBackground = false) => {
@@ -183,22 +147,21 @@ export default function LeposTradingBotPage({
                 {tHeader("canonical_plan")}:
               </span>
               <span className="font-mono text-white tracking-tight">
-                {currentPlan?.side || "LONG"} @{" "}
-                {currentPlan?.entryPrice?.toFixed(1) || "1945.3"}
+                {currentPlan ? `${currentPlan.side} @ ${currentPlan.entryPrice?.toFixed(1) ?? "--"}` : "--"}
               </span>
             </div>
 
             <div className="flex items-center gap-1.5 rounded-lg border border-sky-500/30 bg-sky-500/10 px-2.5 py-1 text-sky-400 font-semibold shadow-[0_0_15px_rgba(56,189,248,0.1)]">
               <span className="text-[11px] text-sky-300/80">TP:</span>
               <span className="font-mono font-bold text-white tracking-tight">
-                {currentPlan?.tpPrice?.toFixed(1) || "1961.3"}
+                {currentPlan?.tpPrice ? currentPlan.tpPrice.toFixed(1) : "--"}
               </span>
             </div>
 
             <div className="flex items-center gap-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 px-2.5 py-1 text-rose-400 font-semibold shadow-[0_0_15px_rgba(244,63,94,0.1)]">
               <span className="text-[11px] text-rose-300/80">SL:</span>
               <span className="font-mono font-bold text-white tracking-tight">
-                {currentPlan?.slPrice?.toFixed(1) || "1937.3"}
+                {currentPlan?.slPrice ? currentPlan.slPrice.toFixed(1) : "--"}
               </span>
             </div>
           </div>
@@ -241,17 +204,19 @@ export default function LeposTradingBotPage({
             >
               <Database className="h-3.5 w-3.5 text-sky-400 group-hover:scale-110 transition-transform" />
               <span className="hidden sm:inline">
-                {tHeader("history_button", {
-                  count: summary?.totalSessions ?? 414,
-                })}
+                {summary?.totalSessions != null
+                  ? tHeader("history_button", {
+                      count: summary.totalSessions,
+                    })
+                  : tHeader("history_button_loading")}
               </span>
               <span className="sm:hidden">
-                {summary?.totalSessions ?? 414}P
+                {summary?.totalSessions != null ? `${summary.totalSessions}P` : "--"}
               </span>
               <span className="rounded-full bg-emerald-500/20 px-1.5 py-0.2 text-[10px] font-mono text-emerald-300 border border-emerald-500/30 font-bold">
-                {summary?.totalPnl !== undefined
+                {summary?.totalPnl != null
                   ? `${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl.toFixed(1)}đ`
-                  : "+770.5đ"}
+                  : "--"}
               </span>
             </button>
           </div>
@@ -424,10 +389,10 @@ export default function LeposTradingBotPage({
 
                   <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-mono text-slate-400 border border-white/5">
                     {sidebarTab === "advisor"
-                      ? "CANONICAL"
+                      ? tHeader("canonical_badge")
                       : sidebarTab === "chat"
-                      ? tChat("analysis_badge")
-                      : tChat("qa_count_badge")}
+                        ? tChat("analysis_badge")
+                        : tChat("qa_count_badge")}
                   </span>
                 </div>
 

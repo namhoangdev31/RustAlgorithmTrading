@@ -11,13 +11,15 @@ export async function GET() {
     const snapshot = await getLatestMarketSnapshot();
     const todayStr = new Date().toISOString().split("T")[0];
 
-    // Tạo đúng 1 kèo duy nhất chuẩn bị cho phiên 14/09/2026 (RefPrice chốt 11/09: 1940.0)
+    // Tạo đúng 1 kèo duy nhất chuẩn bị cho phiên hôm nay
     const canonicalPlan = generateCanonicalQuantPlan(
-      "2026-09-14",
+      todayStr,
       snapshot.current || 1940.0,
       26.5,
       1944.0,
-      1938.0
+      1938.0,
+      undefined,
+      snapshot
     );
 
     // Tự động lưu kèo vào Database (BfxpsTradingPlan)

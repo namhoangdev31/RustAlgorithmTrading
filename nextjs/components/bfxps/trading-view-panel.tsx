@@ -30,8 +30,8 @@ interface CandleBar {
 }
 
 interface TradingViewPanelProps {
-  snapshot: MarketSnapshot;
-  plan?: TradingPlan;
+  snapshot?: MarketSnapshot | null;
+  plan?: TradingPlan | null;
 }
 
 export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
@@ -46,10 +46,10 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
     const [visibleCount, setVisibleCount] = useState<number>(60);
     const [hoveredBar, setHoveredBar] = useState<CandleBar | null>(null);
 
-    // Dynamic market metrics from snapshot & candles
+    // Tính toán mốc thị trường & tỷ lệ
     const currentPrice =
       snapshot?.current ||
-      (candles.length ? candles[candles.length - 1].close : 1940.0);
+      (candles.length ? candles[candles.length - 1].close : 0);
     const openPrice =
       snapshot?.open || (candles.length ? candles[0].open : currentPrice);
     const priceDiff = currentPrice - openPrice;
@@ -62,10 +62,10 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
     const oi = snapshot?.oi ?? null;
     const foreignNet = snapshot?.foreignNet ?? null;
 
-    // Mốc Kèo Quant
-    const entryPrice = plan?.entryPrice || 1945.3;
-    const tpPrice = plan?.tpPrice || 1961.3;
-    const slPrice = plan?.slPrice || 1937.3;
+    // Mốc Kèo Quant động (không gán cứng)
+    const entryPrice = plan?.entryPrice ?? null;
+    const tpPrice = plan?.tpPrice ?? null;
+    const slPrice = plan?.slPrice ?? null;
     const side = plan?.side || "LONG";
 
     // Canvas ref
@@ -167,10 +167,18 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       const candleAreaHeight = chartHeight - volumeHeight - 10;
 
       // Tìm Min/Max Price bao gồm cả Kèo (Entry, TP, SL)
-      let minPrice = Math.min(...displayedBars.map((b) => b.low));
-      let maxPrice = Math.max(...displayedBars.map((b) => b.high));
-      minPrice = Math.min(minPrice, slPrice - 2, 1935);
-      maxPrice = Math.max(maxPrice, tpPrice + 2, 1965);
+      let minPrice = displayedBars.length
+        ? Math.min(...displayedBars.map((b) => b.low))
+        : 1935;
+      let maxPrice = displayedBars.length
+        ? Math.max(...displayedBars.map((b) => b.high))
+        : 1965;
+      if (slPrice != null) {
+        minPrice = Math.min(minPrice, slPrice - 2);
+      }
+      if (tpPrice != null) {
+        maxPrice = Math.max(maxPrice, tpPrice + 2);
+      }
       const priceRange = maxPrice - minPrice || 1;
 
       const maxVolume = Math.max(...displayedBars.map((b) => b.volume), 1);
@@ -248,20 +256,28 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       };
 
       const refPrice = openPrice;
-      drawLevel(
-        refPrice,
-        "#484f58",
-        `${t("ref_level_label")}: ${refPrice.toFixed(1)}`,
-        true,
-      );
-      drawLevel(
-        entryPrice,
-        "#3fb950",
-        `${side} ${t("stop_entry_level")}: ${entryPrice.toFixed(1)}`,
-        true,
-      );
-      drawLevel(tpPrice, "#58a6ff", `TP: ${tpPrice.toFixed(1)}`, true);
-      drawLevel(slPrice, "#f85149", `SL: ${slPrice.toFixed(1)}`, true);
+      if (refPrice > 0) {
+        drawLevel(
+          refPrice,
+          "#484f58",
+          `${t("ref_level_label")}: ${refPrice.toFixed(1)}`,
+          true,
+        );
+      }
+      if (entryPrice != null) {
+        drawLevel(
+          entryPrice,
+          "#3fb950",
+          `${side} ${t("stop_entry_level")}: ${entryPrice.toFixed(1)}`,
+          true,
+        );
+      }
+      if (tpPrice != null) {
+        drawLevel(tpPrice, "#58a6ff", `TP: ${tpPrice.toFixed(1)}`, true);
+      }
+      if (slPrice != null) {
+        drawLevel(slPrice, "#f85149", `SL: ${slPrice.toFixed(1)}`, true);
+      }
 
       // Live Close Line & Pill
       const currentClose = currentPrice;
@@ -499,21 +515,27 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
 
           {/* Mốc Kèo Quant Overlay Chips */}
           <div className="flex items-center gap-1.5 font-mono text-[11px]">
-            <span
-              className={`flex items-center gap-1 rounded-md px-2 py-0.5 font-bold shadow-sm ${
-                side === "LONG"
-                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
-                  : "bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.1)]"
-              }`}
-            >
-              {side} {t("stop_chip_label")}: {entryPrice.toFixed(1)}
-            </span>
-            <span className="rounded-md bg-sky-500/15 px-2 py-0.5 font-bold text-sky-400 border border-sky-500/30 shadow-[0_0_10px_rgba(56,189,248,0.1)]">
-              TP: {tpPrice.toFixed(1)}
-            </span>
-            <span className="rounded-md bg-rose-500/15 px-2 py-0.5 font-bold text-rose-400 border border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.1)]">
-              SL: {slPrice.toFixed(1)}
-            </span>
+            {entryPrice != null && (
+              <span
+                className={`flex items-center gap-1 rounded-md px-2 py-0.5 font-bold shadow-sm ${
+                  side === "LONG"
+                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+                    : "bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.1)]"
+                }`}
+              >
+                {side} {t("stop_chip_label")}: {entryPrice.toFixed(1)}
+              </span>
+            )}
+            {tpPrice != null && (
+              <span className="rounded-md bg-sky-500/15 px-2 py-0.5 font-bold text-sky-400 border border-sky-500/30 shadow-[0_0_10px_rgba(56,189,248,0.1)]">
+                TP: {tpPrice.toFixed(1)}
+              </span>
+            )}
+            {slPrice != null && (
+              <span className="rounded-md bg-rose-500/15 px-2 py-0.5 font-bold text-rose-400 border border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.1)]">
+                SL: {slPrice.toFixed(1)}
+              </span>
+            )}
 
             <button
               onClick={() => setIsFullscreen(!isFullscreen)}
@@ -546,7 +568,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
                   <span className={`font-bold ${activeBarStats.isUp ? "text-emerald-400" : "text-rose-400"}`}>
                     ({activeBarStats.diff >= 0 ? "+" : ""}{activeBarStats.diff.toFixed(1)} / {activeBarStats.pct}%)
                   </span>
-                  <span className="hidden xl:inline text-slate-400">Vol: <strong className="text-slate-200">{activeBar.volume.toLocaleString()}</strong></span>
+                  <span className="hidden xl:inline text-slate-400">{t("vol_label")} <strong className="text-slate-200">{activeBar.volume.toLocaleString()}</strong></span>
                 </div>
               </>
             )}
@@ -627,7 +649,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
 
             {/* Volume */}
             <span className="flex items-center gap-1">
-              <span className="text-slate-400">Vol:</span>
+              <span className="text-slate-400">{t("vol_label")}</span>
               <span className="font-mono font-bold text-white">
                 {volume > 0 ? volume.toLocaleString() : "--"}
               </span>
@@ -669,25 +691,27 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
             <span className="text-white/10">|</span>
 
             {/* Quant Target Info */}
-            <span className="rounded-md bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-mono text-slate-300 border border-white/5">
-              <strong
-                className={
-                  side === "LONG" ? "text-emerald-400" : "text-rose-400"
-                }
-              >
-                {side} @ {entryPrice.toFixed(1)}
-              </strong>
-              <span className="text-slate-500 mx-1">·</span>
-              <span>
-                TP{" "}
-                <strong className="text-sky-400">{tpPrice.toFixed(1)}</strong>
+            {entryPrice != null && tpPrice != null && slPrice != null && (
+              <span className="rounded-md bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-mono text-slate-300 border border-white/5">
+                <strong
+                  className={
+                    side === "LONG" ? "text-emerald-400" : "text-rose-400"
+                  }
+                >
+                  {side} @ {entryPrice.toFixed(1)}
+                </strong>
+                <span className="text-slate-500 mx-1">·</span>
+                <span>
+                  TP{" "}
+                  <strong className="text-sky-400">{tpPrice.toFixed(1)}</strong>
+                </span>
+                <span className="text-slate-500 mx-1">·</span>
+                <span>
+                  SL{" "}
+                  <strong className="text-rose-400">{slPrice.toFixed(1)}</strong>
+                </span>
               </span>
-              <span className="text-slate-500 mx-1">·</span>
-              <span>
-                SL{" "}
-                <strong className="text-rose-400">{slPrice.toFixed(1)}</strong>
-              </span>
-            </span>
+            )}
           </div>
 
           {/* Live Feed Heartbeat */}

@@ -100,7 +100,13 @@ export function DynamicPnlChart({ title }: { title?: string }) {
           <h4 className="text-sm font-black tracking-wide text-[#e6edf3]">{chartTitle}</h4>
           <p className="text-xs text-[#8b949e]">
             {stats
-              ? `${stats.sessions} ${t("legend_equity").toLowerCase()} · ${stats.trades} trades · Winrate: ${stats.winrate}% · PnL: ${stats.totalPnl > 0 ? "+" : ""}${stats.totalPnl} · Max DD: ${stats.maxDd}`
+              ? t("stats_summary", {
+                  sessions: stats.sessions,
+                  trades: stats.trades,
+                  winrate: stats.winrate,
+                  pnl: `${stats.totalPnl > 0 ? "+" : ""}${stats.totalPnl}`,
+                  maxDd: stats.maxDd,
+                })
               : t("subtitle")}
           </p>
         </div>
