@@ -41,10 +41,8 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
   plan,
 }) => {
   const t = useTranslations("Bfxps.chart");
-  const [chartMode, setChartMode] = useState<"REAL_CANDLES" | "TRADINGVIEW">("REAL_CANDLES");
   const [timeframe, setTimeframe] = useState<"15m" | "1m">("15m");
   const [symbol, setSymbol] = useState("VN30F1M");
-  const [tvSymbol, setTvSymbol] = useState("INDEX:VN30");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoadingCandles, setIsLoadingCandles] = useState(false);
   const [candles, setCandles] = useState<CandleBar[]>([]);
@@ -60,7 +58,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
 
   // Canvas ref
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const tvContainerRef = useRef<HTMLDivElement | null>(null);
 
   // Fetch real candles from /api/bfxps/candles
   const fetchCandles = useCallback(async (tf: "15m" | "1m") => {
@@ -80,59 +77,8 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
   }, []);
 
   useEffect(() => {
-    if (chartMode === "REAL_CANDLES") {
-      fetchCandles(timeframe);
-    }
-  }, [chartMode, timeframe, fetchCandles]);
-
-  // Khởi tạo TradingView widget khi ở chế độ TRADINGVIEW
-  useEffect(() => {
-    if (chartMode !== "TRADINGVIEW") return;
-    const container = tvContainerRef.current;
-    if (!container) return;
-
-    container.innerHTML = "";
-    const widgetDiv = document.createElement("div");
-    widgetDiv.id = "tradingview_widget_instance";
-    widgetDiv.className = "h-full w-full";
-    container.appendChild(widgetDiv);
-
-    const script = document.createElement("script");
-    script.src = "https://s3.tradingview.com/tv.js";
-    script.type = "text/javascript";
-    script.async = true;
-    script.onload = () => {
-      if ((window as any).TradingView) {
-        new (window as any).TradingView.widget({
-          autosize: true,
-          symbol: tvSymbol,
-          interval: timeframe === "15m" ? "15" : "1",
-          timezone: "Asia/Ho_Chi_Minh",
-          theme: "dark",
-          style: "1",
-          locale: "vi_VN",
-          toolbar_bg: "#111722",
-          enable_publishing: false,
-          hide_top_toolbar: false,
-          allow_symbol_change: true,
-          save_image: true,
-          container_id: "tradingview_widget_instance",
-          studies: ["MASimple@tv-basicstudies", "ATR@tv-basicstudies"],
-          loading_screen: { backgroundColor: "#0e1117", foregroundColor: "#2f81f7" },
-          overrides: {
-            "paneProperties.background": "#0e1117",
-            "paneProperties.backgroundType": "solid",
-            "scalesProperties.textColor": "#8b949e",
-          },
-        });
-      }
-    };
-    container.appendChild(script);
-
-    return () => {
-      if (container) container.innerHTML = "";
-    };
-  }, [chartMode, tvSymbol, timeframe]);
+    fetchCandles(timeframe);
+  }, [timeframe, fetchCandles]);
 
   // Visible bars slice
   const displayedBars = useMemo(() => {
@@ -457,30 +403,10 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
       <div className="flex flex-wrap items-center justify-between border-b border-[#30363d] bg-[#111722] px-3 py-2 gap-2 text-xs">
         {/* Chế độ Chart & Ticker Switcher */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Main Switcher: Nến Thật VN30F1M vs TradingView */}
-          <div className="flex items-center rounded-lg border border-[#30363d] bg-[#171b23] p-0.5 font-sans text-xs">
-            <button
-              onClick={() => setChartMode("REAL_CANDLES")}
-              className={`flex items-center gap-1.5 rounded px-2.5 py-1 font-bold transition-all ${
-                chartMode === "REAL_CANDLES"
-                  ? "bg-[#2f81f7] text-white shadow"
-                  : "text-[#8b949e] hover:bg-[#222833] hover:text-white"
-              }`}
-            >
-              <Activity className="h-3.5 w-3.5" />
-              <span>{t("real_candles")} ({timeframe})</span>
-            </button>
-            <button
-              onClick={() => setChartMode("TRADINGVIEW")}
-              className={`flex items-center gap-1.5 rounded px-2.5 py-1 font-bold transition-all ${
-                chartMode === "TRADINGVIEW"
-                  ? "bg-[#238636] text-white shadow"
-                  : "text-[#8b949e] hover:bg-[#222833] hover:text-white"
-              }`}
-            >
-              <BarChart2 className="h-3.5 w-3.5" />
-              <span>{t("tradingview_pro")}</span>
-            </button>
+          {/* Badge: Nến Thật VN30F1M */}
+          <div className="flex items-center gap-1.5 rounded-lg border border-[#30363d] bg-[#171b23] px-2.5 py-1 font-bold text-white shadow">
+            <Activity className="h-3.5 w-3.5 text-[#3fb950]" />
+            <span>{t("real_candles")} ({timeframe})</span>
           </div>
 
           {/* Timeframe selector (15m vs 1m) */}
@@ -510,53 +436,29 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
           </div>
 
           {/* Zoom controls cho Canvas */}
-          {chartMode === "REAL_CANDLES" && (
-            <div className="flex items-center gap-1 border-l border-[#30363d] pl-2 text-[#8b949e]">
-              <button
-                onClick={() => setVisibleCount((prev) => Math.max(20, prev - 15))}
-                className="rounded p-1 hover:bg-[#222833] hover:text-white"
-                title={t("zoom_in")}
-              >
-                <ZoomIn className="h-3.5 w-3.5" />
-              </button>
-              <button
-                onClick={() => setVisibleCount((prev) => Math.min(180, prev + 15))}
-                className="rounded p-1 hover:bg-[#222833] hover:text-white"
-                title={t("zoom_out")}
-              >
-                <ZoomOut className="h-3.5 w-3.5" />
-              </button>
-              <button
-                onClick={() => setVisibleCount(60)}
-                className="rounded p-1 hover:bg-[#222833] hover:text-white"
-                title={t("reset_zoom")}
-              >
-                <RotateCcw className="h-3 w-3" />
-              </button>
-            </div>
-          )}
-
-          {/* If TradingView mode, show TV symbol choices */}
-          {chartMode === "TRADINGVIEW" && (
-            <div className="flex items-center gap-1 rounded border border-[#30363d] bg-[#171b23] p-0.5 font-mono text-[11px]">
-              {[
-                { sym: "INDEX:VN30", label: "VN30 Index" },
-                { sym: "BINANCE:BTCUSDT", label: "BTC/USDT" },
-              ].map((item) => (
-                <button
-                  key={item.sym}
-                  onClick={() => setTvSymbol(item.sym)}
-                  className={`rounded px-1.5 py-0.5 font-bold ${
-                    tvSymbol === item.sym
-                      ? "bg-[#2f81f7] text-white"
-                      : "text-[#8b949e] hover:text-white"
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="flex items-center gap-1 border-l border-[#30363d] pl-2 text-[#8b949e]">
+            <button
+              onClick={() => setVisibleCount((prev) => Math.max(20, prev - 15))}
+              className="rounded p-1 hover:bg-[#222833] hover:text-white"
+              title={t("zoom_in")}
+            >
+              <ZoomIn className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => setVisibleCount((prev) => Math.min(180, prev + 15))}
+              className="rounded p-1 hover:bg-[#222833] hover:text-white"
+              title={t("zoom_out")}
+            >
+              <ZoomOut className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => setVisibleCount(60)}
+              className="rounded p-1 hover:bg-[#222833] hover:text-white"
+              title={t("reset_zoom")}
+            >
+              <RotateCcw className="h-3 w-3" />
+            </button>
+          </div>
         </div>
 
         {/* Mốc Kèo Quant Overlay Chips */}
@@ -593,26 +495,22 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(({
 
       {/* Main Chart Container */}
       <div className="relative flex-1 w-full overflow-hidden bg-[#0e1117]">
-        {chartMode === "REAL_CANDLES" ? (
-          <div className="relative h-full w-full">
-            {isLoadingCandles && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0e1117]/80">
-                <div className="flex items-center gap-2 text-sm text-[#58a6ff]">
-                  <RefreshCw className="h-4 w-4 animate-spin" />
-                  <span>{t("loading_candles", { tf: timeframe })}</span>
-                </div>
+        <div className="relative h-full w-full">
+          {isLoadingCandles && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0e1117]/80">
+              <div className="flex items-center gap-2 text-sm text-[#58a6ff]">
+                <RefreshCw className="h-4 w-4 animate-spin" />
+                <span>{t("loading_candles", { tf: timeframe })}</span>
               </div>
-            )}
-            <canvas
-              ref={canvasRef}
-              onMouseMove={handleCanvasMouseMove}
-              onMouseLeave={handleCanvasMouseLeave}
-              className="h-full w-full cursor-crosshair"
-            />
-          </div>
-        ) : (
-          <div ref={tvContainerRef} className="h-full w-full" />
-        )}
+            </div>
+          )}
+          <canvas
+            ref={canvasRef}
+            onMouseMove={handleCanvasMouseMove}
+            onMouseLeave={handleCanvasMouseLeave}
+            className="h-full w-full cursor-crosshair"
+          />
+        </div>
       </div>
 
       {/* Bottom Status Bar - Entrade Pro Market Strip */}
