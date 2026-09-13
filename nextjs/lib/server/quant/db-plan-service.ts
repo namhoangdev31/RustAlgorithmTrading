@@ -30,6 +30,11 @@ export interface TradeSettlementResult {
  */
 export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
   const planDate = new Date(`${plan.date}T00:00:00.000Z`);
+  const dayOfWeek = planDate.getUTCDay();
+  // Bỏ qua không tạo/lưu kèo cho ngày Thứ Bảy (6) hoặc Chủ Nhật (0)
+  if (dayOfWeek === 0 || dayOfWeek === 6) {
+    return null;
+  }
 
   return prisma.bfxpsTradingPlan.upsert({
     where: {
@@ -178,6 +183,30 @@ export async function getTradingHistoryFromDb() {
     return null;
   }
 
+  // Tự động dọn dẹp các bản ghi rơi vào cuối tuần nếu có (do lệch múi giờ server)
+  const weekendPlans = plans.filter((p) => {
+    const day = p.date.getUTCDay();
+    return day === 0 || day === 6;
+  });
+
+  if (weekendPlans.length > 0) {
+    prisma.bfxpsTradingPlan.deleteMany({
+      where: {
+        id: { in: weekendPlans.map((p) => p.id) },
+      },
+    }).catch(() => {});
+  }
+
+  // Chỉ lấy các phiên hợp lệ trong tuần (Thứ 2 đến Thứ 6)
+  const validPlans = plans.filter((p) => {
+    const day = p.date.getUTCDay();
+    return day !== 0 && day !== 6;
+  });
+
+  if (validPlans.length === 0) {
+    return null;
+  }
+
   let cumulativePnl = 0;
   let wins = 0;
   let losses = 0;
@@ -189,7 +218,7 @@ export async function getTradingHistoryFromDb() {
   let maxDrawdown = 0;
   const monthlyPnl: Record<string, number> = {};
 
-  const trades = plans.map((p) => {
+  const trades = validPlans.map((p) => {
     const dateStr = p.date.toISOString().slice(0, 10);
     const pnl = p.pnlPoints ? Number(p.pnlPoints.toString()) : 0;
     const isFilled = p.status !== "PENDING" && p.exitType !== "NO_FILL";
@@ -235,12 +264,12 @@ export async function getTradingHistoryFromDb() {
   const winRate = tradedCount > 0 ? Number(((wins / tradedCount) * 100).toFixed(1)) : 0;
   const profitFactor = totalLossPoints > 0 ? Number((totalWinPoints / totalLossPoints).toFixed(2)) : (totalWinPoints > 0 ? 99.0 : 0);
 
-  const startDate = plans[0]?.date ? plans[0].date.toISOString().slice(0, 10) : undefined;
-  const endDate = plans[plans.length - 1]?.date ? plans[plans.length - 1].date.toISOString().slice(0, 10) : undefined;
+  const startDate = validPlans[0]?.date ? validPlans[0].date.toISOString().slice(0, 10) : undefined;
+  const endDate = validPlans[validPlans.length - 1]?.date ? validPlans[validPlans.length - 1].date.toISOString().slice(0, 10) : undefined;
 
   return {
     summary: {
-      totalSessions: plans.length,
+      totalSessions: validPlans.length,
       totalBars: undefined, // Tính từ nguồn dữ liệu thực tế, không ước lượng
       startDate,
       endDate,

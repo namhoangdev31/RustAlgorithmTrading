@@ -226,3 +226,41 @@ export function generateCanonicalQuantPlan(
     resolvedSource: "CANONICAL_PRE_OPEN_VOLATILITY_EXPANSION",
   };
 }
+
+/**
+ * Lấy ngày giao dịch hiện tại hoặc kế tiếp theo múi giờ Việt Nam (Asia/Ho_Chi_Minh - UTC+7)
+ * Tự động bỏ qua Thứ 7 & Chủ Nhật (thị trường phái sinh VN30F nghỉ) -> chuyển sang Thứ 2 tiếp theo.
+ */
+export function getVietnamTradingDate(date: Date = new Date()): string {
+  const vnFormatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const dateStr = vnFormatter.format(date); // YYYY-MM-DD
+  const parts = dateStr.split("-").map(Number);
+  const vnDate = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+  const dayOfWeek = vnDate.getUTCDay(); // 0 = Chủ Nhật, 6 = Thứ 7
+
+  if (dayOfWeek === 6) {
+    vnDate.setUTCDate(vnDate.getUTCDate() + 2); // Thứ 7 -> Thứ 2
+  } else if (dayOfWeek === 0) {
+    vnDate.setUTCDate(vnDate.getUTCDate() + 1); // Chủ Nhật -> Thứ 2
+  }
+
+  const y = vnDate.getUTCFullYear();
+  const m = String(vnDate.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(vnDate.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+/**
+ * Kiểm tra xem ngày có rơi vào ngày cuối tuần (Thứ 7 / Chủ Nhật) không
+ */
+export function isWeekend(dateStr: string): boolean {
+  const parts = dateStr.split("-").map(Number);
+  const d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+  const day = d.getUTCDay();
+  return day === 0 || day === 6;
+}
