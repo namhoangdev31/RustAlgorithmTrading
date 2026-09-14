@@ -137,7 +137,7 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
                 >
                   <span className={`h-1.5 w-1.5 rounded-full ${isPShort ? "bg-rose-400" : "bg-emerald-400"}`} />
                   <span className="font-bold">{idx === 0 ? "Kèo Chính" : idx === 1 ? "Rải Nấc" : "Breakout"}:</span>
-                  <span className="font-mono">{p.side} @ {p.entryPrice?.toFixed(1)}</span>
+                  <span className="font-mono">{p.side} {p.orderType === "LIMIT" ? "Limit" : "Stop"} @ {p.entryPrice?.toFixed(1)}</span>
                 </button>
               );
             })}
@@ -259,7 +259,9 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
               </div>
 
               <div className="rounded-lg bg-white/[0.03] border border-white/10 p-2 shadow-inner">
-                <span className="block text-[9px] text-slate-400 uppercase font-bold">{t("stop_entry")}</span>
+                <span className="block text-[9px] text-slate-400 uppercase font-bold">
+                  {plan.orderType === "LIMIT" ? t("limit_entry") : t("stop_entry")}
+                </span>
                 <span className="mt-1 block text-xs font-black text-white font-mono">
                   {plan.entryPrice?.toFixed(1) ?? "--"}
                 </span>
@@ -288,7 +290,9 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
                   <span>{t("order_guide_title")}</span>
                 </b>
                 <span className="text-slate-300 text-[11px] leading-normal block">
-                  {t("order_guide_desc", { price: plan.entryPrice?.toFixed(1) ?? "--" })}
+                  {plan.orderType === "LIMIT"
+                    ? t("order_guide_desc_limit", { price: plan.entryPrice?.toFixed(1) ?? "--" })
+                    : t("order_guide_desc", { price: plan.entryPrice?.toFixed(1) ?? "--" })}
                 </span>
               </div>
 
