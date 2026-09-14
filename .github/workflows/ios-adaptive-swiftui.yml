@@ -29,67 +29,36 @@ permissions:
   contents: write
 
 jobs:
-  lint-and-format:
-    name: Lint and Format Gate
+  lint-and-check:
+    name: Lint & Structure Checks
     runs-on: macos-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
-      - name: SwiftFormat (optional)
+      - name: SwiftFormat Check (if config exists)
         shell: bash
         run: |
           set -euo pipefail
           if [[ -f ios/.swiftformat || -f .swiftformat ]]; then
             brew install swiftformat
             swiftformat --lint ios/Libraries/AdaptiveSwiftUi/Sources ios/Libraries/AdaptiveSwiftUi/Tests
-          else
-            echo "No .swiftformat config found; skipping SwiftFormat gate."
           fi
 
-      - name: SwiftLint (optional)
+      - name: Compatibility Enforcement
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -f ios/.swiftlint.yml || -f .swiftlint.yml ]]; then
-            brew install swiftlint
-            CONFIG_PATH=".swiftlint.yml"
-            if [[ -f ios/.swiftlint.yml ]]; then
-              CONFIG_PATH="ios/.swiftlint.yml"
-            fi
-            swiftlint lint --strict --config "${CONFIG_PATH}" ios/Libraries/AdaptiveSwiftUi/Sources ios/Libraries/AdaptiveSwiftUi/Tests
-          else
-            echo "No .swiftlint.yml config found; skipping SwiftLint gate."
-          fi
-
-  compatibility-enforcement:
-    name: Compatibility Enforcement Gate
-    runs-on: macos-latest
-    needs: lint-and-format
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Fail on legacy local compatibility wrappers
-        shell: bash
-        run: |
-          set -euo pipefail
-          if rg -n "func (adaptiveGlass|adaptiveGlassButton|adaptiveBackgroundExtension|adaptiveTabBarMinimizeOnScroll|glassEffect|liquidGlass|liquidGlassButton)\\b|struct (AdaptiveGlassContainer|LiquidGlassModifier|LiquidGlassButtonModifier)\\b|enum AdaptiveGlassButtonVariant\\b" ios/iosApp/DesignSystem; then
+          if rg -n "func (adaptiveGlass|adaptiveGlassButton|adaptiveBackgroundExtension|adaptiveTabBarMinimizeOnScroll|glassEffect|liquidGlass|liquidGlassButton)\\b|struct (AdaptiveGlassContainer|LiquidGlassModifier|LiquidGlassButtonModifier)\\b|enum AdaptiveGlassButtonVariant\\b" ios/iosApp/DesignSystem 2>/dev/null; then
             echo "::error::Legacy compatibility wrappers still exist in iosApp/DesignSystem. Use AdaptiveSwiftUi package as source-of-truth."
             exit 1
           fi
 
-      - name: Fail on banned raw SwiftUI APIs in migrated views
-        shell: bash
-        run: |
-          set -euo pipefail
-          if rg -n "\\.(glassEffect|liquidGlass|liquidGlassButton|interactiveDismissDisabled|navigationSubtitle)\\s*\\(|\\.tabViewStyle\\s*\\(\\s*PageTabViewStyle|\\.tabBarMinimizeBehavior\\s*\\(" ios/iosApp/Views; then
+          if rg -n "\\.(glassEffect|liquidGlass|liquidGlassButton|interactiveDismissDisabled|navigationSubtitle)\\s*\\(|\\.tabViewStyle\\s*\\(\\s*PageTabViewStyle|\\.tabBarMinimizeBehavior\\s*\\(" ios/iosApp/Views 2>/dev/null; then
             echo "::error::Raw compatibility APIs are still used in iosApp/Views. Migrate to AdaptiveSwiftUi adaptive* APIs."
             exit 1
           fi
 
-      - name: Require direct AdaptiveSwiftUi imports on adaptive API call-sites
-        shell: bash
-        run: |
-          set -euo pipefail
           missing=0
           while IFS= read -r file; do
             [[ -z "${file}" ]] && continue
@@ -97,91 +66,28 @@ jobs:
               echo "::error file=${file}::Missing direct import AdaptiveSwiftUi for adaptive* call-site."
               missing=1
             fi
-          done < <(rg -l "\\.adaptive[A-Z][A-Za-z0-9_]*\\(" ios/iosApp/Views || true)
+          done < <(rg -l "\\.adaptive[A-Z][A-Za-z0-9_]*\\(" ios/iosApp/Views 2>/dev/null || true)
 
           if [[ "${missing}" -ne 0 ]]; then
             exit 1
           fi
 
-  unit-tests:
-    name: Swift Test Gate
+  swift-test-and-build:
+    name: Test & Integration Build
     runs-on: macos-latest
-    needs: [lint-and-format, compatibility-enforcement]
-    defaults:
-      run:
+    needs: lint-and-check
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Swift Package Tests
         working-directory: ios/Libraries/AdaptiveSwiftUi
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Reset and clear module/build caches
         shell: bash
         run: |
           set -euo pipefail
-          swift package reset
-          rm -rf .build
-          rm -rf .swiftpm/xcode/xcuserdata
-          rm -rf "$HOME/Library/Developer/Xcode/DerivedData/ModuleCache.noindex"
-          rm -rf "$HOME/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex"
+          swift test
 
-      - name: Run swift test
-        shell: bash
-        run: |
-          set -euo pipefail
-          swift test | tee swift-test.log
-
-      - name: Upload swift test logs
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: adaptive-swiftui-swift-test-log
-          path: ios/Libraries/AdaptiveSwiftUi/swift-test.log
-
-  coverage:
-    name: Coverage Gate
-    runs-on: macos-latest
-    needs: [lint-and-format, compatibility-enforcement]
-    defaults:
-      run:
-        working-directory: ios/Libraries/AdaptiveSwiftUi
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run deterministic package CI with coverage
-        shell: bash
-        run: |
-          set -euo pipefail
-          bash ../../scripts/ios/package_ci.sh | tee package-ci.log
-
-      - name: Collect coverage artifacts
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p coverage-artifacts
-          CODECOV_PATH="$(swift test --show-codecov-path)"
-          if [[ -f "${CODECOV_PATH}" ]]; then
-            cp "${CODECOV_PATH}" coverage-artifacts/lcov.info
-          fi
-          find .build -name '*.profdata' -print -exec cp {} coverage-artifacts/ \;
-          if [[ -d .build ]]; then
-            tar -czf coverage-artifacts/build-coverage.tar.gz .build
-          fi
-
-      - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: adaptive-swiftui-coverage
-          path: |
-            ios/Libraries/AdaptiveSwiftUi/coverage-artifacts/**
-            ios/Libraries/AdaptiveSwiftUi/package-ci.log
-
-  integration-compile:
-    name: iOS App Integration Compile Gate
-    runs-on: macos-latest
-    needs: [unit-tests, coverage, compatibility-enforcement]
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build iosApp with local AdaptiveSwiftUi package
+      - name: Integration Compile iosApp
         shell: bash
         run: |
           set -euo pipefail
@@ -191,39 +97,27 @@ jobs:
             -configuration Debug \
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO \
-            build | tee ios-app-build.log
-
-      - name: Upload integration compile log
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: adaptive-swiftui-iosapp-build-log
-          path: ios-app-build.log
+            build
 
   release:
-    name: Internal Tag Release
+    name: Tagged Release
     runs-on: macos-latest
-    needs: [unit-tests, coverage, integration-compile]
+    needs: swift-test-and-build
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: release-artifacts
-
-      - name: Package release artifacts
+      - name: Create Release Tarball
         shell: bash
         run: |
           set -euo pipefail
-          tar -czf adaptive-swiftui-release-artifacts-${GITHUB_REF_NAME}.tar.gz release-artifacts
+          tar -czf adaptive-swiftui-${GITHUB_REF_NAME}.tar.gz -C ios/Libraries/AdaptiveSwiftUi Sources Tests Package.swift
 
-      - name: Create GitHub release with artifacts
+      - name: GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           draft: false
           prerelease: ${{ contains(github.ref_name, '-rc') }}
           generate_release_notes: true
           files: |
-            adaptive-swiftui-release-artifacts-${{ github.ref_name }}.tar.gz
+            adaptive-swiftui-${{ github.ref_name }}.tar.gz

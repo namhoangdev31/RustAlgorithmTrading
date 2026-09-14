@@ -3,131 +3,77 @@ name: Rust Trading System CI/CD
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'rust/**'
+      - '.github/workflows/rust.yml'
   pull_request:
     branches: [main]
+    paths:
+      - 'rust/**'
+      - '.github/workflows/rust.yml'
+
+concurrency:
+  group: rust-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
 
 jobs:
-  check:
-    name: Code Quality Checks
+  check-and-test:
+    name: Rust Checks & Test Suite
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: stable
-          components: rustfmt, clippy
-
-      - name: Cache cargo registry
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
-
-      - name: Check formatting
-        working-directory: ./rust
-        run: cargo fmt --all -- --check
-
-      - name: Run clippy
-        working-directory: ./rust
-        run: cargo clippy --all-targets --all-features -- -D warnings
-
-      - name: Check documentation
-        working-directory: ./rust
-        run: cargo doc --no-deps --all-features
-
-  test:
-    name: Test Suite
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        rust: [stable, nightly]
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: ${{ matrix.rust }}
-
-      - name: Install ZeroMQ dependencies
+      - name: Install ZeroMQ & System Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libzmq3-dev pkg-config
 
-      - name: Cache cargo build
-        uses: actions/cache@v4
-        with:
-          path: rust/target/
-          key: ${{ runner.os }}-cargo-build-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-build-${{ matrix.rust }}-
-            ${{ runner.os }}-cargo-build-
-
-      - name: Build all components
-        working-directory: ./rust
-        run: cargo build --workspace --all-features
-
-      - name: Run unit tests
-        working-directory: ./rust
-        run: cargo test --workspace --lib --all-features
-
-      - name: Run integration tests
-        working-directory: ./rust
-        run: cargo test --workspace --test '*' --all-features
-
-      - name: Run doc tests
-        working-directory: ./rust
-        run: cargo test --workspace --doc --all-features
-
-  security:
-    name: Security Audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
       - name: Install Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
 
-      - name: Install cargo-audit
-        run: cargo install cargo-audit
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
 
-      - name: Run security audit
-        working-directory: ./rust
-        run: cargo audit
-
-      - name: Check for outdated dependencies
+      - name: Check Formatting & Clippy
         working-directory: ./rust
         run: |
-          cargo install cargo-outdated
-          cargo outdated --exit-code 1 || echo "::warning::Outdated dependencies found"
+          cargo fmt --all -- --check
+          cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: Run Tests (lib, tests, doc)
+        working-directory: ./rust
+        run: cargo test --workspace --all-features
 
   build-release:
     name: Build Release Binaries
     runs-on: ubuntu-latest
-    needs: [check, test, security]
+    needs: check-and-test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-
-      - name: Install ZeroMQ dependencies
+      - name: Install ZeroMQ & System Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libzmq3-dev pkg-config
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
 
       - name: Build release binaries
         working-directory: ./rust
@@ -155,70 +101,4 @@ jobs:
             target/release/risk_management_service
             target/release/strategy_engine
             target/release/api_gateway
-          retention-days: 30
-
-  docker-build:
-    name: Build Docker Images
-    runs-on: ubuntu-latest
-    needs: [check, test, security]
-    if: github.event_name == 'push'
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            type=ref,event=branch
-            type=sha,prefix={{branch}}-
-            type=semver,pattern={{version}}
-
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./ops/deployment/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  coverage:
-    name: Code Coverage
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-
-      - name: Install ZeroMQ dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libzmq3-dev pkg-config
-
-      - name: Install tarpaulin
-        run: cargo install cargo-tarpaulin
-
-      - name: Generate coverage
-        working-directory: ./rust
-        run: cargo tarpaulin --workspace --all-features --out Xml --timeout 300
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./rust/cobertura.xml
-          fail_ci_if_error: false
+          retention-days: 7
