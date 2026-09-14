@@ -2,6 +2,7 @@ import {
   Direction,
   MarketSnapshot,
   TradingPlan,
+  TradingSessionPhase,
   QuantStrategyConfig,
   LadderStrategyConfig,
   SimCarryConfig,
@@ -363,7 +364,44 @@ export function generateMultiEnginePortfolio(
   );
   canonicalPlan.consensusWeight = 1.5;
 
-  return [simCarryPlan, ladderPlan, canonicalPlan];
+  // Inject pha giao dịch hiện tại (ATO_OBSERVATION trước 09:15, CONTINUOUS sau 09:15)
+  const phase = getTradingSessionPhase();
+  const plans = [simCarryPlan, ladderPlan, canonicalPlan];
+  for (const p of plans) {
+    p.sessionPhase = phase;
+  }
+
+  return plans;
+}
+
+/**
+ * Xác định pha giao dịch hiện tại theo lịch phái sinh VN30F1M (UTC+7)
+ * - PRE_ATO:          < 08:45
+ * - ATO_OBSERVATION:  08:45 – 09:15 (quan sát, chưa chốt kèo)
+ * - CONTINUOUS:       09:15 – 11:30 & 13:00 – 14:30 (kèo chính thức)
+ * - LUNCH_BREAK:      11:30 – 13:00
+ * - ATC:              14:30 – 14:45
+ * - CLOSED:           ≥ 14:45
+ */
+export function getTradingSessionPhase(date: Date = new Date()): TradingSessionPhase {
+  const vnTimeStr = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(date);
+  // vnTimeStr = "HH:MM:SS" or "HH:MM:SS"
+  const [h, m] = vnTimeStr.split(":").map(Number);
+  const minuteOfDay = h * 60 + m;
+
+  if (minuteOfDay < 8 * 60 + 45) return "PRE_ATO";
+  if (minuteOfDay < 9 * 60 + 15) return "ATO_OBSERVATION";
+  if (minuteOfDay < 11 * 60 + 30) return "CONTINUOUS";
+  if (minuteOfDay < 13 * 60) return "LUNCH_BREAK";
+  if (minuteOfDay < 14 * 60 + 30) return "CONTINUOUS";
+  if (minuteOfDay < 14 * 60 + 45) return "ATC";
+  return "CLOSED";
 }
 
 /**

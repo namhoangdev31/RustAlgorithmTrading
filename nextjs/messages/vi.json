@@ -1320,7 +1320,15 @@
       "pts_unit": "đ",
       "contracts_unit": "HĐ",
       "view_history_tooltip": "Bấm để xem chi tiết toàn bộ 413 phiên lịch sử trong CSDL PostgreSQL",
-      "perf_summary": "Tỷ lệ thắng {winrate} · Lãi {pnl}đ"
+      "perf_summary": "Tỷ lệ thắng {winrate} · Lãi {pnl}đ",
+      "phase_pre_ato": "CHUẨN BỊ · THỊ TRƯỜNG CHƯA MỞ",
+      "phase_ato_observation": "⏳ QUAN SÁT ATO (08:45 - 09:15) · Chốt kèo chính thức lúc 09:15",
+      "phase_continuous": "✅ KÈO CHÍNH THỨC PHIÊN LIÊN TỤC (Đã xác nhận sau ATO 09:15)",
+      "phase_lunch": "🍜 NGHỈ TRƯA (11:30 - 13:00) · Kèo chính thức vẫn hiệu lực",
+      "phase_atc": "🔔 PHIÊN ATC (14:30 - 14:45) · Chủ động đóng vị thế",
+      "phase_closed": "🔒 THỊ TRƯỜNG ĐÃ ĐÓNG CỬA",
+      "ato_observation_note": "Hệ thống quan sát hết phiên ATO (09:00 - 09:15) để loại bỏ bẫy giá mở cửa. Lúc 09:15, kèo chính thức sẽ được kích hoạt.",
+      "order_guide_desc_ato": "⚠️ Chờ sau 09:15 mới đặt lệnh. Hệ thống đang quan sát phiên ATO để xác nhận giá Open chính thức và loại bỏ bẫy giá dồn lệnh."
     },
     "engines": {
       "CanonicalDirectionalBreakout": "Đột Phá Xu Hướng Chuẩn Tắc",

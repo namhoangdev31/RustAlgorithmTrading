@@ -4,6 +4,17 @@ export type R5Action = "KEEP" | "CANCEL" | "FLIP_HINT" | "PRE_OPEN" | "NO_SIGNAL
 
 export type PlanStatus = "PENDING" | "ACTIVE_TODAY" | "STALE" | "UPCOMING" | "FILLED" | "SETTLED";
 
+/**
+ * Pha giao dịch trong ngày theo lịch phái sinh VN30F1M (UTC+7):
+ * - PRE_ATO: Trước 08:45 — Thị trường chưa mở, kèo dựa trên dữ liệu ngày trước.
+ * - ATO_OBSERVATION: 08:45 – 09:15 — Quan sát phiên ATO, kèo chưa chính thức.
+ * - CONTINUOUS: 09:15 – 11:30 / 13:00 – 14:30 — Phiên liên tục, kèo chính thức.
+ * - LUNCH_BREAK: 11:30 – 13:00 — Nghỉ trưa.
+ * - ATC: 14:30 – 14:45 — Phiên ATC đóng cửa.
+ * - CLOSED: Sau 14:45 — Thị trường đóng cửa.
+ */
+export type TradingSessionPhase = "PRE_ATO" | "ATO_OBSERVATION" | "CONTINUOUS" | "LUNCH_BREAK" | "ATC" | "CLOSED";
+
 export interface MarketSnapshot {
   open: number;
   high: number;
@@ -49,6 +60,7 @@ export interface TradingPlan {
   expectedHigh?: number;
   expectedLow?: number;
   resolvedSource?: string;
+  sessionPhase?: TradingSessionPhase;
   ladderConfig?: LadderConfig;
   trailingConfig?: TrailingConfig;
   execution?: ExecutionState;

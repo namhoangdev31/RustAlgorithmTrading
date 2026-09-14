@@ -1320,7 +1320,15 @@
       "pts_unit": " pts",
       "contracts_unit": "contracts",
       "view_history_tooltip": "Click to view detailed ledger of all 413 historical sessions in PostgreSQL",
-      "perf_summary": "Winrate {winrate} · PnL {pnl} pts"
+      "perf_summary": "Winrate {winrate} · PnL {pnl} pts",
+      "phase_pre_ato": "PREPARING · MARKET NOT OPEN YET",
+      "phase_ato_observation": "⏳ ATO OBSERVATION (08:45 - 09:15) · Official plan confirms at 09:15",
+      "phase_continuous": "✅ OFFICIAL PLAN — CONTINUOUS SESSION (Confirmed post-ATO 09:15)",
+      "phase_lunch": "🍜 LUNCH BREAK (11:30 - 13:00) · Official plan still active",
+      "phase_atc": "🔔 ATC SESSION (14:30 - 14:45) · Close positions now",
+      "phase_closed": "🔒 MARKET CLOSED",
+      "ato_observation_note": "System observes ATO session (09:00 - 09:15) to filter opening price traps. At 09:15, the official plan will be activated.",
+      "order_guide_desc_ato": "⚠️ Wait until after 09:15 to place orders. System is observing ATO session to confirm official Open price and filter order-stacking traps."
     },
     "engines": {
       "CanonicalDirectionalBreakout": "Canonical Directional Breakout",

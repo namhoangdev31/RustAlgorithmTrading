@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ConsensusResult, MarketSnapshot, TradingPlan } from "@/lib/server/quant/types";
-import { RefreshCw, TrendingUp, TrendingDown, ArrowUpRight, Layers } from "lucide-react";
+import { RefreshCw, TrendingUp, TrendingDown, ArrowUpRight, Layers, Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface LiveDashboardPanelProps {
@@ -48,6 +48,34 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
     tpDiff != null && slDiff != null && slDiff > 0
       ? `1:${(tpDiff / slDiff).toFixed(1)}`
       : "1:2";
+
+  // Pha giao dịch hiện tại (từ backend inject vào plan)
+  const sessionPhase = plan?.sessionPhase ?? "CONTINUOUS";
+  const isAtoObservation = sessionPhase === "ATO_OBSERVATION" || sessionPhase === "PRE_ATO";
+
+  const getPhaseLabel = () => {
+    switch (sessionPhase) {
+      case "PRE_ATO": return t("phase_pre_ato");
+      case "ATO_OBSERVATION": return t("phase_ato_observation");
+      case "CONTINUOUS": return t("phase_continuous");
+      case "LUNCH_BREAK": return t("phase_lunch");
+      case "ATC": return t("phase_atc");
+      case "CLOSED": return t("phase_closed");
+      default: return t("phase_continuous");
+    }
+  };
+
+  const getPhaseColor = () => {
+    switch (sessionPhase) {
+      case "PRE_ATO": return "border-slate-500/40 bg-slate-900/50 text-slate-300";
+      case "ATO_OBSERVATION": return "border-amber-500/40 bg-amber-950/40 text-amber-300";
+      case "CONTINUOUS": return "border-emerald-500/40 bg-emerald-950/40 text-emerald-300";
+      case "LUNCH_BREAK": return "border-slate-500/40 bg-slate-900/50 text-slate-300";
+      case "ATC": return "border-orange-500/40 bg-orange-950/40 text-orange-300";
+      case "CLOSED": return "border-slate-600/40 bg-slate-950/50 text-slate-400";
+      default: return "border-emerald-500/40 bg-emerald-950/40 text-emerald-300";
+    }
+  };
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.08] bg-[#0b0f17]/90 shadow-2xl backdrop-blur-xl text-slate-100">
@@ -114,6 +142,19 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
               : t("awaiting_plan")}
           </p>
         </div>
+
+        {/* Banner Pha Giao Dịch (ATO Observation / Continuous Session) */}
+        <div className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-[11px] font-bold tracking-wide ${getPhaseColor()}`}>
+          <Clock className={`h-3.5 w-3.5 shrink-0 ${isAtoObservation ? "animate-pulse" : ""}`} />
+          <span className="leading-tight">{getPhaseLabel()}</span>
+        </div>
+
+        {/* Ghi chú ATO Observation */}
+        {isAtoObservation && (
+          <div className="rounded-lg border border-amber-500/20 bg-amber-950/20 px-3 py-2 text-[11px] text-amber-200/90 leading-relaxed">
+            {t("ato_observation_note")}
+          </div>
+        )}
 
         {/* Bộ chuyển đổi Engine (Nếu có nhiều hơn 1 plan) */}
         {plans.length > 1 && (
@@ -315,9 +356,11 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
                   <span>{t("order_guide_title")}</span>
                 </b>
                 <span className="text-slate-300 text-[11px] leading-normal block">
-                  {plan.orderType === "LIMIT"
-                    ? t("order_guide_desc_limit", { price: plan.entryPrice?.toFixed(1) ?? "--" })
-                    : t("order_guide_desc", { price: plan.entryPrice?.toFixed(1) ?? "--" })}
+                  {isAtoObservation
+                    ? t("order_guide_desc_ato")
+                    : plan.orderType === "LIMIT"
+                      ? t("order_guide_desc_limit", { price: plan.entryPrice?.toFixed(1) ?? "--" })
+                      : t("order_guide_desc", { price: plan.entryPrice?.toFixed(1) ?? "--" })}
                 </span>
               </div>
 
