@@ -15,13 +15,23 @@ import {
   ZoomIn,
   ZoomOut,
   RotateCcw,
-  Activity,
 } from "lucide-react";
+import {
+  createChart,
+  CandlestickSeries,
+  HistogramSeries,
+  LineSeries,
+  LineStyle,
+  CrosshairMode,
+  ColorType,
+  IChartApi,
+  ISeriesApi,
+} from "lightweight-charts";
 import { TradingPlan, MarketSnapshot } from "@/lib/server/quant/types";
 import { useTranslations } from "next-intl";
 
 interface CandleBar {
-  time: number; // seconds
+  time: number; // seconds (UTC epoch)
   open: number;
   high: number;
   low: number;
@@ -43,10 +53,22 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
     const [isLoadingCandles, setIsLoadingCandles] = useState(false);
     const [candles, setCandles] = useState<CandleBar[]>([]);
     const [candleCount, setCandleCount] = useState<number>(7259);
-    const [visibleCount, setVisibleCount] = useState<number>(60);
     const [hoveredBar, setHoveredBar] = useState<CandleBar | null>(null);
 
-    // Tính toán mốc thị trường & tỷ lệ
+    // Chart container & API refs
+    const chartContainerRef = useRef<HTMLDivElement | null>(null);
+    const chartRef = useRef<IChartApi | null>(null);
+    const candleSeriesRef = useRef<ISeriesApi<"Candlestick", any> | null>(null);
+    const volumeSeriesRef = useRef<ISeriesApi<"Histogram", any> | null>(null);
+    const ema5SeriesRef = useRef<ISeriesApi<"Line", any> | null>(null);
+    const ema10SeriesRef = useRef<ISeriesApi<"Line", any> | null>(null);
+
+    // Price lines refs (Entry, TP, SL)
+    const entryLineRef = useRef<any>(null);
+    const tpLineRef = useRef<any>(null);
+    const slLineRef = useRef<any>(null);
+
+    // Market metrics calculations
     const currentPrice =
       snapshot?.current ||
       (candles.length ? candles[candles.length - 1].close : 0);
@@ -62,56 +84,54 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
     const oi = snapshot?.oi ?? null;
     const foreignNet = snapshot?.foreignNet ?? null;
 
-    // Mốc Kèo Quant động (không gán cứng)
+    // Quant Plan dynamic markers
     const entryPrice = plan?.entryPrice ?? null;
     const tpPrice = plan?.tpPrice ?? null;
     const slPrice = plan?.slPrice ?? null;
     const side = plan?.side || "LONG";
 
-    // Canvas ref
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-    // Fetch real candles from /api/bfxps/candles
-    const fetchCandles = useCallback(async (tf: "15m" | "1m", isBackground = false) => {
-      if (!isBackground) setIsLoadingCandles(true);
-      try {
-        const res = await fetch(`/api/bfxps/candles?timeframe=${tf}&limit=200&_t=${Date.now()}`, {
-          cache: "no-store",
-        });
-        const json = await res.json();
-        if (json.ok && Array.isArray(json.bars)) {
-          setCandles(json.bars);
-          setCandleCount(json.totalCount || (tf === "15m" ? 7259 : 100746));
+    // Fetch real candles from /api/bfxps/candles (mỗi 2 phút làm mới 1 lần)
+    const fetchCandles = useCallback(
+      async (tf: "15m" | "1m", isBackground = false) => {
+        if (!isBackground) setIsLoadingCandles(true);
+        try {
+          const res = await fetch(
+            `/api/bfxps/candles?timeframe=${tf}&limit=300&_t=${Date.now()}`,
+            { cache: "no-store" },
+          );
+          const json = await res.json();
+          if (json.ok && Array.isArray(json.bars)) {
+            setCandles(json.bars);
+            setCandleCount(json.totalCount || (tf === "15m" ? 7259 : 100746));
+          }
+        } catch (err) {
+          console.error("Candle fetch error:", err);
+        } finally {
+          if (!isBackground) setIsLoadingCandles(false);
         }
-      } catch (err) {
-        console.error("Candle fetch error:", err);
-      } finally {
-        if (!isBackground) setIsLoadingCandles(false);
-      }
-    }, []);
+      },
+      [],
+    );
 
     useEffect(() => {
       fetchCandles(timeframe, false);
-      // Tự động làm mới nến mới định kỳ mỗi 2 phút (120s) để tối ưu hiệu năng & tuyệt đối tránh lỗi rate limit 429
       const candleInterval = setInterval(() => {
         fetchCandles(timeframe, true);
-      }, 120000);
+      }, 120000); // 2 phút gọi nến 1 lần tránh 429
       return () => clearInterval(candleInterval);
     }, [timeframe, fetchCandles]);
 
-    // Visible bars slice - sync latest bar in real time with snapshot
-    const displayedBars = useMemo(() => {
+    // Tính toán dữ liệu nến đồng bộ thời gian thực với snapshot
+    const chartData = useMemo(() => {
       if (!candles.length) return [];
-      const sliced = candles.slice(-visibleCount);
-      if (!snapshot?.current) return sliced;
+      const list = candles.map((c) => ({ ...c }));
+      if (!snapshot?.current) return list;
 
-      const bars = sliced.map((b) => ({ ...b }));
-      const last = bars[bars.length - 1];
+      const last = list[list.length - 1];
       const snapTimeSec = snapshot.timestamp
         ? Math.floor(new Date(snapshot.timestamp).getTime() / 1000)
         : null;
 
-      // Nếu snapshot có cây nến phút mới hơn cây nến cuối trong candles (chênh lệch >= 60s trên khung 1m)
       if (
         timeframe === "1m" &&
         snapTimeSec &&
@@ -119,7 +139,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
         snapTimeSec >= last.time + 60
       ) {
         const roundedTime = Math.floor(snapTimeSec / 60) * 60;
-        bars.push({
+        list.push({
           time: roundedTime,
           open: snapshot.open || snapshot.current,
           high: Math.max(snapshot.high || snapshot.current, snapshot.current),
@@ -127,346 +147,326 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
           close: snapshot.current,
           volume: Math.max(1, Math.round((snapshot.volume || 1000) / 100)),
         });
-        if (bars.length > visibleCount) {
-          bars.shift();
-        }
       } else if (last) {
-        // Cập nhật giá tick hiện tại vào cây nến đang chạy
         last.close = snapshot.current;
         if (snapshot.current > last.high) last.high = snapshot.current;
         if (snapshot.current < last.low) last.low = snapshot.current;
       }
-      return bars;
-    }, [candles, visibleCount, snapshot, timeframe]);
+      return list;
+    }, [candles, snapshot, timeframe]);
 
-    // Tính toán EMA(5) và EMA(10)
-    const calculateEMA = (data: CandleBar[], period: number) => {
-      const k = 2 / (period + 1);
-      const emaArr: (number | null)[] = [];
-      let prevEMA: number | null = null;
-      for (let i = 0; i < data.length; i++) {
-        const price = data[i].close;
-        if (i < period - 1) {
-          emaArr.push(null);
-        } else if (i === period - 1) {
-          let sum = 0;
-          for (let j = 0; j < period; j++) sum += data[j].close;
-          prevEMA = sum / period;
-          emaArr.push(prevEMA);
-        } else if (prevEMA !== null) {
-          prevEMA = price * k + prevEMA * (1 - k);
-          emaArr.push(prevEMA);
+    // Khởi tạo TradingView Lightweight Chart Engine
+    useEffect(() => {
+      const container = chartContainerRef.current;
+      if (!container) return;
+
+      const chart = createChart(container, {
+        width: container.clientWidth,
+        height: container.clientHeight,
+        layout: {
+          background: { type: ColorType.Solid, color: "#070a0f" },
+          textColor: "#94a3b8",
+          fontSize: 11,
+          fontFamily: "JetBrains Mono, monospace",
+        },
+        grid: {
+          vertLines: { color: "rgba(255, 255, 255, 0.04)" },
+          horzLines: { color: "rgba(255, 255, 255, 0.04)" },
+        },
+        crosshair: {
+          mode: CrosshairMode.Normal,
+          vertLine: {
+            color: "rgba(255, 255, 255, 0.2)",
+            width: 1,
+            style: LineStyle.Dashed,
+            labelBackgroundColor: "#1e293b",
+          },
+          horzLine: {
+            color: "rgba(255, 255, 255, 0.2)",
+            width: 1,
+            style: LineStyle.Dashed,
+            labelBackgroundColor: "#1e293b",
+          },
+        },
+        rightPriceScale: {
+          borderColor: "rgba(255, 255, 255, 0.08)",
+          scaleMargins: {
+            top: 0.1,
+            bottom: 0.22,
+          },
+          autoScale: true,
+        },
+        timeScale: {
+          borderColor: "rgba(255, 255, 255, 0.08)",
+          timeVisible: true,
+          secondsVisible: false,
+          shiftVisibleRangeOnNewBar: true,
+        },
+        localization: {
+          locale: "vi-VN",
+          timeFormatter: (time: number) => {
+            const date = new Date(time * 1000);
+            return new Intl.DateTimeFormat("vi-VN", {
+              timeZone: "Asia/Ho_Chi_Minh",
+              day: "2-digit",
+              month: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            }).format(date);
+          },
+        },
+      });
+
+      // Volume Series (Nằm ở đáy)
+      const volumeSeries = chart.addSeries(HistogramSeries, {
+        color: "#26a69a",
+        priceFormat: { type: "volume" },
+        priceScaleId: "", // overlay
+      });
+      volumeSeries.priceScale().applyOptions({
+        scaleMargins: {
+          top: 0.8,
+          bottom: 0,
+        },
+      });
+
+      // Candlestick Series Chính Hãng TradingView
+      const candleSeries = chart.addSeries(CandlestickSeries, {
+        upColor: "#26a69a",
+        downColor: "#ef5350",
+        borderVisible: false,
+        wickUpColor: "#26a69a",
+        wickDownColor: "#ef5350",
+      });
+
+      // Đường EMA(5) Màu vàng
+      const ema5Series = chart.addSeries(LineSeries, {
+        color: "#f1e05a",
+        lineWidth: 1,
+        crosshairMarkerVisible: false,
+        priceLineVisible: false,
+        title: "EMA 5",
+      });
+
+      // Đường EMA(10) Màu tím
+      const ema10Series = chart.addSeries(LineSeries, {
+        color: "#a371f7",
+        lineWidth: 1,
+        crosshairMarkerVisible: false,
+        priceLineVisible: false,
+        title: "EMA 10",
+      });
+
+      // Bắt sự kiện Crosshair Hover để cập nhật OHLC Live Ribbon
+      chart.subscribeCrosshairMove((param) => {
+        if (!param || !param.time || !param.seriesData) {
+          setHoveredBar(null);
+          return;
         }
-      }
-      return emaArr;
-    };
-
-    const ema5 = useMemo(() => calculateEMA(displayedBars, 5), [displayedBars]);
-    const ema10 = useMemo(
-      () => calculateEMA(displayedBars, 10),
-      [displayedBars],
-    );
-
-    // Vẽ Canvas Candlestick Pro Chart
-    const drawChart = useCallback(() => {
-      const canvas = canvasRef.current;
-      if (!canvas || !displayedBars.length) return;
-
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      // Handle high DPI
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.scale(dpr, dpr);
-
-      const width = rect.width;
-      const height = rect.height;
-
-      // Clear background
-      ctx.fillStyle = "#070a0f";
-      ctx.fillRect(0, 0, width, height);
-
-      const paddingRight = 65; // Price scale
-      const paddingBottom = 26; // Time scale
-      const paddingTop = 28; // Header info space
-      const chartWidth = width - paddingRight;
-      const chartHeight = height - paddingBottom - paddingTop;
-      const volumeHeight = Math.min(80, chartHeight * 0.22);
-      const candleAreaHeight = chartHeight - volumeHeight - 10;
-
-      // Tìm Min/Max Price bao gồm cả Kèo (Entry, TP, SL)
-      let minPrice = displayedBars.length
-        ? Math.min(...displayedBars.map((b) => b.low))
-        : 1935;
-      let maxPrice = displayedBars.length
-        ? Math.max(...displayedBars.map((b) => b.high))
-        : 1965;
-      if (slPrice != null) {
-        minPrice = Math.min(minPrice, slPrice - 2);
-      }
-      if (tpPrice != null) {
-        maxPrice = Math.max(maxPrice, tpPrice + 2);
-      }
-      const priceRange = maxPrice - minPrice || 1;
-
-      const maxVolume = Math.max(...displayedBars.map((b) => b.volume), 1);
-
-      // Helpers to convert data to pixels
-      const getY = (price: number) => {
-        return (
-          paddingTop +
-          candleAreaHeight -
-          ((price - minPrice) / priceRange) * candleAreaHeight
-        );
-      };
-      const getVolY = (vol: number) => {
-        const volAreaTop = paddingTop + candleAreaHeight + 10;
-        return volAreaTop + volumeHeight - (vol / maxVolume) * volumeHeight;
-      };
-
-      const count = displayedBars.length;
-      const candleSpacing = chartWidth / count;
-      const candleWidth = Math.max(2, candleSpacing * 0.7);
-
-      // 1. Grid Lines & Price Labels
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
-      ctx.lineWidth = 1;
-      ctx.fillStyle = "#94a3b8";
-      ctx.font = "10px JetBrains Mono, monospace";
-      ctx.textAlign = "left";
-      ctx.textBaseline = "middle";
-
-      const priceStep = priceRange > 30 ? 10 : priceRange > 15 ? 5 : 2;
-      const startGridPrice = Math.ceil(minPrice / priceStep) * priceStep;
-
-      for (let p = startGridPrice; p <= maxPrice; p += priceStep) {
-        const y = getY(p);
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(chartWidth, y);
-        ctx.stroke();
-
-        ctx.fillText(p.toFixed(1), chartWidth + 6, y);
-      }
-
-      // 2. Kèo Quant Target Lines (Entry, TP, SL, Ref)
-      const drawLevel = (
-        price: number,
-        color: string,
-        label: string,
-        isDashed = true,
-      ) => {
-        const y = getY(price);
-        if (y < paddingTop || y > paddingTop + candleAreaHeight) return;
-
-        ctx.save();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1.5;
-        if (isDashed) ctx.setLineDash([4, 4]);
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(chartWidth, y);
-        ctx.stroke();
-
-        // Badge on right axis
-        ctx.setLineDash([]);
-        ctx.fillStyle = color;
-        ctx.fillRect(chartWidth + 1, y - 9, 62, 18);
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 9px JetBrains Mono, monospace";
-        ctx.fillText(price.toFixed(1), chartWidth + 5, y);
-
-        // Label on chart
-        ctx.fillStyle = color;
-        ctx.font = "bold 10px sans-serif";
-        ctx.fillText(label, 8, y - 6);
-        ctx.restore();
-      };
-
-      const refPrice = openPrice;
-      if (refPrice > 0) {
-        drawLevel(
-          refPrice,
-          "#484f58",
-          `${t("ref_level_label")}: ${refPrice.toFixed(1)}`,
-          true,
-        );
-      }
-      if (entryPrice != null) {
-        drawLevel(
-          entryPrice,
-          "#3fb950",
-          `${side} ${t("stop_entry_level")}: ${entryPrice.toFixed(1)}`,
-          true,
-        );
-      }
-      if (tpPrice != null) {
-        drawLevel(tpPrice, "#58a6ff", `TP: ${tpPrice.toFixed(1)}`, true);
-      }
-      if (slPrice != null) {
-        drawLevel(slPrice, "#f85149", `SL: ${slPrice.toFixed(1)}`, true);
-      }
-
-      // Live Close Line & Pill
-      const currentClose = currentPrice;
-      const yCurrent = getY(currentClose);
-      if (yCurrent >= paddingTop && yCurrent <= paddingTop + candleAreaHeight) {
-        ctx.save();
-        ctx.strokeStyle = "#26a69a";
-        ctx.lineWidth = 1;
-        ctx.setLineDash([2, 3]);
-        ctx.beginPath();
-        ctx.moveTo(0, yCurrent);
-        ctx.lineTo(chartWidth, yCurrent);
-        ctx.stroke();
-
-        // Entrade Green Pill on Right Price Axis
-        ctx.setLineDash([]);
-        ctx.fillStyle = "#26a69a";
-        ctx.fillRect(chartWidth + 1, yCurrent - 9, 62, 18);
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 9px JetBrains Mono, monospace";
-        ctx.fillText(currentClose.toFixed(2), chartWidth + 5, yCurrent);
-        ctx.restore();
-      }
-
-      // 3. Draw Volume Bars
-      const volAreaTop = paddingTop + candleAreaHeight + 10;
-      for (let i = 0; i < count; i++) {
-        const b = displayedBars[i];
-        const x = i * candleSpacing + candleSpacing / 2;
-        const isUp = b.close >= b.open;
-        const vY = getVolY(b.volume);
-        const vH = volAreaTop + volumeHeight - vY;
-
-        ctx.fillStyle = isUp
-          ? "rgba(38, 166, 154, 0.35)"
-          : "rgba(239, 83, 80, 0.35)";
-        ctx.fillRect(x - candleWidth / 2, vY, candleWidth, vH);
-      }
-
-      // 4. Draw Candlesticks (Wick & Body)
-      for (let i = 0; i < count; i++) {
-        const b = displayedBars[i];
-        const x = i * candleSpacing + candleSpacing / 2;
-        const isUp = b.close >= b.open;
-        const color = isUp ? "#26a69a" : "#ef5350";
-
-        const yOpen = getY(b.open);
-        const yClose = getY(b.close);
-        const yHigh = getY(b.high);
-        const yLow = getY(b.low);
-
-        // Wick
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.moveTo(x, yHigh);
-        ctx.lineTo(x, yLow);
-        ctx.stroke();
-
-        // Body
-        const bodyY = Math.min(yOpen, yClose);
-        const bodyH = Math.max(2, Math.abs(yClose - yOpen));
-        ctx.fillStyle = color;
-        ctx.fillRect(x - candleWidth / 2, bodyY, candleWidth, bodyH);
-
-        // Time X-Axis labels (Luôn hiển thị chuẩn giờ Việt Nam UTC+7)
-        if (i % Math.ceil(count / 7) === 0 || i === count - 1) {
-          const date = new Date(b.time * 1000);
-          const timeFormatter = new Intl.DateTimeFormat("vi-VN", {
-            timeZone: "Asia/Ho_Chi_Minh",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
+        const data = param.seriesData.get(candleSeries) as any;
+        if (data) {
+          setHoveredBar({
+            time: Number(param.time),
+            open: data.open,
+            high: data.high,
+            low: data.low,
+            close: data.close,
+            volume: 0,
           });
-          const dateFormatter = new Intl.DateTimeFormat("vi-VN", {
-            timeZone: "Asia/Ho_Chi_Minh",
-            day: "2-digit",
-            month: "2-digit",
-          });
-          const timeStr = timeFormatter.format(date);
-          const dayStr = dateFormatter.format(date);
-          ctx.fillStyle = "#6e7681";
-          ctx.font = "9px JetBrains Mono, monospace";
-          ctx.textAlign = "center";
-          ctx.fillText(
-            timeframe === "15m" ? `${dayStr} ${timeStr}` : timeStr,
-            x,
-            height - 8,
-          );
+        } else {
+          setHoveredBar(null);
+        }
+      });
+
+      chartRef.current = chart;
+      candleSeriesRef.current = candleSeries;
+      volumeSeriesRef.current = volumeSeries;
+      ema5SeriesRef.current = ema5Series;
+      ema10SeriesRef.current = ema10Series;
+
+      // Xử lý Resize mượt mà với ResizeObserver
+      const resizeObserver = new ResizeObserver((entries) => {
+        if (!entries || entries.length === 0) return;
+        const entry = entries[0];
+        const { width, height } = entry.contentRect;
+        chart.applyOptions({ width, height });
+      });
+      resizeObserver.observe(container);
+
+      return () => {
+        resizeObserver.disconnect();
+        chart.remove();
+        chartRef.current = null;
+        candleSeriesRef.current = null;
+        volumeSeriesRef.current = null;
+        ema5SeriesRef.current = null;
+        ema10SeriesRef.current = null;
+      };
+    }, []);
+
+    // Cập nhật Dữ liệu & Tính toán EMA vào Lightweight Chart
+    useEffect(() => {
+      if (
+        !candleSeriesRef.current ||
+        !volumeSeriesRef.current ||
+        !ema5SeriesRef.current ||
+        !ema10SeriesRef.current ||
+        !chartData.length
+      )
+        return;
+
+      // Format dữ liệu nến cho Lightweight Charts (yêu cầu time tăng dần không trùng lặp)
+      const sorted = [...chartData].sort((a, b) => a.time - b.time);
+      const uniqueBars: CandleBar[] = [];
+      const seenTimes = new Set<number>();
+      for (const b of sorted) {
+        if (!seenTimes.has(b.time)) {
+          seenTimes.add(b.time);
+          uniqueBars.push(b);
         }
       }
 
-      // 5. Draw EMA Lines
-      const drawIndicatorLine = (data: (number | null)[], color: string) => {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        let started = false;
-        for (let i = 0; i < count; i++) {
-          const val = data[i];
-          if (val === null) continue;
-          const x = i * candleSpacing + candleSpacing / 2;
-          const y = getY(val);
-          if (!started) {
-            ctx.moveTo(x, y);
-            started = true;
-          } else {
-            ctx.lineTo(x, y);
+      const candlePoints = uniqueBars.map((b) => ({
+        time: b.time as any,
+        open: b.open,
+        high: b.high,
+        low: b.low,
+        close: b.close,
+      }));
+
+      const volumePoints = uniqueBars.map((b) => ({
+        time: b.time as any,
+        value: b.volume,
+        color:
+          b.close >= b.open
+            ? "rgba(38, 166, 154, 0.35)"
+            : "rgba(239, 83, 80, 0.35)",
+      }));
+
+      // Tính toán EMA(5) & EMA(10)
+      const calcEMA = (period: number) => {
+        const k = 2 / (period + 1);
+        const res: { time: any; value: number }[] = [];
+        let prev: number | null = null;
+        for (let i = 0; i < uniqueBars.length; i++) {
+          const price = uniqueBars[i].close;
+          if (i === period - 1) {
+            let sum = 0;
+            for (let j = 0; j < period; j++) sum += uniqueBars[j].close;
+            prev = sum / period;
+            res.push({ time: uniqueBars[i].time as any, value: prev });
+          } else if (prev !== null && i >= period) {
+            prev = price * k + prev * (1 - k);
+            res.push({
+              time: uniqueBars[i].time as any,
+              value: Number(prev.toFixed(2)),
+            });
           }
         }
-        ctx.stroke();
+        return res;
       };
 
-      drawIndicatorLine(ema5, "#f1e05a"); // Yellow EMA5
-      drawIndicatorLine(ema10, "#a371f7"); // Purple EMA10
-    }, [
-      displayedBars,
-      slPrice,
-      tpPrice,
-      entryPrice,
-      side,
-      openPrice,
-      currentPrice,
-      ema5,
-      ema10,
-      timeframe,
-      hoveredBar,
-      t,
-    ]);
+      candleSeriesRef.current.setData(candlePoints);
+      volumeSeriesRef.current.setData(volumePoints);
+      ema5SeriesRef.current.setData(calcEMA(5));
+      ema10SeriesRef.current.setData(calcEMA(10));
+    }, [chartData]);
 
-    // Redraw when bars or window resize
+    // Đồng bộ đường kẻ Kèo Quant (Entry, TP, SL) trên TradingView
     useEffect(() => {
-      drawChart();
-      const handleResize = () => drawChart();
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, [drawChart]);
+      const candleSeries = candleSeriesRef.current;
+      if (!candleSeries) return;
 
-    // Mouse move handler for canvas hover
-    const handleCanvasMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-      const canvas = canvasRef.current;
-      if (!canvas || !displayedBars.length) return;
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const paddingRight = 65;
-      const chartWidth = rect.width - paddingRight;
-      const candleSpacing = chartWidth / displayedBars.length;
-      const idx = Math.floor(x / candleSpacing);
-      if (idx >= 0 && idx < displayedBars.length) {
-        setHoveredBar(displayedBars[idx]);
+      // Xóa các đường kẻ cũ
+      if (entryLineRef.current) {
+        try {
+          candleSeries.removePriceLine(entryLineRef.current);
+        } catch {}
+        entryLineRef.current = null;
+      }
+      if (tpLineRef.current) {
+        try {
+          candleSeries.removePriceLine(tpLineRef.current);
+        } catch {}
+        tpLineRef.current = null;
+      }
+      if (slLineRef.current) {
+        try {
+          candleSeries.removePriceLine(slLineRef.current);
+        } catch {}
+        slLineRef.current = null;
+      }
+
+      // Vẽ đường Entry
+      if (entryPrice != null) {
+        entryLineRef.current = candleSeries.createPriceLine({
+          price: entryPrice,
+          color: side === "LONG" ? "#10b981" : "#f43f5e",
+          lineWidth: 2,
+          lineStyle: LineStyle.Dashed,
+          axisLabelVisible: true,
+          title: `${side} STOP`,
+        });
+      }
+
+      // Vẽ đường TP
+      if (tpPrice != null) {
+        tpLineRef.current = candleSeries.createPriceLine({
+          price: tpPrice,
+          color: "#38bdf8",
+          lineWidth: 2,
+          lineStyle: LineStyle.Dashed,
+          axisLabelVisible: true,
+          title: "TARGET TP",
+        });
+      }
+
+      // Vẽ đường SL
+      if (slPrice != null) {
+        slLineRef.current = candleSeries.createPriceLine({
+          price: slPrice,
+          color: "#f43f5e",
+          lineWidth: 2,
+          lineStyle: LineStyle.Dashed,
+          axisLabelVisible: true,
+          title: "STOP LOSS",
+        });
+      }
+    }, [entryPrice, tpPrice, slPrice, side]);
+
+    // Các hàm Zoom Controls
+    const handleZoomIn = () => {
+      const timeScale = chartRef.current?.timeScale();
+      if (!timeScale) return;
+      const logicalRange = timeScale.getVisibleLogicalRange();
+      if (logicalRange) {
+        const delta = (logicalRange.to - logicalRange.from) * 0.2;
+        timeScale.setVisibleLogicalRange({
+          from: logicalRange.from + delta,
+          to: logicalRange.to - delta,
+        });
       }
     };
 
-    const handleCanvasMouseLeave = () => {
-      setHoveredBar(null);
+    const handleZoomOut = () => {
+      const timeScale = chartRef.current?.timeScale();
+      if (!timeScale) return;
+      const logicalRange = timeScale.getVisibleLogicalRange();
+      if (logicalRange) {
+        const delta = (logicalRange.to - logicalRange.from) * 0.25;
+        timeScale.setVisibleLogicalRange({
+          from: logicalRange.from - delta,
+          to: logicalRange.to + delta,
+        });
+      }
     };
 
-    const activeBar = hoveredBar || displayedBars[displayedBars.length - 1];
+    const handleResetZoom = () => {
+      chartRef.current?.timeScale().resetTimeScale();
+    };
+
+    const activeBar = hoveredBar || chartData[chartData.length - 1];
     const activeBarStats = useMemo(() => {
       if (!activeBar) return null;
       const isUp = activeBar.close >= activeBar.open;
@@ -494,13 +494,17 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       >
         {/* Top Header Controls Bar */}
         <div className="flex flex-wrap items-center justify-between border-b border-white/[0.08] bg-[#090d16]/90 backdrop-blur-md px-3 py-2 gap-2 text-xs">
-          {/* Chế độ Chart & Ticker Switcher */}
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Badge: Nến Thật VN30F1M */}
-            <div className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 font-bold text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.12)]">
-              <Activity className="h-3.5 w-3.5 text-emerald-400" />
-              <span>
-                {t("real_candles")} ({timeframe})
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <span className="font-extrabold tracking-wider text-white">
+                {symbol}
+              </span>
+              <span className="rounded bg-sky-500/10 px-1.5 py-0.5 text-[10px] font-bold text-sky-400 border border-sky-500/20">
+                VN30
+              </span>
+              {/* Official TradingView Brand Tag */}
+              <span className="flex items-center gap-1 rounded bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-bold text-blue-400 border border-blue-500/20 font-sans shadow-sm">
+                TradingView™ Engine
               </span>
             </div>
 
@@ -530,28 +534,24 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
               </button>
             </div>
 
-            {/* Zoom controls cho Canvas */}
+            {/* Zoom controls cho Chart */}
             <div className="flex items-center gap-0.5 border-l border-white/10 pl-2 text-slate-400">
               <button
-                onClick={() =>
-                  setVisibleCount((prev) => Math.max(20, prev - 15))
-                }
+                onClick={handleZoomIn}
                 className="rounded p-1 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
                 title={t("zoom_in")}
               >
                 <ZoomIn className="h-3.5 w-3.5" />
               </button>
               <button
-                onClick={() =>
-                  setVisibleCount((prev) => Math.min(180, prev + 15))
-                }
+                onClick={handleZoomOut}
                 className="rounded p-1 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
                 title={t("zoom_out")}
               >
                 <ZoomOut className="h-3.5 w-3.5" />
               </button>
               <button
-                onClick={() => setVisibleCount(60)}
+                onClick={handleResetZoom}
                 className="rounded p-1 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
                 title={t("reset_zoom")}
               >
@@ -605,17 +605,55 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
             {activeBar && activeBarStats && (
               <>
                 <span className="text-slate-600">·</span>
-                <span className="text-slate-400 text-[10px]">{activeBarStats.dtStr}</span>
+                <span className="text-slate-400 text-[10px]">
+                  {activeBarStats.dtStr}
+                </span>
                 <span className="text-slate-600">·</span>
                 <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
-                  <span>O: <strong className="text-slate-200">{activeBar.open.toFixed(1)}</strong></span>
-                  <span>H: <strong className="text-emerald-400">{activeBar.high.toFixed(1)}</strong></span>
-                  <span>L: <strong className="text-rose-400">{activeBar.low.toFixed(1)}</strong></span>
-                  <span>C: <strong className={activeBarStats.isUp ? "text-emerald-400" : "text-rose-400"}>{activeBar.close.toFixed(1)}</strong></span>
-                  <span className={`font-bold ${activeBarStats.isUp ? "text-emerald-400" : "text-rose-400"}`}>
-                    ({activeBarStats.diff >= 0 ? "+" : ""}{activeBarStats.diff.toFixed(1)} / {activeBarStats.pct}%)
+                  <span>
+                    O:{" "}
+                    <strong className="text-slate-200">
+                      {activeBar.open.toFixed(1)}
+                    </strong>
                   </span>
-                  <span className="hidden xl:inline text-slate-400">{t("vol_label")} <strong className="text-slate-200">{activeBar.volume.toLocaleString()}</strong></span>
+                  <span>
+                    H:{" "}
+                    <strong className="text-emerald-400">
+                      {activeBar.high.toFixed(1)}
+                    </strong>
+                  </span>
+                  <span>
+                    L:{" "}
+                    <strong className="text-rose-400">
+                      {activeBar.low.toFixed(1)}
+                    </strong>
+                  </span>
+                  <span>
+                    C:{" "}
+                    <strong
+                      className={
+                        activeBarStats.isUp
+                          ? "text-emerald-400"
+                          : "text-rose-400"
+                      }
+                    >
+                      {activeBar.close.toFixed(1)}
+                    </strong>
+                  </span>
+                  <span
+                    className={`font-bold ${activeBarStats.isUp ? "text-emerald-400" : "text-rose-400"}`}
+                  >
+                    ({activeBarStats.diff >= 0 ? "+" : ""}
+                    {activeBarStats.diff.toFixed(1)} / {activeBarStats.pct}%)
+                  </span>
+                  {activeBar.volume > 0 && (
+                    <span className="hidden xl:inline text-slate-400">
+                      {t("vol_label")}{" "}
+                      <strong className="text-slate-200">
+                        {activeBar.volume.toLocaleString()}
+                      </strong>
+                    </span>
+                  )}
                 </div>
               </>
             )}
@@ -634,24 +672,26 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
           </div>
         </div>
 
-        {/* Main Chart Container */}
+        {/* Main Chart Container - TradingView Lightweight Canvas Engine */}
         <div className="relative flex-1 w-full overflow-hidden bg-[#070a0f]">
-          <div className="relative h-full w-full">
-            {isLoadingCandles && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#070a0f]/80 backdrop-blur-sm">
-                <div className="flex items-center gap-2 text-xs font-semibold text-sky-400">
-                  <RefreshCw className="h-4 w-4 animate-spin" />
-                  <span>{t("loading_candles", { tf: timeframe })}</span>
-                </div>
+          {isLoadingCandles && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#070a0f]/80 backdrop-blur-sm">
+              <div className="flex items-center gap-2 text-xs font-semibold text-sky-400">
+                <RefreshCw className="h-4 w-4 animate-spin" />
+                <span>{t("loading_candles", { tf: timeframe })}</span>
               </div>
-            )}
-            <canvas
-              ref={canvasRef}
-              onMouseMove={handleCanvasMouseMove}
-              onMouseLeave={handleCanvasMouseLeave}
-              className="h-full w-full cursor-crosshair"
-            />
+            </div>
+          )}
+
+          {/* Watermark Logo TradingView Tinh Tế Phía Dưới */}
+          <div className="pointer-events-none absolute bottom-8 left-4 z-0 select-none opacity-15">
+            <span className="font-mono text-3xl font-black tracking-widest text-slate-500">
+              TRADINGVIEW
+            </span>
           </div>
+
+          {/* Canvas Mount Point */}
+          <div ref={chartContainerRef} className="h-full w-full" />
         </div>
 
         {/* Bottom Status Bar - Live Quant Stream */}
@@ -755,7 +795,9 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
                 <span className="text-slate-500 mx-1">·</span>
                 <span>
                   SL{" "}
-                  <strong className="text-rose-400">{slPrice.toFixed(1)}</strong>
+                  <strong className="text-rose-400">
+                    {slPrice.toFixed(1)}
+                  </strong>
                 </span>
               </span>
             )}
