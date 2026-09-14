@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getLatestMarketSnapshot } from "@/lib/server/market/market-service";
 import {
-  generateCanonicalQuantPlan,
+  getLatestMarketSnapshot,
+  getDailyMarketMetrics,
+} from "@/lib/server/market/market-service";
+import {
+  generateMultiEnginePortfolio,
   getVietnamTradingDate,
 } from "@/lib/server/quant/strategy-engine";
 import { computeConsensus } from "@/lib/server/quant/consensus";
@@ -20,7 +23,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const snapshot = await getLatestMarketSnapshot();
+    const [snapshot, metrics] = await Promise.all([
+      getLatestMarketSnapshot(),
+      getDailyMarketMetrics(),
+    ]);
 
     // Cho phép người dùng override OHLC thủ công nếu có
     if (body.session_open != null) snapshot.open = Number(body.session_open);
@@ -29,16 +35,7 @@ export async function POST(req: NextRequest) {
     if (body.live_price != null) snapshot.current = Number(body.live_price);
 
     const todayStr = getVietnamTradingDate();
-    const canonicalPlan = generateCanonicalQuantPlan(
-      todayStr,
-      snapshot.current || 1940.0,
-      26.5,
-      1944.0,
-      1938.0,
-      undefined,
-      snapshot
-    );
-    const plans = [canonicalPlan];
+    const plans = generateMultiEnginePortfolio(todayStr, snapshot, metrics);
     const consensus = computeConsensus(plans);
 
     // Lấy thông số kiểm định động từ CSDL

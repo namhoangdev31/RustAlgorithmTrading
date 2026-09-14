@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
-import { getLatestMarketSnapshot } from "@/lib/server/market/market-service";
 import {
-  generateCanonicalQuantPlan,
+  getLatestMarketSnapshot,
+  getDailyMarketMetrics,
+} from "@/lib/server/market/market-service";
+import {
+  generateMultiEnginePortfolio,
   getVietnamTradingDate,
 } from "@/lib/server/quant/strategy-engine";
 import { computeConsensus } from "@/lib/server/quant/consensus";
@@ -11,29 +14,25 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const snapshot = await getLatestMarketSnapshot();
+    const [snapshot, metrics] = await Promise.all([
+      getLatestMarketSnapshot(),
+      getDailyMarketMetrics(),
+    ]);
     const todayStr = getVietnamTradingDate();
 
-    // Tạo đúng 1 kèo duy nhất chuẩn bị cho phiên hôm nay
-    const canonicalPlan = generateCanonicalQuantPlan(
-      todayStr,
-      snapshot.current || 1940.0,
-      26.5,
-      1944.0,
-      1938.0,
-      undefined,
-      snapshot
-    );
+    // Sinh tổ hợp 3 Engine định lượng đầy đủ (simcarrry6, AllDaysLadder, CanonicalBreakout)
+    const plans = generateMultiEnginePortfolio(todayStr, snapshot, metrics);
+    const consensus = computeConsensus(plans);
 
-    // Tự động lưu kèo vào Database (BfxpsTradingPlan)
+    // Kèo chuẩn tắc CanonicalBreakout để lưu DB và quản trị thực thi
+    const canonicalPlan = plans.find((p) => p.engine === "CanonicalDirectionalBreakout") || plans[0];
+
+    // Tự động lưu kèo chủ đạo vào Database (BfxpsTradingPlan)
     try {
       await saveDailyPlanToDb(canonicalPlan);
     } catch (dbErr: any) {
       console.warn("DB save plan warning:", dbErr?.message);
     }
-
-    const plans = [canonicalPlan];
-    const consensus = computeConsensus(plans);
 
     let historySummary = null;
     try {
@@ -44,8 +43,9 @@ export async function GET() {
     return NextResponse.json({
       ok: true,
       service: "Lepos Trading Bot Advisor",
-      version: "10.0.1",
+      version: "10.1.0",
       live_market: snapshot,
+      metrics,
       freshness: {
         level: "GREEN",
         status: "FRESH",
