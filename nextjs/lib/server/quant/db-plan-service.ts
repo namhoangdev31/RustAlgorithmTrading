@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/server/prisma";
 import { Prisma } from "@/prisma/generated/client";
 
+import { ExecutionState } from "./types";
+
 export interface CanonicalPlanInput {
   planId?: string;
   date: string;
@@ -9,6 +11,7 @@ export interface CanonicalPlanInput {
   slPrice: number;
   tpPrice: number;
   reason?: string;
+  execution?: ExecutionState;
 }
 
 export interface TradeSettlementResult {
@@ -26,7 +29,7 @@ export interface TradeSettlementResult {
 }
 
 /**
- * 1. Lưu hoặc cập nhật Kèo mới vào DB (Trading Plan cho ngày tương lai)
+ * 1. Tự động Lưu hoặc Cập nhật Kèo & Trạng thái Khớp Lệnh Realtime vào DB (Hoàn toàn tự động hóa)
  */
 export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
   const planDate = new Date(`${plan.date}T00:00:00.000Z`);
@@ -34,6 +37,48 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
   // Bỏ qua không tạo/lưu kèo cho ngày Thứ Bảy (6) hoặc Chủ Nhật (0)
   if (dayOfWeek === 0 || dayOfWeek === 6) {
     return null;
+  }
+
+  const exec = plan.execution;
+  let status = "PENDING";
+  let exitType: string | null = null;
+  let exitPrice: number | null = null;
+  let exitMinute: string | null = null;
+  let pnlPoints: number | null = null;
+  let isWin: boolean | null = null;
+  let notes = plan.reason || "Kèo định lượng thực chiến tự động";
+
+  if (exec && exec.isFilled) {
+    pnlPoints = exec.livePnlPoints ?? 0;
+    isWin = pnlPoints > 0;
+    if (exec.settled) {
+      status =
+        exec.status === "TP_EXIT"
+          ? "FILLED_TP"
+          : exec.status === "EXIT_SL"
+          ? "FILLED_SL"
+          : exec.status === "ATC_EXIT"
+          ? "FILLED_ATC"
+          : "FILLED_TRAIL";
+      exitType =
+        exec.status === "TP_EXIT"
+          ? "TP"
+          : exec.status === "EXIT_SL"
+          ? "SL"
+          : exec.status === "BE_EXIT"
+          ? "BE"
+          : exec.status === "TRAIL_EXIT"
+          ? "TRAIL"
+          : "ATC";
+      exitPrice = exec.exitPrice ?? null;
+      exitMinute = exec.exitTime ?? "14:45";
+      notes = `Tự động chốt vị thế ${exitType} lúc ${exitMinute}, PnL: ${pnlPoints > 0 ? "+" : ""}${pnlPoints}đ`;
+    } else {
+      status = "FILLED";
+      exitType = "FILLED";
+      exitMinute = exec.exitTime || "11:30";
+      notes = `Tự động khớp vị thế ${plan.side} @ ${exec.avgEntryPrice.toFixed(1)}, PnL Live: ${pnlPoints > 0 ? "+" : ""}${pnlPoints}đ`;
+    }
   }
 
   return prisma.bfxpsTradingPlan.upsert({
@@ -48,9 +93,15 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
       entryPrice: new Prisma.Decimal(plan.entryPrice),
       tpPrice: new Prisma.Decimal(plan.tpPrice),
       slPrice: new Prisma.Decimal(plan.slPrice),
-      status: "PENDING",
-      r5State: "PRE_OPEN",
+      status,
+      r5State: exec?.isFilled ? "FILLED" : "PRE_OPEN",
       isCanonical: true,
+      exitType: exitType ?? undefined,
+      exitPrice: exitPrice != null ? new Prisma.Decimal(exitPrice) : undefined,
+      exitMinute: exitMinute ?? undefined,
+      pnlPoints: pnlPoints != null ? new Prisma.Decimal(pnlPoints) : undefined,
+      isWin: isWin != null ? isWin : undefined,
+      notes,
     },
     create: {
       date: planDate,
@@ -62,9 +113,15 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
       tpPrice: new Prisma.Decimal(plan.tpPrice),
       slPrice: new Prisma.Decimal(plan.slPrice),
       maxCap: new Prisma.Decimal(0.3),
-      r5State: "PRE_OPEN",
-      status: "PENDING",
+      r5State: exec?.isFilled ? "FILLED" : "PRE_OPEN",
+      status,
       isCanonical: true,
+      exitType,
+      exitPrice: exitPrice != null ? new Prisma.Decimal(exitPrice) : null,
+      exitMinute,
+      pnlPoints: pnlPoints != null ? new Prisma.Decimal(pnlPoints) : null,
+      isWin,
+      notes,
     },
   });
 }
