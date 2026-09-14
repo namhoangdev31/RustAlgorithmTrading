@@ -53,7 +53,8 @@ export function generateSimCarry6Plan(
   expectedHigh?: number,
   expectedLow?: number,
   previousShortCutloss?: number,
-  config?: SimCarryConfig
+  config?: SimCarryConfig,
+  swingHigh5d?: number
 ): TradingPlan {
   const basisThreshold = config?.basisThreshold ?? DEFAULT_SIMCARRY_CONFIG.basisThreshold;
   const atrMultiplier = config?.atrMultiplier ?? DEFAULT_SIMCARRY_CONFIG.atrMultiplier;
@@ -65,19 +66,60 @@ export function generateSimCarry6Plan(
   const isPriceStrong = snapshot.current >= refPrice;
   const side: Direction = basis < basisThreshold || isPriceStrong ? "LONG" : "SHORT";
 
-  // 2. Tính mức giá Entry
-  const entryDelta = Number((atrMultiplier * atr5d).toFixed(1));
-  const entryPrice = side === "LONG"
-    ? Number((refPrice + entryDelta).toFixed(1))
-    : Number((refPrice - entryDelta).toFixed(1));
+  // 2. Tính mức giá Entry & Order Type thích ứng biên độ thực tế
+  // Khi thị trường đã mở cửa: Vào lệnh Limit tại vùng Tham chiếu (như web gốc ai.beefx.com ENTRY 1940.0)
+  // hoặc vào theo giá mở cửa nếu chưa có cản
+  let entryPrice: number;
+  let orderType: "STOP" | "LIMIT" = "LIMIT";
+
+  if (snapshot.open > 0 && Math.abs(snapshot.open - refPrice) >= 2.0) {
+    // Phiên có gap: Ưu tiên điểm Limit tại Tham chiếu (đón nhịp hồi test tham chiếu)
+    entryPrice = Number(refPrice.toFixed(1));
+    orderType = "LIMIT";
+  } else {
+    const entryDelta = Number((atrMultiplier * atr5d).toFixed(1));
+    entryPrice = side === "LONG"
+      ? Number((refPrice + entryDelta).toFixed(1))
+      : Number((refPrice - entryDelta).toFixed(1));
+    orderType = snapshot.current > 0
+      ? (side === "SHORT" ? (entryPrice > snapshot.current ? "LIMIT" : "STOP") : (entryPrice < snapshot.current ? "LIMIT" : "STOP"))
+      : "STOP";
+  }
 
   // 3. Mục tiêu TP theo cấu hình chiến lược
   const tpPrice = side === "LONG"
     ? Number((entryPrice + tpPoints).toFixed(1))
     : Number((entryPrice - tpPoints).toFixed(1));
 
-  // 4. Mức cắt lỗ SL theo cơ chế LATEST_SHORT_CUTLOSS_REVERSAL
-  const slPrice = resolveCutloss(side, swingLow5d, previousShortCutloss);
+  // 4. Mức cắt lỗ SL theo cơ chế LATEST_SHORT_CUTLOSS_REVERSAL & An toàn biên độ thực tế
+  let slPrice = resolveCutloss(
+    side,
+    swingLow5d,
+    previousShortCutloss,
+    swingHigh5d ?? expectedHigh
+  );
+
+  // Đảm bảo khoảng cách SL thích ứng biên độ thực tế (chuẩn 8.0 - 10.0đ, nằm ngoài đỉnh/đáy sáng)
+  const safeSlDistance = Math.min(12.0, Math.max(8.0, Number((0.35 * atr5d).toFixed(1))));
+  if (side === "SHORT") {
+    const sessionHigh = Math.max(snapshot.high ?? refPrice, refPrice);
+    const bufferHigh = Number((sessionHigh + 3.3).toFixed(1));
+    const minDistanceSl = Number((entryPrice + safeSlDistance).toFixed(1));
+    slPrice = Math.max(bufferHigh, minDistanceSl);
+    if (previousShortCutloss && previousShortCutloss > entryPrice && previousShortCutloss < entryPrice + 15.0) {
+      slPrice = Math.max(slPrice, previousShortCutloss);
+    }
+  } else {
+    // Với LONG: SL phải dưới đáy sáng và cách entry an toàn
+    const sessionLow = Math.min(snapshot.low ?? refPrice, refPrice);
+    const bufferLow = Number((sessionLow - 3.3).toFixed(1));
+    const minDistanceSl = Number((entryPrice - safeSlDistance).toFixed(1));
+    if (previousShortCutloss && previousShortCutloss < entryPrice && previousShortCutloss > 0) {
+      slPrice = previousShortCutloss;
+    } else {
+      slPrice = Math.min(bufferLow, minDistanceSl);
+    }
+  }
 
   // 5. Đánh giá R5 tại Open
   const r5Eval = evaluateR5(side, snapshot.open, refPrice, slPrice);
@@ -91,7 +133,7 @@ export function generateSimCarry6Plan(
     profile: "SWING_T1",
     horizon: "t+1",
     side,
-    orderType: "STOP",
+    orderType,
     entryPrice,
     tpPrice,
     slPrice,
@@ -103,7 +145,7 @@ export function generateSimCarry6Plan(
     breakevenTrigger: trailingConfig.beTriggerPoints,
     expectedHigh,
     expectedLow,
-    resolvedSource: previousShortCutloss ? "LATEST_SHORT_CUTLOSS_REVERSAL" : "SWING_LOW_5D",
+    resolvedSource: previousShortCutloss ? "LATEST_SHORT_CUTLOSS_REVERSAL" : "ADAPTIVE_VOLATILITY_SWING",
   };
 }
 
@@ -128,7 +170,24 @@ export function generateAllDaysLadderPlan(
     : Number((entryPrice - tpDelta).toFixed(1));
   const maxCap = config?.maxCap ?? DEFAULT_LADDER_CONFIG.maxCap;
 
-  const r5Eval = evaluateR5(side, snapshot.open, refPrice, slPrice);
+  // Tính SL an toàn cho AllDaysLadder:
+  // SL KHÔNG ĐƯỢC trùng entryPrice. Phải nằm ngoài toàn bộ các nấc rải + buffer an toàn (>= 6.0đ từ WAP)
+  let ladderSlPrice: number;
+  if (side === "SHORT") {
+    const highestStep = entryPrice + 4.0;
+    const peakHigh = Math.max(highestStep, snapshot.high ?? entryPrice);
+    ladderSlPrice = Math.max(Number((peakHigh + 3.3).toFixed(1)), slPrice > entryPrice ? slPrice : entryPrice + 8.0);
+  } else {
+    if (slPrice < entryPrice && slPrice > 0) {
+      ladderSlPrice = slPrice;
+    } else {
+      const lowestStep = entryPrice - 4.0;
+      const valleyLow = Math.min(lowestStep, snapshot.low ?? entryPrice);
+      ladderSlPrice = Math.min(Number((valleyLow - 3.3).toFixed(1)), entryPrice - 8.0);
+    }
+  }
+
+  const r5Eval = evaluateR5(side, snapshot.open, refPrice, ladderSlPrice);
 
   const ladderConfig: LadderConfig = {
     enabled: true,
@@ -150,14 +209,14 @@ export function generateAllDaysLadderPlan(
     ladderConfig,
     entryPrice,
     tpPrice,
-    slPrice,
+    slPrice: ladderSlPrice,
     maxCap,
     r5State: r5Eval.action,
     status: "ACTIVE_TODAY",
     isCanonical: true,
     expectedHigh,
     expectedLow,
-    resolvedSource: "CANONICAL_NATIVE",
+    resolvedSource: "ADAPTIVE_LADDER_SCALP",
   };
 }
 
@@ -275,7 +334,9 @@ export function generateMultiEnginePortfolio(
     swingLow5d,
     swingHigh5d,
     swingLow5d,
-    undefined
+    undefined,
+    undefined,
+    swingHigh5d
   );
   simCarryPlan.consensusWeight = 2.0;
 
