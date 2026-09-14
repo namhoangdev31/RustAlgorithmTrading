@@ -92,10 +92,10 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
 
     useEffect(() => {
       fetchCandles(timeframe, false);
-      // Auto-refresh nến mới theo chu kỳ 6s
+      // Tự động làm mới nến mới định kỳ mỗi 2 phút (120s) để tối ưu hiệu năng & tuyệt đối tránh lỗi rate limit 429
       const candleInterval = setInterval(() => {
         fetchCandles(timeframe, true);
-      }, 6000);
+      }, 120000);
       return () => clearInterval(candleInterval);
     }, [timeframe, fetchCandles]);
 
