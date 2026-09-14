@@ -99,7 +99,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       return () => clearInterval(candleInterval);
     }, [timeframe, fetchCandles]);
 
-    // Visible bars slice - sync latest bar in real time with snapshot.current
+    // Visible bars slice - sync latest bar in real time with snapshot
     const displayedBars = useMemo(() => {
       if (!candles.length) return [];
       const sliced = candles.slice(-visibleCount);
@@ -107,13 +107,37 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
 
       const bars = sliced.map((b) => ({ ...b }));
       const last = bars[bars.length - 1];
-      if (last) {
+      const snapTimeSec = snapshot.timestamp
+        ? Math.floor(new Date(snapshot.timestamp).getTime() / 1000)
+        : null;
+
+      // Nếu snapshot có cây nến phút mới hơn cây nến cuối trong candles (chênh lệch >= 60s trên khung 1m)
+      if (
+        timeframe === "1m" &&
+        snapTimeSec &&
+        last &&
+        snapTimeSec >= last.time + 60
+      ) {
+        const roundedTime = Math.floor(snapTimeSec / 60) * 60;
+        bars.push({
+          time: roundedTime,
+          open: snapshot.open || snapshot.current,
+          high: Math.max(snapshot.high || snapshot.current, snapshot.current),
+          low: Math.min(snapshot.low || snapshot.current, snapshot.current),
+          close: snapshot.current,
+          volume: Math.max(1, Math.round((snapshot.volume || 1000) / 100)),
+        });
+        if (bars.length > visibleCount) {
+          bars.shift();
+        }
+      } else if (last) {
+        // Cập nhật giá tick hiện tại vào cây nến đang chạy
         last.close = snapshot.current;
         if (snapshot.current > last.high) last.high = snapshot.current;
         if (snapshot.current < last.low) last.low = snapshot.current;
       }
       return bars;
-    }, [candles, visibleCount, snapshot?.current]);
+    }, [candles, visibleCount, snapshot, timeframe]);
 
     // Tính toán EMA(5) và EMA(10)
     const calculateEMA = (data: CandleBar[], period: number) => {
