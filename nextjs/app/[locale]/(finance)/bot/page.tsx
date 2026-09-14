@@ -552,6 +552,8 @@ export default function LeposTradingBotPage({
       <TradeHistoryModal
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
+        livePlans={plans}
+        liveSnapshot={snapshot}
       />
     </div>
   );

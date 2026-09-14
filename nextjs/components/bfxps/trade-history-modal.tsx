@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { TradingPlan, MarketSnapshot } from "@/lib/server/quant/types";
+
 export interface TradeItem {
   date: string;
   mode?: "LIVE" | "BACKTEST";
@@ -25,7 +27,7 @@ export interface TradeItem {
   slPrice: number;
   tpPrice: number;
   exitPrice: number;
-  exitType: "TP" | "SL" | "ATC" | "NO_FILL" | "PENDING" | "TRAIL" | "BE" | string;
+  exitType: "TP" | "SL" | "ATC" | "NO_FILL" | "PENDING" | "TRAIL" | "BE" | "FILLED" | string;
   exitMinute: string;
   pnl: number;
   isWin: boolean;
@@ -37,9 +39,16 @@ export interface TradeItem {
 interface TradeHistoryModalProps {
   isOpen: boolean;
   onClose: () => void;
+  livePlans?: TradingPlan[] | null;
+  liveSnapshot?: MarketSnapshot | null;
 }
 
-export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, onClose }) => {
+export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
+  isOpen,
+  onClose,
+  livePlans,
+  liveSnapshot,
+}) => {
   const t = useTranslations("Bfxps.history");
   const [trades, setTrades] = useState<TradeItem[]>([]);
   const [summary, setSummary] = useState<any>(null);
@@ -54,7 +63,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
   useEffect(() => {
     if (isOpen) {
       setLoading(true);
-      fetch("/api/bfxps/history")
+      fetch(`/api/bfxps/history?_t=${Date.now()}`, { cache: "no-store" })
         .then((res) => res.json())
         .then((data) => {
           if (data.ok) {
@@ -68,18 +77,52 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
     }
   }, [isOpen]);
 
+  // Đồng bộ hóa lệnh hôm nay (2026-09-14) với trạng thái khớp lệnh thời gian thực
+  const activeTrades = useMemo(() => {
+    if (!trades.length) return trades;
+    const todayPlan = livePlans?.[0] || livePlans?.find((p) => p.isCanonical);
+    if (!todayPlan) return trades;
+
+    return trades.map((item) => {
+      if (item.date === "2026-09-14" || item.date === todayPlan.date) {
+        const exec = todayPlan.execution;
+        if (exec && exec.isFilled) {
+          const isSettled = exec.settled;
+          const exitType = isSettled
+            ? (exec.status === "TP_EXIT" ? "TP" : exec.status === "EXIT_SL" ? "SL" : exec.status === "TRAIL_EXIT" ? "TRAIL" : exec.status === "BE_EXIT" ? "BE" : "ATC")
+            : "FILLED";
+          const pnl = exec.livePnlPoints;
+          const isWin = pnl > 0;
+          return {
+            ...item,
+            side: todayPlan.side,
+            entryPrice: exec.avgEntryPrice,
+            exitPrice: exec.exitPrice || (liveSnapshot?.current ?? exec.avgEntryPrice),
+            exitType,
+            exitMinute: exec.exitTime || item.exitMinute || "11:30",
+            pnl,
+            isWin,
+            status: isSettled ? "ĐÃ ĐÓNG" : "ĐANG GIỮ VỊ THẾ",
+            notes: `Lệnh Khớp Realtime lúc ${exec.exitTime || "11:30"}. Vị thế: ${todayPlan.side} @ ${exec.avgEntryPrice}`,
+          };
+        }
+      }
+      return item;
+    });
+  }, [trades, livePlans, liveSnapshot]);
+
   // Danh sách các tháng có trong dữ liệu
   const availableMonths = useMemo(() => {
     const months = new Set<string>();
-    trades.forEach((t) => {
+    activeTrades.forEach((t) => {
       if (t.date) months.add(t.date.slice(0, 7));
     });
     return Array.from(months).sort().reverse();
-  }, [trades]);
+  }, [activeTrades]);
 
   // Bộ lọc dữ liệu
   const filteredTrades = useMemo(() => {
-    return trades.filter((t) => {
+    return activeTrades.filter((t) => {
       // Lọc theo search
       if (searchTerm && !t.date.includes(searchTerm)) {
         return false;
@@ -107,7 +150,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
       }
       return true;
     });
-  }, [trades, searchTerm, selectedMonth, filterType]);
+  }, [activeTrades, searchTerm, selectedMonth, filterType]);
 
   // Đảo ngược danh sách để hiển thị phiên mới nhất lên đầu
   const reversedFiltered = useMemo(() => {
@@ -388,6 +431,8 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
                               ? "bg-rose-500/20 text-rose-400 border border-rose-500/30"
                               : trade.exitType === "ATC"
                               ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                              : trade.exitType === "FILLED"
+                              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
                               : trade.exitType === "PENDING"
                               ? "bg-sky-500/20 text-sky-400 border border-sky-500/30"
                               : "bg-white/10 text-slate-400 border border-white/10"
@@ -397,6 +442,8 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
                             ? t("exit_no_fill")
                             : trade.exitType === "PENDING"
                             ? t("exit_pending")
+                            : trade.exitType === "FILLED"
+                            ? "ĐANG KHỚP"
                             : trade.exitType === "BE"
                             ? "BE (Hòa vốn)"
                             : trade.exitType === "TRAIL"

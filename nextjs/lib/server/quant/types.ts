@@ -51,6 +51,7 @@ export interface TradingPlan {
   resolvedSource?: string;
   ladderConfig?: LadderConfig;
   trailingConfig?: TrailingConfig;
+  execution?: ExecutionState;
 }
 
 export interface ConsensusResult {

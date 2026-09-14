@@ -9,6 +9,7 @@ import {
 } from "@/lib/server/quant/strategy-engine";
 import { computeConsensus } from "@/lib/server/quant/consensus";
 import { saveDailyPlanToDb, getTradingHistoryFromDb } from "@/lib/server/quant/db-plan-service";
+import { IntradayExecutionTracker } from "@/lib/server/quant/execution-tracker";
 
 export const dynamic = "force-dynamic";
 
@@ -21,8 +22,29 @@ export async function GET() {
     const todayStr = getVietnamTradingDate();
 
     // Sinh tổ hợp 3 Engine định lượng đầy đủ (simcarrry6, AllDaysLadder, CanonicalBreakout)
-    const plans = generateMultiEnginePortfolio(todayStr, snapshot, metrics);
-    const consensus = computeConsensus(plans);
+    const rawPlans = generateMultiEnginePortfolio(todayStr, snapshot, metrics);
+    const consensus = computeConsensus(rawPlans);
+
+    const tickTime = snapshot.timestamp
+      ? new Date(snapshot.timestamp).toLocaleTimeString("vi-VN", { hour12: false })
+      : "11:30:00";
+
+    const liveTick = {
+      time: tickTime,
+      open: snapshot.open,
+      high: snapshot.high,
+      low: snapshot.low,
+      close: snapshot.current,
+    };
+
+    const plans = rawPlans.map((plan) => {
+      const tracker = new IntradayExecutionTracker(plan);
+      const execution = tracker.updateTick(liveTick);
+      return {
+        ...plan,
+        execution,
+      };
+    });
 
     // Kèo chuẩn tắc CanonicalBreakout để lưu DB và quản trị thực thi
     const canonicalPlan = plans.find((p) => p.engine === "CanonicalDirectionalBreakout") || plans[0];
@@ -38,7 +60,7 @@ export async function GET() {
     try {
       const history = await getTradingHistoryFromDb();
       if (history) historySummary = history.summary;
-    } catch {}
+    } catch { }
 
     return NextResponse.json(
       {

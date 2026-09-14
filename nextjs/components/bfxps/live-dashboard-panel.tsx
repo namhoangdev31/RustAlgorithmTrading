@@ -138,6 +138,11 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
                   <span className={`h-1.5 w-1.5 rounded-full ${isPShort ? "bg-rose-400" : "bg-emerald-400"}`} />
                   <span className="font-bold">{idx === 0 ? "Kèo Chính" : idx === 1 ? "Rải Nấc" : "Breakout"}:</span>
                   <span className="font-mono">{p.side} {p.orderType === "LIMIT" ? "Limit" : "Stop"} @ {p.entryPrice?.toFixed(1)}</span>
+                  {p.execution?.isFilled && (
+                    <span className="rounded bg-emerald-500/30 px-1 py-0.2 text-[9px] font-bold text-emerald-300">
+                      KHỚP
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -238,7 +243,7 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
         {/* Thẻ Kèo Chi Tiết (Plan Details Card) */}
         {plan && (
           <div className="rounded-xl border border-sky-500/30 bg-gradient-to-b from-[#0e1626]/90 to-[#090d16]/90 p-3.5 shadow-xl">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-white text-xs" title={plan.engine}>
                   {getEngineTitle(plan.engine)}
@@ -246,6 +251,23 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
                 <span className="rounded-full bg-sky-500/20 border border-sky-500/40 px-2 py-0.5 text-[10px] font-bold text-sky-300">
                   {selectedPlanIdx === 0 ? "KÈO CHÍNH" : selectedPlanIdx === 1 ? "RẢI NẤC" : "BREAKOUT"}
                 </span>
+                {plan.execution ? (
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-mono font-bold border ${
+                      plan.execution.isFilled
+                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
+                        : "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                    }`}
+                  >
+                    <span className={`h-1.5 w-1.5 rounded-full ${plan.execution.isFilled ? "bg-emerald-400 animate-pulse" : "bg-amber-400"}`} />
+                    {plan.execution.isFilled ? `ĐÃ KHỚP @ ${plan.execution.avgEntryPrice.toFixed(1)}` : "CHỜ KHỚP"}
+                    {plan.execution.isFilled && plan.execution.livePnlPoints !== 0 && (
+                      <span className={plan.execution.livePnlPoints > 0 ? "text-emerald-400 ml-1" : "text-rose-400 ml-1"}>
+                        ({plan.execution.livePnlPoints > 0 ? "+" : ""}{plan.execution.livePnlPoints.toFixed(1)}đ)
+                      </span>
+                    )}
+                  </span>
+                ) : null}
               </div>
               <span className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] font-mono text-slate-400">
                 {t("session_label")} {plan.date}
