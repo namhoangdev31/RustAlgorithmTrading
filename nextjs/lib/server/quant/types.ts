@@ -133,6 +133,7 @@ export interface SimCarryConfig {
   atrMultiplier?: number;       // Hệ số ATR (mặc định 0.15)
   tpPoints?: number;            // Mức chốt lời (mặc định 22.0)
   maxCap?: number;              // Tỷ trọng tối đa (mặc định 1.0)
+  orderType?: "STOP" | "LIMIT"; // Loại lệnh (STOP cho breakout hoặc LIMIT cho đón hồi)
   trailing?: TrailingConfig;    // Cấu hình Trailing Stop & Khóa hòa vốn cho Swing
 }
 

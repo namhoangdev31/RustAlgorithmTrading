@@ -13,6 +13,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "test:quant": "vitest run tests/quant-core.test.ts",
     "test:portal": "tsx --test --test-concurrency=1 tests/portal/**/*.test.ts",
     "test:ab": "tsx --test --test-concurrency=1 tests/ab-testing/**/*.test.ts",
     "test:lepoship": "tsx --test --test-concurrency=1 tests/lepoship/**/*.test.ts",
@@ -149,6 +150,8 @@
     "prisma": "7.5.0",
     "tailwindcss": "^3.4.1",
     "tsx": "4.21.0",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.0"
   }
 }
