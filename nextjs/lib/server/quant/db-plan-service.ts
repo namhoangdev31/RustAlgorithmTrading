@@ -1,8 +1,9 @@
+import { createHash } from "crypto";
 import { prisma } from "@/lib/server/prisma";
 import { Prisma } from "@/prisma/generated/client";
 
-import { ExecutionState } from "./types";
-import { getVnDateString, isWeekend } from "./strategy-engine";
+import { ExecutionState, MarketSnapshot } from "./types";
+import { getVnDateString, isWeekend, LIVE_CUTOFF_DATE } from "./strategy-engine";
 
 export interface CanonicalPlanInput {
   planId?: string;
@@ -27,6 +28,93 @@ export interface TradeSettlementResult {
   tpPrice?: number;
   slPrice?: number;
   notes?: string;
+}
+
+/**
+ * ID tất định cho bản ghi khóa ngữ cảnh ATO theo ngày (YYYY-MM-DD).
+ * sha256 -> 16 byte đầu -> format UUID (cột id là @db.Uuid). Cùng ngày -> cùng ID
+ * -> dùng làm PK để DB tự chống trùng (atomic insert-once/ngày), không cần SELECT-then-INSERT.
+ */
+export function deriveLockId(dateVn: string): string {
+  const h = createHash("sha256").update(`bfxps-ato-lock:${dateVn}`).digest("hex");
+  // 32 hex đầu -> 8-4-4-4-12
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20, 32)}`;
+}
+
+/**
+ * Đọc ngữ cảnh market đã khóa lúc 09:15 (nguồn sự thật cho kèo chính thức).
+ * Trả null nếu chưa khóa / không có.
+ */
+export async function getLockedContext(dateVn: string): Promise<MarketSnapshot | null> {
+  const row = await prisma.bfxpsMarketSnapshot.findUnique({
+    where: { id: deriveLockId(dateVn) },
+  });
+  if (!row) return null;
+  return {
+    open: Number(row.open.toString()),
+    high: Number(row.high.toString()),
+    low: Number(row.low.toString()),
+    current: Number(row.current.toString()),
+    volume: Number(row.volume.toString()),
+    oi: row.oi != null ? Number(row.oi.toString()) : null,
+    basis: row.basis != null ? Number(row.basis.toString()) : null,
+    foreignBuy: null,
+    foreignSell: null,
+    foreignNet: null,
+    timestamp: row.timestamp.toISOString(),
+    source: "ATO_LOCKED_CONTEXT",
+  };
+}
+
+/**
+ * Khóa ngữ cảnh market lần đầu trong ngày (ATOMIC, chống race):
+ * createMany(skipDuplicates) -> ON CONFLICT (id) DO NOTHING. Hai request đồng thời 09:15
+ * chỉ ghi được 1 row; cả hai đọc lại cùng row THẮNG -> kèo tất định, không phân kỳ.
+ */
+export async function saveLockedContext(
+  dateVn: string,
+  snapshot: MarketSnapshot
+): Promise<MarketSnapshot | null> {
+  const lockId = deriveLockId(dateVn);
+  await prisma.bfxpsMarketSnapshot.createMany({
+    data: [
+      {
+        id: lockId,
+        // Mốc 09:15 VN — giờ kèo chính thức được chốt (UTC+7)
+        timestamp: new Date(`${dateVn}T09:15:00+07:00`),
+        open: new Prisma.Decimal(snapshot.open),
+        high: new Prisma.Decimal(snapshot.high),
+        low: new Prisma.Decimal(snapshot.low),
+        current: new Prisma.Decimal(snapshot.current),
+        volume: new Prisma.Decimal(snapshot.volume),
+        oi: snapshot.oi != null ? new Prisma.Decimal(snapshot.oi) : null,
+        basis: snapshot.basis != null ? new Prisma.Decimal(snapshot.basis) : null,
+        foreignBuy: null,
+        foreignSell: null,
+        source: "ATO_LOCKED_CONTEXT",
+      },
+    ],
+    skipDuplicates: true,
+  });
+  // Đọc lại row thắng (do request này HOẶC request đồng thời khác ghi)
+  return getLockedContext(dateVn);
+}
+
+/**
+ * Settlement đã persist chưa? NGUỒN SỰ THẬT DUY NHẤT = cột settledAt
+ * (do chính settleDailyPlanAtEod set). KHÔNG suy ra từ status/FILLED_*.
+ */
+export async function isCanonicalSettlementDone(dateVn: string): Promise<boolean> {
+  const row = await prisma.bfxpsTradingPlan.findUnique({
+    where: {
+      date_engine: {
+        date: new Date(`${dateVn}T00:00:00.000Z`),
+        engine: "CanonicalDirectionalBreakout",
+      },
+    },
+    select: { settledAt: true },
+  });
+  return row?.settledAt != null;
 }
 
 /**
@@ -224,13 +312,36 @@ export async function settleDailyPlanAtEod(result: TradeSettlementResult) {
     },
   });
 
+  // Buộc tính lại lịch sử để summary trên UI/dashboard không stale sau khi chốt phiên
+  invalidateTradingHistoryCache();
+
   return { plan: updatedPlan, ledger };
 }
 
 /**
- * 3. Lấy toàn bộ lịch sử giao dịch từ Database
+ * 3. Lấy toàn bộ lịch sử giao dịch từ Database.
+ * Cache ngắn hạn (~60s): lịch sử không đổi intraday, giảm tải DB khi UI poll /health mỗi 4s.
  */
-export async function getTradingHistoryFromDb() {
+type TradingHistory = Awaited<ReturnType<typeof computeTradingHistory>>;
+let cachedHistory: { value: TradingHistory | null; at: number } | null = null;
+const HISTORY_CACHE_TTL_MS = 60_000;
+
+export async function getTradingHistoryFromDb(): Promise<TradingHistory | null> {
+  const now = Date.now();
+  if (cachedHistory && now - cachedHistory.at < HISTORY_CACHE_TTL_MS) {
+    return cachedHistory.value;
+  }
+  const value = await computeTradingHistory();
+  cachedHistory = { value, at: now };
+  return value;
+}
+
+/** Buộc tính lại lịch sử ở lần gọi kế (dùng sau khi settle để summary không stale) */
+export function invalidateTradingHistoryCache() {
+  cachedHistory = null;
+}
+
+async function computeTradingHistory() {
   const plans = await prisma.bfxpsTradingPlan.findMany({
     where: { engine: "CanonicalDirectionalBreakout" },
     orderBy: { date: "asc" },
@@ -247,11 +358,13 @@ export async function getTradingHistoryFromDb() {
   });
 
   if (weekendPlans.length > 0) {
-    prisma.bfxpsTradingPlan.deleteMany({
-      where: {
-        id: { in: weekendPlans.map((p) => p.id) },
-      },
-    }).catch(() => {});
+    prisma.bfxpsTradingPlan
+      .deleteMany({
+        where: {
+          id: { in: weekendPlans.map((p) => p.id) },
+        },
+      })
+      .catch((e) => console.warn("[db] Dọn dẹp kèo cuối tuần thất bại:", (e as Error)?.message));
   }
 
   // Chỉ lấy các phiên hợp lệ trong tuần (Thứ 2 đến Thứ 6)
@@ -301,7 +414,7 @@ export async function getTradingHistoryFromDb() {
       if (dd < maxDrawdown) maxDrawdown = dd;
     }
 
-    const isLive = dateStr >= "2026-09-14";
+    const isLive = dateStr >= LIVE_CUTOFF_DATE;
     const mode = isLive ? "LIVE" : "BACKTEST";
 
     return {
@@ -329,8 +442,8 @@ export async function getTradingHistoryFromDb() {
   const startDate = validPlans[0]?.date ? getVnDateString(validPlans[0].date) : undefined;
   const endDate = validPlans[validPlans.length - 1]?.date ? getVnDateString(validPlans[validPlans.length - 1].date) : undefined;
 
-  const liveCount = validPlans.filter((p) => getVnDateString(p.date) >= "2026-09-14").length;
-  const backtestCount = validPlans.filter((p) => getVnDateString(p.date) < "2026-09-14").length;
+  const liveCount = validPlans.filter((p) => getVnDateString(p.date) >= LIVE_CUTOFF_DATE).length;
+  const backtestCount = validPlans.filter((p) => getVnDateString(p.date) < LIVE_CUTOFF_DATE).length;
 
   return {
     summary: {

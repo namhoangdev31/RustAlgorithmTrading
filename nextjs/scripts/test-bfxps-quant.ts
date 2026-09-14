@@ -133,7 +133,7 @@ async function runTests() {
   // Test 10: AllDaysLadder Tự động nhận diện SHORT hoặc nhận cấu hình
   const ladderShort = generateAllDaysLadderPlan(
     "2026-09-10",
-    { ...snapshot, current: 1950.0 },
+    { ...snapshot, open: 1950.0, current: 1950.0 },
     1961.9,
     1970.0
   );
@@ -170,16 +170,16 @@ async function runTests() {
 
   // Test 13: Thoát SL khi có Gap Down (Exit Slippage) và Zero-Lookahead
   // Nến mở cửa rơi thủng SL (thấp hơn SL 2.0 điểm) -> phải cắt tại tick.open
-  const expectedSl = canonicalLong.entryPrice + 3.0 - 8.0;
+  const actualSl = canonicalLong.slPrice;
   gapTracker.updateTick({
     time: "09:16:00",
-    open: expectedSl - 2.0,
-    high: expectedSl - 1.0,
-    low: expectedSl - 3.0,
-    close: expectedSl - 2.5,
+    open: actualSl - 2.0,
+    high: actualSl - 1.0,
+    low: actualSl - 3.0,
+    close: actualSl - 2.5,
   });
   assert(gapTracker.getState().settled, "Vị thế bị cắt lỗ do gap down thủng SL");
-  assert(gapTracker.getState().exitPrice === expectedSl - 2.0, "Cắt lỗ đúng giá tick.open khi bị gap down trượt qua SL");
+  assert(gapTracker.getState().exitPrice === actualSl - 2.0, "Cắt lỗ đúng giá tick.open khi bị gap down trượt qua SL");
   assert(gapTracker.getState().status === "EXIT_SL", "Trạng thái thoát lệnh đúng là EXIT_SL");
 
   // Test 14: Dynamic TP khi trung bình giá thay đổi (Laddering)

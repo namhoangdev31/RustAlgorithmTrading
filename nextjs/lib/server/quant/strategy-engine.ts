@@ -44,6 +44,56 @@ export const DEFAULT_SIMCARRY_CONFIG: Required<SimCarryConfig> = {
 };
 
 /**
+ * Mốc phân tách dữ liệu LIVE vs BACKTEST trong lịch sử kèo.
+ * Nguồn duy nhất — db-plan-service import lại để tránh hardcode trùng lặp/lệch ngày.
+ */
+export const LIVE_CUTOFF_DATE = "2026-09-14";
+
+// Tham số mô hình xác định hướng SimCarry6 (TUNABLE — không phải hằng số đã chứng minh).
+const SIMCARRY_MOMENTUM_WEIGHT = 0.6; // Trọng số Price Action (gap so với ref)
+const SIMCARRY_CARRY_WEIGHT = 0.4;    // Trọng số Basis carry (backwardation/contango)
+const SIMCARRY_SATURATION_ATR = 0.5;  // Mỗi thành phần bão hòa khi |tín hiệu| >= 0.5*ATR
+const SIMCARRY_DEAD_ZONE = 0.15;      // Vùng giằng co quanh 0 -> dùng bộ lọc thứ cấp (EMA/open)
+
+function clamp(v: number, lo: number, hi: number): number {
+  return Math.max(lo, Math.min(hi, v));
+}
+
+/**
+ * Mô hình xác định hướng SimCarry6 — ZERO phụ thuộc `current` (chống lật kèo intraday).
+ * Kết hợp 2 nhân tố đã đóng băng/ổn định theo ngày:
+ *  1. Momentum: gap = (Open - Ref), chuẩn hóa theo ATR(5). Gap dương -> thiên LONG.
+ *  2. Carry:    basis = (Futures - Spot). basis ÂM (backwardation) -> futures rẻ -> thiên LONG;
+ *               basis DƯƠNG (contango) -> thiên SHORT. Chuẩn hóa theo ATR(5).
+ *  score = 0.6*momentum + 0.4*carry (mỗi thành phần bão hòa ở ±1).
+ *  score > +0.15 -> LONG ; score < -0.15 -> SHORT.
+ *  Vùng chết (|score| <= 0.15): dùng EMA5 vs EMA10 (nếu có), ngược lại so Open vs Ref.
+ */
+export function resolveSimCarryDirection(
+  snapshot: MarketSnapshot,
+  refPrice: number,
+  atr5d: number,
+  ema5?: number,
+  ema10?: number
+): Direction {
+  const open = snapshot.open > 0 ? snapshot.open : snapshot.current;
+  const atr = atr5d > 0 ? atr5d : 1;
+  const basis = snapshot.basis ?? 0;
+
+  const momentum = clamp((open - refPrice) / atr / SIMCARRY_SATURATION_ATR, -1, 1);
+  const carry = clamp(-basis / atr / SIMCARRY_SATURATION_ATR, -1, 1);
+  const score = SIMCARRY_MOMENTUM_WEIGHT * momentum + SIMCARRY_CARRY_WEIGHT * carry;
+
+  if (score > SIMCARRY_DEAD_ZONE) return "LONG";
+  if (score < -SIMCARRY_DEAD_ZONE) return "SHORT";
+
+  if (ema5 !== undefined && ema10 !== undefined) {
+    return ema5 >= ema10 ? "LONG" : "SHORT";
+  }
+  return open >= refPrice ? "LONG" : "SHORT";
+}
+
+/**
  * Tính toán Kèo Chính Swing t+1: simcarrry6
  */
 export function generateSimCarry6Plan(
@@ -56,17 +106,17 @@ export function generateSimCarry6Plan(
   expectedLow?: number,
   previousShortCutloss?: number,
   config?: SimCarryConfig,
-  swingHigh5d?: number
+  swingHigh5d?: number,
+  ema5?: number,
+  ema10?: number
 ): TradingPlan {
-  const basisThreshold = config?.basisThreshold ?? DEFAULT_SIMCARRY_CONFIG.basisThreshold;
   const atrMultiplier = config?.atrMultiplier ?? DEFAULT_SIMCARRY_CONFIG.atrMultiplier;
   const tpPoints = config?.tpPoints ?? DEFAULT_SIMCARRY_CONFIG.tpPoints;
   const maxCap = config?.maxCap ?? DEFAULT_SIMCARRY_CONFIG.maxCap;
 
-  // 1. Xác định hướng (LONG / SHORT) dựa trên Basis và vị thế giá
-  const basis = snapshot.basis ?? 0;
-  const isPriceStrong = snapshot.current >= refPrice;
-  const side: Direction = basis < basisThreshold || isPriceStrong ? "LONG" : "SHORT";
+  // 1. Xác định hướng (LONG / SHORT) theo mô hình đa nhân tố ZERO phụ thuộc `current`
+  //    (chống lật kèo intraday). Dùng Open/Ref/ATR/Basis đã đóng băng theo ngày.
+  const side: Direction = resolveSimCarryDirection(snapshot, refPrice, atr5d, ema5, ema10);
 
   // 2. Tính mức giá Entry & Order Type thích ứng biên độ thực tế
   // Khi thị trường đã mở cửa: Vào lệnh Limit tại vùng Tham chiếu (như web gốc ai.beefx.com ENTRY 1940.0)
@@ -125,6 +175,9 @@ export function generateSimCarry6Plan(
   // 5. Đánh giá R5 tại Open
   const r5Eval = evaluateR5(side, snapshot.open, refPrice, slPrice);
 
+  // 6. Đánh giá V44 (Anti-Lookahead Gate): chặn kèo khi kỳ vọng ngược hướng tham chiếu
+  const v44Eval = evaluateV44(side, refPrice, expectedHigh ?? swingHigh5d, expectedLow ?? swingLow5d);
+
   const trailingConfig = config?.trailing ?? DEFAULT_SIMCARRY_CONFIG.trailing;
 
   return {
@@ -140,6 +193,8 @@ export function generateSimCarry6Plan(
     slPrice,
     maxCap,
     r5State: r5Eval.action,
+    v44Active: v44Eval.isV44Active,
+    v44Warning: v44Eval.warning,
     status: "ACTIVE_TODAY",
     isCanonical: true,
     trailingConfig,
@@ -162,8 +217,10 @@ export function generateAllDaysLadderPlan(
   expectedLow?: number,
   config?: LadderStrategyConfig
 ): TradingPlan {
-  // Xác định hướng động (dựa trên cấu hình hoặc vị thế thị trường so với Ref, loại bỏ hardcode thiên vị 1 chiều LONG)
-  const side: Direction = config?.side ?? (snapshot.current >= refPrice ? "LONG" : "SHORT");
+  // Xác định hướng theo Open (đã đóng băng sau ATO) — KHÔNG dùng `current` để tránh lật kèo intraday.
+  // Ưu tiên config.side nếu caller chỉ định; ngược lại so Open vs Ref.
+  const refOpen = snapshot.open > 0 ? snapshot.open : snapshot.current;
+  const side: Direction = config?.side ?? (refOpen >= refPrice ? "LONG" : "SHORT");
   const entryPrice = Number(refPrice.toFixed(1));
   const tpDelta = config?.tpPoints ?? DEFAULT_LADDER_CONFIG.tpPoints;
   const tpPrice = side === "LONG"
@@ -189,6 +246,7 @@ export function generateAllDaysLadderPlan(
   }
 
   const r5Eval = evaluateR5(side, snapshot.open, refPrice, ladderSlPrice);
+  const v44Eval = evaluateV44(side, refPrice, expectedHigh, expectedLow);
 
   const ladderConfig: LadderConfig = {
     enabled: true,
@@ -213,6 +271,8 @@ export function generateAllDaysLadderPlan(
     slPrice: ladderSlPrice,
     maxCap,
     r5State: r5Eval.action,
+    v44Active: v44Eval.isV44Active,
+    v44Warning: v44Eval.warning,
     status: "ACTIVE_TODAY",
     isCanonical: true,
     expectedHigh,
@@ -224,11 +284,11 @@ export function generateAllDaysLadderPlan(
 /**
  * HỆ THỐNG PHÁT 1 KÈO DUY NHẤT TRONG NGÀY (CANONICAL SINGLE-PLAN ADVISOR)
  * Hoàn toàn KHÔNG dùng dữ liệu tương lai (Zero Lookahead Barrier):
- * - Kết hợp đa nhân tố: Price Action (Open vs Ref, Current vs Ref), Basis, và ATR(5).
- * - Khắc phục hoàn toàn độ trễ của EMA khi thị trường đảo chiều gấp.
- * - Phát đúng 1 lệnh điều kiện Stop Order trước 09:00:
- *   + Nếu cấu trúc Bán chiếm ưu thế (Open < Ref hoặc Current < Ref kèm Basis âm) -> Kèo SHORT: Stop Sell tại RefPrice - (atrEntryMultiplier * ATR5)
- *   + Nếu cấu trúc Mua chiếm ưu thế (Open > Ref hoặc Current >= Ref kèm Basis dương) -> Kèo LONG: Stop Buy tại RefPrice + (atrEntryMultiplier * ATR5)
+ * - Kết hợp đa nhân tố đã ĐÓNG BĂNG sau ATO: Price Action (Open vs Ref), Basis, ATR(5), EMA5/EMA10.
+ *   KHÔNG dùng `current` (biến động mỗi tick) -> kèo không bị lật LONG<->SHORT intraday.
+ * - Phát đúng 1 lệnh điều kiện Stop Order sau khi xác nhận Open (09:15):
+ *   + Cấu trúc Bán ưu thế (Gap < -2đ, hoặc Open < Ref kèm Basis âm) -> SHORT: Stop Sell tại Ref - (mult*ATR5)
+ *   + Cấu trúc Mua ưu thế (Gap > +2đ, hoặc Open >= Ref kèm Basis không âm) -> LONG: Stop Buy tại Ref + (mult*ATR5)
  * - Tỷ lệ R:R = 1:3.0 (TP 24.0đ, SL 8.0đ), tích hợp Trailing Stop & BE Lock tự động.
  */
 export function generateCanonicalQuantPlan(
@@ -238,23 +298,26 @@ export function generateCanonicalQuantPlan(
   ema5: number,
   ema10: number,
   config?: QuantStrategyConfig,
-  snapshot?: MarketSnapshot
+  snapshot?: MarketSnapshot,
+  expectedHigh?: number,
+  expectedLow?: number
 ): TradingPlan {
   const atrEntryMultiplier = config?.atrEntryMultiplier ?? DEFAULT_CANONICAL_CONFIG.atrEntryMultiplier;
   const tpPoints = config?.tpPoints ?? DEFAULT_CANONICAL_CONFIG.tpPoints;
   const slPoints = config?.slPoints ?? DEFAULT_CANONICAL_CONFIG.slPoints;
   const maxCap = config?.maxCap ?? DEFAULT_CANONICAL_CONFIG.maxCap;
 
-  // Xác định xu hướng chuẩn xác theo Price Action & Vị thế giá so với tham chiếu:
+  // Xác định xu hướng theo Price Action đã ĐÓNG BĂNG sau ATO (Open vs Ref) + Basis + ATR.
+  // KHÔNG dùng `current` (biến động mỗi tick) để tránh lật kèo intraday.
   let side: Direction;
   if (snapshot) {
     const gap = snapshot.open - refPrice;
-    const isUnderRef = snapshot.current < refPrice;
+    const isOpenUnderRef = snapshot.open < refPrice;
     const isNegativeBasis = (snapshot.basis ?? 0) < -1.5;
 
-    if (gap < -2.0 || (isUnderRef && isNegativeBasis)) {
+    if (gap < -2.0 || (isOpenUnderRef && isNegativeBasis)) {
       side = "SHORT";
-    } else if (gap > 2.0 || (!isUnderRef && !isNegativeBasis)) {
+    } else if (gap > 2.0 || (!isOpenUnderRef && !isNegativeBasis)) {
       side = "LONG";
     } else {
       // Vùng giằng co quanh Ref: dùng EMA5 vs EMA10 làm bộ lọc thứ cấp
@@ -282,6 +345,8 @@ export function generateCanonicalQuantPlan(
     ? evaluateR5(side, snapshot.open, refPrice, slPrice).action
     : "KEEP";
 
+  const v44Eval = evaluateV44(side, refPrice, expectedHigh, expectedLow);
+
   const trailingConfig = config?.trailing ?? DEFAULT_CANONICAL_CONFIG.trailing;
 
   return {
@@ -297,6 +362,10 @@ export function generateCanonicalQuantPlan(
     slPrice,
     maxCap,
     r5State,
+    v44Active: v44Eval.isV44Active,
+    v44Warning: v44Eval.warning,
+    expectedHigh,
+    expectedLow,
     trailingConfig,
     breakevenTrigger: trailingConfig.beTriggerPoints,
     status: "ACTIVE_TODAY",
@@ -322,11 +391,12 @@ export function generateMultiEnginePortfolio(
     swingHigh5d: number;
     ema5: number;
     ema10: number;
-  }
+  },
+  options?: { isOfficial?: boolean; phase?: TradingSessionPhase }
 ): TradingPlan[] {
   const { refPrice, atr5d, swingLow5d, swingHigh5d, ema5, ema10 } = metrics;
 
-  // 1. Kèo Chính Swing t+1: simcarrry6
+  // 1. Kèo Chính Swing t+1: simcarrry6 (truyền ema5/ema10 cho dead-zone resolver)
   const simCarryPlan = generateSimCarry6Plan(
     dateStr,
     snapshot,
@@ -337,7 +407,9 @@ export function generateMultiEnginePortfolio(
     swingLow5d,
     undefined,
     undefined,
-    swingHigh5d
+    swingHigh5d,
+    ema5,
+    ema10
   );
   simCarryPlan.consensusWeight = 2.0;
 
@@ -352,7 +424,7 @@ export function generateMultiEnginePortfolio(
   );
   ladderPlan.consensusWeight = 1.0;
 
-  // 3. Kèo Breakout Chuẩn Tắc: CanonicalDirectionalBreakout
+  // 3. Kèo Breakout Chuẩn Tắc: CanonicalDirectionalBreakout (truyền expectedHigh/Low cho V44)
   const canonicalPlan = generateCanonicalQuantPlan(
     dateStr,
     refPrice,
@@ -360,15 +432,20 @@ export function generateMultiEnginePortfolio(
     ema5,
     ema10,
     undefined,
-    snapshot
+    snapshot,
+    swingHigh5d,
+    swingLow5d
   );
   canonicalPlan.consensusWeight = 1.5;
 
-  // Inject pha giao dịch hiện tại (ATO_OBSERVATION trước 09:15, CONTINUOUS sau 09:15)
-  const phase = getTradingSessionPhase();
+  // Inject pha giao dịch + cờ official (kèo đã khóa sau ATO 09:15 hay chỉ là observation)
+  const phase = options?.phase ?? getTradingSessionPhase();
+  const inOfficialWindow = phase !== "PRE_ATO" && phase !== "ATO_OBSERVATION";
+  const isOfficial = options?.isOfficial ?? inOfficialWindow;
   const plans = [simCarryPlan, ladderPlan, canonicalPlan];
   for (const p of plans) {
     p.sessionPhase = phase;
+    p.isOfficial = isOfficial;
   }
 
   return plans;

@@ -8,6 +8,16 @@ export interface M1Tick {
   close: number;
 }
 
+/** Ngưỡng phút trong ngày bắt đầu phiên ATC (14:45 VN) để ép đóng vị thế */
+const ATC_MINUTE_OF_DAY = 14 * 60 + 45;
+
+/** Bar này có thuộc phiên ATC (>= 14:45) không — dùng để ép ATC_EXIT khi replay */
+export function isAtcBar(timeHHMMSS: string): boolean {
+  const [h, m] = timeHHMMSS.split(":").map(Number);
+  if (!Number.isFinite(h) || !Number.isFinite(m)) return false;
+  return h * 60 + m >= ATC_MINUTE_OF_DAY;
+}
+
 /**
  * Máy trạng thái Quản lý Khớp Lệnh & Vị Thế Intraday (Execution State Machine)
  */
@@ -170,6 +180,9 @@ export class IntradayExecutionTracker {
 
       const effectiveSl = trailing?.enabled ? this.currentSl : this.plan.slPrice;
 
+      // GIẢ ĐỊNH PESSIMISTIC (chuẩn backtest): khi 1 nến chạm CẢ SL lẫn TP, kiểm tra SL TRƯỚC.
+      // Nến OHLC không cho biết điểm nào chạm trước -> chọn kết cục bất lợi (lỗ) để không thổi phồng lợi nhuận.
+      // Gap/slippage đã xử lý: nếu tick.open vượt mốc, khớp tại open (giá tệ hơn).
       if (this.plan.side === "LONG") {
         if (tick.low <= effectiveSl) {
           const actualExitPrice = tick.open < effectiveSl ? tick.open : effectiveSl;
@@ -288,4 +301,47 @@ export class IntradayExecutionTracker {
 
     return this.state;
   }
+}
+
+/**
+ * Replay toàn bộ nến 1m hôm nay qua tracker -> ExecutionState cuối cùng.
+ * ĐÂY là cách production dựng trạng thái khớp/PnL (thay vì feed 1 nến tổng hợp cả ngày):
+ * fill/trailing/BE/ladder/SL-TP-ordering/ATC chạy đúng theo đường đi giá thật.
+ */
+export function replayExecution(
+  plan: TradingPlan,
+  bars: M1Tick[]
+): ExecutionState {
+  const tracker = new IntradayExecutionTracker(plan);
+  let last: ExecutionState = tracker.getState();
+  for (const bar of bars) {
+    last = tracker.updateTick(bar, isAtcBar(bar.time));
+    if (last.settled) break;
+  }
+  return last;
+}
+
+/**
+ * Cache replay theo bar cuối: nến chưa đổi thì KHÔNG replay lại (giảm ~300 bar x 3 engine mỗi poll 4s).
+ * Cache module-level chỉ là tối ưu cho warm instance; DB-lock mới là nguồn sự thật cho cold start.
+ */
+const replayCache = new Map<string, { barKey: string; state: ExecutionState }>();
+
+export function replayExecutionCached(
+  plan: TradingPlan,
+  bars: M1Tick[]
+): ExecutionState {
+  const barKey = bars.length > 0 ? bars[bars.length - 1].time : "EMPTY";
+  const cached = replayCache.get(plan.id);
+  if (cached && cached.barKey === barKey) {
+    return cached.state;
+  }
+  const state = replayExecution(plan, bars);
+  replayCache.set(plan.id, { barKey, state });
+  return state;
+}
+
+/** Xóa cache replay (dùng cho test cold-start / khi đổi ngày) */
+export function clearReplayCache() {
+  replayCache.clear();
 }

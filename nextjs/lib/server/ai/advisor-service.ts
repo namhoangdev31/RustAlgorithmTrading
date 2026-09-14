@@ -134,7 +134,7 @@ export async function generateAdvisorReply(
   const brokerList = config?.brokerPlatforms?.length
     ? config.brokerPlatforms.join(", ")
     : "VPS, TCBS, SSI, DNSE";
-  const orderTime = config?.orderBeforeTime || "08:55";
+  const orderTime = config?.orderBeforeTime || "09:15";
   const atcTime = config?.atcTime || "14:45";
 
   // 4. Chuỗi thống kê kiểm định đa ngôn ngữ động

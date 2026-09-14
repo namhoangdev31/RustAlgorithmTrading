@@ -56,6 +56,9 @@ export interface TradingPlan {
   status: PlanStatus;
   isCanonical: boolean;
   consensusWeight?: number; // Trọng số đồng thuận (mặc định 1.0). Engine chính = 2.0, engine phụ = 1.0
+  v44Active?: boolean; // V44 Anti-Lookahead Gate: true = kèo bị chặn do kỳ vọng ngược hướng (loại khỏi consensus)
+  v44Warning?: string; // Lý do V44 chặn (hiển thị cho trader)
+  isOfficial?: boolean; // Kèo đã được khóa chính thức sau ATO 09:15 (false = observation/degraded)
   breakevenTrigger?: number; // Khóa hòa vốn khi giá đi đúng >= X điểm
   expectedHigh?: number;
   expectedLow?: number;

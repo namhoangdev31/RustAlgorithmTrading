@@ -3,11 +3,22 @@ import {
   generateSimCarry6Plan,
   generateAllDaysLadderPlan,
   generateCanonicalQuantPlan,
+  generateMultiEnginePortfolio,
+  resolveSimCarryDirection,
+  getTradingSessionPhase,
+  LIVE_CUTOFF_DATE,
 } from "../lib/server/quant/strategy-engine";
 import { evaluateR5, evaluateV44 } from "../lib/server/quant/risk-governors";
 import { computeConsensus } from "../lib/server/quant/consensus";
-import { IntradayExecutionTracker } from "../lib/server/quant/execution-tracker";
-import { MarketSnapshot } from "../lib/server/quant/types";
+import {
+  IntradayExecutionTracker,
+  replayExecution,
+  replayExecutionCached,
+  clearReplayCache,
+  isAtcBar,
+  M1Tick,
+} from "../lib/server/quant/execution-tracker";
+import { MarketSnapshot, TradingPlan } from "../lib/server/quant/types";
 
 describe("BFXPS Quant Core Test Suite", () => {
   let snapshot: MarketSnapshot;
@@ -37,10 +48,10 @@ describe("BFXPS Quant Core Test Suite", () => {
     });
 
     it("AllDaysLadder: Khống chế NAV và tự động nhận diện SHORT", () => {
-      // Ép giá current xuống thấp hơn Ref để test auto-short
-      snapshot.current = 1950.0;
+      // Ép giá OPEN xuống thấp hơn Ref để test auto-short (hướng dựa trên Open đã đóng băng, không phải current)
+      snapshot.open = 1950.0;
       const plan = generateAllDaysLadderPlan("2026-09-10", snapshot, 1961.9, 1970.0);
-      
+
       expect(plan.side).toBe("SHORT");
       expect(plan.maxCap).toBe(0.3); // Tối đa 30%
       expect(plan.tpPrice).toBeCloseTo(plan.entryPrice - 4.1, 1);
@@ -205,6 +216,206 @@ describe("BFXPS Quant Core Test Suite", () => {
       // SL kỹ thuật 1945.4 phải được giữ vững -> Không được báo EXIT_SL vì High 1944.7 < 1945.4
       expect(state.settled).toBe(false);
       expect(state.status).toBe("FILLED");
+    });
+  });
+
+  describe("4. Determinism — kèo KHÔNG lật theo current (chống bug ATO)", () => {
+    it("resolveSimCarryDirection: cùng Open/Ref/Basis, đổi current -> hướng GIỮ NGUYÊN", () => {
+      const base = { ...snapshot, open: 1968.0, basis: -1.0 };
+      const dirA = resolveSimCarryDirection({ ...base, current: 1990.0 }, 1961.9, 15.0);
+      const dirB = resolveSimCarryDirection({ ...base, current: 1920.0 }, 1961.9, 15.0);
+      expect(dirA).toBe(dirB); // current không ảnh hưởng hướng
+    });
+
+    it("generateMultiEnginePortfolio: đổi current giữ open/ref -> cả 3 engine cùng side", () => {
+      const metrics = { refPrice: 1961.9, atr5d: 15.0, swingLow5d: 1944.9, swingHigh5d: 1988.0, ema5: 1968.8, ema10: 1961.0 };
+      const snapA = { ...snapshot, open: 1968.0, basis: -1.0, current: 1999.0 };
+      const snapB = { ...snapshot, open: 1968.0, basis: -1.0, current: 1900.0 };
+      const plansA = generateMultiEnginePortfolio("2026-09-10", snapA, metrics, { isOfficial: true, phase: "CONTINUOUS" });
+      const plansB = generateMultiEnginePortfolio("2026-09-10", snapB, metrics, { isOfficial: true, phase: "CONTINUOUS" });
+      expect(plansA.map((p) => p.side)).toEqual(plansB.map((p) => p.side));
+      expect(plansA.every((p) => p.isOfficial === true)).toBe(true);
+    });
+
+    it("resolveSimCarryDirection boundaries: gap mạnh -> momentum thắng", () => {
+      // Gap UP mạnh (open >> ref), basis contango nhẹ -> LONG (momentum áp đảo)
+      expect(resolveSimCarryDirection({ ...snapshot, open: 1990.0, basis: 1.0 }, 1961.9, 15.0)).toBe("LONG");
+      // Gap DOWN mạnh (open << ref), basis backwardation nhẹ -> SHORT
+      expect(resolveSimCarryDirection({ ...snapshot, open: 1930.0, basis: -1.0 }, 1961.9, 15.0)).toBe("SHORT");
+    });
+
+    it("resolveSimCarryDirection carry: backwardation sâu thiên LONG, contango sâu thiên SHORT", () => {
+      // open == ref (momentum 0), basis âm sâu (backwardation) -> carry dương -> LONG
+      expect(resolveSimCarryDirection({ ...snapshot, open: 1961.9, basis: -12.0 }, 1961.9, 15.0)).toBe("LONG");
+      // open == ref, basis dương sâu (contango) -> carry âm -> SHORT
+      expect(resolveSimCarryDirection({ ...snapshot, open: 1961.9, basis: 12.0 }, 1961.9, 15.0)).toBe("SHORT");
+    });
+
+    it("resolveSimCarryDirection dead-zone: tín hiệu yếu -> fallback EMA", () => {
+      // open == ref, basis ~0 -> score ~0 (dead-zone) -> dùng EMA. ema5 < ema10 -> SHORT
+      expect(resolveSimCarryDirection({ ...snapshot, open: 1961.9, basis: 0 }, 1961.9, 15.0, 1960.0, 1965.0)).toBe("SHORT");
+      // ema5 > ema10 -> LONG
+      expect(resolveSimCarryDirection({ ...snapshot, open: 1961.9, basis: 0 }, 1961.9, 15.0, 1965.0, 1960.0)).toBe("LONG");
+    });
+  });
+
+  describe("5. getTradingSessionPhase tại ranh giới (UTC+7)", () => {
+    // Dùng mốc UTC để chắc chắn: VN = UTC+7. 08:45 VN = 01:45 UTC.
+    const at = (h: number, m: number, s: number) =>
+      new Date(Date.UTC(2026, 8, 14, h - 7, m, s)); // h:m:s giờ VN -> UTC
+
+    it("ranh giới PRE_ATO / ATO_OBSERVATION", () => {
+      expect(getTradingSessionPhase(at(8, 44, 59))).toBe("PRE_ATO");
+      expect(getTradingSessionPhase(at(8, 45, 0))).toBe("ATO_OBSERVATION");
+    });
+
+    it("ranh giới ATO_OBSERVATION / CONTINUOUS (09:15)", () => {
+      expect(getTradingSessionPhase(at(9, 14, 59))).toBe("ATO_OBSERVATION");
+      expect(getTradingSessionPhase(at(9, 15, 0))).toBe("CONTINUOUS");
+    });
+
+    it("ranh giới CONTINUOUS / LUNCH_BREAK / ATC / CLOSED", () => {
+      expect(getTradingSessionPhase(at(11, 30, 0))).toBe("LUNCH_BREAK");
+      expect(getTradingSessionPhase(at(13, 0, 0))).toBe("CONTINUOUS");
+      expect(getTradingSessionPhase(at(14, 30, 0))).toBe("ATC");
+      expect(getTradingSessionPhase(at(14, 45, 0))).toBe("CLOSED");
+    });
+  });
+
+  describe("6. Consensus nâng cao (V44 exclusion + NEUTRAL)", () => {
+    const mkPlan = (over: Partial<TradingPlan>): TradingPlan =>
+      ({
+        id: "p", date: "2026-09-10", engine: "E", horizon: "t", side: "LONG",
+        entryPrice: 1, tpPrice: 2, slPrice: 0.5, maxCap: 1, r5State: "KEEP",
+        status: "ACTIVE_TODAY", isCanonical: true, ...over,
+      } as TradingPlan);
+
+    it("NEUTRAL khi hòa phiếu -> strength = 0 (không phải 0.5)", () => {
+      const c = computeConsensus([
+        mkPlan({ id: "a", engine: "L", side: "LONG", consensusWeight: 1 }),
+        mkPlan({ id: "b", engine: "S", side: "SHORT", consensusWeight: 1 }),
+      ]);
+      expect(c.direction).toBe("NEUTRAL");
+      expect(c.strength).toBe(0);
+    });
+
+    it("Tất cả CANCEL -> NEUTRAL, strength 0, loại hết engine", () => {
+      const c = computeConsensus([
+        mkPlan({ id: "a", engine: "X", r5State: "CANCEL" }),
+        mkPlan({ id: "b", engine: "Y", r5State: "CANCEL" }),
+      ]);
+      expect(c.direction).toBe("NEUTRAL");
+      expect(c.strength).toBe(0);
+      expect(c.longCount).toBe(0);
+    });
+
+    it("V44-active bị loại khỏi bỏ phiếu (như R5 CANCEL)", () => {
+      const c = computeConsensus([
+        mkPlan({ id: "a", engine: "BLOCKED", side: "LONG", consensusWeight: 2, v44Active: true }),
+        mkPlan({ id: "b", engine: "OK", side: "SHORT", consensusWeight: 1 }),
+      ]);
+      // LONG bị chặn (weight 2) -> chỉ còn SHORT weight 1 -> SHORT toàn phiếu
+      expect(c.direction).toBe("SHORT");
+      expect(c.strength).toBe(1.0);
+      expect(c.excludedEngines).toContain("BLOCKED");
+      expect(c.longCount).toBe(0);
+    });
+  });
+
+  describe("7. V44 được wire thật vào generator (không còn dead code)", () => {
+    it("Canonical LONG với swingHigh < ref -> v44Active = true", () => {
+      // expectedHigh (swingHigh5d) = 1955 < ref 1961.9 -> V44 chặn kèo LONG
+      const plan = generateCanonicalQuantPlan(
+        "2026-09-10", 1961.9, 15.0, 1970.0, 1960.0,
+        undefined, { ...snapshot, open: 1975.0, current: 1975.0 }, 1955.0, 1940.0
+      );
+      expect(plan.side).toBe("LONG");
+      expect(plan.v44Active).toBe(true);
+      expect(plan.v44Warning).toBeTruthy();
+    });
+
+    it("Canonical LONG với swingHigh > ref -> v44Active = false", () => {
+      const plan = generateCanonicalQuantPlan(
+        "2026-09-10", 1961.9, 15.0, 1970.0, 1960.0,
+        undefined, { ...snapshot, open: 1975.0, current: 1975.0 }, 1990.0, 1940.0
+      );
+      expect(plan.v44Active).toBe(false);
+    });
+  });
+
+  describe("8. Replay nến 1m (execution thật, không còn 1 nến tổng hợp)", () => {
+    const longPlan = (): TradingPlan => {
+      const p = generateCanonicalQuantPlan("2026-09-10", 1960.0, 10.0, 1965.0, 1960.0);
+      // Entry 1961, TP 1985, SL 1953
+      return p;
+    };
+
+    it("isAtcBar: phân định đúng mốc 14:45", () => {
+      expect(isAtcBar("14:44:00")).toBe(false);
+      expect(isAtcBar("14:45:00")).toBe(true);
+      expect(isAtcBar("14:46:30")).toBe(true);
+      expect(isAtcBar("garbage")).toBe(false);
+    });
+
+    it("replayExecution: ATC_EXIT khi nến >=14:45 chưa chạm TP/SL", () => {
+      const bars: M1Tick[] = [
+        { time: "09:15:00", open: 1960, high: 1962, low: 1960, close: 1961 }, // khớp Long 1961
+        { time: "10:00:00", open: 1961, high: 1963, low: 1960, close: 1962 },
+        { time: "14:45:00", open: 1962, high: 1963, low: 1961, close: 1962.5 }, // ATC
+      ];
+      const st = replayExecution(longPlan(), bars);
+      expect(st.settled).toBe(true);
+      expect(st.status).toBe("ATC_EXIT");
+      expect(st.exitPrice).toBe(1962.5);
+    });
+
+    it("replayExecution: trailing tích lũy qua NHIỀU nến (điều 1-nến-tổng-hợp không làm được)", () => {
+      const bars: M1Tick[] = [
+        { time: "09:15:00", open: 1960, high: 1962, low: 1960, close: 1961 }, // khớp 1961
+        { time: "09:30:00", open: 1961, high: 1970, low: 1961, close: 1969 }, // +8đ -> BE lock
+        { time: "10:00:00", open: 1969, high: 1975, low: 1968, close: 1974 }, // peak 1975 (+14đ -> trail)
+        { time: "10:15:00", open: 1974, high: 1975, low: 1968, close: 1969 }, // chạm trail SL ~1970
+      ];
+      const st = replayExecution(longPlan(), bars);
+      expect(st.settled).toBe(true);
+      expect(["TRAIL_EXIT", "BE_EXIT", "TP_EXIT"]).toContain(st.status);
+      expect(st.livePnlPoints).toBeGreaterThan(0); // thoát có lãi nhờ trailing
+    });
+
+    it("replayExecution: SL/TP cùng 1 nến -> ưu tiên SL (pessimistic)", () => {
+      const bars: M1Tick[] = [
+        { time: "09:15:00", open: 1960, high: 1962, low: 1960, close: 1961 }, // khớp 1961
+        // Nến cực dài chạm CẢ SL 1953 lẫn TP 1985 -> phải báo lỗ (EXIT_SL)
+        { time: "09:16:00", open: 1961, high: 1990, low: 1950, close: 1970 },
+      ];
+      const st = replayExecution(longPlan(), bars);
+      expect(st.settled).toBe(true);
+      expect(st.status).toBe("EXIT_SL");
+    });
+
+    it("replayExecutionCached: cùng bar cuối -> dùng cache (state giống hệt)", () => {
+      clearReplayCache();
+      const bars: M1Tick[] = [
+        { time: "09:15:00", open: 1960, high: 1962, low: 1960, close: 1961 },
+      ];
+      const p = longPlan();
+      const s1 = replayExecutionCached(p, bars);
+      const s2 = replayExecutionCached(p, bars); // bar cuối không đổi -> cache hit
+      expect(s2).toEqual(s1);
+      // Đổi bar cuối -> replay lại, có thể cho kết quả khác
+      const bars2: M1Tick[] = [
+        ...bars,
+        { time: "14:45:00", open: 1961, high: 1962, low: 1960, close: 1961.5 },
+      ];
+      const s3 = replayExecutionCached(p, bars2);
+      expect(s3.status).toBe("ATC_EXIT");
+      clearReplayCache();
+    });
+  });
+
+  describe("9. Hằng số LIVE_CUTOFF_DATE (nguồn duy nhất)", () => {
+    it("LIVE_CUTOFF_DATE đúng định dạng ngày", () => {
+      expect(LIVE_CUTOFF_DATE).toBe("2026-09-14");
     });
   });
 });
