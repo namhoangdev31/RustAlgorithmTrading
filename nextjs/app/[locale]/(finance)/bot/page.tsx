@@ -57,7 +57,10 @@ export default function LeposTradingBotPage({
   const fetchHealth = async (isBackground = false) => {
     if (!isBackground) setIsLoading(true);
     try {
-      const res = await fetch("/api/bfxps/health");
+      const res = await fetch(`/api/bfxps/health?_t=${Date.now()}`, {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" },
+      });
       if (res.ok) {
         const data = await res.json();
         if (data.live_market) setSnapshot(data.live_market);
@@ -74,10 +77,10 @@ export default function LeposTradingBotPage({
 
   useEffect(() => {
     fetchHealth(false);
-    // Background polling every 8s
+    // Background polling every 4s realtime
     const interval = setInterval(() => {
       fetchHealth(true);
-    }, 8000);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
