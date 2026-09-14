@@ -189,17 +189,59 @@ export async function getLatestMarketSnapshot(force = false): Promise<MarketSnap
           lastTimestamp = new Date(data.t[lastIdx] * 1000).toISOString();
         }
 
+        // Lấy VN30 Index và OI thực tế trực tiếp từ sàn VNDirect để tính Basis & OI chuẩn xác:
+        let basis = -0.5;
+        let oi = 30378.0;
+
+        try {
+          const [vn30Res, oiRes] = await Promise.allSettled([
+            fetch(
+              `https://dchart-api.vndirect.com.vn/dchart/history?resolution=1&symbol=VN30&from=${nowSec - 600}&to=${nowSec}`,
+              {
+                headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)" },
+                cache: "no-store",
+                signal: AbortSignal.timeout(3000),
+              }
+            ),
+            fetch(
+              `https://api-finfo.vndirect.com.vn/v4/derivatives?q=code:VN30F1M`,
+              {
+                headers: { "User-Agent": "Mozilla/5.0" },
+                cache: "no-store",
+                signal: AbortSignal.timeout(3000),
+              }
+            ),
+          ]);
+
+          if (vn30Res.status === "fulfilled" && vn30Res.value.ok) {
+            const vn30Data = await vn30Res.value.json();
+            if (vn30Data?.c?.length > 0) {
+              const latestVn30 = Number(vn30Data.c[vn30Data.c.length - 1]);
+              basis = Number((current - latestVn30).toFixed(1));
+            }
+          }
+
+          if (oiRes.status === "fulfilled" && oiRes.value.ok) {
+            const oiData = await oiRes.value.json();
+            if (oiData?.data?.[0]?.openInterest) {
+              oi = Number(oiData.data[0].openInterest);
+            }
+          }
+        } catch {
+          // Bỏ qua nếu mạng sàn phụ trễ
+        }
+
         const snapshot: MarketSnapshot = {
           open,
           high,
           low,
           current,
           volume,
-          oi: 34210.0,
-          basis: -1.8,
-          foreignBuy: 450.0,
-          foreignSell: 380.0,
-          foreignNet: 70.0,
+          oi,
+          basis,
+          foreignBuy: 0,
+          foreignSell: 0,
+          foreignNet: 0,
           timestamp: lastTimestamp,
           source: "https://services.entrade.com.vn/chart-api/chart?symbol=VN30F1M",
         };
@@ -217,14 +259,14 @@ export async function getLatestMarketSnapshot(force = false): Promise<MarketSnap
   const fallbackSnapshot: MarketSnapshot = cachedSnapshot || {
     open: 1936.0,
     high: 1944.7,
-    low: 1935.9,
-    current: 1940.0,
-    volume: 34500.0,
-    oi: 34210.0,
-    basis: -1.8,
-    foreignBuy: 450.0,
-    foreignSell: 380.0,
-    foreignNet: 70.0,
+    low: 1931.2,
+    current: 1936.7,
+    volume: 91594.0,
+    oi: 30378.0,
+    basis: -0.5,
+    foreignBuy: 0,
+    foreignSell: 0,
+    foreignNet: 0,
     timestamp: new Date().toISOString(),
     source: "FALLBACK_LIVE_ESTIMATE",
   };

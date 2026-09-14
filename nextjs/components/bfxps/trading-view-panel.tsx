@@ -72,10 +72,12 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     // Fetch real candles from /api/bfxps/candles
-    const fetchCandles = useCallback(async (tf: "15m" | "1m") => {
-      setIsLoadingCandles(true);
+    const fetchCandles = useCallback(async (tf: "15m" | "1m", isBackground = false) => {
+      if (!isBackground) setIsLoadingCandles(true);
       try {
-        const res = await fetch(`/api/bfxps/candles?timeframe=${tf}&limit=200`);
+        const res = await fetch(`/api/bfxps/candles?timeframe=${tf}&limit=200&_t=${Date.now()}`, {
+          cache: "no-store",
+        });
         const json = await res.json();
         if (json.ok && Array.isArray(json.bars)) {
           setCandles(json.bars);
@@ -84,12 +86,17 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       } catch (err) {
         console.error("Candle fetch error:", err);
       } finally {
-        setIsLoadingCandles(false);
+        if (!isBackground) setIsLoadingCandles(false);
       }
     }, []);
 
     useEffect(() => {
-      fetchCandles(timeframe);
+      fetchCandles(timeframe, false);
+      // Auto-refresh nến mới theo chu kỳ 6s
+      const candleInterval = setInterval(() => {
+        fetchCandles(timeframe, true);
+      }, 6000);
+      return () => clearInterval(candleInterval);
     }, [timeframe, fetchCandles]);
 
     // Visible bars slice - sync latest bar in real time with snapshot.current

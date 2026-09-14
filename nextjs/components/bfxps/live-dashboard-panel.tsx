@@ -188,18 +188,21 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
             </div>
           </div>
 
-          {/* Basis & NN Net */}
+          {/* Basis & OI Realtime */}
           <div className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-2.5 shadow-sm hover:border-white/15 transition-colors">
-            <span className="block text-[10px] uppercase tracking-wider font-semibold text-slate-400">
-              {t("basis_nn_title")}
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="block text-[10px] uppercase tracking-wider font-semibold text-slate-400">
+                BASIS / OI REALTIME
+              </span>
+              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            </div>
             <div className="mt-1.5 flex items-center gap-1.5 font-mono text-xs font-bold">
               <span className={snapshot?.basis && snapshot.basis < 0 ? "text-rose-400" : "text-emerald-400"}>
                 {snapshot?.basis != null ? `${snapshot.basis > 0 ? "+" : ""}${snapshot.basis.toFixed(1)}${t("pts_unit")}` : "--"}
               </span>
               <span className="text-slate-500">/</span>
-              <span className="text-slate-200">
-                {snapshot?.foreignNet != null ? `${snapshot.foreignNet > 0 ? "+" : ""}${snapshot.foreignNet} ${t("contracts_unit")}` : "--"}
+              <span className="text-sky-300">
+                OI: {snapshot?.oi != null ? snapshot.oi.toLocaleString() : "--"}
               </span>
             </div>
           </div>

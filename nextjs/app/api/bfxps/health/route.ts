@@ -40,25 +40,34 @@ export async function GET() {
       if (history) historySummary = history.summary;
     } catch {}
 
-    return NextResponse.json({
-      ok: true,
-      service: "Lepos Trading Bot Advisor",
-      version: "10.2.0",
-      live_market: snapshot,
-      metrics,
-      freshness: {
-        level: "GREEN",
-        status: "FRESH",
-        reference_date: todayStr,
+    return NextResponse.json(
+      {
+        ok: true,
+        service: "Lepos Trading Bot Advisor",
+        version: "10.3.0",
+        live_market: snapshot,
+        metrics,
+        freshness: {
+          level: "GREEN",
+          status: "FRESH",
+          reference_date: todayStr,
+        },
+        plans,
+        consensus,
+        summary: historySummary,
       },
-      plans,
-      consensus,
-      summary: historySummary,
-    });
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      }
+    );
   } catch (error: any) {
     return NextResponse.json(
       { ok: false, error: error.message || "Lỗi kiểm tra hệ thống" },
-      { status: 500 }
+      { status: 500, headers: { "Cache-Control": "no-store" } }
     );
   }
 }
