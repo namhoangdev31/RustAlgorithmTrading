@@ -80,30 +80,47 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
   // Đồng bộ hóa lệnh hôm nay (2026-09-14) với trạng thái khớp lệnh thời gian thực
   const activeTrades = useMemo(() => {
     if (!trades.length) return trades;
-    const todayPlan = livePlans?.[0] || livePlans?.find((p) => p.isCanonical);
-    if (!todayPlan) return trades;
+    // Tìm kèo chuẩn tắc (Canonical) của phiên hôm nay trong livePlans
+    const canonicalPlan =
+      livePlans?.find((p) => p.isCanonical) ||
+      livePlans?.find((p) => p.engine === "CanonicalDirectionalBreakout") ||
+      livePlans?.[0];
+
+    if (!canonicalPlan) return trades;
 
     return trades.map((item) => {
-      if (item.date === "2026-09-14" || item.date === todayPlan.date) {
-        const exec = todayPlan.execution;
-        if (exec && exec.isFilled) {
+      if (item.date === "2026-09-14" || item.date === canonicalPlan.date) {
+        const exec = canonicalPlan.execution;
+        if (exec) {
+          const isFilled = exec.isFilled;
           const isSettled = exec.settled;
           const exitType = isSettled
             ? (exec.status === "TP_EXIT" ? "TP" : exec.status === "EXIT_SL" ? "SL" : exec.status === "TRAIL_EXIT" ? "TRAIL" : exec.status === "BE_EXIT" ? "BE" : "ATC")
-            : "FILLED";
-          const pnl = exec.livePnlPoints;
+            : isFilled
+            ? "FILLED"
+            : "PENDING";
+          const pnl = isFilled ? exec.livePnlPoints : 0;
           const isWin = pnl > 0;
+
           return {
             ...item,
-            side: todayPlan.side,
-            entryPrice: exec.avgEntryPrice,
-            exitPrice: exec.exitPrice || (liveSnapshot?.current ?? exec.avgEntryPrice),
+            side: canonicalPlan.side,
+            entryPrice: isFilled ? exec.avgEntryPrice : canonicalPlan.entryPrice,
+            tpPrice: canonicalPlan.tpPrice,
+            slPrice: canonicalPlan.slPrice,
+            exitPrice: isSettled
+              ? (exec.exitPrice ?? 0)
+              : isFilled
+              ? (liveSnapshot?.current ?? exec.avgEntryPrice)
+              : 0,
             exitType,
-            exitMinute: exec.exitTime || item.exitMinute || "11:30",
+            exitMinute: exec.exitTime || (isFilled ? "11:30" : "—"),
             pnl,
             isWin,
-            status: isSettled ? "ĐÃ ĐÓNG" : "ĐANG GIỮ VỊ THẾ",
-            notes: `Lệnh Khớp Realtime lúc ${exec.exitTime || "11:30"}. Vị thế: ${todayPlan.side} @ ${exec.avgEntryPrice}`,
+            status: isSettled ? "ĐÃ ĐÓNG" : isFilled ? "ĐANG GIỮ VỊ THẾ" : "CHỜ KHỚP",
+            notes: isFilled
+              ? `Khớp lệnh ${canonicalPlan.side} @ ${exec.avgEntryPrice.toFixed(1)} (PnL Live: ${pnl > 0 ? "+" : ""}${pnl.toFixed(1)}đ)`
+              : `Lệnh Chờ Kích Hoạt ${canonicalPlan.side} @ ${canonicalPlan.entryPrice.toFixed(1)}`,
           };
         }
       }
@@ -376,11 +393,15 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
                     >
                       <td className="py-2.5 px-3 font-bold text-white">
                         {trade.date}
-                        {trade.exitType === "PENDING" && (
+                        {trade.exitType === "FILLED" ? (
+                          <span className="ml-1.5 rounded-md bg-emerald-500/20 px-1.5 py-0.5 text-[10px] text-emerald-300 font-sans border border-emerald-500/40">
+                            PHIÊN NÀY
+                          </span>
+                        ) : trade.exitType === "PENDING" ? (
                           <span className="ml-1.5 rounded-md bg-sky-500/20 px-1.5 py-0.5 text-[10px] text-sky-400 font-sans border border-sky-500/30">
                             {t("next_session")}
                           </span>
-                        )}
+                        ) : null}
                       </td>
                       <td className="py-2.5 px-3 text-center">
                         {trade.date >= "2026-09-14" ? (
