@@ -33,6 +33,7 @@ export const DEFAULT_SIMCARRY_CONFIG: Required<SimCarryConfig> = {
   atrMultiplier: 0.15,
   tpPoints: 22.0,
   maxCap: 1.0,
+  orderType: "STOP",
   trailing: {
     enabled: true,
     beTriggerPoints: 8.0,     // Swing: khóa BE muộn hơn Canonical (8đ thay vì 6đ)
@@ -70,20 +71,18 @@ export function generateSimCarry6Plan(
   // Khi thị trường đã mở cửa: Vào lệnh Limit tại vùng Tham chiếu (như web gốc ai.beefx.com ENTRY 1940.0)
   // hoặc vào theo giá mở cửa nếu chưa có cản
   let entryPrice: number;
-  let orderType: "STOP" | "LIMIT" = "LIMIT";
+  let orderType: "STOP" | "LIMIT" = config?.orderType ?? "STOP";
 
   if (snapshot.open > 0 && Math.abs(snapshot.open - refPrice) >= 2.0) {
     // Phiên có gap: Ưu tiên điểm Limit tại Tham chiếu (đón nhịp hồi test tham chiếu)
     entryPrice = Number(refPrice.toFixed(1));
-    orderType = "LIMIT";
+    orderType = config?.orderType ?? "LIMIT";
   } else {
     const entryDelta = Number((atrMultiplier * atr5d).toFixed(1));
     entryPrice = side === "LONG"
       ? Number((refPrice + entryDelta).toFixed(1))
       : Number((refPrice - entryDelta).toFixed(1));
-    orderType = snapshot.current > 0
-      ? (side === "SHORT" ? (entryPrice > snapshot.current ? "LIMIT" : "STOP") : (entryPrice < snapshot.current ? "LIMIT" : "STOP"))
-      : "STOP";
+    orderType = config?.orderType ?? "STOP";
   }
 
   // 3. Mục tiêu TP theo cấu hình chiến lược
@@ -110,14 +109,15 @@ export function generateSimCarry6Plan(
       slPrice = Math.max(slPrice, previousShortCutloss);
     }
   } else {
-    // Với LONG: SL phải dưới đáy sáng và cách entry an toàn
+    // Với LONG: SL phải dưới đáy sáng và cách entry an toàn, đồng thời tôn trọng swingLow5d nếu có
     const sessionLow = Math.min(snapshot.low ?? refPrice, refPrice);
     const bufferLow = Number((sessionLow - 3.3).toFixed(1));
     const minDistanceSl = Number((entryPrice - safeSlDistance).toFixed(1));
     if (previousShortCutloss && previousShortCutloss < entryPrice && previousShortCutloss > 0) {
       slPrice = previousShortCutloss;
     } else {
-      slPrice = Math.min(bufferLow, minDistanceSl);
+      const baseSl = swingLow5d > 0 && swingLow5d < entryPrice ? swingLow5d : Math.min(bufferLow, minDistanceSl);
+      slPrice = Math.min(baseSl, bufferLow, minDistanceSl);
     }
   }
 
