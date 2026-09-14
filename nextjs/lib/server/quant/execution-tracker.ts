@@ -107,21 +107,10 @@ export class IntradayExecutionTracker {
         this.peakPrice = fillPrice;
         this.fillPrices = [fillPrice];
 
-        // Bảo toàn khoảng cách rủi ro SL ban đầu (Risk Points) kể cả khi bị trượt giá (Slippage)
-        const plannedRisk = Math.abs(this.plan.entryPrice - this.plan.slPrice);
-        if (this.plan.side === "LONG") {
-          this.currentSl = fillPrice > this.plan.entryPrice
-            ? Number((fillPrice - plannedRisk).toFixed(1))
-            : this.plan.slPrice;
-        } else {
-          this.currentSl = fillPrice < this.plan.entryPrice
-            ? Number((fillPrice + plannedRisk).toFixed(1))
-            : this.plan.slPrice;
-        }
+        this.currentSl = this.plan.slPrice;
       }
     }
 
-    // 2. Nếu đã khớp nấc 1 và bật chế độ rải nấc (Laddering / Scale-in), kiểm tra các nấc tiếp theo
     if (this.state.status === "FILLED" && ladderConfig.enabled) {
       while (this.state.fillStages < ladderConfig.steps.length) {
         const nextStageIdx = this.state.fillStages;
@@ -170,24 +159,19 @@ export class IntradayExecutionTracker {
       }
     }
 
-    // 3. Quản trị vị thế sau khi khớp lệnh: Trailing Stop, Khóa hòa vốn, TP, SL, ATC
     if (this.state.status === "FILLED") {
       const trailing = this.plan.trailingConfig;
-      // Mục tiêu TP động theo giá vốn bình quân (Dynamic TP adapted to avgEntryPrice)
       const targetPoints = Math.abs(this.plan.tpPrice - this.plan.entryPrice);
       const effectiveTp = this.plan.tpPrice > 0
         ? (this.plan.side === "LONG"
-            ? Number((this.state.avgEntryPrice + targetPoints).toFixed(1))
-            : Number((this.state.avgEntryPrice - targetPoints).toFixed(1)))
+          ? Number((this.state.avgEntryPrice + targetPoints).toFixed(1))
+          : Number((this.state.avgEntryPrice - targetPoints).toFixed(1)))
         : 0;
 
-      // Bước 3.1: Kiểm tra Cắt lỗ (SL) hoặc Trailing Stop từ nến trước TRƯỚC (Loại bỏ Lookahead Bias)
       const effectiveSl = trailing?.enabled ? this.currentSl : this.plan.slPrice;
 
       if (this.plan.side === "LONG") {
-        // Kiểm tra chạm SL / Trailing Stop hiện hành
         if (tick.low <= effectiveSl) {
-          // Xử lý Gap-down trượt giá qua mốc SL
           const actualExitPrice = tick.open < effectiveSl ? tick.open : effectiveSl;
           const isTrailingWin = actualExitPrice > this.state.avgEntryPrice + 0.5;
           const isBe = actualExitPrice >= this.state.avgEntryPrice - 0.1 && actualExitPrice <= this.state.avgEntryPrice + 0.5;
@@ -202,9 +186,7 @@ export class IntradayExecutionTracker {
           return this.state;
         }
 
-        // Bước 3.2: Kiểm tra Chốt lời TP (nếu có và không chạm SL)
         if (effectiveTp > 0 && tick.high >= effectiveTp) {
-          // Xử lý Gap-up vượt qua mức TP
           const actualExitPrice = tick.open > effectiveTp ? tick.open : effectiveTp;
           this.state.status = "TP_EXIT";
           this.state.exitPrice = actualExitPrice;
@@ -216,7 +198,6 @@ export class IntradayExecutionTracker {
           return this.state;
         }
 
-        // Bước 3.3: Nếu nến an toàn (KHÔNG chết SL và KHÔNG dính TP), mới cập nhật peakPrice và tính SL mới cho tick sau
         if (tick.high > this.peakPrice) this.peakPrice = tick.high;
 
         if (trailing?.enabled) {

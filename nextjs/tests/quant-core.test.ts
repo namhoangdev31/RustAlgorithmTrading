@@ -186,5 +186,25 @@ describe("BFXPS Quant Core Test Suite", () => {
       // Phép tính: (1960*0.1 + 1959*0.2 + 1958*0.3) / 0.6 = 1175.2 / 0.6 = 1958.666...
       expect(state.avgEntryPrice).toBeCloseTo(1958.7, 1); // Đã làm tròn 1 chữ số thập phân
     });
+
+    it("Short Stop Order: Giữ nguyên Technical SL khi khớp Gap-down có lợi thế", () => {
+      // Kèo Short: Entry 1937.4, SL 1945.4. Giá mở cửa nhảy thẳng xuống 1936.0 (khớp Short tốt hơn)
+      const testShortPlan = generateCanonicalQuantPlan("2026-09-14", 1939.8, 24.0, 1935.0, 1940.0);
+      testShortPlan.entryPrice = 1937.4;
+      testShortPlan.slPrice = 1945.4;
+      testShortPlan.side = "SHORT";
+      testShortPlan.orderType = "STOP";
+
+      const shortTracker = new IntradayExecutionTracker(testShortPlan);
+      // Nến 1: Open 1936.0, High 1944.7 (chưa chạm SL 1945.4), Low 1931.2, Close 1936.8
+      shortTracker.updateTick({ time: "09:00:00", open: 1936.0, high: 1944.7, low: 1931.2, close: 1936.8 });
+
+      const state = shortTracker.getState();
+      expect(state.isFilled).toBe(true);
+      expect(state.avgEntryPrice).toBe(1936.0);
+      // SL kỹ thuật 1945.4 phải được giữ vững -> Không được báo EXIT_SL vì High 1944.7 < 1945.4
+      expect(state.settled).toBe(false);
+      expect(state.status).toBe("FILLED");
+    });
   });
 });
