@@ -43,7 +43,7 @@ export async function GET() {
     return NextResponse.json({
       ok: true,
       service: "Lepos Trading Bot Advisor",
-      version: "10.1.0",
+      version: "10.2.0",
       live_market: snapshot,
       metrics,
       freshness: {
