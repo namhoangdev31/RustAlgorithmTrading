@@ -164,11 +164,12 @@ export function generateAllDaysLadderPlan(
 /**
  * HỆ THỐNG PHÁT 1 KÈO DUY NHẤT TRONG NGÀY (CANONICAL SINGLE-PLAN ADVISOR)
  * Hoàn toàn KHÔNG dùng dữ liệu tương lai (Zero Lookahead Barrier):
- * - Bắt buộc truyền các tham số thị trường thực tế: RefPrice, ATR(5), EMA(5), EMA(10).
+ * - Kết hợp đa nhân tố: Price Action (Open vs Ref, Current vs Ref), Basis, và ATR(5).
+ * - Khắc phục hoàn toàn độ trễ của EMA khi thị trường đảo chiều gấp.
  * - Phát đúng 1 lệnh điều kiện Stop Order trước 09:00:
- *   + Nếu EMA(5) >= EMA(10) -> Kèo LONG: Stop Buy tại RefPrice + (atrEntryMultiplier * ATR5), TP +tpPoints, SL -slPoints
- *   + Nếu EMA(5) < EMA(10)  -> Kèo SHORT: Stop Sell tại RefPrice - (atrEntryMultiplier * ATR5), TP -tpPoints, SL +slPoints
- * - Cho phép tùy chỉnh linh hoạt qua QuantStrategyConfig, r5State được đánh giá động qua snapshot.
+ *   + Nếu cấu trúc Bán chiếm ưu thế (Open < Ref hoặc Current < Ref kèm Basis âm) -> Kèo SHORT: Stop Sell tại RefPrice - (atrEntryMultiplier * ATR5)
+ *   + Nếu cấu trúc Mua chiếm ưu thế (Open > Ref hoặc Current >= Ref kèm Basis dương) -> Kèo LONG: Stop Buy tại RefPrice + (atrEntryMultiplier * ATR5)
+ * - Tỷ lệ R:R = 1:3.0 (TP 24.0đ, SL 8.0đ), tích hợp Trailing Stop & BE Lock tự động.
  */
 export function generateCanonicalQuantPlan(
   dateStr: string,
@@ -184,8 +185,25 @@ export function generateCanonicalQuantPlan(
   const slPoints = config?.slPoints ?? DEFAULT_CANONICAL_CONFIG.slPoints;
   const maxCap = config?.maxCap ?? DEFAULT_CANONICAL_CONFIG.maxCap;
 
-  const isBull = ema5 >= ema10;
-  const side: Direction = isBull ? "LONG" : "SHORT";
+  // Xác định xu hướng chuẩn xác theo Price Action & Vị thế giá so với tham chiếu:
+  let side: Direction;
+  if (snapshot) {
+    const gap = snapshot.open - refPrice;
+    const isUnderRef = snapshot.current < refPrice;
+    const isNegativeBasis = (snapshot.basis ?? 0) < -1.5;
+
+    if (gap < -2.0 || (isUnderRef && isNegativeBasis)) {
+      side = "SHORT";
+    } else if (gap > 2.0 || (!isUnderRef && !isNegativeBasis)) {
+      side = "LONG";
+    } else {
+      // Vùng giằng co quanh Ref: dùng EMA5 vs EMA10 làm bộ lọc thứ cấp
+      side = ema5 >= ema10 ? "LONG" : "SHORT";
+    }
+  } else {
+    side = ema5 >= ema10 ? "LONG" : "SHORT";
+  }
+
   const delta = Number((atrEntryMultiplier * atr5d).toFixed(1));
 
   const entryPrice = side === "LONG"
@@ -225,6 +243,66 @@ export function generateCanonicalQuantPlan(
     isCanonical: true,
     resolvedSource: "CANONICAL_PRE_OPEN_VOLATILITY_EXPANSION",
   };
+}
+
+/**
+ * TỔ HỢP ĐA CHIẾN LƯỢC BFXPS (MULTI-ENGINE ENSEMBLE PORTFOLIO)
+ * Tổ hợp đầy đủ 3 Engine tiêu chuẩn tương tự web gốc ai.beefx.com:
+ * 1. simcarrry6 t+1: Kèo Chính Swing (trọng số 2.0)
+ * 2. AllDaysLadder_CAP0.3: Kèo Intraday Scalp rải nấc (trọng số 1.0)
+ * 3. CanonicalDirectionalBreakout: Kèo Breakout Intraday chuẩn tắc (trọng số 1.5)
+ */
+export function generateMultiEnginePortfolio(
+  dateStr: string,
+  snapshot: MarketSnapshot,
+  metrics: {
+    refPrice: number;
+    atr5d: number;
+    swingLow5d: number;
+    swingHigh5d: number;
+    ema5: number;
+    ema10: number;
+  }
+): TradingPlan[] {
+  const { refPrice, atr5d, swingLow5d, swingHigh5d, ema5, ema10 } = metrics;
+
+  // 1. Kèo Chính Swing t+1: simcarrry6
+  const simCarryPlan = generateSimCarry6Plan(
+    dateStr,
+    snapshot,
+    refPrice,
+    atr5d,
+    swingLow5d,
+    swingHigh5d,
+    swingLow5d,
+    undefined
+  );
+  simCarryPlan.consensusWeight = 2.0;
+
+  // 2. Kèo Phụ Intraday Scalp: AllDaysLadder_CAP0.3
+  const ladderPlan = generateAllDaysLadderPlan(
+    dateStr,
+    snapshot,
+    refPrice,
+    simCarryPlan.slPrice,
+    swingHigh5d,
+    swingLow5d
+  );
+  ladderPlan.consensusWeight = 1.0;
+
+  // 3. Kèo Breakout Chuẩn Tắc: CanonicalDirectionalBreakout
+  const canonicalPlan = generateCanonicalQuantPlan(
+    dateStr,
+    refPrice,
+    atr5d,
+    ema5,
+    ema10,
+    undefined,
+    snapshot
+  );
+  canonicalPlan.consensusWeight = 1.5;
+
+  return [simCarryPlan, ladderPlan, canonicalPlan];
 }
 
 /**

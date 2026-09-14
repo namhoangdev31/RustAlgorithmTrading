@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { ConsensusResult, MarketSnapshot, TradingPlan } from "@/lib/server/quant/types";
-import { RefreshCw, TrendingUp, ShieldAlert, ArrowUpRight } from "lucide-react";
+import { RefreshCw, TrendingUp, TrendingDown, ArrowUpRight, Layers } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface LiveDashboardPanelProps {
@@ -26,7 +26,10 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
 }) => {
   const t = useTranslations("Bfxps.live");
   const tEngines = useTranslations("Bfxps.engines");
-  const plan = plans[0];
+  const [selectedPlanIdx, setSelectedPlanIdx] = useState(0);
+
+  const plan = plans[selectedPlanIdx] || plans[0];
+  const isShort = plan?.side === "SHORT";
 
   const getEngineTitle = (engineName?: string) => {
     if (!engineName) return "";
@@ -52,8 +55,8 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
       <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#090d16]/80 px-4 py-2.5">
         <div className="flex items-center gap-2.5">
           <div className="relative flex h-2.5 w-2.5 items-center justify-center">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
+            <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${isShort ? "bg-rose-400" : "bg-emerald-400"} opacity-75`}></span>
+            <span className={`relative inline-flex h-2 w-2 rounded-full ${isShort ? "bg-rose-500 shadow-[0_0_8px_#f43f5e]" : "bg-emerald-500 shadow-[0_0_8px_#10b981]"}`}></span>
           </div>
           <h2 className="text-xs font-black tracking-wider uppercase text-white bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
             {t("title")}
@@ -72,25 +75,37 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
       {/* Body scroll */}
       <div className="flex-1 overflow-y-auto p-3 space-y-3 text-xs custom-scrollbar">
         {/* Banner trạng thái Hero Action Card */}
-        <div className="relative overflow-hidden rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 via-[#0a1e17]/50 to-[#07130f]/70 p-3.5 shadow-[0_0_20px_rgba(16,185,129,0.08)]">
-          <div className="absolute top-0 right-0 h-16 w-16 bg-emerald-500/10 blur-xl pointer-events-none rounded-full" />
+        <div
+          className={`relative overflow-hidden rounded-xl border p-3.5 shadow-lg transition-all ${
+            isShort
+              ? "border-rose-500/30 bg-gradient-to-br from-rose-950/40 via-[#1f0b12]/50 to-[#12060a]/70 shadow-[0_0_20px_rgba(244,63,94,0.08)]"
+              : "border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 via-[#0a1e17]/50 to-[#07130f]/70 shadow-[0_0_20px_rgba(16,185,129,0.08)]"
+          }`}
+        >
+          <div className={`absolute top-0 right-0 h-16 w-16 ${isShort ? "bg-rose-500/10" : "bg-emerald-500/10"} blur-xl pointer-events-none rounded-full`} />
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 font-bold text-emerald-400">
-              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-500/20 border border-emerald-500/30">
-                <TrendingUp className="h-3.5 w-3.5" />
+            <div className={`flex items-center gap-2 font-bold ${isShort ? "text-rose-400" : "text-emerald-400"}`}>
+              <div className={`flex h-6 w-6 items-center justify-center rounded-lg ${isShort ? "bg-rose-500/20 border-rose-500/30" : "bg-emerald-500/20 border-emerald-500/30"} border`}>
+                {isShort ? <TrendingDown className="h-3.5 w-3.5" /> : <TrendingUp className="h-3.5 w-3.5" />}
               </div>
               <span className="text-xs tracking-wide uppercase">{t("recommendation_title")}</span>
             </div>
             {plan && (
-              <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-300 border border-emerald-500/30">
-                {plan.side} 100%
+              <span
+                className={`rounded-full px-2 py-0.5 font-mono text-[10px] font-bold border ${
+                  isShort
+                    ? "bg-rose-500/20 text-rose-300 border-rose-500/30"
+                    : "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+                }`}
+              >
+                {plan.side} {consensus?.isUnanimous ? "100%" : `${Math.round((consensus?.strength || 1) * 100)}%`}
               </span>
             )}
           </div>
-          <p className="mt-2 text-xs leading-relaxed text-emerald-100/90 font-medium">
+          <p className={`mt-2 text-xs leading-relaxed font-medium ${isShort ? "text-rose-100/90" : "text-emerald-100/90"}`}>
             {plan
               ? t("recommendation_desc", {
-                  side: plan.side || "LONG",
+                  side: plan.side || "SHORT",
                   price: plan.entryPrice?.toFixed(1) || "--",
                   rr: rrRatio,
                   tp: tpDiff != null ? tpDiff.toFixed(1) : "--",
@@ -99,6 +114,35 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
               : t("awaiting_plan")}
           </p>
         </div>
+
+        {/* Bộ chuyển đổi Engine (Nếu có nhiều hơn 1 plan) */}
+        {plans.length > 1 && (
+          <div className="flex items-center gap-1.5 p-1 bg-white/[0.02] border border-white/[0.06] rounded-xl overflow-x-auto custom-scrollbar">
+            <div className="flex items-center gap-1 px-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0">
+              <Layers className="h-3 w-3 text-sky-400" />
+              <span>3 Engine:</span>
+            </div>
+            {plans.map((p, idx) => {
+              const isSelected = idx === selectedPlanIdx;
+              const isPShort = p.side === "SHORT";
+              return (
+                <button
+                  key={p.id || idx}
+                  onClick={() => setSelectedPlanIdx(idx)}
+                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-medium transition-all shrink-0 cursor-pointer ${
+                    isSelected
+                      ? "bg-sky-500/20 border border-sky-400 text-sky-300 shadow-[0_0_10px_rgba(56,189,248,0.2)]"
+                      : "bg-white/[0.02] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.05]"
+                  }`}
+                >
+                  <span className={`h-1.5 w-1.5 rounded-full ${isPShort ? "bg-rose-400" : "bg-emerald-400"}`} />
+                  <span className="font-bold">{idx === 0 ? "Kèo Chính" : idx === 1 ? "Rải Nấc" : "Breakout"}:</span>
+                  <span className="font-mono">{p.side} @ {p.entryPrice?.toFixed(1)}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* 4 Thẻ Grid Chỉ Số Thị Trường */}
         <div className="grid grid-cols-2 gap-2">
@@ -128,13 +172,17 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
                 {consensus ? `${consensus.direction} · ${Math.round(consensus.strength * 100)}%` : "--"}
               </span>
               <span className="rounded bg-sky-500/10 px-1.5 py-0.2 text-[10px] font-mono text-sky-300 border border-sky-500/20">
-                {plan?.side === "LONG" ? "1L/0S" : (plan?.side === "SHORT" ? "0L/1S" : "--")}
+                {consensus ? `${consensus.longCount}L/${consensus.shortCount}S` : "--"}
               </span>
             </div>
             {/* Mini Progress Bar */}
             <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
               <div
-                className="h-full bg-gradient-to-r from-sky-400 to-emerald-400 rounded-full"
+                className={`h-full rounded-full ${
+                  consensus?.direction === "SHORT"
+                    ? "bg-gradient-to-r from-rose-500 to-amber-400"
+                    : "bg-gradient-to-r from-sky-400 to-emerald-400"
+                }`}
                 style={{ width: consensus ? `${Math.round(consensus.strength * 100)}%` : "0%" }}
               />
             </div>
@@ -184,7 +232,7 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
           </div>
         </div>
 
-        {/* Thẻ Kèo Chi Tiết Duy Nhất (Canonical Card) */}
+        {/* Thẻ Kèo Chi Tiết (Plan Details Card) */}
         {plan && (
           <div className="rounded-xl border border-sky-500/30 bg-gradient-to-b from-[#0e1626]/90 to-[#090d16]/90 p-3.5 shadow-xl">
             <div className="flex items-center justify-between">
@@ -193,7 +241,7 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
                   {getEngineTitle(plan.engine)}
                 </span>
                 <span className="rounded-full bg-sky-500/20 border border-sky-500/40 px-2 py-0.5 text-[10px] font-bold text-sky-300">
-                  {t("single_plan_badge")}
+                  {selectedPlanIdx === 0 ? "KÈO CHÍNH" : selectedPlanIdx === 1 ? "RẢI NẤC" : "BREAKOUT"}
                 </span>
               </div>
               <span className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] font-mono text-slate-400">
@@ -203,9 +251,9 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
 
             {/* 4 Chips Thông Số Lệnh */}
             <div className="mt-3 grid grid-cols-4 gap-2 text-center">
-              <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/30 p-2 shadow-inner">
-                <span className="block text-[9px] text-emerald-300/80 uppercase font-bold">{t("position_label")}</span>
-                <span className="mt-1 block text-xs font-black text-emerald-400 font-mono">
+              <div className={`rounded-lg p-2 shadow-inner border ${isShort ? "bg-rose-500/10 border-rose-500/30" : "bg-emerald-500/10 border-emerald-500/30"}`}>
+                <span className={`block text-[9px] uppercase font-bold ${isShort ? "text-rose-300/80" : "text-emerald-300/80"}`}>{t("position_label")}</span>
+                <span className={`mt-1 block text-xs font-black font-mono ${isShort ? "text-rose-400" : "text-emerald-400"}`}>
                   {plan.side}
                 </span>
               </div>

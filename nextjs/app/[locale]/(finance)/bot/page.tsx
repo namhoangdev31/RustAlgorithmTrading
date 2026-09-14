@@ -118,6 +118,7 @@ export default function LeposTradingBotPage({
   const tHeader = useTranslations("Bfxps.header");
   const tChat = useTranslations("Bfxps.chat");
   const currentPlan = plans[0];
+  const isCurrentShort = currentPlan?.side === "SHORT";
 
   return (
     <div className="flex h-screen w-full flex-col bg-[#070a0f] text-slate-100 antialiased selection:bg-sky-500/30 selection:text-white overflow-hidden">
@@ -127,8 +128,8 @@ export default function LeposTradingBotPage({
           {/* Brand Identity */}
           <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
             <div className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3 items-center justify-center">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></span>
+              <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${isCurrentShort ? "bg-rose-400" : "bg-emerald-400"} opacity-75`}></span>
+              <span className={`relative inline-flex h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full ${isCurrentShort ? "bg-rose-500 shadow-[0_0_10px_#f43f5e]" : "bg-emerald-500 shadow-[0_0_10px_#10b981]"}`}></span>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2">
               <span className="font-black tracking-wider text-white text-xs sm:text-sm bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
@@ -142,8 +143,12 @@ export default function LeposTradingBotPage({
 
           {/* Canonical Strategy Ticker Pills - Visible on sm and up */}
           <div className="hidden md:flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
-            <div className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-emerald-400 font-bold shadow-[0_0_15px_rgba(16,185,129,0.12)]">
-              <span className="text-[11px] text-emerald-300/80">
+            <div className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1 font-bold ${
+              isCurrentShort
+                ? "border-rose-500/30 bg-rose-500/10 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.12)]"
+                : "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.12)]"
+            }`}>
+              <span className={`text-[11px] ${isCurrentShort ? "text-rose-300/80" : "text-emerald-300/80"}`}>
                 {tHeader("canonical_plan")}:
               </span>
               <span className="font-mono text-white tracking-tight">
