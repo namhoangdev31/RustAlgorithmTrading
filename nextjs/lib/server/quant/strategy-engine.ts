@@ -395,7 +395,20 @@ export function getVietnamTradingDate(date: Date = new Date()): string {
 }
 
 /**
- * Kiểm tra xem ngày có rơi vào ngày cuối tuần (Thứ 7 / Chủ Nhật) không
+ * Chuyển đổi Date sang định dạng YYYY-MM-DD theo đúng múi giờ Việt Nam (UTC+7 / Asia/Ho_Chi_Minh)
+ */
+export function getVnDateString(date: Date = new Date()): string {
+  const vnFormatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return vnFormatter.format(date);
+}
+
+/**
+ * Kiểm tra xem ngày có rơi vào ngày cuối tuần (Thứ 7 / Chủ Nhật) không theo múi giờ Việt Nam
  */
 export function isWeekend(dateStr: string): boolean {
   const parts = dateStr.split("-").map(Number);
@@ -403,3 +416,4 @@ export function isWeekend(dateStr: string): boolean {
   const day = d.getUTCDay();
   return day === 0 || day === 6;
 }
+

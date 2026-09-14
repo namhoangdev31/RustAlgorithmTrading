@@ -2,6 +2,7 @@ import { prisma } from "@/lib/server/prisma";
 import { Prisma } from "@/prisma/generated/client";
 
 import { ExecutionState } from "./types";
+import { getVnDateString, isWeekend } from "./strategy-engine";
 
 export interface CanonicalPlanInput {
   planId?: string;
@@ -32,12 +33,11 @@ export interface TradeSettlementResult {
  * 1. Tự động Lưu hoặc Cập nhật Kèo & Trạng thái Khớp Lệnh Realtime vào DB (Hoàn toàn tự động hóa)
  */
 export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
-  const planDate = new Date(`${plan.date}T00:00:00.000Z`);
-  const dayOfWeek = planDate.getUTCDay();
-  // Bỏ qua không tạo/lưu kèo cho ngày Thứ Bảy (6) hoặc Chủ Nhật (0)
-  if (dayOfWeek === 0 || dayOfWeek === 6) {
+  // Bỏ qua không tạo/lưu kèo cho ngày Thứ Bảy hoặc Chủ Nhật theo múi giờ Việt Nam
+  if (isWeekend(plan.date)) {
     return null;
   }
+  const planDate = new Date(`${plan.date}T00:00:00.000Z`);
 
   const exec = plan.execution;
   let status = "PENDING";
@@ -240,10 +240,10 @@ export async function getTradingHistoryFromDb() {
     return null;
   }
 
-  // Tự động dọn dẹp các bản ghi rơi vào cuối tuần nếu có (do lệch múi giờ server)
+  // Tự động dọn dẹp các bản ghi rơi vào cuối tuần theo múi giờ Việt Nam
   const weekendPlans = plans.filter((p) => {
-    const day = p.date.getUTCDay();
-    return day === 0 || day === 6;
+    const dStr = getVnDateString(p.date);
+    return isWeekend(dStr);
   });
 
   if (weekendPlans.length > 0) {
@@ -256,8 +256,8 @@ export async function getTradingHistoryFromDb() {
 
   // Chỉ lấy các phiên hợp lệ trong tuần (Thứ 2 đến Thứ 6)
   const validPlans = plans.filter((p) => {
-    const day = p.date.getUTCDay();
-    return day !== 0 && day !== 6;
+    const dStr = getVnDateString(p.date);
+    return !isWeekend(dStr);
   });
 
   if (validPlans.length === 0) {
@@ -276,7 +276,7 @@ export async function getTradingHistoryFromDb() {
   const monthlyPnl: Record<string, number> = {};
 
   const trades = validPlans.map((p) => {
-    const dateStr = p.date.toISOString().slice(0, 10);
+    const dateStr = getVnDateString(p.date);
     const pnl = p.pnlPoints ? Number(p.pnlPoints.toString()) : 0;
     const isFilled = p.status !== "PENDING" && p.exitType !== "NO_FILL";
 
@@ -326,11 +326,11 @@ export async function getTradingHistoryFromDb() {
   const winRate = tradedCount > 0 ? Number(((wins / tradedCount) * 100).toFixed(1)) : 0;
   const profitFactor = totalLossPoints > 0 ? Number((totalWinPoints / totalLossPoints).toFixed(2)) : (totalWinPoints > 0 ? 99.0 : 0);
 
-  const startDate = validPlans[0]?.date ? validPlans[0].date.toISOString().slice(0, 10) : undefined;
-  const endDate = validPlans[validPlans.length - 1]?.date ? validPlans[validPlans.length - 1].date.toISOString().slice(0, 10) : undefined;
+  const startDate = validPlans[0]?.date ? getVnDateString(validPlans[0].date) : undefined;
+  const endDate = validPlans[validPlans.length - 1]?.date ? getVnDateString(validPlans[validPlans.length - 1].date) : undefined;
 
-  const liveCount = validPlans.filter((p) => p.date.toISOString().slice(0, 10) >= "2026-09-14").length;
-  const backtestCount = validPlans.filter((p) => p.date.toISOString().slice(0, 10) < "2026-09-14").length;
+  const liveCount = validPlans.filter((p) => getVnDateString(p.date) >= "2026-09-14").length;
+  const backtestCount = validPlans.filter((p) => getVnDateString(p.date) < "2026-09-14").length;
 
   return {
     summary: {

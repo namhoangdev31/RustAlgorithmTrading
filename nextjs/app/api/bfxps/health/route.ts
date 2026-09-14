@@ -26,7 +26,13 @@ export async function GET() {
     const consensus = computeConsensus(rawPlans);
 
     const tickTime = snapshot.timestamp
-      ? new Date(snapshot.timestamp).toLocaleTimeString("vi-VN", { hour12: false })
+      ? new Intl.DateTimeFormat("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        }).format(new Date(snapshot.timestamp))
       : "11:30:00";
 
     const liveTick = {
