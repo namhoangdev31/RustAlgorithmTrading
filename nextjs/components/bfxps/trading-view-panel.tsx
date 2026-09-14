@@ -374,13 +374,22 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
         ctx.fillStyle = color;
         ctx.fillRect(x - candleWidth / 2, bodyY, candleWidth, bodyH);
 
-        // Time X-Axis labels
+        // Time X-Axis labels (Luôn hiển thị chuẩn giờ Việt Nam UTC+7)
         if (i % Math.ceil(count / 7) === 0 || i === count - 1) {
           const date = new Date(b.time * 1000);
-          const timeStr = `${String(date.getHours()).padStart(2, "0")}:${String(
-            date.getMinutes(),
-          ).padStart(2, "0")}`;
-          const dayStr = `${date.getDate()}/${date.getMonth() + 1}`;
+          const timeFormatter = new Intl.DateTimeFormat("vi-VN", {
+            timeZone: "Asia/Ho_Chi_Minh",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          });
+          const dateFormatter = new Intl.DateTimeFormat("vi-VN", {
+            timeZone: "Asia/Ho_Chi_Minh",
+            day: "2-digit",
+            month: "2-digit",
+          });
+          const timeStr = timeFormatter.format(date);
+          const dayStr = dateFormatter.format(date);
           ctx.fillStyle = "#6e7681";
           ctx.font = "9px JetBrains Mono, monospace";
           ctx.textAlign = "center";
@@ -464,9 +473,16 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       const diff = activeBar.close - activeBar.open;
       const pct = ((diff / (activeBar.open || 1)) * 100).toFixed(2);
       const date = new Date(activeBar.time * 1000);
-      const dtStr = `${date.toLocaleDateString("vi-VN")} ${String(
-        date.getHours(),
-      ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+      const dtFormatter = new Intl.DateTimeFormat("vi-VN", {
+        timeZone: "Asia/Ho_Chi_Minh",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
+      const dtStr = dtFormatter.format(date);
       return { isUp, diff, pct, dtStr };
     }, [activeBar]);
 
