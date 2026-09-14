@@ -18,6 +18,8 @@ import { useTranslations } from "next-intl";
 
 export interface TradeItem {
   date: string;
+  mode?: "LIVE" | "BACKTEST";
+  isLive?: boolean;
   side: "LONG" | "SHORT";
   entryPrice: number;
   slPrice: number;
@@ -43,7 +45,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
   const [summary, setSummary] = useState<any>(null);
   const [monthlyPnl, setMonthlyPnl] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
-  const [filterType, setFilterType] = useState<"ALL" | "FILLED" | "WIN" | "LOSS" | "NO_FILL">("ALL");
+  const [filterType, setFilterType] = useState<"ALL" | "LIVE" | "FILLED" | "WIN" | "LOSS" | "NO_FILL">("ALL");
   const [selectedMonth, setSelectedMonth] = useState<string>("ALL");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -84,6 +86,10 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
       }
       // Lọc theo tháng
       if (selectedMonth !== "ALL" && !t.date.startsWith(selectedMonth)) {
+        return false;
+      }
+      // Lọc theo chế độ Live
+      if (filterType === "LIVE" && t.date < "2026-09-14") {
         return false;
       }
       // Lọc theo trạng thái
@@ -248,6 +254,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
           <div className="flex items-center gap-1.5">
             {[
               { id: "ALL", label: t("filter_all", { count: trades.length }) },
+              { id: "LIVE", label: t("filter_live", { count: summary?.liveCount ?? trades.filter((tr) => tr.date >= "2026-09-14").length }) },
               { id: "WIN", label: t("filter_win", { count: summary?.wins ?? trades.filter((tr) => tr.isWin).length }) },
               { id: "LOSS", label: t("filter_loss", { count: summary?.losses ?? trades.filter((tr) => tr.pnl < 0 && tr.exitType !== "NO_FILL").length }) },
             ].map((tab) => (
@@ -299,6 +306,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
               <thead className="sticky top-0 z-10 border-b border-white/10 bg-[#090d16] text-slate-400">
                 <tr>
                   <th className="py-2.5 px-3 font-semibold">{t("col_date")}</th>
+                  <th className="py-2.5 px-3 font-semibold text-center">{t("col_mode")}</th>
                   <th className="py-2.5 px-3 font-semibold">{t("col_plan")}</th>
                   <th className="py-2.5 px-3 font-semibold">{t("col_entry")}</th>
                   <th className="py-2.5 px-3 font-semibold">{t("col_tp")}</th>
@@ -328,6 +336,21 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({ isOpen, on
                         {trade.exitType === "PENDING" && (
                           <span className="ml-1.5 rounded-md bg-sky-500/20 px-1.5 py-0.5 text-[10px] text-sky-400 font-sans border border-sky-500/30">
                             {t("next_session")}
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3 text-center">
+                        {trade.date >= "2026-09-14" ? (
+                          <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-extrabold text-emerald-400 border border-emerald-500/40 shadow-[0_0_10px_rgba(52,211,153,0.2)]">
+                            <span className="relative flex h-1.5 w-1.5">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                            </span>
+                            {t("mode_live")}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold text-purple-300/80 border border-purple-500/20">
+                            {t("mode_backtest")}
                           </span>
                         )}
                       </td>

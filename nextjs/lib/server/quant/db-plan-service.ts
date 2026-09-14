@@ -244,8 +244,13 @@ export async function getTradingHistoryFromDb() {
       if (dd < maxDrawdown) maxDrawdown = dd;
     }
 
+    const isLive = dateStr >= "2026-09-14";
+    const mode = isLive ? "LIVE" : "BACKTEST";
+
     return {
       date: dateStr,
+      mode,
+      isLive,
       side: p.side as "LONG" | "SHORT",
       entryPrice: Number(p.entryPrice.toString()),
       slPrice: Number(p.slPrice.toString()),
@@ -267,9 +272,14 @@ export async function getTradingHistoryFromDb() {
   const startDate = validPlans[0]?.date ? validPlans[0].date.toISOString().slice(0, 10) : undefined;
   const endDate = validPlans[validPlans.length - 1]?.date ? validPlans[validPlans.length - 1].date.toISOString().slice(0, 10) : undefined;
 
+  const liveCount = validPlans.filter((p) => p.date.toISOString().slice(0, 10) >= "2026-09-14").length;
+  const backtestCount = validPlans.filter((p) => p.date.toISOString().slice(0, 10) < "2026-09-14").length;
+
   return {
     summary: {
       totalSessions: validPlans.length,
+      liveCount,
+      backtestCount,
       totalBars: undefined, // Tính từ nguồn dữ liệu thực tế, không ước lượng
       startDate,
       endDate,
