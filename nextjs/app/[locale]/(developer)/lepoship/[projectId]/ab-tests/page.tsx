@@ -38,7 +38,6 @@ export default async function AbTestsPage({ params }: Props) {
     include: { analysisSnapshots: { orderBy: { bucketStart: "desc" }, take: 1 } },
   });
 
-  // Fetch available release tracks for the create form
   const tracks = await prisma.bundleReleaseTracks.findMany({
     where: { bundleId: bundle.id, status: "active", storagePath: { not: "" } },
     orderBy: { buildNumber: "desc" },
@@ -52,10 +51,10 @@ export default async function AbTestsPage({ params }: Props) {
         description="Run OTA experiments to test different bundle versions on a subset of devices."
       />
 
-      {/* Create form */}
+      {}
       {canEdit && <AbTestActions projectId={projectId} tracks={tracks} tests={tests} />}
 
-      {/* Test list */}
+      {}
       {tests.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center text-sm text-muted-foreground">
@@ -119,7 +118,7 @@ export default async function AbTestsPage({ params }: Props) {
                     {latest?.liftPercent !== null && latest?.liftPercent !== undefined && <span>· Lift {latest.liftPercent.toFixed(2)}%</span>}
                   </div>
 
-                  {/* Action buttons based on status */}
+                  {}
                   <div className="flex items-center gap-2 pt-1">
                     {test.status === "draft" && (
                       <>

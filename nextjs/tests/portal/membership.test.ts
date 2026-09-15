@@ -19,7 +19,6 @@ test.describe("Portal Phase 2 Membership Model Tests", () => {
     const org = await createTestOrganization(owner.id);
     const member = await createTestUser();
 
-    // Create membership record
     const membership = await prisma.organizationMembership.create({
       data: {
         organizationId: org.id,
@@ -33,7 +32,6 @@ test.describe("Portal Phase 2 Membership Model Tests", () => {
     assert.strictEqual(membership.role, "editor");
     assert.strictEqual(membership.inviteStatus, "accepted");
 
-    // Query organization with members
     const orgWithMembers = await prisma.organization.findUnique({
       where: { id: org.id },
       include: {
@@ -56,7 +54,6 @@ test.describe("Portal Phase 2 Membership Model Tests", () => {
     const project = await createTestProject(org.id);
     const member = await createTestUser();
 
-    // Create project membership record
     const membership = await prisma.projectMembership.create({
       data: {
         projectId: project.id,
@@ -69,7 +66,6 @@ test.describe("Portal Phase 2 Membership Model Tests", () => {
     assert.ok(membership.id);
     assert.strictEqual(membership.role, "viewer");
 
-    // Query project with members
     const projectWithMembers = await prisma.project.findUnique({
       where: { id: project.id },
       include: {

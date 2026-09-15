@@ -46,12 +46,10 @@ export const BenefitsSection = () => {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Register ScrollTrigger
     gsap.registerPlugin(ScrollTrigger);
 
-    // Left-side text reveal + parallax glide
     if (textRef.current && containerRef.current) {
-      // Reveal text elements
+      
       gsap.fromTo(
         textRef.current.children,
         { opacity: 0, y: 30 },
@@ -69,7 +67,6 @@ export const BenefitsSection = () => {
         }
       );
 
-      // Glide text downwards during scroll on desktop
       if (window.innerWidth >= 1024) {
         gsap.to(textRef.current, {
           y: 80,
@@ -84,7 +81,6 @@ export const BenefitsSection = () => {
       }
     }
 
-    // Right-side cards stagger animation + rotation reveal
     if (cardsContainerRef.current) {
       const cards = cardsContainerRef.current.querySelectorAll(".benefit-card");
       gsap.fromTo(
@@ -108,13 +104,11 @@ export const BenefitsSection = () => {
     }
   }, []);
 
-  // Card hover interactive animations
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     const card = e.currentTarget;
     const icon = card.querySelector(".benefit-icon");
     const bgNumber = card.querySelector(".benefit-number");
 
-    // Scale up card & color tint border
     gsap.to(card, {
       scale: 1.03,
       borderColor: "rgba(62,207,142,0.5)",
@@ -123,7 +117,6 @@ export const BenefitsSection = () => {
       ease: "power2.out",
     });
 
-    // Bounce and rotate icon slightly
     if (icon) {
       gsap.to(icon, {
         scale: 1.15,
@@ -134,7 +127,6 @@ export const BenefitsSection = () => {
       });
     }
 
-    // Move number up and highlight it
     if (bgNumber) {
       gsap.to(bgNumber, {
         y: -10,

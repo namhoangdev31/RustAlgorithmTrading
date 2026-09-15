@@ -6,17 +6,12 @@ import { requireProjectRole } from "@/lib/server/permissions";
 import { prisma } from "@/lib/server/prisma";
 import { PERMISSION_GROUPS } from "@/lib/server/permission-groups";
 
-
 async function requireCollaboratorManager(userId: string, projectId: string) {
-  // Requires owner or admin project role to manage collaborator permissions
+  
   const access = await requireProjectRole(userId, projectId, "owner");
   return access;
 }
 
-/**
- * Update a collaborator's permissions on the project's bundle
- * based on the selected standard role group.
- */
 export async function updateCollaboratorPermissionsAction(
   projectId: string,
   collaboratorUserId: string,
@@ -41,13 +36,12 @@ export async function updateCollaboratorPermissionsAction(
     throw new Error("Invalid permission group key.");
   }
 
-  // Update permissionKeys array in BundleCollaborators
   const updated = await prisma.bundleCollaborators.update({
     where: {
       bundleId_userId: { bundleId, userId: collaboratorUserId },
     },
     data: {
-      role: groupKey, // Map standard group key as role string
+      role: groupKey, 
       permissionKeys,
     },
   });

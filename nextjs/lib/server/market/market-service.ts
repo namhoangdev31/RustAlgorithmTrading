@@ -2,16 +2,15 @@ import { MarketSnapshot } from "../quant/types";
 
 export interface DailyMarketMetrics {
   refDate: string;
-  refPrice: number;        // Giá đóng cửa phiên trước (Reference Price)
-  atr5d: number;           // Biên độ biến động trung bình 5 phiên gần nhất
-  swingLow5d: number;      // Đáy 5 phiên gần nhất
-  swingHigh5d: number;     // Đỉnh 5 phiên gần nhất
-  ema5: number;            // EMA(5) nến ngày
-  ema10: number;           // EMA(10) nến ngày
-  isFallback?: boolean;    // true khi dùng số liệu dự phòng (mạng lỗi) -> freshness AMBER
+  refPrice: number;        
+  atr5d: number;           
+  swingLow5d: number;      
+  swingHigh5d: number;     
+  ema5: number;            
+  ema10: number;           
+  isFallback?: boolean;    
 }
 
-/** Nến 1 phút dùng cho replay execution (time theo giờ VN "HH:mm:ss") */
 export interface IntradayBar {
   time: string;
   open: number;
@@ -20,7 +19,6 @@ export interface IntradayBar {
   close: number;
 }
 
-/** Dữ liệu thô 1m từ Entrade (dùng chung cho snapshot + bars để tránh double-fetch) */
 interface Raw1mData {
   t: number[];
   o: number[];
@@ -33,36 +31,28 @@ interface Raw1mData {
 
 let cachedSnapshot: MarketSnapshot | null = null;
 let lastFetchTime = 0;
-const CACHE_TTL_MS = 5000; // 5s cache realtime
+const CACHE_TTL_MS = 5000; 
 
 let cachedDailyMetrics: DailyMarketMetrics | null = null;
 let lastDailyFetchTime = 0;
-const DAILY_CACHE_TTL_MS = 60000; // 60s cache cho chỉ số ngày
+const DAILY_CACHE_TTL_MS = 60000; 
 
-// Cache dùng chung cho nến 1m (snapshot + getIntradayBars đọc cùng nguồn, chỉ gọi sàn 1 lần/TTL)
 let cachedRaw1m: Raw1mData | null = null;
 let lastRaw1mFetch = 0;
 const RAW_1M_TTL_MS = 5000;
 
-/** Ngày VN (YYYY-MM-DD) từ epoch giây */
 function vnDateFromEpochSec(epochSec: number): string {
   return new Date((epochSec + 7 * 3600) * 1000).toISOString().slice(0, 10);
 }
 
-/** Ngày VN hôm nay (YYYY-MM-DD) từ epoch ms */
 function vnTodayStr(nowMs: number): string {
   return new Date(nowMs + 7 * 3600 * 1000).toISOString().slice(0, 10);
 }
 
-/** Giờ VN (HH:mm:ss) từ epoch giây */
 function vnTimeFromEpochSec(epochSec: number): string {
   return new Date((epochSec + 7 * 3600) * 1000).toISOString().slice(11, 19);
 }
 
-/**
- * Fetch thô nến 1m VN30F1M từ Entrade, có cache dùng chung.
- * Trả về cache cũ nếu fetch lỗi (stale-while-error) để bot không chết giữa phiên.
- */
 async function fetchRaw1mData(force = false): Promise<Raw1mData | null> {
   const now = Date.now();
   if (!force && cachedRaw1m && now - lastRaw1mFetch < RAW_1M_TTL_MS) {
@@ -71,7 +61,7 @@ async function fetchRaw1mData(force = false): Promise<Raw1mData | null> {
 
   try {
     const nowSec = Math.floor(now / 1000);
-    const fromSec = nowSec - 86400 * 2; // 2 ngày: đủ bao phiên hôm nay + dự phòng
+    const fromSec = nowSec - 86400 * 2; 
     const res = await fetch(
       `https://services.entrade.com.vn/chart-api/chart?resolution=1&symbol=VN30F1M&from=${fromSec}&to=${nowSec}`,
       {
@@ -147,7 +137,7 @@ export async function getDailyMarketMetrics(force = false): Promise<DailyMarketM
     const fromSec = nowSec - 86400 * 45; // 45 ngày để đủ dữ liệu EMA10 & ATR5
 
     const res = await fetch(
-      `https://services.entrade.com.vn/chart-api/chart?resolution=1D&symbol=VN30F1M&from=${fromSec}&to=${nowSec}`,
+      `https:
       {
         headers: {
           Accept: "application/json",
@@ -165,12 +155,10 @@ export async function getDailyMarketMetrics(force = false): Promise<DailyMarketM
         const todayStr = new Date(now + 7 * 3600 * 1000).toISOString().slice(0, 10);
         const lastBarDate = new Date((d.t[len - 1] + 7 * 3600) * 1000).toISOString().slice(0, 10);
 
-        // Phiên tham chiếu đã đóng cửa (nếu cây nến cuối là của hôm nay thì lấy cây trước đó)
         const prevIdx = lastBarDate === todayStr ? len - 2 : len - 1;
         const refDate = new Date((d.t[prevIdx] + 7 * 3600) * 1000).toISOString().slice(0, 10);
         const refPrice = Number(d.c[prevIdx]);
 
-        // Tính ATR(5), SwingLow5D, SwingHigh5D
         let trSum = 0;
         const lows: number[] = [];
         const highs: number[] = [];
@@ -187,7 +175,6 @@ export async function getDailyMarketMetrics(force = false): Promise<DailyMarketM
         const swingLow5d = Math.min(...lows);
         const swingHigh5d = Math.max(...highs);
 
-        // Tính EMA5 và EMA10
         function calcEMA(arr: number[], period: number) {
           const k = 2 / (period + 1);
           let ema = arr[0];
@@ -221,7 +208,6 @@ export async function getDailyMarketMetrics(force = false): Promise<DailyMarketM
     console.warn("[market] Lỗi lấy DailyMarketMetrics từ sàn:", (err as Error)?.message);
   }
 
-  // Fallback an toàn nếu mạng lỗi — đánh dấu isFallback để route tính freshness AMBER/RED
   const reusedCache = cachedDailyMetrics;
   const fallbackMetrics: DailyMarketMetrics = reusedCache
     ? { ...reusedCache, isFallback: true }
@@ -247,9 +233,6 @@ export async function getDailyMarketMetrics(force = false): Promise<DailyMarketM
   return fallbackMetrics;
 }
 
-/**
- * Service cào và quản lý dữ liệu thị trường trực tiếp cho VN30F1M
- */
 export async function getLatestMarketSnapshot(force = false): Promise<MarketSnapshot> {
   const now = Date.now();
   if (!force && cachedSnapshot && now - lastFetchTime < CACHE_TTL_MS) {
@@ -257,13 +240,12 @@ export async function getLatestMarketSnapshot(force = false): Promise<MarketSnap
   }
 
   try {
-    // Dùng chung cache nến 1m với getIntradayBars -> chỉ gọi Entrade 1 lần/TTL (tránh 429)
+    
     const raw = await fetchRaw1mData(force);
 
     if (raw && raw.c.length > 0) {
       const todayStr = vnTodayStr(raw.fetchedAt);
 
-      // Lọc các nến 1m chỉ thuộc phiên hôm nay
       const todayIndices: number[] = [];
       for (let i = 0; i < raw.t.length; i++) {
         if (vnDateFromEpochSec(raw.t[i]) === todayStr) {
@@ -286,7 +268,7 @@ export async function getLatestMarketSnapshot(force = false): Promise<MarketSnap
         volume = todayIndices.reduce((s, i) => s + Number(raw.v?.[i] || 0), 0);
         lastTimestamp = new Date(raw.t[todayIndices[todayIndices.length - 1]] * 1000).toISOString();
       } else {
-        // Trước giờ mở cửa phiên hôm nay
+        
         const lastIdx = raw.c.length - 1;
         current = Number(raw.c[lastIdx]);
         open = current;
@@ -296,7 +278,6 @@ export async function getLatestMarketSnapshot(force = false): Promise<MarketSnap
         lastTimestamp = new Date(raw.t[lastIdx] * 1000).toISOString();
       }
 
-      // Lấy VN30 Index và OI thực tế trực tiếp từ sàn VNDirect để tính Basis & OI chuẩn xác:
       let basis = -0.5;
       let oi = 30378.0;
 
@@ -312,7 +293,7 @@ export async function getLatestMarketSnapshot(force = false): Promise<MarketSnap
             }
           ),
           fetch(
-            `https://api-finfo.vndirect.com.vn/v4/derivatives?q=code:VN30F1M`,
+            `https:
             {
               headers: { "User-Agent": "Mozilla/5.0" },
               cache: "no-store",
@@ -336,7 +317,7 @@ export async function getLatestMarketSnapshot(force = false): Promise<MarketSnap
           }
         }
       } catch {
-        // Bỏ qua nếu mạng sàn phụ trễ
+        
       }
 
       const snapshot: MarketSnapshot = {
@@ -362,7 +343,6 @@ export async function getLatestMarketSnapshot(force = false): Promise<MarketSnap
     console.warn("[market] Lỗi dựng snapshot từ nến 1m:", (error as Error)?.message);
   }
 
-  // Fallback nếu ngoài giờ hoặc mạng nghẽn — đánh dấu source để route tính freshness RED
   const reused = cachedSnapshot;
   const fallbackSnapshot: MarketSnapshot = reused || {
     open: 1936.0,

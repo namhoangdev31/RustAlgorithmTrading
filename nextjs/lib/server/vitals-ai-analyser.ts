@@ -1,6 +1,6 @@
 export interface WebVitalsRecord {
   id: string;
-  name: string; // "LCP" | "FID" | "CLS" | "INP"
+  name: string; 
   value: number;
   rating: "good" | "needs-improvement" | "poor";
   pathname: string;

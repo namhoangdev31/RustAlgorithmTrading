@@ -27,7 +27,7 @@ interface WebhookItem {
   id: string;
   url: string;
   secret: string | null;
-  events: string; // JSON array of string events
+  events: string; 
   isActive: boolean;
   failureCount: number;
   consecutiveFailures: number;
@@ -52,7 +52,6 @@ export function WebhookManager({ projectId, initialWebhooks }: WebhookManagerPro
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [pending, setPending] = React.useState(false);
 
-  // Form states
   const [url, setUrl] = React.useState("");
   const [selectedEvents, setSelectedEvents] = React.useState<string[]>([]);
   const [isActive, setIsActive] = React.useState(true);
@@ -219,7 +218,6 @@ export function WebhookManager({ projectId, initialWebhooks }: WebhookManagerPro
         </DialogContent>
       </Dialog>
 
-      {/* Webhooks list */}
       {webhooks.length === 0 ? (
         <div className="py-12 text-center text-xs text-muted-foreground border border-dashed rounded-lg">
           No webhooks configured for this project.

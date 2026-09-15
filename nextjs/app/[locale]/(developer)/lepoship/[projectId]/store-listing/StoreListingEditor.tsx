@@ -100,14 +100,12 @@ export function StoreListingEditor({
   privacy: initialPrivacy
 }: StoreListingEditorProps) {
   const t = useTranslations("LepoShip.store_listing");
-  // --- Tab State ---
+  
   const [activeTab, setActiveTab] = React.useState("locales");
 
-  // --- Locales Tab State ---
   const [selectedLocale, setSelectedLocale] = React.useState<string>("en");
   const [newLocale, setNewLocale] = React.useState("");
 
-  // Get active listing & localization data
   const currentListing = listings.find((l) => l.region === selectedLocale);
   const currentLoc = localizations.find((l) => l.languageCode === selectedLocale);
 
@@ -123,7 +121,6 @@ export function StoreListingEditor({
     setChangelog(currentLoc?.localizedChangelog || "");
   }, [selectedLocale, currentListing, currentLoc]);
 
-  // All distinct locales available
   const allLocales = Array.from(
     new Set(["en", "vi", ...listings.map((l) => l.region), ...localizations.map((l) => l.languageCode)])
   );
@@ -138,7 +135,6 @@ export function StoreListingEditor({
     }
   };
 
-  // --- Screenshots (Media) State ---
   const [mediaList, setMediaList] = React.useState<Omit<Screenshot, "id" | "bundleId" | "createdAt">[]>(
     initialScreenshots.map((s) => ({
       url: s.url,
@@ -183,11 +179,9 @@ export function StoreListingEditor({
     setMediaList(nextList.map((m, idx) => ({ ...m, sortOrder: idx })));
   };
 
-  // --- Keywords & Tags State ---
   const localeKeywords = keywords.filter((k) => k.locale === selectedLocale).map((k) => k.keyword).join(", ");
   const globalTags = initialTags.map((t) => t.tag).join(", ");
 
-  // --- Privacy State ---
   const [collectsPersonal, setCollectsPersonal] = React.useState(initialPrivacy?.collectsPersonalData || false);
   const [sharingThirdParty, setSharingThirdParty] = React.useState(initialPrivacy?.thirdPartySharing || false);
 
@@ -212,10 +206,10 @@ export function StoreListingEditor({
         </TabsTrigger>
       </TabsList>
 
-      {/* --- LOCALES TAB --- */}
+      {}
       <TabsContent value="locales" className="space-y-4 outline-none">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {/* Left panel: locale selector */}
+          {}
           <div className="space-y-4">
             <Card className="border-hairline">
               <CardHeader className="p-4 pb-2">
@@ -254,7 +248,7 @@ export function StoreListingEditor({
             </Card>
           </div>
 
-          {/* Right panel: editor */}
+          {}
           <div className="md:col-span-3">
             <Card className="border-hairline">
               <CardHeader className="p-5 pb-3">
@@ -331,7 +325,7 @@ export function StoreListingEditor({
         </div>
       </TabsContent>
 
-      {/* --- MEDIA TAB --- */}
+      {}
       <TabsContent value="media" className="space-y-4 outline-none">
         <Card className="border-hairline">
           <CardHeader className="p-5 pb-3">
@@ -341,7 +335,7 @@ export function StoreListingEditor({
             </CardDescription>
           </CardHeader>
           <CardContent className="p-5 pt-0 space-y-6">
-            {/* Screenshot List */}
+            {}
             <div className="space-y-2 max-w-3xl">
               {mediaList.length === 0 ? (
                 <div className="py-8 text-center text-xs text-muted-foreground border border-dashed border-hairline rounded-md">
@@ -402,7 +396,7 @@ export function StoreListingEditor({
               )}
             </div>
 
-            {/* Add New media form (Client-side stack) */}
+            {}
             <div className="space-y-4 pt-4 border-t border-hairline max-w-xl">
               <h3 className="text-xs font-semibold">Add Screenshot URL</h3>
               <div className="grid grid-cols-1 gap-3">
@@ -450,7 +444,7 @@ export function StoreListingEditor({
               </div>
             </div>
 
-            {/* Save Entire Media list Action */}
+            {}
             <form action={replaceScreenshotsAction} className="pt-6 border-t border-hairline">
               <input type="hidden" name="projectId" value={projectId} />
               <input type="hidden" name="screenshots" value={JSON.stringify(mediaList)} />
@@ -462,10 +456,10 @@ export function StoreListingEditor({
         </Card>
       </TabsContent>
 
-      {/* --- KEYWORDS TAB --- */}
+      {}
       <TabsContent value="keywords" className="space-y-4 outline-none">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Localized keywords */}
+          {}
           <Card className="border-hairline">
             <CardHeader className="p-5 pb-3">
               <CardTitle className="text-sm font-semibold">Localized Keywords</CardTitle>
@@ -494,7 +488,7 @@ export function StoreListingEditor({
             </CardContent>
           </Card>
 
-          {/* Global tags */}
+          {}
           <Card className="border-hairline">
             <CardHeader className="p-5 pb-3">
               <CardTitle className="text-sm font-semibold">Global Tags</CardTitle>
@@ -524,7 +518,7 @@ export function StoreListingEditor({
         </div>
       </TabsContent>
 
-      {/* --- PRIVACY TAB --- */}
+      {}
       <TabsContent value="privacy" className="space-y-4 outline-none">
         <Card className="border-hairline">
           <CardHeader className="p-5 pb-3">

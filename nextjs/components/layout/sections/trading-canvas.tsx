@@ -11,7 +11,6 @@ export const TradingCanvas = () => {
   useEffect(() => {
     if (typeof window === "undefined" || !canvasRef.current || !containerRef.current) return;
 
-    // --- Setup Scene, Camera, Renderer ---
     const width = containerRef.current.clientWidth || window.innerWidth;
     const height = containerRef.current.clientHeight || window.innerHeight;
 
@@ -30,7 +29,6 @@ export const TradingCanvas = () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height);
 
-    // --- State & Interaction Variables ---
     const mouseRef = new THREE.Vector2(0, 0);
     const mouseTargetStrength = { value: 0.0 };
     const mouseCurrentStrength = { value: 0.0 };
@@ -42,23 +40,21 @@ export const TradingCanvas = () => {
       current: 0,
     };
 
-    // --- Particle System Generation ---
     const particleCount = 15000;
     const positions = new Float32Array(particleCount * 3);
-    const randoms = new Float32Array(particleCount * 4); // [orbitRadius, phaseOffset, orbitSpeed, heightOffset]
+    const randoms = new Float32Array(particleCount * 4); 
     const colors = new Float32Array(particleCount * 3);
 
-    // Define color palettes
     const palette = [
-      new THREE.Color("#3ecf8e"), // Emerald Green
-      new THREE.Color("#24b47e"), // Darker Emerald
-      new THREE.Color("#06b6d4"), // Bright Cyan
-      new THREE.Color("#10b981"), // Mint
-      new THREE.Color("#6366f1"), // Indigo accents
+      new THREE.Color("#3ecf8e"), 
+      new THREE.Color("#24b47e"), 
+      new THREE.Color("#06b6d4"), 
+      new THREE.Color("#10b981"), 
+      new THREE.Color("#6366f1"), 
     ];
 
     for (let i = 0; i < particleCount; i++) {
-      // Distribute particles in a large 3D volume
+      
       const x = (Math.random() - 0.5) * 800;
       const y = (Math.random() - 0.5) * 500;
       const z = (Math.random() - 0.5) * 400;
@@ -67,25 +63,23 @@ export const TradingCanvas = () => {
       positions[i * 3 + 1] = y;
       positions[i * 3 + 2] = z;
 
-      // Random parameters for mouse swirl and animation phase
-      randoms[i * 4] = Math.random(); // orbitRadius scaling
-      randoms[i * 4 + 1] = Math.random(); // phaseOffset
-      randoms[i * 4 + 2] = 0.5 + Math.random() * 1.5; // orbitSpeed modifier
-      randoms[i * 4 + 3] = Math.random(); // heightOffset scaling
+      randoms[i * 4] = Math.random(); 
+      randoms[i * 4 + 1] = Math.random(); 
+      randoms[i * 4 + 2] = 0.5 + Math.random() * 1.5; 
+      randoms[i * 4 + 3] = Math.random(); 
 
-      // Distribute colors across the palette
       let colorIndex = 0;
       const r = Math.random();
       if (r < 0.45) {
-        colorIndex = 0; // Emerald
+        colorIndex = 0; 
       } else if (r < 0.7) {
-        colorIndex = 1; // Darker Emerald
+        colorIndex = 1; 
       } else if (r < 0.9) {
-        colorIndex = 2; // Cyan
+        colorIndex = 2; 
       } else if (r < 0.96) {
-        colorIndex = 3; // Mint
+        colorIndex = 3; 
       } else {
-        colorIndex = 4; // Indigo
+        colorIndex = 4; 
       }
 
       const color = palette[colorIndex];
@@ -99,7 +93,6 @@ export const TradingCanvas = () => {
     geometry.setAttribute("aRandom", new THREE.BufferAttribute(randoms, 4));
     geometry.setAttribute("aColor", new THREE.BufferAttribute(colors, 3));
 
-    // --- Custom Shader Material ---
     const material = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0.0 },
@@ -226,7 +219,6 @@ export const TradingCanvas = () => {
     const particles = new THREE.Points(geometry, material);
     scene.add(particles);
 
-    // --- Mouse Event Handlers ---
     const handleMouseMove = (event: MouseEvent) => {
       mouseRef.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouseRef.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -240,7 +232,6 @@ export const TradingCanvas = () => {
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
     document.addEventListener("mouseleave", handleMouseLeave, { passive: true });
 
-    // --- Window Resize Handler ---
     const handleResize = () => {
       if (!containerRef.current) return;
       const w = containerRef.current.clientWidth || window.innerWidth;
@@ -254,7 +245,6 @@ export const TradingCanvas = () => {
     };
     window.addEventListener("resize", handleResize);
 
-    // --- Animation Loop ---
     const clock = new THREE.Clock();
     let animationFrameId: number;
 
@@ -264,11 +254,9 @@ export const TradingCanvas = () => {
       const elapsed = clock.getElapsedTime();
       material.uniforms.uTime.value = elapsed;
 
-      // 1. Mouse presence interpolation
       mouseCurrentStrength.value += (mouseTargetStrength.value - mouseCurrentStrength.value) * 0.08;
       material.uniforms.uMouseStrength.value = mouseCurrentStrength.value;
 
-      // 2. Project mouse coordinates onto the 3D plane at z=0
       if (mouseCurrentStrength.value > 0.01) {
         const mouseVector = new THREE.Vector3(mouseRef.x, mouseRef.y, 0.5);
         mouseVector.unproject(camera);
@@ -277,20 +265,16 @@ export const TradingCanvas = () => {
         mouse3D.copy(camera.position).add(dir.multiplyScalar(distance));
       }
 
-      // Smooth lag / tailing effect on the mouse vector
       mouse3DInterp.lerp(mouse3D, 0.1);
       material.uniforms.uMouse.value.copy(mouse3DInterp);
 
-      // 3. Scroll damping
       scrollState.target = window.scrollY;
       scrollState.current += (scrollState.target - scrollState.current) * 0.06;
       material.uniforms.uScrollY.value = scrollState.current;
 
-      // 4. Subtle background rotation of the whole scene
       particles.rotation.y = elapsed * 0.015;
       particles.rotation.x = elapsed * 0.008;
 
-      // 5. Dynamic theme switching for blending and fog
       const isDark = document.documentElement.classList.contains("dark");
       material.uniforms.uIsDark.value = isDark ? 1.0 : 0.0;
       
@@ -311,14 +295,12 @@ export const TradingCanvas = () => {
 
     animate();
 
-    // --- Cleanup ---
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseleave", handleMouseLeave);
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationFrameId);
 
-      // Dispose of Three.js objects to prevent memory leaks
       geometry.dispose();
       material.dispose();
       renderer.dispose();

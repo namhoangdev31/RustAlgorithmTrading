@@ -25,7 +25,7 @@ export function FeatureFlagProvider({
   initialFlags?: FeatureFlags;
   projectId?: string;
 }) {
-  // Helper to read browser cookies
+  
   const getCookie = (name: string): string | null => {
     if (typeof document === "undefined") return null;
     const value = `; ${document.cookie}`;

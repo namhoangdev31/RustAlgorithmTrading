@@ -12,8 +12,7 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
       next();
       return;
     }
-    
-    // Slide up the transition overlay
+
     gsap.timeline({
       onComplete: next,
     })
@@ -31,7 +30,6 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
       return;
     }
 
-    // Slide out the transition overlay
     gsap.timeline({
       onComplete: () => {
         next();

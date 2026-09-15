@@ -50,7 +50,6 @@ export const ServicesSection = () => {
 
     gsap.registerPlugin(ScrollTrigger);
 
-    // Animate Header
     if (headerRef.current) {
       gsap.fromTo(
         headerRef.current.children,
@@ -70,7 +69,6 @@ export const ServicesSection = () => {
       );
     }
 
-    // Animate Cards
     if (cardsContainerRef.current) {
       const cards = cardsContainerRef.current.querySelectorAll(".service-card");
       gsap.fromTo(

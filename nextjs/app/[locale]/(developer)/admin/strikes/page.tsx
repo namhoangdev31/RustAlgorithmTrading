@@ -9,13 +9,11 @@ import { getTranslations } from "next-intl/server";
 import { AlertOctagon, CheckCircle2, ShieldAlert, ShieldX } from "lucide-react";
 import React from "react";
 
-// Client-side helper triggers
 import { ClientTrigger } from "./ClientTrigger";
 
 export default async function AdminStrikesPage() {
   const t = await getTranslations("LepoShip.compliance");
 
-  // Fetch all pending reports
   const pendingReports = await prisma.bundleUserReports.findMany({
     where: { status: "pending" },
     orderBy: { createdAt: "desc" },
@@ -25,7 +23,6 @@ export default async function AdminStrikesPage() {
     },
   });
 
-  // Fetch active abuse signals
   const abuseSignals = await prisma.bundleAbuseSignals.findMany({
     where: { flaggedForReview: true },
     orderBy: { overallRiskScore: "desc" },
@@ -34,7 +31,6 @@ export default async function AdminStrikesPage() {
     },
   });
 
-  // Fetch all developer strikes
   const strikes = await prisma.bundleDeveloperStrikes.findMany({
     orderBy: { createdAt: "desc" },
     include: {
@@ -45,7 +41,6 @@ export default async function AdminStrikesPage() {
     },
   });
 
-  // Fetch developers and bundles for the "Issue Strike" selector dropdown
   const developers = await prisma.user.findMany({
     where: { userType: "developer" },
     select: { id: true, fullName: true, email: true },
@@ -68,9 +63,9 @@ export default async function AdminStrikesPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: User Reports & Abuse Signals */}
+        {}
         <div className="lg:col-span-2 space-y-6">
-          {/* User Reports */}
+          {}
           <Card className="border-hairline">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
@@ -111,7 +106,7 @@ export default async function AdminStrikesPage() {
             </CardContent>
           </Card>
 
-          {/* Abuse Signals */}
+          {}
           <Card className="border-hairline">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
@@ -156,7 +151,6 @@ export default async function AdminStrikesPage() {
           </Card>
         </div>
 
-        {/* Right Column: Strike History */}
         <div>
           <Card className="border-hairline h-full">
             <CardHeader className="pb-3">

@@ -10,7 +10,6 @@ import { Checkbox } from "./checkbox"
 import { Switch } from "./switch"
 import { RadioGroup, RadioGroupItem } from "./radio-group"
 
-// Helper to safely format errors for FieldError component
 function getFieldErrors(errors: any[]): Array<{ message?: string } | undefined> {
   return errors.map((err) => {
     if (typeof err === "string") {

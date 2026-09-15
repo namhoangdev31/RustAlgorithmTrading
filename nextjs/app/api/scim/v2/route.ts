@@ -12,10 +12,6 @@ function scimError(detail: string, status: number) {
   );
 }
 
-/**
- * Provides an authenticated health descriptor for the configured SCIM base URL.
- * Resource requests remain at /Users and /Groups, scoped by the bearer token.
- */
 export async function GET(request: NextRequest) {
   const authentication = await verifyScimBearerToken(request.headers.get("authorization"));
   if (!authentication.valid) {

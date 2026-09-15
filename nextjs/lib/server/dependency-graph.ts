@@ -4,10 +4,6 @@ import {
   type DependencyNode,
 } from "@/lib/server/native-platform/monorepo";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
 export interface ParallelGroup {
   level: number;
   packages: string[];
@@ -22,14 +18,6 @@ export interface DependencyAnalysis {
   cycles: string[][];
 }
 
-// ---------------------------------------------------------------------------
-// Topological Sort (Kahn's Algorithm)
-// ---------------------------------------------------------------------------
-
-/**
- * Compute a topological ordering of the dependency graph using Kahn's
- * algorithm. Detects cycles and returns the offending paths when found.
- */
 export function topologicalSort(graph: Record<string, string[]>): {
   sorted: string[];
   hasCycles: boolean;
@@ -39,14 +27,11 @@ export function topologicalSort(graph: Record<string, string[]>): {
   const inDegree: Record<string, number> = {};
   const adjacency: Record<string, string[]> = {};
 
-  // Initialise
   for (const node of nodes) {
     inDegree[node] = 0;
     adjacency[node] = [];
   }
 
-  // Build adjacency list and compute in-degree.
-  // graph[A] = [B, C] means A depends on B and C  →  edges B→A, C→A
   for (const node of nodes) {
     for (const dep of graph[node] || []) {
       if (!(dep in inDegree)) {
@@ -58,7 +43,6 @@ export function topologicalSort(graph: Record<string, string[]>): {
     }
   }
 
-  // BFS from nodes with in-degree 0
   const queue: string[] = [];
   for (const node of Object.keys(inDegree)) {
     if (inDegree[node] === 0) queue.push(node);
@@ -77,13 +61,11 @@ export function topologicalSort(graph: Record<string, string[]>): {
     }
   }
 
-  // Detect cycles
   const remaining = Object.keys(inDegree).filter((n) => inDegree[n] > 0);
   if (remaining.length === 0) {
     return { sorted, hasCycles: false, cycles: [] };
   }
 
-  // Find actual cycle paths via Tarjan's SCC
   const cycles = findTarjanSCC(graph);
   return { sorted, hasCycles: true, cycles };
 }
@@ -138,15 +120,6 @@ export function findTarjanSCC(graph: Record<string, string[]>): string[][] {
   return sccs;
 }
 
-// ---------------------------------------------------------------------------
-// Parallel Build Groups
-// ---------------------------------------------------------------------------
-
-/**
- * Group packages into parallel-build levels.
- * Level 0 contains packages with no internal dependencies (can build first).
- * Level N contains packages whose dependencies are all in levels < N.
- */
 export function getParallelGroups(graph: Record<string, string[]>): ParallelGroup[] {
   const nodes = Object.keys(graph);
   const levels: Record<string, number> = {};
@@ -169,7 +142,6 @@ export function getParallelGroups(graph: Record<string, string[]>): ParallelGrou
     }
   }
 
-  // BFS with level tracking
   const queue: Array<{ node: string; level: number }> = [];
   for (const node of Object.keys(inDegree)) {
     if (inDegree[node] === 0) {
@@ -192,7 +164,6 @@ export function getParallelGroups(graph: Record<string, string[]>): ParallelGrou
     }
   }
 
-  // Group by level
   const groupMap = new Map<number, string[]>();
   for (const [node, level] of Object.entries(levels)) {
     if (!groupMap.has(level)) groupMap.set(level, []);
@@ -207,20 +178,11 @@ export function getParallelGroups(graph: Record<string, string[]>): ParallelGrou
   return groups;
 }
 
-// ---------------------------------------------------------------------------
-// Affected Package Detection
-// ---------------------------------------------------------------------------
-
-/**
- * Given a list of changed packages (from Git diff), compute the full set of
- * downstream packages that must be rebuilt (transitive closure via reverse
- * dependency graph).
- */
 export function getAffectedPackages(
   graph: Record<string, string[]>,
   changedPackages: string[]
 ): string[] {
-  // Build reverse graph: dependents of each package
+  
   const reverse: Record<string, string[]> = {};
   for (const node of Object.keys(graph)) {
     reverse[node] = [];
@@ -232,7 +194,6 @@ export function getAffectedPackages(
     }
   }
 
-  // BFS from changed packages through reverse graph
   const affected = new Set<string>(changedPackages);
   const queue = [...changedPackages];
 
@@ -249,11 +210,6 @@ export function getAffectedPackages(
   return Array.from(affected);
 }
 
-// ---------------------------------------------------------------------------
-// Mermaid Diagram
-// ---------------------------------------------------------------------------
-
-/** Generate a Mermaid flowchart visualising the dependency graph. */
 export function generateMermaidDiagram(
   graph: Record<string, string[]>,
   packages: Record<string, DependencyNode>
@@ -262,7 +218,6 @@ export function generateMermaidDiagram(
 
   const lines: string[] = ["graph TD"];
 
-  // Define nodes
   for (const [name, node] of Object.entries(packages)) {
     const id = sanitize(name);
     lines.push(`  ${id}["${name}"]`);

@@ -9,7 +9,7 @@ type FilterBarProps = {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   searchPlaceholder?: string;
-  children?: React.ReactNode; // For additional filters
+  children?: React.ReactNode; 
   className?: string;
 };
 

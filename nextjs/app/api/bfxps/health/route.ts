@@ -38,9 +38,8 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const SNAPSHOT_STALE_MS = 30_000; // snapshot cũ hơn 30s => AMBER
+const SNAPSHOT_STALE_MS = 30_000; 
 
-/** Map trạng thái execution -> exitType dùng cho EOD settlement */
 function mapExitType(status: ExecutionState["status"]): TradeSettlementResult["exitType"] {
   switch (status) {
     case "TP_EXIT":
@@ -77,15 +76,12 @@ export async function GET() {
     ]);
 
     const now = new Date();
-    const todayStr = getVietnamTradingDate(now); // ngày kèo (cuộn T7/CN -> Thứ 2)
-    const realDateVn = getVnDateString(now); // ngày lịch thực tế tại VN
+    const todayStr = getVietnamTradingDate(now); 
+    const realDateVn = getVnDateString(now); 
     const isTradingDay = !isWeekend(realDateVn);
     const phase: TradingSessionPhase = getTradingSessionPhase(now);
     const inOfficialWindow = phase !== "PRE_ATO" && phase !== "ATO_OBSERVATION";
 
-    // ---- Khóa ngữ cảnh kèo lúc 09:15 (DB = nguồn sự thật, an toàn trên serverless) ----
-    // Trước 09:15: chỉ là kèo quan sát, không khóa, không lưu.
-    // Từ 09:15: đóng băng snapshot lần đầu; mọi poll sau đọc lại -> hướng KHÔNG lật.
     let decisionSnapshot: MarketSnapshot = liveSnapshot;
     let isOfficial = false;
     let lockFailed = false;
@@ -102,27 +98,24 @@ export async function GET() {
           lockFailed = true;
         }
       } catch (lockErr: any) {
-        // Mất nguồn sự thật => degraded, KHÔNG được coi là kèo chính thức
+        
         lockFailed = true;
         console.warn("[health] Khóa ngữ cảnh ATO thất bại:", lockErr?.message);
       }
     }
 
-    // ---- Sinh tổ hợp 3 engine từ ngữ cảnh đã quyết định ----
     const plans = generateMultiEnginePortfolio(todayStr, decisionSnapshot, metrics, {
       isOfficial,
       phase,
     });
     let consensus = computeConsensus(plans);
 
-    // ---- Replay nến 1m thật qua execution state machine (có cache theo bar cuối) ----
     const ticks = bars.map(toTick);
     const plansWithExecution = plans.map((plan: TradingPlan) => ({
       ...plan,
       execution: replayExecutionCached(plan, ticks),
     }));
 
-    // Kiểm tra xem hôm nay đã có Kèo Tái Lập Sau Stop Loss được kích hoạt trong CSDL chưa
     const recalibratedDb = await getTodayRecalibratedPlan(todayStr, "simcarrry6");
     if (recalibratedDb) {
       const simIdx = plansWithExecution.findIndex((p) => p.engine === "simcarrry6");
@@ -131,8 +124,7 @@ export async function GET() {
         const entryPrice = Number(recalibratedDb.entryPrice.toString());
         const tpPrice = Number(recalibratedDb.tpPrice.toString());
         const slPrice = Number(recalibratedDb.slPrice.toString());
-        // QUY TẮC: Kèo tái lập sinh ra trong phiên -> CHỈ replay các nến từ thời điểm tạo trở đi!
-        // Tuyệt đối không replay từ 09:00:00 gây khớp lệnh hồi tố và chốt lời giả tạo trong quá khứ!
+
         const createdDate = recalibratedDb.createdAt ? new Date(recalibratedDb.createdAt) : null;
         const createdTimeStr = createdDate
           ? createdDate.toLocaleTimeString("en-GB", { timeZone: "Asia/Ho_Chi_Minh" })

@@ -7,10 +7,6 @@ import { randomBytes } from "crypto";
 import { encryptSecret } from "@/lib/server/secret-crypto";
 import { requireWorkspaceRole } from "@/lib/server/permissions";
 
-/**
- * Returns the SCIM configuration settings (Base URL and secure Token shims)
- * alongside all synced mapped users and groups.
- */
 export async function getScimConfigAction(organizationId: string) {
   const user = await requireCurrentUser();
   await requireWorkspaceRole(user.id, organizationId, "viewer");
@@ -47,9 +43,6 @@ export async function getScimConfigAction(organizationId: string) {
   };
 }
 
-/**
- * Creates or rotates the workspace SCIM credential. The raw token is returned once.
- */
 export async function generateScimCredentialsAction(organizationId: string) {
   const user = await requireCurrentUser();
   await requireWorkspaceRole(user.id, organizationId, "admin");

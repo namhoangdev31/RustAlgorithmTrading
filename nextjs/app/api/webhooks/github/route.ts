@@ -9,7 +9,6 @@ import { createReleaseCandidate } from "@/lib/server/lepoship/release-service";
 import { enqueueBuild } from "@/lib/server/build-queue";
 import { readBoundedText } from "@/lib/server/bounded-json";
 
-// AWS Signature V4 headers generator for Cloud storage operations
 function getSignatureV4Headers(
   method: string,
   url: string,
@@ -86,7 +85,7 @@ async function deleteFromR2OrS3(key: string): Promise<boolean> {
   const region = process.env.LEPOS_CACHE_REGION || "us-east-1";
 
   if (!accessKeyId || !secretAccessKey || !bucket || !endpoint) {
-    console.log(`[Auto-Pruning R2/S3 Mock] Cloud credentials not configured. Simulating delete of s3://${bucket}/${key}`);
+    console.log(`[Auto-Pruning R2/S3 Mock] Cloud credentials not configured. Simulating delete of s3:
     return true;
   }
 
@@ -334,7 +333,7 @@ export async function POST(request: NextRequest) {
       }
       const decryptedToken = decryptSecret(githubAccessTokenEncrypted);
       
-      const previewUrl = `https://pr-${prNumber}-${bundle.slug}.preview.lepos.dev`;
+      const previewUrl = `https:
 
       const latestDeployment = await prisma.nativeDeployment.findFirst({
         where: { projectId, target: "preview" },
@@ -346,7 +345,7 @@ export async function POST(request: NextRequest) {
       const qaReport = await runAutomatedQaTests(previewUrl, projectId, deploymentId);
 
       // 1. Post a comment on the PR containing preview link & QA Test Report
-      const commentUrl = `https://api.github.com/repos/${repoFullName}/issues/${prNumber}/comments`;
+      const commentUrl = `https:
       await fetch(commentUrl, {
         method: "POST",
         headers: {
@@ -362,9 +361,8 @@ export async function POST(request: NextRequest) {
 
       // 2. Post status checks to GitHub
       if (sha) {
-        const statusUrl = `https://api.github.com/repos/${repoFullName}/statuses/${sha}`;
-        
-        // Post preview deployment status
+        const statusUrl = `https:
+
         await fetch(statusUrl, {
           method: "POST",
           headers: {
@@ -502,7 +500,7 @@ export async function POST(request: NextRequest) {
     });
     await enqueueBuild({
       projectId, bundleId: bundle.id, buildNumber: release.buildNumber, version: newVersion,
-      config: { platform: configObj.platform || "expo", gitRepoUrl: `https://github.com/${repoFullName}.git`, gitBranch: tag },
+      config: { platform: configObj.platform || "expo", gitRepoUrl: `https:
       trackId: release.id, releaseId: release.id, buildJobId: buildJob.id,
     });
 

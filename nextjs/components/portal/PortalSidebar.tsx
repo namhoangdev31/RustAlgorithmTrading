@@ -84,7 +84,6 @@ export function PortalSidebar({
   const locale = (params?.locale as string) || "en";
   const projectId = params?.projectId as string;
 
-  // Determine current active navigation context
   let navItems: NavItem[] = [];
   let groupTitle = "Workspace";
 
@@ -115,7 +114,7 @@ export function PortalSidebar({
       </SidebarHeader>
       
       <SidebarContent>
-        {/* Context Switching Banner if in Project or LepoShip scope */}
+        
         {projectId && (
           <div className="px-3 py-2">
             <Link

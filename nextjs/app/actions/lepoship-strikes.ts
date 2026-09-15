@@ -25,7 +25,7 @@ export async function issueStrikeAction(data: {
   const expires = data.expiresAt ? new Date(data.expiresAt) : null;
 
   return await prisma.$transaction(async (tx) => {
-    // 1. Create the strike
+    
     const strike = await tx.bundleDeveloperStrikes.create({
       data: {
         id: crypto.randomUUID(),
@@ -41,7 +41,6 @@ export async function issueStrikeAction(data: {
       },
     });
 
-    // 2. Count active, non-expired strikes for this developer
     const activeStrikesCount = await tx.bundleDeveloperStrikes.count({
       where: {
         developerId: data.developerId,
@@ -53,10 +52,9 @@ export async function issueStrikeAction(data: {
       },
     });
 
-    // 3. If >= 3 active strikes, suspend all their bundles
     let suspendedCount = 0;
     if (activeStrikesCount >= 3) {
-      // Find developer's bundles that are published or under_review
+      
       const developerBundles = await tx.bundles.findMany({
         where: {
           developerId: data.developerId,

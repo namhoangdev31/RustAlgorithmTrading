@@ -6,7 +6,7 @@ import { requireProjectRole } from "@/lib/server/permissions";
 import { prisma } from "@/lib/server/prisma";
 
 async function requireBundleOwner(userId: string, projectId: string) {
-  // Require at least 'editor' role to configure ads
+  
   const access = await requireProjectRole(userId, projectId, "editor");
   const bundle = access.project.bundle;
   if (!bundle) throw new Error("LepoShip bundle not found.");

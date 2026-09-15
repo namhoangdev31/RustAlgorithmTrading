@@ -1,9 +1,5 @@
 import { Direction, R5Action } from "./types";
 
-/**
- * Bộ lọc R5 (R5 Corrective Overlay):
- * Ưu tiên: CANCEL > FLIP_HINT > KEEP
- */
 export function evaluateR5(
   side: Direction,
   openPrice: number,
@@ -15,7 +11,7 @@ export function evaluateR5(
   const gap = openPrice - refPrice;
 
   if (side === "LONG") {
-    // 1. Điều kiện CANCEL: ATO Gap down quá sâu hoặc mở cửa chạm ngưỡng cắt lỗ
+    
     if (gap < -6.0 || openPrice <= slPrice + 2.0) {
       return {
         action: "CANCEL",

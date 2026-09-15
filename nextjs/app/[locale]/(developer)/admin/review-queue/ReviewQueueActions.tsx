@@ -30,7 +30,7 @@ export function ReviewQueueActions({ queueItemId, bundleName }: Props) {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Approve */}
+      {}
       <form
         action={approveReviewQueueAction}
         onSubmit={() => setPending(true)}
@@ -47,7 +47,7 @@ export function ReviewQueueActions({ queueItemId, bundleName }: Props) {
         </Button>
       </form>
 
-      {/* Reject dialog */}
+      {}
       <Dialog open={rejectOpen} onOpenChange={setRejectOpen}>
         <DialogTrigger asChild>
           <Button

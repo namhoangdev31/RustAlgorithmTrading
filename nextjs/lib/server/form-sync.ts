@@ -5,10 +5,6 @@ export type ExternalSyncResult = {
   message: string;
 };
 
-/**
- * A provider adapter must be connected before submissions can leave the portal.
- * This boundary deliberately never reports success for an unconfigured adapter.
- */
 export async function syncSubmissionToExternal(
   _data: Record<string, unknown>,
   target: "google-sheets" | "salesforce"

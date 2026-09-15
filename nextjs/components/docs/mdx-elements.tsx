@@ -11,7 +11,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-// --- CALLOUT COMPONENT ---
 interface CalloutProps {
   type?: "info" | "warning" | "danger" | "success";
   children: React.ReactNode;
@@ -70,7 +69,6 @@ export function Callout({ type = "info", children, title }: CalloutProps) {
   );
 }
 
-// --- STEPS COMPONENT ---
 interface StepsProps {
   children: React.ReactNode;
 }
@@ -80,8 +78,7 @@ export function Steps({ children }: StepsProps) {
     <div className="steps-container my-10 pl-6 border-l border-border relative space-y-8">
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) return child;
-        
-        // Treat H3 elements or other headings as step headings
+
         const isHeading = ["h3", "h4"].includes(typeof child.type === "string" ? child.type : "");
 
         return (
@@ -97,7 +94,6 @@ export function Steps({ children }: StepsProps) {
   );
 }
 
-// --- CARD & CARD GROUP COMPONENTS ---
 interface CardProps {
   title: string;
   description: string;

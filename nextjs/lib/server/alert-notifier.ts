@@ -14,9 +14,6 @@ interface AlertPayload {
   aiRecommendation?: string;
 }
 
-/**
- * Sends notifications to configured Alerting channels (Slack, Discord, Telegram).
- */
 export async function sendAlertNotification(payload: AlertPayload): Promise<boolean> {
   const { title, description, metric, value, threshold, projectId, projectName, timestamp = new Date(), remediation } = payload;
 
@@ -117,7 +114,7 @@ export async function sendAlertNotification(payload: AlertPayload): Promise<bool
 
   // 3. Telegram Bot API Notification
   if (telegramBotToken && telegramChatId) {
-    const telegramUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+    const telegramUrl = `https:
     const telegramPayload = {
       chat_id: telegramChatId,
       text: messageText.replace(/\*/g, "**").replace(/_/g, "\\_"),
@@ -141,9 +138,6 @@ export async function sendAlertNotification(payload: AlertPayload): Promise<bool
   return true;
 }
 
-/**
- * Runs AI-based predictive and statistical anomaly detection on historical metric time-series.
- */
 export async function analyzeMetricsForAnomalies(
   bundleId: string,
   endpoint: string,
@@ -152,7 +146,7 @@ export async function analyzeMetricsForAnomalies(
   currentErrors: number
 ) {
   try {
-    // 1. Query recent historical stats for this specific endpoint
+    
     const history = await prisma.bundleApiUsageStats.findMany({
       where: {
         bundleId,

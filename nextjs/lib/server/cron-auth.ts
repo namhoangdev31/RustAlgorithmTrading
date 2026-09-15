@@ -1,11 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-/**
- * Fail-closed cron authorization.
- * - 503 if CRON_SECRET is not configured.
- * - 401 if bearer token does not match.
- * - null if authorized (proceed with handler).
- */
 export function verifyCronAuth(request: NextRequest): NextResponse | null {
   const cronSecret = process.env.CRON_SECRET;
 
@@ -26,5 +20,5 @@ export function verifyCronAuth(request: NextRequest): NextResponse | null {
     );
   }
 
-  return null; // Authorized
+  return null; 
 }

@@ -15,13 +15,13 @@ export function TableOfContents() {
   const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
-    // Helper to slugify text
+    
     const slugify = (text: string) => {
       return text
         .toString()
         .toLowerCase()
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "") // Remove Vietnamese diacritics
+        .replace(/[\u0300-\u036f]/g, "") 
         .replace(/\s+/g, "-")
         .replace(/[^\w\-]+/g, "")
         .replace(/\-\-+/g, "-")
@@ -29,7 +29,6 @@ export function TableOfContents() {
         .replace(/-+$/, "");
     };
 
-    // Query headings inside the article
     const updateHeadings = () => {
       const headingElements = document.querySelectorAll("article h2, article h3");
       const items: TocItem[] = [];
@@ -49,10 +48,8 @@ export function TableOfContents() {
       setHeadings(items);
     };
 
-    // Run initial update
     updateHeadings();
 
-    // Re-run if DOM changes (e.g. MDX content loads asynchronously)
     const observer = new MutationObserver(updateHeadings);
     const article = document.querySelector("article");
     if (article) {
@@ -88,7 +85,7 @@ export function TableOfContents() {
     e.preventDefault();
     const el = document.getElementById(id);
     if (el) {
-      const yOffset = -90; // account for fixed header
+      const yOffset = -90; 
       const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
       setActiveId(id);

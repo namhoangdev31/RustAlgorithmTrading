@@ -32,11 +32,6 @@ export interface TradeSettlementResult {
   notes?: string;
 }
 
-/**
- * ID tất định cho bản ghi khóa ngữ cảnh ATO theo ngày (YYYY-MM-DD).
- * sha256 -> 16 byte đầu -> format UUID (cột id là @db.Uuid). Cùng ngày -> cùng ID
- * -> dùng làm PK để DB tự chống trùng (atomic insert-once/ngày), không cần SELECT-then-INSERT.
- */
 export function deriveLockId(dateVn: string): string {
   const h = createHash("sha256").update(`bfxps-ato-lock:${dateVn}`).digest("hex");
   // 32 hex đầu -> 8-4-4-4-12

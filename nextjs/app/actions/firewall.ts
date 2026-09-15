@@ -34,7 +34,6 @@ export async function createFirewallRuleAction(
     },
   });
 
-  // Sync to local memory WAF configuration (in a real production app, this writes to Upstash Redis)
   console.log(`[WAF Sync] Synced firewall rule ${rule.name} for project ${projectId} to Edge cache.`);
 
   revalidatePath(`/projects/${projectId}/security`);

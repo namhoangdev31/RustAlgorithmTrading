@@ -25,7 +25,6 @@ import { Plus, Edit2, Trash2, Calendar, LayoutGrid, AlertCircle } from "lucide-r
 import { upsertFeaturedSlotAction, removeFeaturedSlotAction } from "@/app/actions/lepoship-featured";
 import { Separator } from "@/components/ui/separator";
 
-
 interface FeaturedSlotItem {
   id: string;
   bundleId: string;
@@ -53,7 +52,6 @@ export function FeaturedSlotsManager({ initialSlots, bundles }: ManagerProps) {
   const [error, setError] = React.useState<string | null>(null);
   const [pending, setPending] = React.useState(false);
 
-  // Edit / Form state
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [bundleId, setBundleId] = React.useState("");
   const [slotType, setSlotType] = React.useState("carousel");
@@ -339,7 +337,7 @@ export function FeaturedSlotsManager({ initialSlots, bundles }: ManagerProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Grid of active placements */}
+      {}
       {slots.length === 0 ? (
         <div className="py-12 text-center text-xs text-muted-foreground border border-dashed rounded-lg">
           No featured placements configured. Click &ldquo;Add Featured Slot&rdquo; above to get started.

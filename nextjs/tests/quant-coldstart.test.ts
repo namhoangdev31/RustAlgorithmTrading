@@ -1,15 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-/**
- * Test cold-start / atomic-lock cho cơ chế khóa kèo ATO 09:15.
- * Mô phỏng DB bằng in-memory Map để kiểm chứng:
- *  1. Race: hai saveLockedContext song song -> chỉ 1 row, cả hai đọc về cùng snapshot.
- *  2. Cold-start: ghi lock ở "instance A", xóa module cache, "instance B" đọc lại đúng snapshot.
- *  3. Lock-fail: createMany throw -> caller nhận degraded (không official).
- */
-
-// --- In-memory fake cho bảng bfxps_market_snapshots ---
-// vi.mock được HOIST lên đầu file, nên state dùng trong factory phải tạo qua vi.hoisted.
 const { snapshotTable, ctl } = vi.hoisted(() => {
   const snapshotTable = new Map<string, Record<string, any>>();
   const ctl = { createManyShouldThrow: false };
@@ -22,7 +12,7 @@ vi.mock("@/lib/server/prisma", () => ({
       async createMany(args: { data: Record<string, any>[]; skipDuplicates?: boolean }) {
         if (ctl.createManyShouldThrow) throw new Error("DB unavailable (simulated)");
         for (const row of args.data) {
-          // ON CONFLICT (id) DO NOTHING — skipDuplicates: không ghi đè row đã tồn tại
+          
           if (snapshotTable.has(row.id)) continue;
           snapshotTable.set(row.id, row);
         }
@@ -35,7 +25,6 @@ vi.mock("@/lib/server/prisma", () => ({
   },
 }));
 
-// db-plan-service import Prisma.Decimal -> mock lightweight
 vi.mock("@/prisma/generated/client", () => {
   class Decimal {
     private v: any;
@@ -94,7 +83,7 @@ describe("Cold-start & Atomic Lock — BFXPS ATO 09:15", () => {
     const id2 = deriveLockId(DATE);
     expect(id1).toBe(id2);
     expect(id1).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
-    // Ngày khác -> ID khác
+    
     expect(deriveLockId("2026-09-15")).not.toBe(id1);
   });
 
@@ -102,39 +91,34 @@ describe("Cold-start & Atomic Lock — BFXPS ATO 09:15", () => {
     const snapA = mkSnapshot({ current: 1999.0, source: "A" });
     const snapB = mkSnapshot({ current: 1900.0, source: "B" });
 
-    // Hai request đến gần như đồng thời lúc 09:15
     const [resA, resB] = await Promise.all([
       saveLockedContext(DATE, snapA),
       saveLockedContext(DATE, snapB),
     ]);
 
-    // Chỉ đúng 1 row tồn tại trong bảng (PK tất định + skipDuplicates)
     expect(snapshotTable.size).toBe(1);
-    // Cả hai đọc về CÙNG snapshot thắng (không phân kỳ)
+    
     expect(resA).not.toBeNull();
     expect(resB).not.toBeNull();
     expect(resA!.source).toBe(resB!.source);
     expect(resA!.current).toBe(resB!.current);
-    // Snapshot thắng là A (ghi trước) do ON CONFLICT DO NOTHING
+    
     expect(resA!.source).toBe("ATO_LOCKED_CONTEXT");
   });
 
   it("Cold-start: instance B đọc lại đúng snapshot đã khóa, sinh CÙNG side như instance A", async () => {
-    // Instance A khóa ngữ cảnh lúc 09:15
+    
     const lockedSnap = mkSnapshot({ open: 1968.0, current: 1970.0, basis: -1.0 });
     await saveLockedContext(DATE, lockedSnap);
 
-    // Instance A sinh kèo từ ngữ cảnh đã khóa
     const ctxA = (await getLockedContext(DATE))!;
     const plansA = generateMultiEnginePortfolio(DATE, ctxA, metrics, { isOfficial: true, phase: "CONTINUOUS" });
     const sidesA = plansA.map((p) => p.side);
 
-    // Giả lập instance MỚI (cold start): xóa sạch module-memory cache bằng cách đọc lại từ DB
     const ctxB = (await getLockedContext(DATE))!;
     const plansB = generateMultiEnginePortfolio(DATE, ctxB, metrics, { isOfficial: true, phase: "CONTINUOUS" });
     const sidesB = plansB.map((p) => p.side);
 
-    // Dù current có bị instance khác ghi khác đi, đọc lại từ DB vẫn cho cùng kết quả
     expect(sidesB).toEqual(sidesA);
     expect(ctxB.open).toBe(ctxA.open);
     expect(ctxB.basis).toBe(ctxA.basis);
@@ -145,8 +129,6 @@ describe("Cold-start & Atomic Lock — BFXPS ATO 09:15", () => {
 
     const locked = (await getLockedContext(DATE))!;
 
-    // Một "instance" khác có live snapshot current rất khác (giá đã chạy xa)
-    // Nhưng kèo chính thức PHẢI dùng locked context, không dùng live -> side ổn định
     const plansLocked1 = generateMultiEnginePortfolio(DATE, locked, metrics, { isOfficial: true, phase: "CONTINUOUS" });
     const plansLocked2 = generateMultiEnginePortfolio(DATE, { ...locked, current: 1900.0 }, metrics, { isOfficial: true, phase: "CONTINUOUS" });
 
@@ -156,9 +138,9 @@ describe("Cold-start & Atomic Lock — BFXPS ATO 09:15", () => {
   it("Lock-fail: createMany throw -> saveLockedContext reject (caller tự xử degraded)", async () => {
     ctl.createManyShouldThrow = true;
     await expect(saveLockedContext(DATE, mkSnapshot({}))).rejects.toThrow();
-    // Bảng không có row nào (lock thất bại hoàn toàn)
+    
     expect(snapshotTable.size).toBe(0);
-    // getLockedContext trả null -> route sẽ set isOfficial=false, freshness=RED
+    
     expect(await getLockedContext(DATE)).toBeNull();
   });
 });

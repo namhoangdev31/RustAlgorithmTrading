@@ -2,10 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-/**
- * API trả về chuỗi nến VN30F1M trực tiếp từ Sàn giao dịch (Entrade/DNSE)
- * Tuyệt đối không đọc nến tĩnh từ file JSON cục bộ.
- */
 interface CandleCacheEntry {
   fetchedAt: number;
   data: any;
@@ -20,7 +16,6 @@ export async function GET(req: NextRequest) {
     const limitParam = searchParams.get("limit");
     const limit = limitParam ? parseInt(limitParam, 10) : 500;
 
-    // Chuẩn hóa resolution và số ngày lookback cho Entrade API
     let resolution = "15";
     let lookbackDays = 90;
 

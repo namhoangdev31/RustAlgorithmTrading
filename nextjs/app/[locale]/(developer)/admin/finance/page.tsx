@@ -13,7 +13,6 @@ export default async function AdminFinancePage() {
     redirect("/overview");
   }
 
-  // Fetch all payout logs
   const payouts = await prisma.bundlePayouts.findMany({
     orderBy: { createdAt: "desc" },
     include: {
@@ -21,7 +20,6 @@ export default async function AdminFinancePage() {
     },
   });
 
-  // Fetch all pending and resolved refund requests
   const refunds = await prisma.bundleRefundRequests.findMany({
     orderBy: { createdAt: "desc" },
     include: {

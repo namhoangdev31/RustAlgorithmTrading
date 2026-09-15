@@ -12,8 +12,7 @@ export async function createPatAction(name: string, scopes: string[] = ["project
     return { ok: false, code: "VALIDATION_ERROR", message: "Token name is required.", fieldErrors: { name: ["Token name is required."] } };
   }
 
-  // Generate random secure token
-  const rawToken = "lp_pat_" + randomBytes(24).toString("hex"); // e.g. lp_pat_ + 48 hex characters
+  const rawToken = "lp_pat_" + randomBytes(24).toString("hex"); 
   const tokenHash = createHash("sha256").update(rawToken).digest("hex");
 
   await prisma.personalAccessToken.create({
@@ -22,7 +21,7 @@ export async function createPatAction(name: string, scopes: string[] = ["project
       tokenHash,
       scopes,
       userId: user.id,
-      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // Expires in 1 year
+      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), 
     },
   });
 

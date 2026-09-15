@@ -8,7 +8,7 @@ import { randomBytes } from "crypto";
 import { assertSafeWebhookUrl } from "@/lib/server/lepoship/safe-webhook-url";
 
 async function requireBundleOwner(userId: string, projectId: string) {
-  // Requires editor to configure webhooks
+  
   const access = await requireProjectRole(userId, projectId, "editor");
   const bundle = access.project.bundle;
   if (!bundle) throw new Error("LepoShip bundle not found.");
@@ -33,8 +33,7 @@ export async function createWebhookAction(projectId: string, data: {
   const bundle = await requireBundleOwner(user.id, projectId);
   const now = new Date();
   const webhookUrl = await assertSafeWebhookUrl(data.url);
-  
-  // Generate random HMAC secret
+
   const secret = `whsec_${randomBytes(24).toString("hex")}`;
 
   const webhook = await prisma.bundleWebhooks.create({

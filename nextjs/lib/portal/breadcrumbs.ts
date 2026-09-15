@@ -11,11 +11,9 @@ export function resolveBreadcrumbs(
   const locale = params.locale || "en";
   const segments = pathname.split("/").filter(Boolean);
 
-  // Skip the locale segment if it matches the active locale
   const activeSegments = segments[0] === locale ? segments.slice(1) : segments;
   const items: BreadcrumbItem[] = [];
 
-  // Home/Workspace root marker
   items.push({ label: "Workspace", path: "/overview" });
 
   let currentPath = "";

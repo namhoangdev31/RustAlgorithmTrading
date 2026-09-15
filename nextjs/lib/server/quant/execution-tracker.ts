@@ -1,26 +1,21 @@
 import { ExecutionState, LadderConfig, LadderStep, MarketSnapshot, TradingPlan } from "./types";
 
 export interface M1Tick {
-  time: string; // HH:mm:ss
+  time: string; 
   open: number;
   high: number;
   low: number;
   close: number;
 }
 
-/** Ngưỡng phút trong ngày bắt đầu phiên ATC (14:45 VN) để ép đóng vị thế */
 const ATC_MINUTE_OF_DAY = 14 * 60 + 45;
 
-/** Bar này có thuộc phiên ATC (>= 14:45) không — dùng để ép ATC_EXIT khi replay */
 export function isAtcBar(timeHHMMSS: string): boolean {
   const [h, m] = timeHHMMSS.split(":").map(Number);
   if (!Number.isFinite(h) || !Number.isFinite(m)) return false;
   return h * 60 + m >= ATC_MINUTE_OF_DAY;
 }
 
-/**
- * Máy trạng thái Quản lý Khớp Lệnh & Vị Thế Intraday (Execution State Machine)
- */
 export class IntradayExecutionTracker {
   private state: ExecutionState;
   private plan: TradingPlan;
@@ -48,9 +43,6 @@ export class IntradayExecutionTracker {
     return { ...this.state };
   }
 
-  /**
-   * Cập nhật theo nến M1 hoặc giá thời gian thực
-   */
   public updateTick(tick: M1Tick, isAtcTime = false): ExecutionState {
     if (this.state.settled) {
       return this.state;
@@ -70,38 +62,37 @@ export class IntradayExecutionTracker {
       ],
     };
 
-    // 1. Kiểm tra khớp lệnh nấc đầu tiên (First Entry Fill) nếu đang chờ
     if (this.state.status === "WAIT_ENTRY") {
       let isTriggered = false;
       let fillPrice = this.plan.entryPrice;
 
       if (orderType === "STOP") {
-        // Lệnh dừng Breakout: Vượt đỉnh (LONG) hoặc xuyên đáy (SHORT) mới kích hoạt
+        
         if (this.plan.side === "LONG") {
           isTriggered = tick.high >= this.plan.entryPrice;
           if (isTriggered) {
-            // Xử lý Gap/Slippage: Nếu nến mở cửa đã cao hơn điểm mua, khớp tại giá Open
+            
             fillPrice = tick.open > this.plan.entryPrice ? tick.open : this.plan.entryPrice;
           }
         } else {
           isTriggered = tick.low <= this.plan.entryPrice;
           if (isTriggered) {
-            // Xử lý Gap/Slippage: Nếu nến mở cửa đã thấp hơn điểm bán, khớp tại giá Open
+            
             fillPrice = tick.open < this.plan.entryPrice ? tick.open : this.plan.entryPrice;
           }
         }
       } else {
-        // Lệnh Limit: Nhúng xuống (LONG) hoặc hồi lên (SHORT) chạm mốc Entry
+        
         if (this.plan.side === "LONG") {
           isTriggered = tick.low <= this.plan.entryPrice;
           if (isTriggered) {
-            // Khớp giá tốt hơn nếu mở cửa gap down dưới giá Limit
+            
             fillPrice = tick.open < this.plan.entryPrice ? tick.open : this.plan.entryPrice;
           }
         } else {
           isTriggered = tick.high >= this.plan.entryPrice;
           if (isTriggered) {
-            // Khớp giá tốt hơn nếu mở cửa gap up trên giá Limit
+            
             fillPrice = tick.open > this.plan.entryPrice ? tick.open : this.plan.entryPrice;
           }
         }
@@ -148,7 +139,6 @@ export class IntradayExecutionTracker {
           this.state.fillStages = nextStageIdx + 1;
           this.fillPrices.push(stepFillPrice);
 
-          // Tính toán trung bình giá có trọng số (Weighted Average Price) với giá khớp thực tế của từng nấc
           let totalCost = 0;
           let totalSize = 0;
           for (let i = 0; i < this.state.fillStages; i++) {
@@ -180,9 +170,6 @@ export class IntradayExecutionTracker {
 
       const effectiveSl = trailing?.enabled ? this.currentSl : this.plan.slPrice;
 
-      // GIẢ ĐỊNH PESSIMISTIC (chuẩn backtest): khi 1 nến chạm CẢ SL lẫn TP, kiểm tra SL TRƯỚC.
-      // Nến OHLC không cho biết điểm nào chạm trước -> chọn kết cục bất lợi (lỗ) để không thổi phồng lợi nhuận.
-      // Gap/slippage đã xử lý: nếu tick.open vượt mốc, khớp tại open (giá tệ hơn).
       if (this.plan.side === "LONG") {
         if (tick.low <= effectiveSl) {
           const actualExitPrice = tick.open < effectiveSl ? tick.open : effectiveSl;
@@ -228,10 +215,9 @@ export class IntradayExecutionTracker {
           }
         }
       } else {
-        // Vị thế SHORT
-        // Bước 3.1: Kiểm tra Cắt lỗ (SL) hoặc Trailing Stop từ nến trước TRƯỚC
+
         if (tick.high >= effectiveSl) {
-          // Xử lý Gap-up trượt giá vượt qua mốc SL
+          
           const actualExitPrice = tick.open > effectiveSl ? tick.open : effectiveSl;
           const isTrailingWin = actualExitPrice < this.state.avgEntryPrice - 0.5;
           const isBe = actualExitPrice <= this.state.avgEntryPrice + 0.1 && actualExitPrice >= this.state.avgEntryPrice - 0.5;
@@ -246,9 +232,8 @@ export class IntradayExecutionTracker {
           return this.state;
         }
 
-        // Bước 3.2: Kiểm tra Chốt lời TP (nếu có và không chạm SL)
         if (effectiveTp > 0 && tick.low <= effectiveTp) {
-          // Xử lý Gap-down rớt dưới mức TP
+          
           const actualExitPrice = tick.open < effectiveTp ? tick.open : effectiveTp;
           this.state.status = "TP_EXIT";
           this.state.exitPrice = actualExitPrice;
@@ -260,7 +245,6 @@ export class IntradayExecutionTracker {
           return this.state;
         }
 
-        // Bước 3.3: Cập nhật đáy thấp nhất và Trailing Stop cho tick sau
         if (this.peakPrice === 0 || tick.low < this.peakPrice) this.peakPrice = tick.low;
 
         if (trailing?.enabled) {
@@ -279,7 +263,6 @@ export class IntradayExecutionTracker {
         }
       }
 
-      // 4. Kiểm tra chốt phiên ATC (lấy thời gian thực từ tick.time)
       if (isAtcTime) {
         this.state.status = "ATC_EXIT";
         this.state.exitPrice = tick.close;
@@ -292,7 +275,6 @@ export class IntradayExecutionTracker {
         return this.state;
       }
 
-      // 5. Tính PnL MTM (Mark-to-Market) tức thời theo giá Close nến
       this.state.livePnlPoints =
         this.plan.side === "LONG"
           ? Number((tick.close - this.state.avgEntryPrice).toFixed(1))
@@ -303,11 +285,6 @@ export class IntradayExecutionTracker {
   }
 }
 
-/**
- * Replay toàn bộ nến 1m hôm nay qua tracker -> ExecutionState cuối cùng.
- * ĐÂY là cách production dựng trạng thái khớp/PnL (thay vì feed 1 nến tổng hợp cả ngày):
- * fill/trailing/BE/ladder/SL-TP-ordering/ATC chạy đúng theo đường đi giá thật.
- */
 export function replayExecution(
   plan: TradingPlan,
   bars: M1Tick[]
@@ -321,10 +298,6 @@ export function replayExecution(
   return last;
 }
 
-/**
- * Cache replay theo bar cuối: nến chưa đổi thì KHÔNG replay lại (giảm ~300 bar x 3 engine mỗi poll 4s).
- * Cache module-level chỉ là tối ưu cho warm instance; DB-lock mới là nguồn sự thật cho cold start.
- */
 const replayCache = new Map<string, { barKey: string; state: ExecutionState }>();
 
 export function replayExecutionCached(

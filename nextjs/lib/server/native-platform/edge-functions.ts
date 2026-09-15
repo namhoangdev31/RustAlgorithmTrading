@@ -4,7 +4,7 @@ import crypto from "node:crypto";
 const WASM_MODULE_CACHE = new Map<string, Buffer>();
 
 type EdgeExecutionInput = {
-  code: string; // Can be JS script, base64 Wasm bytecode, or Cloud Storage URL (s3://, gs://, http://, https://)
+  code: string; 
   request?: {
     url?: string;
     method?: string;
@@ -12,11 +12,10 @@ type EdgeExecutionInput = {
     body?: unknown;
   };
   timeoutMs?: number;
-  wasmBytes?: string; // Optional compiled Wasm binary encoded in base64
+  wasmBytes?: string; 
   isWasm?: boolean;
 };
 
-// Inline worker code running the JS/Wasm runtime in isolation
 const WORKER_CODE = `
   const { parentPort } = require("node:worker_threads");
   const vm = require("node:vm");
@@ -128,7 +127,7 @@ class IsolatePoolManager {
   private jsWorkers: Worker[] = [];
   private wasmWorkers: Worker[] = [];
   private activeWorkers = new Set<Worker>();
-  private maxWorkers = 8; // Provisioned Concurrency: 8 total pre-warmed workers
+  private maxWorkers = 8; 
 
   constructor() {
     this.refillPool();
@@ -138,7 +137,7 @@ class IsolatePoolManager {
     return new Worker(WORKER_CODE, {
       eval: true,
       resourceLimits: {
-        maxOldGenerationSizeMb: isWasm ? 16 : 128, // Strict RAM limits: 16MB for Wasm, 128MB for JS
+        maxOldGenerationSizeMb: isWasm ? 16 : 128, 
       },
     });
   }
@@ -183,7 +182,6 @@ class IsolatePoolManager {
         this.refillPool();
       };
 
-      // Watchdog CPU execution time limit check
       timeoutId = setTimeout(() => {
         cleanup();
         currentWorker.terminate();

@@ -9,15 +9,13 @@ export async function GET(
 ) {
   try {
     const { projectId } = await context.params;
-    
-    // Auth & Permission verification
+
     await requireNativeProjectAccess(request, projectId, "project:read", "viewer");
 
     const { searchParams } = new URL(request.url);
     const daysParam = searchParams.get("days");
     const days = daysParam ? parseInt(daysParam, 10) : 30;
 
-    // Retrieve bundle associated with this project
     const project = await prisma.project.findFirst({
       where: { id: projectId, deletedAt: null },
       include: { bundle: true },

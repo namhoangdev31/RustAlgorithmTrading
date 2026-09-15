@@ -55,30 +55,25 @@ export function EdgeConfigVarsCard({
   const t = useTranslations("VercelTab");
   const [isPending, startTransition] = useTransition();
 
-  // Edge Config Connection State
   const [edgeConfigId, setEdgeConfigId] = useState<string | null>(null);
   const [availableStores, setAvailableStores] = useState<any[]>([]);
   const [selectedStoreId, setSelectedStoreId] = useState("");
   const [newStoreSlug, setNewStoreSlug] = useState("");
 
-  // Items State
   const [items, setItems] = useState<Record<string, any>>({});
   const [loadingItems, setLoadingItems] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
-  // CRUD Form State
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [key, setKey] = useState("");
   const [value, setValue] = useState("");
   const [flagType, setFlagType] = useState<"boolean" | "string" | "number" | "json">("boolean");
 
-  // Multi-Provider States
   const [linkedProviders, setLinkedProviders] = useState<any[]>([]);
   const [loadingProviders, setLoadingProviders] = useState(false);
-  
-  // Link Provider Form State
+
   const [isLinkingFormOpen, setIsLinkingFormOpen] = useState(false);
   const [linkProvider, setLinkProvider] = useState<"vercel" | "cloudflare">("vercel");
   const [linkAccountId, setLinkAccountId] = useState("");
@@ -87,7 +82,6 @@ export function EdgeConfigVarsCard({
   const [linkDisplayName, setLinkDisplayName] = useState("");
   const [linkApiKey, setLinkApiKey] = useState("");
 
-  // New States for Schema Validation and Backup History
   const [activeTab, setActiveTab] = useState<"flags" | "schema" | "backups">("flags");
   const [schemaText, setSchemaText] = useState("");
   const [loadingSchema, setLoadingSchema] = useState(false);
@@ -156,14 +150,12 @@ export function EdgeConfigVarsCard({
     fetchProviders();
   }, [projectId]);
 
-  // Determine connection status based on EDGE_CONFIG env var
   useEffect(() => {
     const edgeConfigEnv = vercelProjectEnvVars.find(
       (v) => v.key === "EDGE_CONFIG"
     );
     if (edgeConfigEnv && edgeConfigEnv.value) {
-      // Parse edgeConfigId from connection string
-      // Format: https://edge-config.vercel.com/ecfg_xxxxxxxxxxxxxx?token=...
+
       const match = edgeConfigEnv.value.match(/\/ecfg_([a-zA-Z0-9]+)/);
       if (match) {
         setEdgeConfigId(`ecfg_${match[1]}`);
@@ -338,7 +330,6 @@ export function EdgeConfigVarsCard({
           </div>
         )}
 
-        {/* 1. Connection Step (If not linked yet) */}
         {!edgeConfigId ? (
           <div className="space-y-6 max-w-lg">
             <div className="p-4 bg-canvas-soft/40 border border-hairline border-dashed rounded-md text-center">
@@ -350,7 +341,7 @@ export function EdgeConfigVarsCard({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Option A: Link Existing Store */}
+              
               <div className="border border-hairline p-4 rounded-md space-y-4">
                 <p className="text-xs font-bold uppercase text-ink-mute tracking-wider">Option A: Link Existing Store</p>
                 <form
@@ -393,7 +384,6 @@ export function EdgeConfigVarsCard({
                 </form>
               </div>
 
-              {/* Option B: Create and Link Store */}
               <div className="border border-hairline p-4 rounded-md space-y-4">
                 <p className="text-xs font-bold uppercase text-ink-mute tracking-wider">Option B: Create New Store</p>
                 <form
@@ -433,7 +423,7 @@ export function EdgeConfigVarsCard({
           </div>
         ) : (
           <div className="space-y-6">
-            {/* Edge Config Sub-Tabs */}
+            
             <div className="flex border-b border-hairline mb-4 select-none">
               <button
                 type="button"
@@ -472,7 +462,7 @@ export function EdgeConfigVarsCard({
 
             {activeTab === "flags" && (
               <div className="space-y-4">
-            {/* Form */}
+            
             {isFormOpen && (
               <form onSubmit={handleSubmitFlag} className="bg-canvas-soft/40 p-4 border border-hairline rounded-md space-y-4 animate-in slide-in-from-top-2 duration-200">
                 <div className="flex items-center justify-between">
@@ -580,7 +570,6 @@ export function EdgeConfigVarsCard({
               </form>
             )}
 
-            {/* Flags Table */}
             {loadingItems ? (
               <div className="flex flex-col items-center justify-center py-10 space-y-2">
                 <RefreshCw className="size-6 text-primary animate-spin" />
@@ -654,7 +643,6 @@ export function EdgeConfigVarsCard({
 
             <Separator className="bg-hairline my-6" />
 
-            {/* Centralized Edge Config Sync & Providers Dashboard */}
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -685,7 +673,6 @@ export function EdgeConfigVarsCard({
                 )}
               </div>
 
-              {/* Form to link provider */}
               {isLinkingFormOpen && (
                 <form
                   onSubmit={async (e) => {
@@ -839,7 +826,6 @@ export function EdgeConfigVarsCard({
                 </form>
               )}
 
-              {/* Linked Providers Table */}
               {loadingProviders ? (
                 <div className="text-center py-4 text-xs text-ink-mute">
                   Loading sync targets...
@@ -907,7 +893,6 @@ export function EdgeConfigVarsCard({
           </div>
         )}
 
-            {/* JSON Schema Validation Tab */}
             {activeTab === "schema" && (
               <div className="space-y-4 animate-in fade-in">
                 {schemaError && (
@@ -963,7 +948,6 @@ export function EdgeConfigVarsCard({
               </div>
             )}
 
-            {/* Backup History Tab */}
             {activeTab === "backups" && (
               <div className="space-y-4 animate-in fade-in">
                 {backupsError && (

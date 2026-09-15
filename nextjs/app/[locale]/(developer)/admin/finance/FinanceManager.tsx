@@ -16,7 +16,6 @@ import { Label } from "@/components/ui/label";
 import { DollarSign, RefreshCw, Check, ArrowRight } from "lucide-react";
 import { initiatePayoutAction, approveRefundAction } from "@/app/actions/lepoship-finance";
 
-
 interface PayoutItem {
   id: string;
   amount: number;
@@ -38,7 +37,6 @@ interface RefundItem {
   order: { id: string; totalAmount: number; currency: string; transactionRef: string | null };
 }
 
-
 interface ManagerProps {
   initialPayouts: PayoutItem[];
   initialRefunds: RefundItem[];
@@ -49,7 +47,6 @@ export function FinanceManager({ initialPayouts, initialRefunds }: ManagerProps)
   const [refunds, setRefunds] = React.useState<RefundItem[]>(initialRefunds);
   const [pending, setPending] = React.useState(false);
 
-  // Refund Approval form modal state
   const [selectedRefundId, setSelectedRefundId] = React.useState<string | null>(null);
   const [refundNote, setRefundNote] = React.useState("");
 
@@ -58,7 +55,7 @@ export function FinanceManager({ initialPayouts, initialRefunds }: ManagerProps)
     setPending(true);
     try {
       const updated = await initiatePayoutAction(payoutId);
-      // Map return type to item
+      
       setPayouts((prev) =>
         prev.map((p) => (p.id === payoutId ? { ...p, status: "completed", transactionRef: updated.transactionRef } : p))
       );
@@ -89,7 +86,7 @@ export function FinanceManager({ initialPayouts, initialRefunds }: ManagerProps)
 
   return (
     <div className="space-y-8 text-xs">
-      {/* 1. Refunds Review Queue */}
+      {}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
           <RefreshCw className="size-4 text-amber-500 animate-spin-slow" />
@@ -138,7 +135,7 @@ export function FinanceManager({ initialPayouts, initialRefunds }: ManagerProps)
         )}
       </div>
 
-      {/* 2. Payouts Reconciliation */}
+      {}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
           <DollarSign className="size-4 text-emerald-500" />
@@ -199,7 +196,7 @@ export function FinanceManager({ initialPayouts, initialRefunds }: ManagerProps)
         )}
       </div>
 
-      {/* Review Refund Dialog */}
+      {}
       <Dialog open={selectedRefundId !== null} onOpenChange={(open) => !open && setSelectedRefundId(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

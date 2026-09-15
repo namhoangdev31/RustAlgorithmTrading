@@ -28,7 +28,6 @@ export async function POST(req: NextRequest) {
       getDailyMarketMetrics(),
     ]);
 
-    // Cho phép người dùng override OHLC thủ công nếu có
     if (body.session_open != null) snapshot.open = Number(body.session_open);
     if (body.session_high != null) snapshot.high = Number(body.session_high);
     if (body.session_low != null) snapshot.low = Number(body.session_low);
@@ -38,7 +37,6 @@ export async function POST(req: NextRequest) {
     const plans = generateMultiEnginePortfolio(todayStr, snapshot, metrics);
     const consensus = computeConsensus(plans);
 
-    // Lấy thông số kiểm định động từ CSDL
     let dynamicSummary = body.summary || null;
     if (!dynamicSummary) {
       try {
@@ -47,7 +45,7 @@ export async function POST(req: NextRequest) {
           dynamicSummary = dbHistory.summary;
         }
       } catch (dbErr) {
-        // Fallback tự động trong advisor-service
+        
       }
     }
 

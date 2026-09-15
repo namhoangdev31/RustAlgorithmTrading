@@ -9,15 +9,14 @@ export async function POST(req: NextRequest) {
 
   const rawBody = await req.text();
   const secret = process.env.VERCEL_WEBHOOK_SECRET || "mock-secret";
-  
-  // Verify HMAC signature
+
   const hmac = crypto.createHmac("sha1", secret);
   hmac.update(rawBody);
   const computedSignature = hmac.digest("hex");
 
   if (signature !== computedSignature) {
     console.warn("[Vercel Webhook] Invalid signature detected.");
-    // In production, reject it. In dev/testing, log and/or proceed.
+    
   }
 
   try {

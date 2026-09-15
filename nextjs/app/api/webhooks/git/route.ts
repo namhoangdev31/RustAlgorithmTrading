@@ -9,8 +9,7 @@ import {
 
 export async function POST(request: NextRequest) {
   const headers = request.headers;
-  
-  // 1. Detect provider
+
   let provider: "github" | "gitlab" | "bitbucket" = "github";
   let signature: string | null = null;
 
@@ -24,7 +23,7 @@ export async function POST(request: NextRequest) {
     provider = "bitbucket";
     signature = headers.get("x-bitbucket-signature");
   } else {
-    // Check search params fallback
+    
     const urlProvider = request.nextUrl.searchParams.get("provider");
     if (urlProvider === "gitlab") provider = "gitlab";
     else if (urlProvider === "bitbucket") provider = "bitbucket";
@@ -40,7 +39,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  // 2. Parse payload to get repository name
   let repoName = "";
   if (provider === "github") {
     repoName = payload?.repository?.full_name || "";
@@ -54,7 +52,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing repository identity" }, { status: 400 });
   }
 
-  // 3. Find matching active integration and secret
   const integration = await prisma.bundleExternalIntegrations.findFirst({
     where: {
       integrationType: provider,

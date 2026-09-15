@@ -28,7 +28,7 @@ export async function createDebugSession(input: {
   };
 
   const key = nativeRedisKeys.debug(sessionId);
-  await redisSetJson(key, session, 3600); // 1 hour TTL
+  await redisSetJson(key, session, 3600); 
   return session;
 }
 
@@ -41,12 +41,11 @@ export async function listActiveSessions(projectId: string): Promise<DebugSessio
   const redis = getNativeRedis();
   if (!redis) return [];
 
-  // Scan keys matching "lepos:debug:*"
   const keys = await redis.keys("lepos:debug:*");
   const sessions: DebugSession[] = [];
 
   for (const key of keys) {
-    // Exclude logs keys (like lepos:debug:*:logs)
+    
     if (key.endsWith(":logs")) continue;
     const session = await redisGetJson<DebugSession>(key);
     if (session && session.projectId === projectId) {

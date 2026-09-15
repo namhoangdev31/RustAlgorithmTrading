@@ -5,7 +5,7 @@ export async function GET(
   request: Request,
   context: { params: Promise<{ projectId: string }> }
 ) {
-  // Enforce internal key security
+  
   const internalKey = process.env.LEPOS_INTERNAL_API_KEY;
   const providedInternalKey = request.headers.get("x-lepos-internal-key");
   if (internalKey && providedInternalKey !== internalKey) {

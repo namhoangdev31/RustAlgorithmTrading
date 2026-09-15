@@ -28,13 +28,11 @@ interface StrikeActionsProps {
   bundles: { id: string; name: string }[];
 }
 
-
 export function StrikeActions({ developers, bundles }: StrikeActionsProps) {
   const [issueOpen, setIssueOpen] = React.useState(false);
   const [revokeOpen, setRevokeOpen] = React.useState(false);
   const [triageOpen, setTriageOpen] = React.useState(false);
 
-  // Issue Strike Form State
   const [devId, setDevId] = React.useState("");
   const [bundleId, setBundleId] = React.useState("none");
   const [strikeType, setStrikeType] = React.useState("malware");
@@ -42,11 +40,9 @@ export function StrikeActions({ developers, bundles }: StrikeActionsProps) {
   const [desc, setDesc] = React.useState("");
   const [expiry, setExpiry] = React.useState("");
 
-  // Revoke Strike State
   const [targetStrikeId, setTargetStrikeId] = React.useState("");
   const [revokeReason, setRevokeReason] = React.useState("");
 
-  // Triage Report State
   const [targetReportId, setTargetReportId] = React.useState("");
   const [triageStatus, setTriageStatus] = React.useState<"resolved" | "dismissed">("resolved");
   const [resolution, setResolution] = React.useState("");
@@ -67,7 +63,7 @@ export function StrikeActions({ developers, bundles }: StrikeActionsProps) {
         expiresAt: expiry || undefined,
       });
       setIssueOpen(false);
-      // Reset form
+      
       setDevId("");
       setBundleId("none");
       setDesc("");
@@ -122,7 +118,7 @@ export function StrikeActions({ developers, bundles }: StrikeActionsProps) {
 
   return (
     <div className="flex items-center gap-2">
-      {/* 1. Issue Strike Trigger */}
+      {}
       <Dialog open={issueOpen} onOpenChange={setIssueOpen}>
         <DialogTrigger asChild>
           <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white gap-1 cursor-pointer">
@@ -237,7 +233,7 @@ export function StrikeActions({ developers, bundles }: StrikeActionsProps) {
         </DialogContent>
       </Dialog>
 
-      {/* 2. Revoke Dialog (Triggered dynamically from page tables) */}
+      {}
       <Dialog open={revokeOpen} onOpenChange={setRevokeOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -271,7 +267,7 @@ export function StrikeActions({ developers, bundles }: StrikeActionsProps) {
         </DialogContent>
       </Dialog>
 
-      {/* 3. Triage Report Dialog */}
+      {}
       <Dialog open={triageOpen} onOpenChange={setTriageOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -322,7 +318,6 @@ export function StrikeActions({ developers, bundles }: StrikeActionsProps) {
   );
 }
 
-// Global reference hook setup
 export const globalActionsRef = React.createRef<{
   openRevoke: (strikeId: string) => void;
   openTriage: (reportId: string) => void;

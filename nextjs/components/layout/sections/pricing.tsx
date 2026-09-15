@@ -84,7 +84,6 @@ export const PricingSection = () => {
 
     gsap.registerPlugin(ScrollTrigger);
 
-    // Animate Header
     if (headerRef.current) {
       gsap.fromTo(
         headerRef.current.children,
@@ -104,7 +103,6 @@ export const PricingSection = () => {
       );
     }
 
-    // Animate Cards
     if (cardsContainerRef.current) {
       const cards = cardsContainerRef.current.querySelectorAll(".pricing-card");
       gsap.fromTo(

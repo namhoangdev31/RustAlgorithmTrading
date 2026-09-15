@@ -14,7 +14,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "bundleId, name, and value are required." }, { status: 400 });
   }
 
-  // Verify bundle exists
   const bundle = await prisma.bundles.findUnique({
     where: { id: bundleId },
   });
@@ -25,7 +24,6 @@ export async function POST(request: Request) {
 
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
 
-  // Create analytics event record
   const event = await prisma.bundleAnalyticsEvents.create({
     data: {
       id: crypto.randomUUID(),

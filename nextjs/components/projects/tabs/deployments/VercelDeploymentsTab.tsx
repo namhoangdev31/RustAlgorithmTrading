@@ -76,7 +76,6 @@ export function VercelDeploymentsTab({
   const router = useRouter();
   const t = useTranslations("Deployments");
 
-  // Vercel deployment logs states
   const [isOpenLogs, setIsOpenLogs] = useState(false);
   const [selectedDplId, setSelectedDplId] = useState("");
   const [selectedDplName, setSelectedDplName] = useState("");
@@ -112,7 +111,6 @@ export function VercelDeploymentsTab({
     fetchLogs(dplId);
   };
 
-  // Checks states
   const [isOpenChecks, setIsOpenChecks] = useState(false);
   const [selectedChecksDplId, setSelectedChecksDplId] = useState("");
   const [selectedChecksDplName, setSelectedChecksDplName] = useState("");
@@ -141,14 +139,12 @@ export function VercelDeploymentsTab({
     }
   };
 
-  // Auto-scroll logs
   useEffect(() => {
     if (terminalEndRef.current) {
       terminalEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [logs]);
 
-  // Polling logs
   useEffect(() => {
     if (!isOpenLogs || !selectedDplId || !autoRefresh) return;
 
@@ -266,7 +262,7 @@ export function VercelDeploymentsTab({
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-in fade-in">
-          {/* Trigger Deployment form */}
+          
           <div className="lg:col-span-4 space-y-4">
             <Card className="border border-hairline bg-canvas shadow-dark overflow-hidden">
               <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 p-5">
@@ -327,7 +323,6 @@ export function VercelDeploymentsTab({
             </Card>
           </div>
 
-          {/* Deployments list table */}
           <div className="lg:col-span-8">
             <Card className="overflow-hidden border border-hairline bg-canvas py-0">
               <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-5">
@@ -341,8 +336,7 @@ export function VercelDeploymentsTab({
                       : "List of recent builds and deployments triggered for your project."}
                   </CardDescription>
                 </div>
-                
-                {/* Status Filter Tabs */}
+
                 <div className="flex flex-wrap items-center gap-1 bg-canvas border border-hairline rounded-md p-1 select-none w-fit shrink-0">
                   {["ALL", "READY", "BUILDING", "ERROR", "QUEUED"].map((status) => {
                     const isActive = statusFilter === status;
@@ -426,7 +420,7 @@ export function VercelDeploymentsTab({
                                     {dpl.name}
                                     {dpl.url && (
                                       <a
-                                        href={`https://${dpl.url}`}
+                                        href={`https:
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="text-ink-mute hover:text-primary transition-colors"
@@ -524,7 +518,6 @@ export function VercelDeploymentsTab({
                       </TableBody>
                     </Table>
 
-                    {/* Pagination */}
                     {totalPages > 1 && (
                       <div className="px-5 py-4 border-t border-hairline bg-canvas-soft/20 flex items-center justify-between gap-4">
                         <span className="text-xs text-ink-mute">
@@ -566,11 +559,10 @@ export function VercelDeploymentsTab({
         </div>
       )}
 
-      {/* Real-time Logs Terminal Overlay */}
       {isOpenLogs && (
         <PortalDialog open onOpenChange={setIsOpenLogs} className="max-w-4xl p-0">
           <div className="flex h-[min(600px,calc(100dvh-4rem))] flex-col overflow-hidden bg-canvas">
-            {/* Modal Header */}
+            
             <div className="px-5 py-4 border-b border-hairline bg-canvas-soft/40 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold text-ink">
@@ -582,7 +574,7 @@ export function VercelDeploymentsTab({
               </div>
               
               <div className="flex items-center gap-3">
-                {/* Auto-Refresh Toggle */}
+                
                 <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -595,8 +587,7 @@ export function VercelDeploymentsTab({
                     {locale === "vi" ? "Tự động làm mới (3s)" : "Auto-refresh (3s)"}
                   </label>
                 </div>
-                
-                {/* Manual Refresh */}
+
                 <Button
                   onClick={() => fetchLogs(selectedDplId)}
                   disabled={loadingLogs}
@@ -607,8 +598,7 @@ export function VercelDeploymentsTab({
                   <RefreshCw className={`size-3.5 mr-1.5 ${loadingLogs ? "animate-spin" : ""}`} />
                   {locale === "vi" ? "Làm mới" : "Refresh"}
                 </Button>
-                
-                {/* Close */}
+
                 <Button
                   onClick={() => setIsOpenLogs(false)}
                   variant="ghost"
@@ -619,8 +609,7 @@ export function VercelDeploymentsTab({
                 </Button>
               </div>
             </div>
-            
-            {/* Modal Content - Terminal View */}
+
             <div className="flex-1 bg-black text-zinc-300 font-mono text-xs p-5 overflow-y-auto space-y-1.5 select-text selection:bg-zinc-700">
               {loadingLogs && logs.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-zinc-500 gap-2">
@@ -659,11 +648,10 @@ export function VercelDeploymentsTab({
         </PortalDialog>
       )}
 
-      {/* Checks Modal Overlay */}
       {isOpenChecks && (
         <PortalDialog open onOpenChange={setIsOpenChecks} className="max-w-2xl p-0">
           <div className="flex h-[min(500px,calc(100dvh-4rem))] flex-col overflow-hidden bg-canvas">
-            {/* Modal Header */}
+            
             <div className="px-5 py-4 border-b border-hairline bg-canvas-soft/40 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold text-ink">
@@ -683,8 +671,7 @@ export function VercelDeploymentsTab({
                 {locale === "vi" ? "Đóng" : "Close"}
               </Button>
             </div>
-            
-            {/* Modal Content */}
+
             <div className="flex-1 p-5 overflow-y-auto space-y-4">
               {loadingChecks ? (
                 <div className="h-full flex flex-col items-center justify-center text-ink-mute gap-2">
@@ -741,7 +728,6 @@ export function VercelDeploymentsTab({
         </PortalDialog>
       )}
 
-      {/* Custom Alert Dialog for canceling builds */}
       {confirmCancelDplId && (
         <PortalDialog open onOpenChange={(open) => !open && setConfirmCancelDplId(null)} className="max-w-md p-5">
           <div className="space-y-4">
@@ -785,7 +771,6 @@ export function VercelDeploymentsTab({
         </PortalDialog>
       )}
 
-      {/* Custom Prompt Dialog for promoting/rolling back deployments */}
       {promptPromoteDpl && (
         <PortalDialog open onOpenChange={(open) => !open && setPromptPromoteDpl(null)} className="max-w-md p-5">
           <div className="space-y-4">

@@ -11,14 +11,13 @@ interface PageProps {
   }>;
 }
 
-// Statically compile all valid documentation paths and their directories at build time
 export async function generateStaticParams() {
   const paths: { slug: string[] }[] = [];
   const addedSlugs = new Set<string>();
 
   docsNavigation.forEach((group) => {
     group.items.forEach((item) => {
-      // Add the file slug itself
+      
       if (!addedSlugs.has(item.slug)) {
         addedSlugs.add(item.slug);
         paths.push({
@@ -26,7 +25,6 @@ export async function generateStaticParams() {
         });
       }
 
-      // Add parent directories too
       const parts = item.slug.split("/");
       if (parts.length > 1) {
         for (let i = 1; i < parts.length; i++) {
@@ -54,7 +52,7 @@ export default async function DocPage({ params }: PageProps) {
   let childDocs: { title: string; slug: string }[] = [];
 
   try {
-    // Attempt to load .md file
+    
     const mdxModule = await import(`../content/${slugPath}.md`);
     Content = mdxModule.default;
   } catch (err) {
@@ -119,7 +117,7 @@ export default async function DocPage({ params }: PageProps) {
 
   return (
     <div className="space-y-8">
-      {/* Breadcrumbs */}
+      
       <nav className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium border-b border-border/40 pb-4 mb-4">
         <Link href="/docs" className="hover:text-primary transition-colors">
           Docs
@@ -138,7 +136,6 @@ export default async function DocPage({ params }: PageProps) {
         )}
       </nav>
 
-      {/* Main Content */}
       {isDirectoryIndex ? (
         <div className="space-y-6">
           <div className="space-y-2 border-b border-border/40 pb-6">
@@ -179,7 +176,6 @@ export default async function DocPage({ params }: PageProps) {
         </article>
       )}
 
-      {/* Footer Page Navigation */}
       {!isDirectoryIndex && (prevDoc || nextDoc) && (
         <div className="border-t border-border/60 pt-8 mt-12 grid grid-cols-2 gap-4">
           {prevDoc ? (
@@ -218,11 +214,10 @@ export default async function DocPage({ params }: PageProps) {
         </div>
       )}
 
-      {/* Edit on GitHub link */}
       {!isDirectoryIndex && (
         <div className="flex items-center justify-end text-xs text-muted-foreground/80 mt-6 pt-4 border-t border-border/20">
           <a
-            href={`https://github.com/namhoangdev31/RustAlgorithmTrading/blob/main/nextjs/app/%5Blocale%5D/%28marketing%29/docs/content/${slugPath}.md`}
+            href={`https:
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1 hover:text-foreground transition-colors"

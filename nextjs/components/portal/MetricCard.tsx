@@ -6,7 +6,7 @@ import type { LucideIcon } from "lucide-react";
 type MetricCardProps = {
   title: string;
   value: string | number;
-  trend?: number; // percentage
+  trend?: number; 
   trendLabel?: string;
   className?: string;
   icon?: LucideIcon;

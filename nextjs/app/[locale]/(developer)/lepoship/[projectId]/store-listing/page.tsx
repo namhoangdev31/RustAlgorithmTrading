@@ -25,7 +25,6 @@ export default async function StoreListingPage({ params }: Props) {
     );
   }
 
-  // Fetch existing data
   const [listings, localizations, screenshots, keywords, tags, privacy] = await Promise.all([
     prisma.bundleStoreListings.findMany({
       where: { bundleId: bundle.id },

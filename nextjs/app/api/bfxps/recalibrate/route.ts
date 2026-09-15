@@ -16,10 +16,6 @@ import { Prisma } from "@/prisma/generated/client";
 
 export const dynamic = "force-dynamic";
 
-/**
- * POST /api/bfxps/recalibrate
- * Kích hoạt thuật toán tái lập / đảo kèo mới sau khi vị thế trong phiên bị đóng do dính Stop Loss.
- */
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));

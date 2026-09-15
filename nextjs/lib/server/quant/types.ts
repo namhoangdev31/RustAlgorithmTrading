@@ -4,15 +4,6 @@ export type R5Action = "KEEP" | "CANCEL" | "FLIP_HINT" | "PRE_OPEN" | "NO_SIGNAL
 
 export type PlanStatus = "PENDING" | "ACTIVE_TODAY" | "STALE" | "UPCOMING" | "FILLED" | "SETTLED" | "FILLED_SL" | "FILLED_TP" | "FILLED_ATC" | "FILLED_TRAIL" | string;
 
-/**
- * Pha giao dịch trong ngày theo lịch phái sinh VN30F1M (UTC+7):
- * - PRE_ATO: Trước 08:45 — Thị trường chưa mở, kèo dựa trên dữ liệu ngày trước.
- * - ATO_OBSERVATION: 08:45 – 09:15 — Quan sát phiên ATO, kèo chưa chính thức.
- * - CONTINUOUS: 09:15 – 11:30 / 13:00 – 14:30 — Phiên liên tục, kèo chính thức.
- * - LUNCH_BREAK: 11:30 – 13:00 — Nghỉ trưa.
- * - ATC: 14:30 – 14:45 — Phiên ATC đóng cửa.
- * - CLOSED: Sau 14:45 — Thị trường đóng cửa.
- */
 export type TradingSessionPhase = "PRE_ATO" | "ATO_OBSERVATION" | "CONTINUOUS" | "LUNCH_BREAK" | "ATC" | "CLOSED";
 
 export interface MarketSnapshot {
@@ -26,13 +17,13 @@ export interface MarketSnapshot {
   foreignBuy?: number | null;
   foreignSell?: number | null;
   foreignNet?: number | null;
-  timestamp: string; // ISO 8601 string
+  timestamp: string; 
   source: string;
 }
 
 export interface LadderStep {
-  offsetPoints: number; // Bước lệch so với entryPrice (vd: 0, 1.0, 2.0)
-  size: number;         // Khối lượng / tỷ trọng tại nấc này (vd: 0.1)
+  offsetPoints: number; 
+  size: number;         
 }
 
 export interface LadderConfig {
@@ -42,7 +33,7 @@ export interface LadderConfig {
 
 export interface TradingPlan {
   id: string;
-  date: string; // YYYY-MM-DD
+  date: string; 
   engine: "simcarrry6" | "AllDaysLadder_CAP0.3" | "12K_AllDay" | "CanonicalDirectionalBreakout" | string;
   profile?: string;
   horizon: "t" | "t+1" | "t+2";
@@ -55,11 +46,11 @@ export interface TradingPlan {
   r5State: R5Action;
   status: PlanStatus;
   isCanonical: boolean;
-  consensusWeight?: number; // Trọng số đồng thuận (mặc định 1.0). Engine chính = 2.0, engine phụ = 1.0
-  v44Active?: boolean; // V44 Anti-Lookahead Gate: true = kèo bị chặn do kỳ vọng ngược hướng (loại khỏi consensus)
-  v44Warning?: string; // Lý do V44 chặn (hiển thị cho trader)
-  isOfficial?: boolean; // Kèo đã được khóa chính thức sau ATO 09:15 (false = observation/degraded)
-  breakevenTrigger?: number; // Khóa hòa vốn khi giá đi đúng >= X điểm
+  consensusWeight?: number; 
+  v44Active?: boolean; 
+  v44Warning?: string; 
+  isOfficial?: boolean; 
+  breakevenTrigger?: number; 
   expectedHigh?: number;
   expectedLow?: number;
   resolvedSource?: string;
@@ -72,7 +63,7 @@ export interface TradingPlan {
 
 export interface ConsensusResult {
   direction: Direction | "NEUTRAL";
-  strength: number; // 0.0 to 1.0
+  strength: number; 
   longCount: number;
   shortCount: number;
   isUnanimous: boolean;
@@ -82,8 +73,8 @@ export interface ConsensusResult {
 export interface ExecutionState {
   planId: string;
   isFilled: boolean;
-  fillStages: number; // e.g. 1, 2, 3 nấc
-  filledSize: number; // e.g. 0.1, 0.2, 0.3
+  fillStages: number; 
+  filledSize: number; 
   avgEntryPrice: number;
   livePnlPoints: number;
   status: "WAIT_ENTRY" | "FILLED" | "TP_EXIT" | "EXIT_SL" | "ATC_EXIT" | "TRAIL_EXIT" | "BE_EXIT";
@@ -97,7 +88,7 @@ export interface HistoricalPerformance {
   executedTrades: number;
   winCount: number;
   lossCount: number;
-  winRate: number; // percentage
+  winRate: number; 
   totalPnlPoints: number;
   maxDrawdown: number;
   cancelCount: number;
@@ -126,31 +117,31 @@ export interface AdvisorConfig {
 
 export interface TrailingConfig {
   enabled: boolean;
-  beTriggerPoints?: number;    // Khóa hòa vốn khi lãi >= X điểm (mặc định 6.0đ)
-  trailTriggerPoints?: number; // Kích hoạt Trailing Stop khi lãi >= X điểm (mặc định 12.0đ)
-  trailDistance?: number;      // Khoảng cách Trailing Stop bám đỉnh/đáy (mặc định 5.0đ)
+  beTriggerPoints?: number;    
+  trailTriggerPoints?: number; 
+  trailDistance?: number;      
 }
 
 export interface QuantStrategyConfig {
-  atrEntryMultiplier?: number; // Hệ số mở rộng biên (mặc định 0.10)
-  tpPoints?: number;           // Mức chốt lời kỳ vọng sóng lớn (mặc định 24.0)
-  slPoints?: number;           // Mức cắt lỗ điểm tuyệt đối (mặc định 8.0)
-  maxCap?: number;             // Tỷ trọng tối đa (mặc định 1.0)
-  trailing?: TrailingConfig;   // Cấu hình Trailing Stop & Khóa hòa vốn
+  atrEntryMultiplier?: number; 
+  tpPoints?: number;           
+  slPoints?: number;           
+  maxCap?: number;             
+  trailing?: TrailingConfig;   
 }
 
 export interface LadderStrategyConfig {
-  side?: Direction;            // Hướng lệnh (mặc định tự động nhận diện theo giá vs Ref)
-  tpPoints?: number;           // Mức chốt lời ngắn hạn (mặc định 4.1)
-  maxCap?: number;             // Khống chế tỷ trọng NAV (mặc định 0.3)
+  side?: Direction;            
+  tpPoints?: number;           
+  maxCap?: number;             
 }
 
 export interface SimCarryConfig {
-  basisThreshold?: number;      // Ngưỡng Basis (mặc định -5.0)
-  atrMultiplier?: number;       // Hệ số ATR (mặc định 0.15)
-  tpPoints?: number;            // Mức chốt lời (mặc định 22.0)
-  maxCap?: number;              // Tỷ trọng tối đa (mặc định 1.0)
-  orderType?: "STOP" | "LIMIT"; // Loại lệnh (STOP cho breakout hoặc LIMIT cho đón hồi)
-  trailing?: TrailingConfig;    // Cấu hình Trailing Stop & Khóa hòa vốn cho Swing
+  basisThreshold?: number;      
+  atrMultiplier?: number;       
+  tpPoints?: number;            
+  maxCap?: number;              
+  orderType?: "STOP" | "LIMIT"; 
+  trailing?: TrailingConfig;    
 }
 

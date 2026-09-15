@@ -51,7 +51,7 @@ export async function loadSpeedInsightsData(userId: string, projectId: string) {
     try {
       parsedData = JSON.parse(event.eventData || "{}");
     } catch {
-      // Invalid persisted payloads do not become invented telemetry.
+      
     }
 
     const name = (parsedData.name || event.eventType.split(":")[1] || "").toUpperCase();

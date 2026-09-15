@@ -7,7 +7,6 @@ export async function GET(
 ) {
   const { projectId } = await context.params;
 
-  // Retrieve user ID from cookies or headers
   const cookieHeader = request.headers.get("cookie") || "";
   let userId = "anonymous";
   const match = cookieHeader.match(/lepos_user_id=([^;]+)/);
@@ -25,7 +24,6 @@ export async function GET(
   const writer = writable.getWriter();
   const encoder = new TextEncoder();
 
-  // Helper function to fetch and write current flags
   const sendFlags = async () => {
     try {
       const flags = await evaluateFeatureFlags(projectId, userId, request.headers);

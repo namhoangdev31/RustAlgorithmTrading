@@ -41,7 +41,7 @@ export function PortalHeader({ user }: PortalHeaderProps) {
       <SidebarTrigger className="-ms-1" />
       <Separator className="me-2 h-4" orientation="vertical" />
 
-      {/* Dynamic Breadcrumbs */}
+      {}
       <Breadcrumb className="hidden md:inline-block">
         <BreadcrumbList>
           {breadcrumbs.map((crumb, idx) => {

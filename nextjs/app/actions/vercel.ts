@@ -31,7 +31,7 @@ export async function createAccessGroupAction(formData: FormData) {
     });
   } catch (error) {
     console.error("Failed to create access group:", error);
-    // Redirect with error query param if needed
+    
     redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}error=create_failed`);
   }
 
@@ -642,9 +642,8 @@ export async function linkProjectEdgeConfigAction(formData: FormData) {
       throw new Error("Failed to create Edge Config token");
     }
 
-    const connectionString = `https://edge-config.vercel.com/${edgeConfigId}?token=${token}`;
+    const connectionString = `https:
 
-    // 2. Set the env var on Vercel project
     await vercel.projects.createProjectEnv({
       idOrName: projectId,
       requestBody: [
@@ -700,9 +699,8 @@ export async function createAndLinkEdgeConfigAction(formData: FormData) {
       throw new Error("Failed to create Edge Config token");
     }
 
-    const connectionString = `https://edge-config.vercel.com/${edgeConfigId}?token=${token}`;
+    const connectionString = `https:
 
-    // 3. Create project env var
     await vercel.projects.createProjectEnv({
       idOrName: projectId,
       requestBody: [
@@ -1912,7 +1910,6 @@ export async function listDeploymentCheckRunsAction(projectId: string, deploymen
     return { success: false, error: error?.message || "Failed to list deployment check runs" };
   }
 }
-
 
 // --- Phase 6: DNS Records Actions ---
 export async function getDnsRecordsAction(projectId: string, domain: string) {

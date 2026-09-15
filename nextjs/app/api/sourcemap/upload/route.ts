@@ -2,9 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { uploadSourceMap } from "@/lib/server/native-platform/telemetry";
 import { requireNativeProjectAccess, nativeErrorResponse } from "@/lib/server/native-platform/auth";
 
-/**
- * API Route to upload Source Maps (.map files) dynamically from build pipeline.
- */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -23,7 +20,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "mapJson payload is required." }, { status: 400 });
     }
 
-    // Authenticate project write access (requires PAT token or session with editor permissions)
     await requireNativeProjectAccess(request, projectId, "project:write", "editor");
 
     const sourceMap = await uploadSourceMap({

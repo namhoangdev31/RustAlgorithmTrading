@@ -60,7 +60,7 @@ export function SettingsTab({ github }: SettingsTabProps) {
       </Card>
       
       <div className="space-y-4">
-        {/* GitHub Connection Card */}
+        {}
         <Card className="bg-canvas border border-hairline rounded-lg p-5">
           <CardHeader className="px-0 pt-0">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
@@ -125,7 +125,7 @@ export function SettingsTab({ github }: SettingsTabProps) {
           </CardContent>
         </Card>
 
-        {/* Danger Zone */}
+        {}
         <Card className="bg-canvas border border-hairline rounded-lg p-5">
           <CardHeader className="px-0 pt-0">
             <CardTitle>Danger Zone</CardTitle>

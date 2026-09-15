@@ -18,7 +18,6 @@ export default async function SpeedInsightsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const user = await requireCurrentUser();
 
-  // Fetch all projects for the current user's organizations
   const organizations = await prisma.organization.findMany({
     where: {
       OR: [
@@ -53,7 +52,7 @@ export default async function SpeedInsightsPage({ searchParams }: PageProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Page Title */}
+      {}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-medium tracking-tight">Observability</h1>
       </div>
@@ -66,7 +65,7 @@ export default async function SpeedInsightsPage({ searchParams }: PageProps) {
         </Alert>
       )}
 
-      {/* Speed Insights Client Workspace */}
+      {}
       {speedData.success && (
         <SpeedInsightsClient
           projects={projects.map((p) => ({ id: p.id, name: p.name }))}

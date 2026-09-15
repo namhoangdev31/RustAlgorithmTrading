@@ -103,7 +103,7 @@ export async function uploadSourceMap(input: {
       deploymentId: input.deploymentId || null,
       releaseVersion: input.releaseVersion,
       fileName: input.fileName,
-      storagePath: input.storagePath || `inline://${input.releaseVersion}/${input.fileName}`,
+      storagePath: input.storagePath || `inline:
       mapJson: (input.mapJson || null) as any,
     },
     update: {

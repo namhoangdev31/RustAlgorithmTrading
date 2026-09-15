@@ -5,9 +5,6 @@ const stripe = stripeKey ? new Stripe(stripeKey, { apiVersion: "2022-11-15" as a
 
 export const isStripeAvailable = () => Boolean(stripe);
 
-/**
- * Create a Stripe Connect Express account for a partner workspace.
- */
 export async function createConnectAccount(workspaceId: string, email: string) {
   if (!stripe) {
     throw new Error("Stripe Connect is unavailable because STRIPE_SECRET_KEY is not configured.");
@@ -30,9 +27,6 @@ export async function createConnectAccount(workspaceId: string, email: string) {
   }
 }
 
-/**
- * Generate Stripe Express onboarding link.
- */
 export async function generateOnboardingLink(stripeAccountId: string, returnUrl: string, refreshUrl: string) {
   if (!stripe) {
     throw new Error("Stripe Connect onboarding is unavailable because STRIPE_SECRET_KEY is not configured.");
@@ -52,10 +46,6 @@ export async function generateOnboardingLink(stripeAccountId: string, returnUrl:
   }
 }
 
-/**
- * Create a PaymentIntent with a revenue split.
- * 30% platform fee, 70% goes to the partner.
- */
 export async function createPaymentWithSplit(params: {
   amount: number;
   currency: string;
@@ -65,7 +55,6 @@ export async function createPaymentWithSplit(params: {
 }) {
   const { amount, currency, partnerStripeAccountId, buyerEmail, metadata } = params;
 
-  // Revenue split: 30% platform fee, 70% to partner
   const platformFeeAmount = Math.round(amount * 0.3);
   const transferAmount = amount - platformFeeAmount;
 
@@ -101,9 +90,6 @@ export async function createPaymentWithSplit(params: {
   }
 }
 
-/**
- * Fetch Connected Account Balance.
- */
 export async function getPartnerBalance(stripeAccountId: string) {
   if (!stripe) throw new Error("Stripe balance is unavailable because STRIPE_SECRET_KEY is not configured.");
 
@@ -124,9 +110,6 @@ export async function getPartnerBalance(stripeAccountId: string) {
   }
 }
 
-/**
- * Fetch Connected Account Payout History.
- */
 export async function getPartnerPayouts(stripeAccountId: string) {
   if (!stripe) throw new Error("Stripe payouts are unavailable because STRIPE_SECRET_KEY is not configured.");
 
@@ -149,9 +132,6 @@ export async function getPartnerPayouts(stripeAccountId: string) {
   }
 }
 
-/**
- * Helper to convert float prices (e.g. 10.50 USD or 20000 VND) into Stripe minor units.
- */
 export function toStripeAmount(amount: number, currency: string): number {
   const zeroDecimal = ["bif", "djf", "gnf", "jpy", "kmf", "lrd", "mga", "pyg", "rwf", "ugx", "vnd", "vuv", "xaf", "xof", "xpf"];
   if (zeroDecimal.includes(currency.toLowerCase())) {
@@ -160,16 +140,10 @@ export function toStripeAmount(amount: number, currency: string): number {
   return Math.round(amount * 100);
 }
 
-/**
- * Expose direct Stripe client access.
- */
 export function getStripeInstance() {
   return stripe;
 }
 
-/**
- * Creates a Stripe Checkout Session for marketplace purchases (one-time or subscription).
- */
 export async function createMarketplaceCheckoutSession(params: {
   mode: "payment" | "subscription";
   priceAmount: number;
@@ -203,7 +177,7 @@ export async function createMarketplaceCheckoutSession(params: {
   const interval = normalizeBillingInterval(params.billingPeriod);
 
   if (mode === "payment") {
-    // Platform fee (30% in minor units)
+    
     const platformFeeAmount = Math.round(stripeAmount * (platformFeePercent / 100));
 
     return stripe.checkout.sessions.create({
@@ -233,9 +207,7 @@ export async function createMarketplaceCheckoutSession(params: {
       metadata,
     });
   } else {
-    // For Subscriptions: 30% application fee percent
-    // In Stripe Connect Destination Charges for Subscriptions, we set application_fee_percent
-    // and transfer_data.destination in subscription_data.
+
     return stripe.checkout.sessions.create({
       mode: "subscription",
       customer_email: buyerEmail,
@@ -289,9 +261,6 @@ function normalizeBillingInterval(period?: string): "day" | "week" | "month" | "
   }
 }
 
-/**
- * Construct Stripe Connect Webhook Event.
- */
 export function constructConnectWebhookEvent(body: string, signature: string, secret: string) {
   if (!stripe) {
     throw new Error("Stripe is not configured");
@@ -299,9 +268,6 @@ export function constructConnectWebhookEvent(body: string, signature: string, se
   return stripe.webhooks.constructEvent(body, signature, secret);
 }
 
-/**
- * Construct Stripe Marketplace Webhook Event.
- */
 export function constructMarketplaceWebhookEvent(body: string, signature: string, secret: string) {
   if (!stripe) {
     throw new Error("Stripe is not configured");

@@ -2,10 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { settleDailyPlanAtEod, TradeSettlementResult } from "@/lib/server/quant/db-plan-service";
 import { prisma } from "@/lib/server/prisma";
 
-/**
- * POST /api/bfxps/settlement
- * Báo cáo kết quả kèo mỗi cuối ngày và lưu vào DB (BfxpsTradingPlan & BfxpsLiveLedger)
- */
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();

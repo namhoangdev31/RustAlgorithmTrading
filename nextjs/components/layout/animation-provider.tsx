@@ -7,13 +7,11 @@ import Lenis from "lenis";
 
 export function AnimationProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    // Only execute on client side
+    
     if (typeof window === "undefined") return;
 
-    // Register GSAP plugins
     gsap.registerPlugin(ScrollTrigger);
 
-    // Initialize Lenis smooth scroll
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -22,12 +20,10 @@ export function AnimationProvider({ children }: { children: React.ReactNode }) {
       smoothWheel: true,
     });
 
-    // Update ScrollTrigger on Lenis scroll
     lenis.on("scroll", () => {
       ScrollTrigger.update();
     });
 
-    // Connect Lenis to GSAP ticker
     const updateGsapTicker = (time: number) => {
       lenis.raf(time * 1000);
     };

@@ -7,9 +7,6 @@ export interface RemediationResult {
   details: string;
 }
 
-/**
- * Automatically remediates production anomalies based on error rates and latency spikes.
- */
 export async function executeAutoRemediation(
   bundleId: string,
   anomalyType: "latency" | "error_rate",
@@ -17,7 +14,7 @@ export async function executeAutoRemediation(
   baselineValue: number
 ): Promise<RemediationResult> {
   try {
-    // 1. Fetch bundle and linked project details
+    
     const bundle = await prisma.bundles.findUnique({
       where: { id: bundleId },
       include: { project: true },
@@ -35,11 +32,8 @@ export async function executeAutoRemediation(
     const project = bundle.project;
     const projectId = project.id;
 
-    // 2. Classify anomaly and run remediation action
-
-    // CASE A: Suspected DDoS / Botnet attack (Very high error rate, e.g., >50 errors/min)
     if (anomalyType === "error_rate" && currentValue > 50) {
-      // Check if WAF rule already exists
+      
       const existingRule = await prisma.firewallRule.findFirst({
         where: {
           projectId,
@@ -48,7 +42,7 @@ export async function executeAutoRemediation(
       });
 
       if (!existingRule) {
-        // Automatically insert a path challenge rule for the entire site
+        
         await prisma.firewallRule.create({
           data: {
             name: "AUTO_WAF_UNDER_ATTACK",

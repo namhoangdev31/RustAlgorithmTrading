@@ -76,7 +76,7 @@ function GithubAside({
       ) : (
         <>
           <a
-            href={github.profileUrl || `https://github.com/${github.login}`}
+            href={github.profileUrl || `https:
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 flex items-center gap-2 rounded-md border border-hairline bg-canvas-soft/40 px-2.5 py-2 hover:bg-canvas-soft transition-colors"
@@ -236,7 +236,6 @@ export function OverviewTab({
                       </DropdownMenu>
                     </div>
 
-                    {/* Connection Badges, Version and Mini-Analytics */}
                     <div className="flex items-center justify-between gap-2 mt-3.5 flex-wrap">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-[9px] font-mono font-semibold bg-canvas-soft border border-hairline px-1.5 py-0.5 rounded text-ink-mute" title="Current version">
@@ -275,7 +274,7 @@ export function OverviewTab({
 
                     <div className="flex items-center gap-2 bg-canvas-soft/80 border border-hairline-cool px-2.5 py-1.5 rounded-md mt-4 group-hover:border-hairline-strong transition-colors">
                       <span className={`size-2 rounded-full shrink-0 ${statusInfo.dotClass}`} />
-                      <a href={`https://${projectSlug}.rustalgorithm.net`} target="_blank" rel="noopener noreferrer" className="text-[11px] font-mono font-medium text-ink-mute hover:text-ink transition-colors truncate flex-1">{`${projectSlug}.rustalgorithm.net`}</a>
+                      <a href={`https:
                       <ExternalLink className="size-3 text-ink-mute-2 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </div>
@@ -316,7 +315,7 @@ export function OverviewTab({
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2.5 flex-wrap">
                         <Link href={`/projects/${project.id}/overview`} className="font-bold text-base tracking-tight text-ink hover:text-ink-secondary transition-colors truncate">{project.name}</Link>
-                        <a href={`https://${projectSlug}.rustalgorithm.net`} target="_blank" rel="noopener noreferrer" className="text-xs font-mono font-medium text-ink-mute hover:text-ink-secondary transition-colors flex items-center gap-1 bg-canvas-soft border border-hairline px-2 py-0.5 rounded-md"><span>{`${projectSlug}.rustalgorithm.net`}</span><ExternalLink className="size-3 shrink-0 opacity-60" /></a>
+                        <a href={`https:
                       </div>
                       <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-1.5 text-xs text-ink-mute">
                         <div className="flex items-center gap-1 bg-canvas-soft px-1.5 py-0.5 rounded border border-hairline-cool"><GithubIcon className="size-3 text-ink-secondary shrink-0" /><span className="font-mono truncate max-w-[150px]">{`namhoangdev31/${projectSlug}`}</span><span className="text-hairline-strong">•</span><span className="font-mono text-[10px] text-ink-mute flex items-center gap-0.5"><GitBranch className="size-2.5" />main</span></div>
@@ -324,7 +323,6 @@ export function OverviewTab({
                         <span className="truncate max-w-[320px] text-ink-mute-2">{project.description || bundle?.shortDescription || "No description provided."}</span>
                       </div>
 
-                      {/* Connection Badges, Version and Mini-Analytics */}
                       <div className="flex items-center gap-4.5 mt-2.5 flex-wrap">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="text-[9px] font-mono font-semibold bg-canvas-soft border border-hairline px-1.5 py-0.5 rounded text-ink-mute" title="Current version">

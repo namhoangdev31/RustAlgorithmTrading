@@ -12,7 +12,6 @@ type PortalDialogProps = {
   className?: string;
 };
 
-/** Shared accessible shell for locally controlled Portal workflows. */
 export function PortalDialog({ open, onOpenChange, children, title = "Dialog", className }: PortalDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

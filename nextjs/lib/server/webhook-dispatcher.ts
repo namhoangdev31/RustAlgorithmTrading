@@ -10,19 +10,14 @@ export interface WebhookEventPayload {
   data: any;
 }
 
-/**
- * Dispatch an outbound webhook event immediately (or attempt to).
- * If dispatch fails, schedule for retry using backoff intervals.
- */
 export async function queueWebhookEvent(
   bundleId: string,
   eventType: string,
-  eventKey: string, // Unique eventKey for idempotency and deduplication
+  eventKey: string, 
   data: any
 ) {
   const now = new Date();
-  
-  // Find all active webhooks for this bundle subscribed to this eventType
+
   const webhooks = await prisma.bundleWebhooks.findMany({
     where: {
       bundleId,
@@ -31,7 +26,7 @@ export async function queueWebhookEvent(
   });
 
   for (const webhook of webhooks) {
-    // Check if subscribed to the event
+    
     let subscribedEvents: string[] = [];
     try {
       subscribedEvents = JSON.parse(webhook.events || "[]");
@@ -51,7 +46,6 @@ export async function queueWebhookEvent(
 
     const payloadStr = JSON.stringify(payload);
 
-    // Save Delivery Log entry (idempotently via unique webhookId_eventKey)
     try {
       await prisma.bundleWebhookDeliveries.create({
         data: {
@@ -61,29 +55,22 @@ export async function queueWebhookEvent(
           eventType,
           payload: payloadStr,
           status: "pending",
-          nextRetryAt: now, // Dispatch immediately
+          nextRetryAt: now, 
           createdAt: now,
           updatedAt: now,
         },
       });
     } catch (err: any) {
-      // Event already queued/delivered for this webhook, skip
+      
       continue;
     }
 
-    // Delivery is performed by the authenticated retry cron. Never start
-    // unawaited network work inside a request/serverless invocation.
   }
 }
 
-/**
- * Perform the actual HTTP post, verify response status, sign with HMAC,
- * and handle failure retry scheduling and auto-disable.
- */
 export async function dispatchDelivery(webhookId: string, eventKey: string): Promise<boolean> {
   const now = new Date();
 
-  // Load delivery and webhook configuration
   const delivery = await prisma.bundleWebhookDeliveries.findUnique({
     where: { webhookId_eventKey: { webhookId, eventKey } },
     include: { webhook: true },
@@ -104,7 +91,7 @@ export async function dispatchDelivery(webhookId: string, eventKey: string): Pro
   let success = false;
 
   try {
-    // 5-second timeout safeguard
+    
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
 
@@ -130,11 +117,10 @@ export async function dispatchDelivery(webhookId: string, eventKey: string): Pro
     responseBody = err.message || "Network Error / Timeout";
   }
 
-  // Update webhook stats and check for auto-disable
   const nextAttempt = delivery.attempt + 1;
   
   if (success) {
-    // Reset consecutive failures
+    
     await prisma.$transaction([
       prisma.bundleWebhookDeliveries.update({
         where: { id: delivery.id },
@@ -158,14 +144,14 @@ export async function dispatchDelivery(webhookId: string, eventKey: string): Pro
     ]);
     return true;
   } else {
-    // Calculate exponential retry backoff: 1m, 5m, 30m, 2h, 12h
+    
     const backoffs = [60, 300, 1800, 7200, 43200];
     const delay = backoffs[delivery.attempt] || null;
     const nextRetryAt = delay ? new Date(now.getTime() + delay * 1000) : null;
     const finalStatus = nextRetryAt ? "pending" : "failed";
 
     const newConsecutiveFailures = webhook.consecutiveFailures + 1;
-    // Auto-disable webhook after 5 consecutive failures
+    
     const shouldDisable = newConsecutiveFailures >= 5;
 
     await prisma.$transaction([
@@ -196,15 +182,10 @@ export async function dispatchDelivery(webhookId: string, eventKey: string): Pro
   }
 }
 
-/**
- * Poll recent LepoShipBuild and BundleReleaseTracks states,
- * generating corresponding webhook events if not already processed.
- */
 export async function pollBuilderWebhookEvents() {
   const now = new Date();
   const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
 
-  // 1. Poll LepoShipBuild states
   const recentBuilds = await prisma.lepoShipBuild.findMany({
     where: {
       updatedAt: { gte: fifteenMinutesAgo },

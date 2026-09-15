@@ -8,7 +8,6 @@ export async function GET(
   try {
     const { projectId } = await context.params;
 
-    // Retrieve user ID from cookies or headers
     const cookieHeader = request.headers.get("cookie") || "";
     let userId = "anonymous";
     const match = cookieHeader.match(/lepos_user_id=([^;]+)/);

@@ -18,12 +18,12 @@ export const HeroSection = () => {
 
   return (
     <section className="relative w-full overflow-hidden min-h-[90vh] flex items-center justify-center">
-      {/* 3D WebGL network background */}
+      {}
       <TradingCanvas />
 
       <div className="relative z-10 grid place-items-center lg:max-w-screen-xl gap-8 mx-auto px-6 md:px-8 py-20 md:py-32 w-full">
         <div className="text-center flex flex-col gap-8 max-w-4xl">
-          {/* Animated Badge */}
+          {}
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -34,7 +34,7 @@ export const HeroSection = () => {
             <span>{t("badge")}</span>
           </motion.div>
 
-          {/* Title - Word Stagger Reveal */}
+          {}
           <div className="max-w-screen-md mx-auto text-center text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight">
             <h1 className="leading-tight overflow-hidden py-1">
               {words.map((word, i) => {
@@ -62,7 +62,6 @@ export const HeroSection = () => {
             </h1>
           </div>
 
-          {/* Subtitle */}
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -72,7 +71,6 @@ export const HeroSection = () => {
             {t("subtitle")}
           </motion.p>
 
-          {/* CTA Buttons */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -105,7 +103,6 @@ export const HeroSection = () => {
           </motion.div>
         </div>
 
-        {/* Live trading cockpit preview with GSAP animations */}
         <TradingPreview />
       </div>
     </section>
@@ -248,8 +245,7 @@ const TradingPreview = () => {
       style={{ transformStyle: "preserve-3d" }}
     >
       <div className="absolute top-2 lg:-top-8 left-1/2 h-24 w-[90%] -translate-x-1/2 rounded-full bg-primary/40 blur-3xl lg:h-80 pointer-events-none" />
-      
-      {/* 3D Tilting Card */}
+
       <div 
         ref={cardRef}
         onMouseMove={handleMouseMove}

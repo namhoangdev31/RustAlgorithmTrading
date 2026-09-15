@@ -40,7 +40,6 @@ export const InteractiveBackground = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Set canvas dimensions
     let width = window.innerWidth;
     let height = window.innerHeight;
     canvas.width = width;
@@ -54,25 +53,20 @@ export const InteractiveBackground = () => {
     };
     window.addEventListener("resize", handleResize);
 
-    // Mouse tracking
     let mouseX = -1000;
     let mouseY = -1000;
     let lastMouseX = -1000;
     let lastMouseY = -1000;
     let isMouseOnScreen = false;
 
-    // Smoothly interpolated coordinate for spotlight tracking
     let spotlightX = -1000;
     let spotlightY = -1000;
 
-    // Target opacity for smooth entry/exit
     let currentOpacity = 0;
     let targetOpacity = 0;
 
-    // Scroll tracking
     let scrollY = window.scrollY;
 
-    // Helper to convert hex colors from the design system to rgb string
     const hexToRgb = (hex: string): string => {
       const cleanHex = hex.replace("#", "").trim();
       if (cleanHex.length === 3) {
@@ -359,19 +353,18 @@ export const InteractiveBackground = () => {
       className="fixed inset-0 -z-10 pointer-events-none overflow-hidden bg-background transition-opacity duration-500"
       style={{ opacity: isHomepage ? 0 : 1 }}
     >
-      {/* High-performance canvas that draws the concave deformed grid and the smoke particles */}
+      
       <canvas
         ref={canvasRef}
         className="absolute inset-0 pointer-events-none"
       />
 
-      {/* Wrapper for interactive back-glow, which fades out when mouse leaves */}
       <div
         ref={interactiveWrapperRef}
         className="absolute inset-0 transition-opacity duration-500"
         style={{ opacity: 0 }}
       >
-        {/* Soft backlight behind the grid to emphasize the concave shape */}
+        
         <div
           ref={spotlightRef}
           className="absolute rounded-full blur-[140px] opacity-[0.16] dark:opacity-[0.22] mix-blend-screen"

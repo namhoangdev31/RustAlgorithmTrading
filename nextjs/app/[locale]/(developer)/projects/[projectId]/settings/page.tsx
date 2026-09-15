@@ -62,14 +62,14 @@ export default async function ProjectSettingsPage({ params, searchParams }: Page
     try {
       const configData = JSON.parse(githubIntegration.config);
       webhookLogs = configData.logs || [];
-      webhookUrl = `https://api.github.com/webhooks/github`;
+      webhookUrl = `https:
     } catch {}
   }
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 animate-in fade-in duration-200">
       <div className="xl:col-span-2 space-y-6">
-        {/* Rename Project */}
+        {}
         <SettingsSection
           title="Rename Project"
           description="Change the display name of this project in the workspace."
@@ -92,7 +92,7 @@ export default async function ProjectSettingsPage({ params, searchParams }: Page
           </form>
         </SettingsSection>
 
-        {/* Vercel Project link details */}
+        {}
         <SettingsSection
           title="Vercel Integration"
           description="Link project build and deployment pipelines with Vercel."
@@ -119,7 +119,7 @@ export default async function ProjectSettingsPage({ params, searchParams }: Page
           </div>
         </SettingsSection>
 
-        {/* GitHub Repository integration section */}
+        {}
         <SettingsSection
           title="GitHub Integration"
           description="Connect GitHub repositories to enable auto-triggered deployments and commits mapping."
@@ -181,7 +181,7 @@ export default async function ProjectSettingsPage({ params, searchParams }: Page
           />
         )}
 
-        {/* Danger Zone */}
+        {}
         <form id="delete-project-form" action={deleteProjectAction}>
           <input type="hidden" name="projectId" value={project.id} />
           <input type="hidden" name="returnTo" value={`/${locale}/projects`} />

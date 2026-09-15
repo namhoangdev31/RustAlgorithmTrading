@@ -20,7 +20,6 @@ import { UnavailableState } from "@/components/portal/UnavailableState";
 export default async function BillingPage() {
   const user = await requireCurrentUser();
 
-  // Find first active organization/workspace for the user
   let organization = await prisma.organization.findFirst({
     where: {
       OR: [
@@ -31,7 +30,6 @@ export default async function BillingPage() {
     select: { id: true, name: true },
   });
 
-  // If no organization exists, fetch from bundle Collaborators
   if (!organization) {
     const collaborator = await prisma.bundleCollaborators.findFirst({
       where: { userId: user.id },
@@ -70,7 +68,6 @@ export default async function BillingPage() {
     );
   }
 
-  // Load Stripe Connect and billing statistics
   const data = await getPartnerBillingDashboardData(organization.id);
   if (data.providerUnavailable) {
     return (
@@ -141,7 +138,6 @@ export default async function BillingPage() {
             </Badge>
           </div>
 
-          {/* Revenue Overview Stats Cards */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <Card className="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border-emerald-500/20">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
@@ -206,7 +202,7 @@ export default async function BillingPage() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
-            {/* Transaction Log */}
+            
             <Card className="bg-card border border-hairline">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base font-bold">
@@ -246,7 +242,6 @@ export default async function BillingPage() {
               </CardContent>
             </Card>
 
-            {/* Payout Log */}
             <Card className="bg-card border border-hairline">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base font-bold">

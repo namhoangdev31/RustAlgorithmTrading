@@ -47,7 +47,6 @@ export default function LeposTradingBotPage({
   );
   const [isNoticeDismissed, setIsNoticeDismissed] = useState(false);
 
-  // Responsive & Tab states
   const [mobileTab, setMobileTab] = useState<
     "chart" | "advisor" | "chat" | "qa"
   >("chart");
@@ -204,10 +203,10 @@ export default function LeposTradingBotPage({
 
   return (
     <div className="flex h-[100dvh] min-h-[100dvh] w-full max-w-[100vw] flex-col bg-[#070a0f] text-slate-100 antialiased selection:bg-sky-500/30 selection:text-white overflow-hidden">
-      {/* Top Banner Consensus Bar */}
+      
       <header className="border-b border-white/[0.08] bg-[#090d16]/90 backdrop-blur-xl px-2.5 sm:px-4 py-2 sm:py-2.5 z-20 shadow-lg shrink-0 w-full overflow-hidden">
         <div className="flex items-center justify-between gap-1.5 sm:gap-4 w-full">
-          {/* Brand Identity */}
+          
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <div className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3 items-center justify-center">
               <span
@@ -228,7 +227,6 @@ export default function LeposTradingBotPage({
             </div>
           </div>
 
-          {/* Canonical Strategy Ticker Pills - Visible on sm and up */}
           <div className="hidden md:flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
             <div
               className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 font-bold shadow-sm ${
@@ -366,7 +364,6 @@ export default function LeposTradingBotPage({
               </span>
             </button>
 
-            {/* Sổ Lệnh Lịch Sử Button - Lấy dữ liệu THẬT (Nút nổi không border) */}
             <button
               onClick={() => setIsHistoryOpen(true)}
               className="group flex items-center gap-1 sm:gap-2 rounded-md bg-sky-600 hover:bg-sky-500 px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs font-bold text-white transition-all shadow-md shadow-sky-600/25 cursor-pointer shrink-0"
@@ -585,7 +582,6 @@ export default function LeposTradingBotPage({
                   </span>
                 </div>
 
-                {/* Sidebar Active Tab Content */}
                 <div className="flex-1 overflow-hidden">
                   {sidebarTab === "advisor" && (
                     <LiveDashboardPanel
@@ -624,7 +620,7 @@ export default function LeposTradingBotPage({
             direction="horizontal"
             className="h-full w-full gap-2.5"
           >
-            {/* Panel 1: Live Dashboard Kèo Duy Nhất */}
+            
             <ResizablePanel
               id="p1-dashboard"
               defaultSize="28%"
@@ -648,7 +644,6 @@ export default function LeposTradingBotPage({
               className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded"
             />
 
-            {/* Panel 2: TradingView Center Panel */}
             <ResizablePanel
               id="p2-tradingview"
               defaultSize="44%"
@@ -664,7 +659,6 @@ export default function LeposTradingBotPage({
               className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded"
             />
 
-            {/* Panel 3: Chat Advisor & QA */}
             <ResizablePanel
               id="p3-chat"
               defaultSize="28%"
@@ -729,7 +723,6 @@ export default function LeposTradingBotPage({
         )}
       </main>
 
-      {/* Sổ Lệnh Lịch Sử Kiểm Định & Thực Chiến (Database PostgreSQL) */}
       <TradeHistoryModal
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}

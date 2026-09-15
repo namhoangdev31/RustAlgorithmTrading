@@ -200,8 +200,7 @@ export async function generatePluginBridge(pluginId: string) {
 
   const permissions = plugin.permissions || [];
   const bridgeCode = `
-// Auto-generated LepoShip Plugin Bridge for "${plugin.name}" v${plugin.version}
-// Slug: ${plugin.slug}
+
 (function(global) {
   'use strict';
   
@@ -222,7 +221,7 @@ export async function generatePluginBridge(pluginId: string) {
     async load() {
       if (this._loaded) return;
       console.log('[LepoShip Plugin Bridge] Loading ' + PLUGIN_SLUG + '...');
-      // Execute plugin bundle initialization logic
+      
       this._loaded = true;
     }
   }

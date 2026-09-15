@@ -27,9 +27,6 @@ export interface AdvisorResponse {
   };
 }
 
-/**
- * Phân loại ý định của người dùng (Intent Classifier)
- */
 export function classifyIntent(question: string): string {
   const q = question.toLowerCase();
   if (
@@ -93,9 +90,6 @@ export const DEFAULT_CANONICAL_BACKTEST_SUMMARY: BacktestSummary = {
   maxDrawdown: -92.6,
 };
 
-/**
- * Sinh câu trả lời định dạng chuẩn 4 khối Canonical Provenance Contract của BFXPS
- */
 export async function generateAdvisorReply(
   question: string,
   snapshot: MarketSnapshot,
@@ -121,7 +115,6 @@ export async function generateAdvisorReply(
   const isVi = /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệđùúủũụưứừửữựòóỏõọôốồổỗộơớờởỡợìíỉĩịỳýỷỹỵ]/i.test(question);
   const isEn = !isVi;
 
-  // 1. Tính toán động các mốc chênh lệch TP/SL và Tỷ lệ R:R
   const tpPoints = Math.abs(Number((primaryPlan.tpPrice - primaryPlan.entryPrice).toFixed(1)));
   const slPoints = Math.abs(Number((primaryPlan.slPrice - primaryPlan.entryPrice).toFixed(1)));
   const rawRatio = slPoints > 0 ? tpPoints / slPoints : 2.0;

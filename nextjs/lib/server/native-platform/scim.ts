@@ -35,7 +35,6 @@ function normalizeScimRole(role: string): string {
 async function syncUserWorkspaceRole(organizationId: string, userId: string, role: string) {
   const normalized = normalizeScimRole(role);
 
-  // Find all projects in organization
   const projects = await prisma.project.findMany({
     where: { organizationId, deletedAt: null },
     include: { bundle: true },

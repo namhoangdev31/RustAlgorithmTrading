@@ -3,17 +3,12 @@ import { prisma } from "@/lib/server/prisma";
 import { syncSubmissionToExternal } from "@/lib/server/form-sync";
 import { triggerFormWebhook } from "@/lib/server/webhooks";
 
-/**
- * Simulated Akismet spam rule check.
- */
 function checkSpamAkismet(data: Record<string, any>, ip: string, userAgent: string): boolean {
   const contentString = JSON.stringify(data).toLowerCase();
-  
-  // High-confidence spam keywords
+
   const spamKeywords = ["buy bitcoin", "crypto profit", "seo ranking", "free money", "viagra", "cheap pharmacy"];
   const containsSpamWord = spamKeywords.some((keyword) => contentString.includes(keyword));
-  
-  // Simulate block for suspicious IP/User-Agent signatures (e.g. headless scraping bot)
+
   const isSuspiciousAgent = userAgent.includes("HeadlessChrome") || userAgent.includes("python-requests");
   
   return containsSpamWord || isSuspiciousAgent;
@@ -37,7 +32,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify form exists
     const form = await prisma.form.findUnique({
       where: { id: formId },
     });
@@ -49,7 +43,6 @@ export async function POST(request: NextRequest) {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
     const userAgent = request.headers.get("user-agent") || "";
 
-    // 1. Akismet Spam Protection Check
     const isSpam = checkSpamAkismet(data, ip, userAgent);
     if (isSpam) {
       console.warn(`[Akismet Protection] Blocked spam submission from IP: ${ip} for Form: ${formId}`);

@@ -40,7 +40,7 @@ export function DeploymentsTab({
 
   return (
     <div className="space-y-6">
-      {/* Subsystem Switcher Tabs */}
+      {}
       <DeploymentsTabSwitcher activeSubTab={activeSubTab} setActiveSubTab={setActiveSubTab} />
 
       <div className="animate-in fade-in duration-200">

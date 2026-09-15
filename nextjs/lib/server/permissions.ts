@@ -21,7 +21,6 @@ export async function validatePersonalAccessToken(token: string) {
     return null;
   }
 
-  // Update lastUsedAt asynchronously
   prisma.personalAccessToken.update({
     where: { id: record.id },
     data: { lastUsedAt: new Date() },

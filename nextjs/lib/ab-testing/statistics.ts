@@ -114,7 +114,6 @@ export function sampleRatioMismatchPValue(sampleA: number, sampleB: number, traf
   return clampProbability(2 * (1 - normalCdf(Math.sqrt(chiSquare))));
 }
 
-// Peter John Acklam's inverse-normal approximation.
 export function inverseNormalCdf(probability: number) {
   if (probability <= 0 || probability >= 1) {
     throw new Error("Probability must be between 0 and 1.");

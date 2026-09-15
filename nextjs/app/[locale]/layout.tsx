@@ -57,12 +57,10 @@ export default async function RootLayout({
 }>) {
   const { locale } = await params;
 
-  // Validate that the incoming locale is supported
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
 
-  // Provide all messages to the client provider
   const messages = await getMessages();
 
   return (

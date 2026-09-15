@@ -55,14 +55,12 @@ export const FeaturesSection = () => {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Register ScrollTrigger
     gsap.registerPlugin(ScrollTrigger);
 
     let headerAnim: gsap.core.Tween | null = null;
     let gridAnim: gsap.core.Tween | null = null;
     let items: NodeListOf<Element> | null = null;
 
-    // Animate Header
     if (headerRef.current) {
       headerAnim = gsap.fromTo(
         headerRef.current.children,
@@ -82,11 +80,9 @@ export const FeaturesSection = () => {
       );
     }
 
-    // Animate Grid Items (Slide-in and stagger)
     if (gridRef.current) {
       items = gridRef.current.querySelectorAll(".feature-item");
-      
-      // Clear any leftover inline styles from hot-reloads
+
       gsap.set(items, { clearProps: "all" });
 
       gridAnim = gsap.fromTo(
@@ -128,7 +124,7 @@ export const FeaturesSection = () => {
 
     gsap.to(card, {
       y: -6,
-      borderColor: "rgba(62, 207, 142, 0.4)", // Emerald green border highlight
+      borderColor: "rgba(62, 207, 142, 0.4)", 
       boxShadow: "0 15px 30px -15px rgba(62, 207, 142, 0.2)",
       backgroundColor: "rgba(62, 207, 142, 0.02)",
       duration: 0.3,
@@ -139,7 +135,7 @@ export const FeaturesSection = () => {
       gsap.to(icon, {
         scale: 1.2,
         rotation: 360,
-        color: "#3ecf8e", // Emerald green
+        color: "#3ecf8e", 
         duration: 0.6,
         ease: "power2.out",
       });

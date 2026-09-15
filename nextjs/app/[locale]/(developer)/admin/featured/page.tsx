@@ -13,7 +13,6 @@ export default async function AdminFeaturedPage() {
     redirect("/overview");
   }
 
-  // Retrieve current featured slots
   const slots = await prisma.bundleFeaturedSlots.findMany({
     orderBy: [{ slotType: "asc" }, { sortOrder: "asc" }],
     include: {
@@ -21,7 +20,6 @@ export default async function AdminFeaturedPage() {
     },
   });
 
-  // Retrieve published bundles to configure targets
   const bundles = await prisma.bundles.findMany({
     where: { status: "published" },
     select: { id: true, name: true },

@@ -98,12 +98,10 @@ export function SessionReplayTimeline({ events, sessionId }: SessionReplayTimeli
 
   const duration = decompressedEvents.length > 0 ? Math.max(...decompressedEvents.map(e => e.timestamp), 1000) : 1000;
 
-  // Sync selected event when events change
   useEffect(() => {
     setSelectedEvent(decompressedEvents[0] || null);
   }, [decompressedEvents]);
 
-  // Animation Loop for Session Replay Playback
   useEffect(() => {
     let animationFrameId: number;
     let lastTime = performance.now();
@@ -129,7 +127,6 @@ export function SessionReplayTimeline({ events, sessionId }: SessionReplayTimeli
     return () => cancelAnimationFrame(animationFrameId);
   }, [isPlaying, playbackSpeed, duration]);
 
-  // Select the last persisted event passed by playback.
   useEffect(() => {
     const passedEvents = decompressedEvents.filter(e => e.timestamp <= currentTime);
     if (passedEvents.length > 0) {
@@ -175,8 +172,7 @@ export function SessionReplayTimeline({ events, sessionId }: SessionReplayTimeli
 
   return (
     <Card className="border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg overflow-hidden flex flex-col gap-5 p-0">
-      
-      {/* Persisted event evidence only; visual DOM snapshots are not collected. */}
+
       <div className="bg-slate-950 p-4 border-b border-hairline/10 flex flex-col gap-3">
         <div className="grid grid-cols-1 gap-3 rounded-lg border border-slate-800 bg-slate-900/40 p-4 text-xs sm:grid-cols-3">
           <div>
@@ -193,7 +189,6 @@ export function SessionReplayTimeline({ events, sessionId }: SessionReplayTimeli
           </div>
         </div>
 
-        {/* Replay Player Controls */}
         <div className="flex items-center justify-between gap-4 px-2 py-1">
           <div className="flex items-center gap-2.5">
             <Button
@@ -223,7 +218,6 @@ export function SessionReplayTimeline({ events, sessionId }: SessionReplayTimeli
             </span>
           </div>
 
-          {/* Seekbar Slider */}
           <div className="flex-1 max-w-sm px-2">
             <input 
               type="range" 
@@ -255,7 +249,6 @@ export function SessionReplayTimeline({ events, sessionId }: SessionReplayTimeli
         </div>
       </div>
 
-      {/* 2. Visual Timeline Dots Track */}
       <CardContent className="pt-2 flex flex-col gap-5">
         <div className="relative py-7 bg-slate-950/40 rounded-xl border border-slate-900 px-6">
           <div className="absolute left-6 right-6 top-1/2 h-1 bg-slate-800 -translate-y-1/2 rounded" />
@@ -297,7 +290,6 @@ export function SessionReplayTimeline({ events, sessionId }: SessionReplayTimeli
           <div className="absolute right-6 bottom-1 text-[9px] font-mono text-slate-500">{formatTime(duration)}</div>
         </div>
 
-        {/* Legend */}
         <div className="flex flex-wrap gap-4 items-center justify-center text-[10px] text-slate-400 border-b border-slate-900/60 pb-4">
           <div className="flex items-center gap-1.5">
             <span className="size-2 rounded-full bg-blue-500" />
@@ -321,10 +313,9 @@ export function SessionReplayTimeline({ events, sessionId }: SessionReplayTimeli
           </div>
         </div>
 
-        {/* Selected Event Details & AI Diagnostics & Console Panel */}
         {selectedEvent && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 animate-in fade-in duration-300">
-            {/* Event Info Card */}
+            
             <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 flex flex-col gap-3 lg:col-span-1">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -393,7 +384,6 @@ export function SessionReplayTimeline({ events, sessionId }: SessionReplayTimeli
               </div>
             </div>
 
-            {/* AI Diagnostics Box */}
             <div className={`p-4 rounded-xl border flex flex-col gap-2.5 lg:col-span-1 ${
               isLaggy(selectedEvent) 
                 ? "bg-red-500/5 border-red-500/15 text-red-200" 
@@ -439,7 +429,6 @@ export function SessionReplayTimeline({ events, sessionId }: SessionReplayTimeli
               )}
             </div>
 
-            {/* Split View Console Logs Box */}
             <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 flex flex-col gap-2 lg:col-span-1 h-[155px]">
               <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Console Logs & Errors</span>

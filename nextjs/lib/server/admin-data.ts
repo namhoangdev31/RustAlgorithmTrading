@@ -42,7 +42,6 @@ async function getWorkspaceProjects(userId: string) {
     };
   }
 
-  // Fetch projects from the database
   const projects = await prisma.project.findMany({
     where: {
       organizationId: workspace.activeOrganization.id,

@@ -10,10 +10,6 @@ import { calculateRequiredSamplePerVariant } from "@/lib/ab-testing/statistics";
 import { estimateBaselineConversionRate } from "@/lib/server/ab-testing/baseline";
 import { finalizeExperiment } from "@/lib/server/lepoship/release-service";
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function readFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";

@@ -36,7 +36,6 @@ export async function GET(request: NextRequest) {
       return scimError("organizationId is required.", 400);
     }
 
-    // Handle filtering (e.g. userName eq "user@example.com")
     const filter = request.nextUrl.searchParams.get("filter");
     if (filter) {
       const match = filter.match(/userName\s+eq\s+["']([^"']+)["']/i);

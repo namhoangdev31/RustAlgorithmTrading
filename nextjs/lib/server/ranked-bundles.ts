@@ -1,9 +1,5 @@
 import { prisma } from "@/lib/server/prisma";
 
-/**
- * Fetch published bundles sorted by their overall ranking score.
- * If a bundle does not have a ranking score yet, it defaults to overall score 0.0.
- */
 export async function getRankedBundles(options?: {
   category?: string;
   take?: number;

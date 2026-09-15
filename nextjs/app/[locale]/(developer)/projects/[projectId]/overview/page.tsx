@@ -57,7 +57,7 @@ export default async function ProjectOverviewPage({ params, searchParams }: Page
 
   return (
     <div className="space-y-6">
-      {/* Vercel production deployment status */}
+      
       {vercelConnected && project.vercelProjectId && (
         <Card className="overflow-hidden border border-hairline bg-card py-0">
           <CardHeader className="border-b border-hairline bg-secondary/50 flex flex-row items-center justify-between gap-3 p-5">
@@ -79,7 +79,7 @@ export default async function ProjectOverviewPage({ params, searchParams }: Page
                   <div>
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">URL</p>
                     <a
-                      href={`https://${productionDeployment.url}`}
+                      href={`https:
                       target="_blank"
                       rel="noreferrer"
                       className="text-sm font-semibold text-foreground hover:underline flex items-center gap-1 mt-0.5"
@@ -107,7 +107,7 @@ export default async function ProjectOverviewPage({ params, searchParams }: Page
                   </div>
                 </div>
 
-                {/* Deployment preview link */}
+                {}
                 <div className="w-full h-44 rounded-lg border border-hairline bg-secondary/30 relative overflow-hidden flex flex-col shadow-inner">
                   <div className="h-7 border-b border-hairline bg-secondary flex items-center px-3 gap-1.5 shrink-0 select-none">
                     <span className="size-2 rounded-full bg-red-500/40" />
@@ -141,7 +141,6 @@ export default async function ProjectOverviewPage({ params, searchParams }: Page
         </Card>
       )}
 
-      {/* Metrics Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <MetricCard
           title="Bundle Status"
@@ -159,7 +158,6 @@ export default async function ProjectOverviewPage({ params, searchParams }: Page
         />
       </div>
 
-      {/* Release track log if any */}
       {paginatedTracks.length > 0 && (
         <Card className="border border-hairline bg-card">
           <CardHeader>

@@ -8,10 +8,6 @@ import { requireProjectRole } from "@/lib/server/permissions";
 import { prisma } from "@/lib/server/prisma";
 import { z } from "zod";
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function readFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";

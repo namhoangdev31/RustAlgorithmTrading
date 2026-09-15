@@ -10,9 +10,6 @@ interface WebhookPayload {
   createdAt: string;
 }
 
-/**
- * Triggers a webhook delivery immediately.
- */
 export async function triggerFormWebhook(
   formId: string,
   submissionId: string,
@@ -38,7 +35,6 @@ export async function triggerFormWebhook(
   const url = form.webhookUrl;
   const secret = form.webhookSecret;
 
-  // Create delivery record in database
   const delivery = await prisma.formWebhookDelivery.create({
     data: {
       formId,
@@ -52,13 +48,9 @@ export async function triggerFormWebhook(
   await executeWebhookSend(delivery.id, url, secret, payload, 1);
 }
 
-/**
- * Sweeps and retries failed webhook deliveries.
- */
 export async function retryFailedWebhooks(): Promise<{ processed: number; succeeded: number }> {
   const now = new Date();
-  
-  // Find failed deliveries that are due for a retry
+
   const deliveries = await prisma.formWebhookDelivery.findMany({
     where: {
       status: "FAILED",
@@ -102,9 +94,6 @@ export async function retryFailedWebhooks(): Promise<{ processed: number; succee
   };
 }
 
-/**
- * Performs the HTTP POST request to the webhook URL and updates the delivery status.
- */
 async function executeWebhookSend(
   deliveryId: string,
   url: string,
@@ -118,7 +107,6 @@ async function executeWebhookSend(
     "User-Agent": "LepoShip-Webhook-Client/1.0",
   };
 
-  // Sign payload if secret exists
   if (secret) {
     const signature = crypto
       .createHmac("sha256", secret)

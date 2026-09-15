@@ -7,10 +7,6 @@ import { prisma } from "@/lib/server/prisma";
 import { z } from "zod";
 import { reconcileReleasePromotion, rejectRelease } from "@/lib/server/lepoship/release-service";
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function readFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";

@@ -7,15 +7,6 @@ import {
   purgeAll,
 } from "@/lib/server/native-platform/isr-cache-manager";
 
-/**
- * POST /api/revalidate — Advanced cache purge API
- *
- * Supports purging by:
- * - `type: "path"`          → exact path or wildcard glob (`/blog/*`)
- * - `type: "tag"`           → cache tag label
- * - `type: "surrogate-key"` → CDN Surrogate-Key / Cache-Tag header
- * - `type: "all"`           → flush entire project cache
- */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -39,7 +30,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "projectId is required" }, { status: 400 });
     }
 
-    // Authenticate via secret token OR project-level RBAC
     const revalidationSecret = process.env.REVALIDATION_SECRET;
     if (!revalidationSecret || secret !== revalidationSecret) {
       await requireNativeProjectAccess(

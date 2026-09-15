@@ -4,7 +4,6 @@ import { constructConnectWebhookEvent, isStripeAvailable } from "@/lib/server/st
 import { claimStripeWebhook, completeStripeWebhook, failStripeWebhook } from "@/lib/server/lepoship/stripe-webhook-idempotency";
 import { readBoundedText } from "@/lib/server/bounded-json";
 
-// GET handler acts as the "refresh" URL when onboarding fails or needs refresh
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const accountId = searchParams.get("accountId");

@@ -14,10 +14,6 @@ interface SIEMConfig {
   logSchemaMapping?: Record<string, string>;
 }
 
-/**
- * Custom Log Schema Mapper.
- * Maps original log entry fields to custom field names configured by the enterprise.
- */
 function mapLogSchema(logEntry: any, schemaMapping?: Record<string, string>): any {
   if (!schemaMapping || Object.keys(schemaMapping).length === 0) {
     return logEntry;
@@ -30,10 +26,6 @@ function mapLogSchema(logEntry: any, schemaMapping?: Record<string, string>): an
   return mappedEntry;
 }
 
-/**
- * Asynchronous Retry with Exponential Backoff helper.
- * Executes the task in the background to avoid blocking the main server request.
- */
 async function retryWithBackoff(
   fn: () => Promise<boolean>,
   onFailure: (lastError: string) => Promise<void>,
@@ -49,7 +41,7 @@ async function retryWithBackoff(
       } catch (err: any) {
         lastError = err.message || String(err);
       }
-      // Exponential backoff delay (2s, 4s, 8s...)
+      
       const delay = Math.pow(2, attempt + 1) * 1000;
       await new Promise(resolve => setTimeout(resolve, delay));
     }
@@ -60,9 +52,6 @@ async function retryWithBackoff(
   })();
 }
 
-/**
- * Writes failed audit log entry to the Dead-Letter Queue (DLQ) local JSONL file.
- */
 async function writeToDlq(bundleId: string, destination: string, errorMsg: string, event: any) {
   try {
     const dlqDir = path.join(process.cwd(), "public", "bundles", "siem-dlq", bundleId);
@@ -244,7 +233,7 @@ async function sendToDatadog(
   const mappedEvent = mapLogSchema(event, schemaMapping);
 
   const performSend = async (): Promise<boolean> => {
-    const endpoint = `https://http-intake.logs.${site}/api/v2/logs`;
+    const endpoint = `https:
     console.log(`[SIEM Datadog] Streaming event to Datadog (${site})...`);
     
     const payload = {

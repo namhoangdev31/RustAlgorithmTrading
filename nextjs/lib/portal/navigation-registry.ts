@@ -36,7 +36,6 @@ export type NavItem = {
   requiredRole?: "admin" | "owner" | "editor" | "viewer";
 };
 
-// Workspace navigation structure
 export function getWorkspaceNav(_locale?: string): NavItem[] {
   return [
     { path: "/overview", label: "Overview", icon: LayoutDashboard },
@@ -90,7 +89,6 @@ export function getWorkspaceNav(_locale?: string): NavItem[] {
   ];
 }
 
-// Project navigation structure
 export function getProjectNav(_locale: string, projectId: string): NavItem[] {
   const base = `/projects/${projectId}`;
   return [

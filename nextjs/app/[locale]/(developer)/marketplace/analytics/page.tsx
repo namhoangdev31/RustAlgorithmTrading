@@ -18,7 +18,6 @@ import { getInstallAnalytics, getTopPluginsByInstalls } from "@/lib/server/marke
 export default async function AnalyticsPage() {
   const user = await requireCurrentUser();
 
-  // Find partner's bundle
   const collaborator = await prisma.bundleCollaborators.findFirst({
     where: { userId: user.id },
     select: {
@@ -47,7 +46,6 @@ export default async function AnalyticsPage() {
   const analytics = await getInstallAnalytics(bundle.id, 30);
   const topPlugins = await getTopPluginsByInstalls(5);
 
-  // Parse SVG line chart path for installs
   const chartHeight = 150;
   const chartWidth = 600;
   const padding = 20;
@@ -58,7 +56,6 @@ export default async function AnalyticsPage() {
   const maxInstalls = Math.max(...points.map((p) => p.installs), 1);
   const pointsCount = points.length;
 
-  // Build the path d-attribute
   let pathD = "";
   points.forEach((p, idx) => {
     const x = padding + (idx / (pointsCount - 1)) * usableWidth;
@@ -77,7 +74,6 @@ export default async function AnalyticsPage() {
         description="Monitor installation growth, active user retention, uninstalls, and debug plugin errors in real-time."
       />
 
-      {/* Analytics Overview Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border-emerald-500/20">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
@@ -128,7 +124,6 @@ export default async function AnalyticsPage() {
         </Card>
       </div>
 
-      {/* Chart Section */}
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
         <Card className="col-span-2 bg-card border border-hairline">
           <CardHeader>
@@ -143,15 +138,13 @@ export default async function AnalyticsPage() {
             ) : (
               <div className="w-full flex flex-col items-center">
                 <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full h-full max-h-[160px] overflow-visible">
-                  {/* Grid lines */}
+                  
                   <line x1={padding} y1={padding} x2={chartWidth - padding} y2={padding} stroke="currentColor" strokeOpacity="0.1" />
                   <line x1={padding} y1={padding + usableHeight / 2} x2={chartWidth - padding} y2={padding + usableHeight / 2} stroke="currentColor" strokeOpacity="0.1" />
                   <line x1={padding} y1={padding + usableHeight} x2={chartWidth - padding} y2={padding + usableHeight} stroke="currentColor" strokeOpacity="0.2" />
 
-                  {/* SVG Path */}
                   <path d={pathD} fill="none" stroke="rgb(16 185 129)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
 
-                  {/* Gradient Area below path */}
                   {pointsCount > 0 && (
                     <path
                       d={`${pathD} L ${padding + usableWidth} ${padding + usableHeight} L ${padding} ${padding + usableHeight} Z`}
@@ -167,7 +160,6 @@ export default async function AnalyticsPage() {
                     </linearGradient>
                   </defs>
 
-                  {/* Draw markers */}
                   {points.map((p, idx) => {
                     const x = padding + (idx / (pointsCount - 1)) * usableWidth;
                     const y = padding + usableHeight - (p.installs / maxInstalls) * usableHeight;
@@ -185,7 +177,7 @@ export default async function AnalyticsPage() {
                     );
                   })}
                 </svg>
-                {/* Labels */}
+                
                 <div className="flex justify-between w-full px-5 text-xs text-muted-foreground mt-2">
                   <span>{points[0]?.date}</span>
                   <span>{points[Math.floor(pointsCount / 2)]?.date}</span>
@@ -196,7 +188,6 @@ export default async function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        {/* Top Plugins */}
         <Card className="bg-card border border-hairline">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -224,7 +215,6 @@ export default async function AnalyticsPage() {
         </Card>
       </div>
 
-      {/* Error Breakdown */}
       <Card className="bg-card border border-hairline">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">

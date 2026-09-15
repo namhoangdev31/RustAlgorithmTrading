@@ -23,7 +23,7 @@ export function analyzeJa3Fingerprint(ja3String: string): { isBot: boolean; name
 
 export function generateJsChallenge() {
   const challengeId = crypto.randomUUID();
-  const difficulty = 4; // proof-of-work difficulty
+  const difficulty = 4; 
   const salt = crypto.randomBytes(16).toString("hex");
 
   const redis = getNativeRedis();

@@ -1,8 +1,5 @@
 import { prisma } from "@/lib/server/prisma";
 
-/**
- * Record a new Marketplace install, uninstall, or error event.
- */
 export async function recordInstallEvent(params: {
   bundleId: string;
   userId: string;
@@ -28,14 +25,10 @@ export async function recordInstallEvent(params: {
   }
 }
 
-/**
- * Fetch installation, uninstallation, churn rate, and error analytics.
- */
 export async function getInstallAnalytics(bundleId: string, daysLimit = 30) {
   const sinceDate = new Date();
   sinceDate.setDate(sinceDate.getDate() - daysLimit);
 
-  // Fetch all events for the bundle within the date range
   const events = await prisma.marketplaceInstallEvent.findMany({
     where: {
       bundleId,
@@ -48,13 +41,10 @@ export async function getInstallAnalytics(bundleId: string, daysLimit = 30) {
   let uninstallsCount = 0;
   let errorsCount = 0;
 
-  // Track error messages and their counts
   const errorMap = new Map<string, { count: number; lastSeen: Date }>();
-  
-  // Track daily time-series
+
   const dailyMap = new Map<string, { date: string; installs: number; uninstalls: number; errors: number }>();
 
-  // Initialize daily map for the last N days to ensure contiguous dates
   for (let i = daysLimit - 1; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
@@ -64,8 +54,7 @@ export async function getInstallAnalytics(bundleId: string, daysLimit = 30) {
 
   events.forEach((ev) => {
     const dateStr = ev.createdAt.toISOString().split("T")[0];
-    
-    // Grouping by event type
+
     if (ev.eventType === "install") {
       installsCount++;
       const day = dailyMap.get(dateStr);
@@ -90,7 +79,6 @@ export async function getInstallAnalytics(bundleId: string, daysLimit = 30) {
     }
   });
 
-  // Calculate active installs and churn rate
   const activeInstalls = Math.max(0, installsCount - uninstallsCount);
   const churnRate = installsCount > 0 ? Number(((uninstallsCount / installsCount) * 100).toFixed(1)) : 0;
 
@@ -112,11 +100,8 @@ export async function getInstallAnalytics(bundleId: string, daysLimit = 30) {
   };
 }
 
-/**
- * Get top plugins/bundles ranked by install counts.
- */
 export async function getTopPluginsByInstalls(limit = 5) {
-  // Fetch install events
+  
   const installs = await prisma.marketplaceInstallEvent.findMany({
     where: { eventType: "install" },
     select: { bundleId: true },
@@ -131,7 +116,6 @@ export async function getTopPluginsByInstalls(limit = 5) {
     .sort((a, b) => b[1] - a[1])
     .slice(0, limit);
 
-  // Fetch bundle names
   const bundles = await prisma.bundles.findMany({
     where: { id: { in: sortedBundleIds.map(([id]) => id) } },
     select: { id: true, name: true },

@@ -12,14 +12,14 @@ const brotliCompressAsync = promisify(zlib.brotliCompress);
 const brotliDecompressAsync = promisify(zlib.brotliDecompress);
 
 const ISR_DISK_CACHE_DIR = pathLib.join(process.cwd(), "public", "cache", "isr");
-const MAX_DISK_CACHE_SIZE = 1024 * 1024 * 1024; // 1GB
-const DEFAULT_MAX_AGE = 60; // 60s
-const DEFAULT_SWR = 300; // 5 min stale-while-revalidate
+const MAX_DISK_CACHE_SIZE = 1024 * 1024 * 1024; 
+const DEFAULT_MAX_AGE = 60; 
+const DEFAULT_SWR = 300; 
 
 export type CompressionType = "none" | "gzip" | "brotli";
 
 export interface IsrCacheEntry {
-  body: string; // base64 encoded compressed data
+  body: string; 
   contentType: string;
   status: number;
   headers: Record<string, string>;
@@ -49,11 +49,6 @@ export interface IsrCacheGetResult {
   compressionType: CompressionType;
 }
 
-// ---------------------------------------------------------------------------
-// Compression helpers
-// ---------------------------------------------------------------------------
-
-/** Select optimal compression based on content MIME type */
 export function selectCompression(contentType: string): CompressionType {
   const textTypes = [
     "text/html", "application/json", "text/css",
@@ -67,7 +62,6 @@ export function selectCompression(contentType: string): CompressionType {
   return "none";
 }
 
-/** Compress a buffer using the specified algorithm */
 export async function compressData(data: Buffer, type: CompressionType): Promise<Buffer> {
   switch (type) {
     case "brotli":
@@ -79,7 +73,6 @@ export async function compressData(data: Buffer, type: CompressionType): Promise
   }
 }
 
-/** Decompress a buffer using the specified algorithm */
 export async function decompressData(data: Buffer, type: CompressionType): Promise<Buffer> {
   switch (type) {
     case "brotli":
@@ -90,10 +83,6 @@ export async function decompressData(data: Buffer, type: CompressionType): Promi
       return data;
   }
 }
-
-// ---------------------------------------------------------------------------
-// Disk helpers
-// ---------------------------------------------------------------------------
 
 function getExtension(ct: CompressionType): string {
   if (ct === "brotli") return ".br";
@@ -302,8 +291,7 @@ export async function set(
 
 /**
  * Purge cache entries matching a path pattern.
- * Supports exact paths (`/blog/post-1`) and wildcard globs (`/blog/*`).
- */
+ * Supports exact paths (`/blog/post-1`) and wildcard globs (`/blog
 export async function purgeByPath(projectId: string, pathPattern: string): Promise<number> {
   const normalizedPattern = pathPattern.startsWith("/") ? pathPattern : `/${pathPattern}`;
   const isWildcard = normalizedPattern.includes("*");

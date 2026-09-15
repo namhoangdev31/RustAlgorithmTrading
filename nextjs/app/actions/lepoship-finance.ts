@@ -26,7 +26,6 @@ export async function initiatePayoutAction(payoutId: string) {
   if (!payout) throw new Error("Payout record not found.");
   if (payout.status !== "pending") throw new Error("Payout is not in pending status.");
 
-  // Get connected partner account ID
   const partnerAccount = await prisma.marketplacePartnerAccount.findFirst({
     where: { workspaceId: payout.workspaceId || "" },
   });
@@ -35,10 +34,8 @@ export async function initiatePayoutAction(payoutId: string) {
     throw new Error("Partner does not have a configured Stripe Connect account.");
   }
 
-  // Create Stripe Transfer to connected account
-  // This payout model allocates earnings to the partner
   const transfer = await stripe.transfers.create({
-    amount: Math.round(payout.amount), // VND or other zero-decimal or minor values
+    amount: Math.round(payout.amount), 
     currency: payout.currency.toLowerCase(),
     destination: partnerAccount.stripeAccountId,
     description: `Payout reference ${payout.id} reconciled by admin ${admin.fullName || admin.email}`,

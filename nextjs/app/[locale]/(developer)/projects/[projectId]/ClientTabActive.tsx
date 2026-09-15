@@ -11,8 +11,7 @@ type ClientTabActiveProps = {
 
 export function ClientTabActive({ href, children }: ClientTabActiveProps) {
   const pathname = usePathname();
-  
-  // Simple check for paths
+
   const isActive = pathname === href || pathname.startsWith(href + "/");
 
   return (

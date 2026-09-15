@@ -14,21 +14,16 @@ export interface TargetingRule {
 export interface FeatureFlagConfig {
   id: string;
   name: string;
-  status: string; // "draft" | "running" | "ended"
+  status: string; 
   trafficSplit: number;
   variantAConfig: string;
   variantBConfig: string;
   targetingRules: TargetingRule[];
 }
 
-// Global event emitter for Server-Sent Events to sync flags changes in real-time
 export const flagEvents = new EventEmitter();
 flagEvents.setMaxListeners(100);
 
-/**
- * Consistently hashes a string to a number between 0 and 99.
- * Fully compatible with standard JS/TS runtimes including Edge middleware.
- */
 export function hashString(str: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -37,9 +32,6 @@ export function hashString(str: string): number {
   return Math.abs(hash) % 100;
 }
 
-/**
- * Sync feature flags for a project to all linked providers (Vercel Edge Config, Cloudflare KV)
- */
 export async function syncProjectFeatureFlags(projectId: string): Promise<FeatureFlagConfig[]> {
   const project = await prisma.project.findFirst({
     where: { id: projectId, deletedAt: null },
@@ -73,7 +65,6 @@ export async function syncProjectFeatureFlags(projectId: string): Promise<Featur
     };
   });
 
-  // Replicate configurations to all linked multi-providers (Vercel & Cloudflare KV) in parallel
   const providersRes = await getProjectProvidersAction(projectId);
   if (providersRes.success && providersRes.providers && providersRes.providers.length > 0) {
     const items = [

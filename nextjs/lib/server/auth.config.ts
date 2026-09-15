@@ -12,5 +12,5 @@ export const authConfig = {
     process.env.NEXTAUTH_SECRET ??
     (process.env.NODE_ENV === "production" ? undefined : "development-only-auth-secret"),
   trustHost: true,
-  providers: [], // Configured with actual providers in auth.ts
+  providers: [], 
 } satisfies NextAuthConfig;

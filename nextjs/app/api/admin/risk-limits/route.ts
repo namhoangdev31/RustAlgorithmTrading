@@ -12,7 +12,6 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized. Admin privileges required." }, { status: 403 });
     }
 
-    // Call Go Control Plane to get the current risk limits
     const goUrl = process.env.GO_CONTROL_PLANE_URL;
     const apiKey = process.env.TELEMETRY_API_KEY || process.env.LEPOS_INTERNAL_API_KEY || "";
     if (!goUrl || !apiKey) {

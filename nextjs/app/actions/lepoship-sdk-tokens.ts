@@ -13,17 +13,12 @@ async function requireBundleOwner(userId: string, projectId: string) {
   return bundle;
 }
 
-/**
- * Generate a new lp_sdk_ token for the project's bundle.
- * Plaintext token is only returned ONCE.
- */
 export async function createSdkTokenAction(projectId: string, label: string) {
   const user = await requireCurrentUser();
   const bundle = await requireBundleOwner(user.id, projectId);
 
-  // Generate 8 character prefix and 32 character secret
-  const prefix = randomBytes(4).toString("hex"); // 8 chars
-  const secret = randomBytes(16).toString("hex"); // 32 chars
+  const prefix = randomBytes(4).toString("hex"); 
+  const secret = randomBytes(16).toString("hex"); 
   const plaintextToken = `lp_sdk_${prefix}_${secret}`;
   
   const tokenHash = createHash("sha256").update(plaintextToken).digest("hex");

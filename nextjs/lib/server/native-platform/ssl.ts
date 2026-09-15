@@ -30,7 +30,7 @@ async function createDnsRecord(provider: string, credentials: DnsCredentials, do
     const token = credentials.cloudflareToken;
     if (!token) throw new Error("Cloudflare API token is not configured.");
     const zone = await cloudflareZone(domain, token);
-    const response = await fetch(`https://api.cloudflare.com/client/v4/zones/${zone.zoneId}/dns_records`, {
+    const response = await fetch(`https:
       method: "POST",
       headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
       body: JSON.stringify({ type: "TXT", name: recordName, content: value, ttl: 60 }),
@@ -46,7 +46,7 @@ async function createDnsRecord(provider: string, credentials: DnsCredentials, do
     const secret = credentials.godaddyApiSecret;
     if (!key || !secret) throw new Error("GoDaddy API credentials are not configured.");
     const zoneName = domain.replace(/^\*\./, "");
-    const response = await fetch(`https://api.godaddy.com/v1/domains/${zoneName}/records/TXT/_acme-challenge`, {
+    const response = await fetch(`https:
       method: "PUT",
       headers: { authorization: `sso-key ${key}:${secret}`, "content-type": "application/json" },
       body: JSON.stringify([{ data: value, ttl: 600 }]),
@@ -75,13 +75,13 @@ async function createDnsRecord(provider: string, credentials: DnsCredentials, do
 
 async function removeDnsRecord(provider: string, credentials: DnsCredentials, domain: string, record: DnsRecord) {
   if (provider === "CLOUDFLARE" && record.id && record.zoneId) {
-    await fetch(`https://api.cloudflare.com/client/v4/zones/${record.zoneId}/dns_records/${record.id}`, {
+    await fetch(`https:
       method: "DELETE",
       headers: { authorization: `Bearer ${credentials.cloudflareToken}` },
       cache: "no-store",
     });
   } else if (provider === "GODADDY" && record.zoneName) {
-    await fetch(`https://api.godaddy.com/v1/domains/${record.zoneName}/records/TXT/_acme-challenge`, {
+    await fetch(`https:
       method: "DELETE",
       headers: { authorization: `sso-key ${credentials.godaddyApiKey}:${credentials.godaddyApiSecret}` },
       cache: "no-store",
@@ -162,7 +162,7 @@ export async function renewDomainSsl(domainId: string) {
         sslStatus: "ISSUED",
         certIssuedAt: now,
         certExpiresAt,
-        certPemRef: `edge-certificate://${domainConfig.domain}/cert.pem`,
+        certPemRef: `edge-certificate:
         keyPemRef: `edge-certificate://${domainConfig.domain}/key.pem`,
       },
     });

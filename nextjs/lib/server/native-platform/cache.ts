@@ -88,7 +88,7 @@ export async function setNativeCache(
       cacheKey,
       status: "fresh",
       contentType,
-      bodyRef: `file://${diskPath}`,
+      bodyRef: `file:
       hitCount: 1,
     },
     update: {

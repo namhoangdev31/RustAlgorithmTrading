@@ -38,38 +38,23 @@ export const DEFAULT_SIMCARRY_CONFIG: Required<SimCarryConfig> = {
   orderType: "STOP",
   trailing: {
     enabled: true,
-    beTriggerPoints: 8.0,     // Swing: khóa BE muộn hơn Canonical (8đ thay vì 6đ)
-    trailTriggerPoints: 14.0, // Swing: kích trail muộn hơn (14đ thay vì 12đ)
-    trailDistance: 6.0,       // Swing: khoảng trail rộng hơn (6đ thay vì 5đ)
+    beTriggerPoints: 8.0,     
+    trailTriggerPoints: 14.0, 
+    trailDistance: 6.0,       
   },
 };
 
-/**
- * Mốc phân tách dữ liệu LIVE vs BACKTEST trong lịch sử kèo.
- * Nguồn duy nhất — db-plan-service import lại để tránh hardcode trùng lặp/lệch ngày.
- */
 export const LIVE_CUTOFF_DATE = "2026-09-14";
 
-// Tham số mô hình xác định hướng SimCarry6 (TUNABLE — không phải hằng số đã chứng minh).
-const SIMCARRY_MOMENTUM_WEIGHT = 0.6; // Trọng số Price Action (gap so với ref)
-const SIMCARRY_CARRY_WEIGHT = 0.4;    // Trọng số Basis carry (backwardation/contango)
-const SIMCARRY_SATURATION_ATR = 0.5;  // Mỗi thành phần bão hòa khi |tín hiệu| >= 0.5*ATR
-const SIMCARRY_DEAD_ZONE = 0.15;      // Vùng giằng co quanh 0 -> dùng bộ lọc thứ cấp (EMA/open)
+const SIMCARRY_MOMENTUM_WEIGHT = 0.6; 
+const SIMCARRY_CARRY_WEIGHT = 0.4;    
+const SIMCARRY_SATURATION_ATR = 0.5;  
+const SIMCARRY_DEAD_ZONE = 0.15;      
 
 function clamp(v: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, v));
 }
 
-/**
- * Mô hình xác định hướng SimCarry6 — ZERO phụ thuộc `current` (chống lật kèo intraday).
- * Kết hợp 2 nhân tố đã đóng băng/ổn định theo ngày:
- *  1. Momentum: gap = (Open - Ref), chuẩn hóa theo ATR(5). Gap dương -> thiên LONG.
- *  2. Carry:    basis = (Futures - Spot). basis ÂM (backwardation) -> futures rẻ -> thiên LONG;
- *               basis DƯƠNG (contango) -> thiên SHORT. Chuẩn hóa theo ATR(5).
- *  score = 0.6*momentum + 0.4*carry (mỗi thành phần bão hòa ở ±1).
- *  score > +0.15 -> LONG ; score < -0.15 -> SHORT.
- *  Vùng chết (|score| <= 0.15): dùng EMA5 vs EMA10 (nếu có), ngược lại so Open vs Ref.
- */
 export function resolveSimCarryDirection(
   snapshot: MarketSnapshot,
   refPrice: number,
@@ -94,9 +79,6 @@ export function resolveSimCarryDirection(
   return open >= refPrice ? "LONG" : "SHORT";
 }
 
-/**
- * Tính toán Kèo Chính Swing t+1: simcarrry6
- */
 export function generateSimCarry6Plan(
   dateStr: string,
   snapshot: MarketSnapshot,
@@ -115,18 +97,13 @@ export function generateSimCarry6Plan(
   const tpPoints = config?.tpPoints ?? DEFAULT_SIMCARRY_CONFIG.tpPoints;
   const maxCap = config?.maxCap ?? DEFAULT_SIMCARRY_CONFIG.maxCap;
 
-  // 1. Xác định hướng (LONG / SHORT) theo mô hình đa nhân tố ZERO phụ thuộc `current`
-  //    (chống lật kèo intraday). Dùng Open/Ref/ATR/Basis đã đóng băng theo ngày.
   const side: Direction = resolveSimCarryDirection(snapshot, refPrice, atr5d, ema5, ema10);
 
-  // 2. Tính mức giá Entry & Order Type thích ứng biên độ thực tế
-  // Khi thị trường đã mở cửa: Vào lệnh Limit tại vùng Tham chiếu (như web gốc ai.beefx.com ENTRY 1940.0)
-  // hoặc vào theo giá mở cửa nếu chưa có cản
   let entryPrice: number;
   let orderType: "STOP" | "LIMIT" = config?.orderType ?? "STOP";
 
   if (snapshot.open > 0 && Math.abs(snapshot.open - refPrice) >= 2.0) {
-    // Phiên có gap: Ưu tiên điểm Limit tại Tham chiếu (đón nhịp hồi test tham chiếu)
+    
     entryPrice = Number(refPrice.toFixed(1));
     orderType = config?.orderType ?? "LIMIT";
   } else {
@@ -137,12 +114,10 @@ export function generateSimCarry6Plan(
     orderType = config?.orderType ?? "STOP";
   }
 
-  // 3. Mục tiêu TP theo cấu hình chiến lược
   const tpPrice = side === "LONG"
     ? Number((entryPrice + tpPoints).toFixed(1))
     : Number((entryPrice - tpPoints).toFixed(1));
 
-  // 4. Mức cắt lỗ SL theo cơ chế LATEST_SHORT_CUTLOSS_REVERSAL & An toàn biên độ thực tế
   let slPrice = resolveCutloss(
     side,
     swingLow5d,
@@ -150,7 +125,6 @@ export function generateSimCarry6Plan(
     swingHigh5d ?? expectedHigh
   );
 
-  // Đảm bảo khoảng cách SL thích ứng biên độ thực tế (chuẩn 8.0 - 10.0đ, nằm ngoài đỉnh/đáy sáng)
   const safeSlDistance = Math.min(12.0, Math.max(8.0, Number((0.35 * atr5d).toFixed(1))));
   if (side === "SHORT") {
     const sessionHigh = Math.max(snapshot.high ?? refPrice, refPrice);
@@ -161,7 +135,7 @@ export function generateSimCarry6Plan(
       slPrice = Math.max(slPrice, previousShortCutloss);
     }
   } else {
-    // Với LONG: SL phải dưới đáy sáng và cách entry an toàn, đồng thời tôn trọng swingLow5d nếu có
+    
     const sessionLow = Math.min(snapshot.low ?? refPrice, refPrice);
     const bufferLow = Number((sessionLow - 3.3).toFixed(1));
     const minDistanceSl = Number((entryPrice - safeSlDistance).toFixed(1));
@@ -173,10 +147,8 @@ export function generateSimCarry6Plan(
     }
   }
 
-  // 5. Đánh giá R5 tại Open
   const r5Eval = evaluateR5(side, snapshot.open, refPrice, slPrice);
 
-  // 6. Đánh giá V44 (Anti-Lookahead Gate): chặn kèo khi kỳ vọng ngược hướng tham chiếu
   const v44Eval = evaluateV44(side, refPrice, expectedHigh ?? swingHigh5d, expectedLow ?? swingLow5d);
 
   const trailingConfig = config?.trailing ?? DEFAULT_SIMCARRY_CONFIG.trailing;

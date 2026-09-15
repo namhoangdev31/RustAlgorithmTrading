@@ -22,7 +22,6 @@ export async function GET(
     const { path } = await context.params;
     const resource = path.join("/");
 
-    // Dynamic Domain Global Resolution API (Self-healing Edge routing resolution)
     if (resource === "resolve") {
       const domainParam = searchParams.get("domain") || "";
       if (!domainParam) {
@@ -60,7 +59,6 @@ export async function GET(
         sslStatus: domainConfig.sslStatus,
       };
 
-      // Populate Redis cache dynamically (self-healing fallback cache)
       await redisSetJson(
         nativeRedisKeys.domain(domainParam),
         snapshot,

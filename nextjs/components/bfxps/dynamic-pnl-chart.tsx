@@ -44,7 +44,7 @@ export function DynamicPnlChart({ title }: { title?: string }) {
       .then((res) => {
         if (!isMounted) return;
         if (res.ok && Array.isArray(res.trades) && res.trades.length > 0) {
-          // Lấy 30 phiên gần nhất từ CSDL thực
+          
           const last30 = res.trades.slice(-30);
           let runningEquity = 0;
           let peak = 0;

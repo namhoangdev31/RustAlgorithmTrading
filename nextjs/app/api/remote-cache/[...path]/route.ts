@@ -7,10 +7,6 @@ import {
   type RemoteCacheEventPayload,
 } from "@/lib/server/remote-cache-engine";
 
-// ---------------------------------------------------------------------------
-// Auth & route helpers
-// ---------------------------------------------------------------------------
-
 function extractAuth(request: NextRequest): { token: string; teamId: string } | null {
   const authHeader = request.headers.get("authorization") || "";
   const token = authHeader.replace(/^Bearer\s+/i, "").trim();
@@ -24,11 +20,6 @@ function extractAuth(request: NextRequest): { token: string; teamId: string } | 
   return { token, teamId };
 }
 
-/**
- * Parse catch-all path segments:
- *   /api/remote-cache/v8/artifacts/:hash  → { version: "v8", hash }
- *   /api/remote-cache/v8/artifacts/events → { version: "v8", events: true }
- */
 function parsePath(params: { path: string[] }): {
   version: string;
   hash?: string;
@@ -42,14 +33,9 @@ function parsePath(params: { path: string[] }): {
     return { version, isEvents: true };
   }
 
-  // /v8/artifacts/:hash → hash is segments[2]
   const hash = segments.length >= 3 ? segments[2] : segments[1];
   return { version, hash, isEvents: false };
 }
-
-// ---------------------------------------------------------------------------
-// GET /api/remote-cache/v8/artifacts/:hash — Download artifact
-// ---------------------------------------------------------------------------
 
 export async function GET(
   request: NextRequest,
@@ -80,10 +66,6 @@ export async function GET(
     },
   });
 }
-
-// ---------------------------------------------------------------------------
-// PUT /api/remote-cache/v8/artifacts/:hash — Upload artifact
-// ---------------------------------------------------------------------------
 
 export async function PUT(
   request: NextRequest,

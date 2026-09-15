@@ -5,10 +5,6 @@ import { promisify } from "node:util";
 
 const execAsync = promisify(exec);
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
 export type VulnerabilitySeverity = "info" | "low" | "moderate" | "high" | "critical";
 
 const SEVERITY_ORDER: Record<VulnerabilitySeverity, number> = {
@@ -63,11 +59,6 @@ function emptyScanResult(scanner: string, duration: number): ScanResult {
   };
 }
 
-// ---------------------------------------------------------------------------
-// Package manager detection
-// ---------------------------------------------------------------------------
-
-/** Detect the package manager used in a project directory */
 export async function detectPackageManager(
   projectDir: string
 ): Promise<"npm" | "yarn" | "pnpm"> {
@@ -81,16 +72,12 @@ export async function detectPackageManager(
       await fs.access(path.join(projectDir, lockFile));
       return pm;
     } catch {
-      // not found — continue
+      
     }
   }
 
   return "npm";
 }
-
-// ---------------------------------------------------------------------------
-// npm audit
-// ---------------------------------------------------------------------------
 
 async function runNpmAudit(projectDir: string): Promise<ScanResult> {
   const start = Date.now();
@@ -108,7 +95,6 @@ async function runNpmAudit(projectDir: string): Promise<ScanResult> {
     const data = JSON.parse(stdout);
     const vulnerabilities: Vulnerability[] = [];
 
-    // npm audit v2 format: { vulnerabilities: { [pkg]: { severity, via, ... } } }
     if (data.vulnerabilities && typeof data.vulnerabilities === "object") {
       for (const [pkgName, info] of Object.entries<any>(data.vulnerabilities)) {
         const severity = (info.severity || "info") as VulnerabilitySeverity;
@@ -116,7 +102,6 @@ async function runNpmAudit(projectDir: string): Promise<ScanResult> {
         const fixVersion =
           typeof info.fixAvailable === "object" ? info.fixAvailable.version : undefined;
 
-        // Extract advisory details from `via` array
         const vias = Array.isArray(info.via) ? info.via : [];
         const advisory = vias.find((v: any) => typeof v === "object") || {};
 

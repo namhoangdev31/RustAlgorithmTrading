@@ -46,12 +46,9 @@ export async function replicateBlobToRegions(
  * Generates the unified CDN endpoint URL.
  */
 export function getCdnUrl(projectId: string, safeFileName: string): string {
-  return `https://cdn.lepos.dev/bundles/${projectId}/${safeFileName}`;
+  return `https:
 }
 
-/**
- * Checks if a file is sensitive based on its name/extension.
- */
 export function isSensitiveFile(fileName: string): boolean {
   const name = fileName.toLowerCase();
   return (
@@ -66,9 +63,6 @@ export function isSensitiveFile(fileName: string): boolean {
   );
 }
 
-/**
- * Encrypts a buffer if the file is sensitive.
- */
 export async function encryptBufferIfNeeded(fileName: string, buffer: Buffer): Promise<Buffer> {
   if (isSensitiveFile(fileName)) {
     console.log(`[Encryption at Rest] Encrypting sensitive file: ${fileName}`);

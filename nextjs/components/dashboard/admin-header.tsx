@@ -25,7 +25,7 @@ export function AdminHeader({ user }: AdminHeaderProps) {
       <div className="ms-auto flex items-center gap-2">
         <Search className="h-9 w-9 justify-start px-0 sm:w-40 sm:px-3 lg:w-64" />
         <ThemeSwitch />
-        {/* <ConfigDrawer /> */}
+        {}
         <ProfileDropdown user={user} />
       </div>
     </header>

@@ -24,15 +24,15 @@ export async function listFeaturedSlotsAction() {
 export async function upsertFeaturedSlotAction(data: {
   id?: string;
   bundleId: string;
-  slotType: string; // e.g. carousel, grid
+  slotType: string; 
   title?: string;
   subtitle?: string;
   bannerUrl?: string;
   ctaLabel?: string;
-  region?: string; // e.g. VN, US
+  region?: string; 
   sortOrder: number;
-  startsAt: string; // ISO date string
-  endsAt?: string;  // ISO date string
+  startsAt: string; 
+  endsAt?: string;  
   isActive: boolean;
 }) {
   await requireAdmin();
@@ -46,8 +46,6 @@ export async function upsertFeaturedSlotAction(data: {
 
   const id = data.id || crypto.randomUUID();
 
-  // overlap checks: search for active slots with same slotType, region, sortOrder
-  // overlapping dates
   if (data.isActive) {
     const overlaps = await prisma.bundleFeaturedSlots.findMany({
       where: {
@@ -63,8 +61,6 @@ export async function upsertFeaturedSlotAction(data: {
       const existingStart = row.startsAt;
       const existingEnd = row.endsAt;
 
-      // Overlap condition:
-      // Start is before existing end AND (end is null OR end is after existing start)
       const overlapsStart = start < (existingEnd || new Date(8640000000000000));
       const overlapsEnd = !end || end > existingStart;
 
@@ -110,7 +106,6 @@ export async function upsertFeaturedSlotAction(data: {
     },
   });
 
-  // Revalidate admin & store pages
   revalidatePath("/admin/featured");
   revalidatePath("/marketplace");
 

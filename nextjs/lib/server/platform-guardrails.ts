@@ -34,8 +34,7 @@ export function buildIntegrationConfig(
       mode,
       managedBy: "server-actions",
       notes: input.notes || "",
-      // Non-live marketplace entries stay as registry/config only. They must not
-      // carry an endpoint that future code might call accidentally.
+
       endpoint: mode === "live" ? input.endpoint || "" : "",
     },
   };

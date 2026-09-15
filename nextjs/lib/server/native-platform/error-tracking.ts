@@ -27,7 +27,6 @@ export async function getCrashGroups(
     };
   }
 
-  // Use groupBy to aggregate
   const aggregations = await prisma.nativeCrashReport.groupBy({
     by: ["fingerprint"],
     where,

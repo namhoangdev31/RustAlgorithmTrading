@@ -18,10 +18,6 @@ const VALID_REASONS = [
   "other",
 ];
 
-/**
- * POST /api/bundles/report
- * Accepts authenticated reports with client idempotency key.
- */
 export async function ingestReportRequest(request: NextRequest) {
   try {
     assertLepoShipEnvironment();
@@ -50,7 +46,6 @@ export async function ingestReportRequest(request: NextRequest) {
 
     const bundleId = auth.bundleId;
 
-    // Validate reason
     if (!reason || !VALID_REASONS.includes(reason)) {
       return NextResponse.json(
         { error: `reason must be one of: ${VALID_REASONS.join(", ")}` },

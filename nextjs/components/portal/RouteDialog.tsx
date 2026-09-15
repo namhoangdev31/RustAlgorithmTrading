@@ -13,7 +13,6 @@ type RouteDialogProps = {
   className?: string;
 };
 
-/** Keeps URL-driven dialogs accessible while returning to the canonical route on close. */
 export function RouteDialog({ open, returnTo, children, title = "Dialog", className }: RouteDialogProps) {
   const router = useRouter();
 

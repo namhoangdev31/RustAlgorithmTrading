@@ -42,7 +42,6 @@ export async function executeAiCommandAction(
 ): Promise<AiCommandResult> {
   console.log(`[AiCommand] Parsing query: "${query}" for project: ${projectId || "Global"}`);
 
-  // 1. Fallback regex matcher (useful for local offline testing/development)
   const cleanQuery = query.toLowerCase().trim();
   let parsedResult: {
     type: "block_ip" | "view_logs" | "toggle_flag" | "trigger_build" | "navigate" | "unknown";
@@ -100,7 +99,6 @@ export async function executeAiCommandAction(
     }
   }
 
-  // 2. Call Gemini for NLP parsing if API Key is available
   if (!parsedResult) {
     const prompt = `
 You are an AI DevOps assistant inside the LepoS Platform Dashboard.
