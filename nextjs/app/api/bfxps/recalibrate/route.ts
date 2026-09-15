@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
       create: {
         date: planDate,
         engine: "simcarrry6",
-        profile: "M1_INTRADAY",
+        profile: "RECALIBRATED_AFTER_SL",
         horizon: "INTRADAY",
         side: recalibratedPlan.side,
         entryPrice: new Prisma.Decimal(recalibratedPlan.entryPrice),
@@ -126,9 +126,10 @@ export async function POST(req: NextRequest) {
         r5State: "FILLED",
         status: "ACTIVE_TODAY",
         isCanonical: true,
-        notes: recalibratedPlan.reason || "Kèo tối ưu toàn phiên tới khi kết thúc",
+        notes: recalibratedPlan.reason || "Kèo tối ưu toàn phiên tới khi kết thúc ATC",
       },
       update: {
+        profile: "RECALIBRATED_AFTER_SL",
         side: recalibratedPlan.side,
         entryPrice: new Prisma.Decimal(recalibratedPlan.entryPrice),
         tpPrice: new Prisma.Decimal(recalibratedPlan.tpPrice),
@@ -139,7 +140,7 @@ export async function POST(req: NextRequest) {
         exitMinute: null,
         pnlPoints: null,
         isWin: null,
-        notes: recalibratedPlan.reason || "Kèo tối ưu toàn phiên tới khi kết thúc",
+        notes: recalibratedPlan.reason || "Kèo tối ưu toàn phiên tới khi kết thúc ATC",
         settledAt: null,
       },
     });

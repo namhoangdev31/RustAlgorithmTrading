@@ -113,7 +113,7 @@ export async function GET() {
       isOfficial,
       phase,
     });
-    const consensus = computeConsensus(plans);
+    let consensus = computeConsensus(plans);
 
     // ---- Replay nến 1m thật qua execution state machine (có cache theo bar cuối) ----
     const ticks = bars.map(toTick);
@@ -149,6 +149,7 @@ export async function GET() {
 
         plansWithExecution[simIdx] = {
           ...plansWithExecution[simIdx],
+          profile: "RECALIBRATED_AFTER_SL",
           side,
           entryPrice,
           tpPrice,
@@ -157,6 +158,9 @@ export async function GET() {
           reason: recalibratedDb.notes ?? plansWithExecution[simIdx].reason,
           execution: exec,
         };
+
+        // Đồng bộ consensus mới nhất theo kế hoạch đã tối ưu
+        consensus = computeConsensus(plansWithExecution);
       }
     }
 

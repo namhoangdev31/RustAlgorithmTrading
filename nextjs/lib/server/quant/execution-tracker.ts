@@ -332,12 +332,13 @@ export function replayExecutionCached(
   bars: M1Tick[]
 ): ExecutionState {
   const barKey = bars.length > 0 ? bars[bars.length - 1].time : "EMPTY";
-  const cached = replayCache.get(plan.id);
+  const planKey = `${plan.id}-${plan.side}-${plan.entryPrice}-${plan.tpPrice}-${plan.slPrice}`;
+  const cached = replayCache.get(planKey);
   if (cached && cached.barKey === barKey) {
     return cached.state;
   }
   const state = replayExecution(plan, bars);
-  replayCache.set(plan.id, { barKey, state });
+  replayCache.set(planKey, { barKey, state });
   return state;
 }
 

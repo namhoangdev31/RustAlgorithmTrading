@@ -45,6 +45,7 @@ export default function LeposTradingBotPage({
   const [recalibrateNotice, setRecalibrateNotice] = useState<string | null>(
     null,
   );
+  const [isNoticeDismissed, setIsNoticeDismissed] = useState(false);
 
   // Responsive & Tab states
   const [mobileTab, setMobileTab] = useState<
@@ -137,8 +138,26 @@ export default function LeposTradingBotPage({
       });
       const data = await res.json();
       if (data.ok) {
+        // Cập nhật ngay lập tức kế hoạch mới vào React state để UI lập tức đổi sang kèo mới
+        if (data.plan) {
+          setPlans((prev) => {
+            const simIdx = prev.findIndex((p) => p.engine === "simcarrry6");
+            const newPlan = {
+              ...data.plan,
+              profile: "RECALIBRATED_AFTER_SL",
+              execution: data.execution || (simIdx >= 0 ? prev[simIdx].execution : undefined),
+            };
+            if (simIdx >= 0) {
+              const updated = [...prev];
+              updated[simIdx] = newPlan;
+              return updated;
+            }
+            return [newPlan, ...prev];
+          });
+        }
+        setIsNoticeDismissed(false);
         setRecalibrateNotice(data.message);
-        setTimeout(() => setRecalibrateNotice(null), 7000);
+        // Giữ thông báo cố định để người dùng luôn theo dõi được thông số kèo tối ưu tới hết phiên
         await fetchHealth(false);
       } else {
         alert(data.error || "Không thể tái lập kèo lúc này");
@@ -162,11 +181,26 @@ export default function LeposTradingBotPage({
     currentPlan?.status === "FILLED_SL" ||
     false;
   const isRecalibrated =
+    currentPlan?.profile === "RECALIBRATED_AFTER_SL" ||
     currentPlan?.resolvedSource?.includes("REVERSAL") ||
     currentPlan?.resolvedSource?.includes("SESSION_OPTIMAL") ||
     currentPlan?.reason?.includes("tái lập sau Stop Loss") ||
     currentPlan?.reason?.includes("Tối ưu toàn phiên") ||
     false;
+
+  const cleanPlanReason = currentPlan?.reason
+    ? currentPlan.reason
+        .replace(/^(\[Tối ưu toàn phiên\]\s*)+/, "")
+        .split(" | ")[0]
+        .trim()
+    : "";
+
+  const activeNoticeMessage =
+    recalibrateNotice ||
+    (isRecalibrated && !isNoticeDismissed
+      ? cleanPlanReason ||
+        `Đã tính toán toàn bộ phiên: Đảo sang ${currentPlan?.side} @ ${currentPlan?.entryPrice?.toFixed(1)}, TP ${currentPlan?.tpPrice?.toFixed(1)}, SL ${currentPlan?.slPrice?.toFixed(1)} (Hiệu lực tới kết thúc phiên ATC)`
+      : null);
 
   return (
     <div className="flex h-[100dvh] min-h-[100dvh] w-full max-w-[100vw] flex-col bg-[#070a0f] text-slate-100 antialiased selection:bg-sky-500/30 selection:text-white overflow-hidden">
@@ -206,7 +240,7 @@ export default function LeposTradingBotPage({
               <span
                 className={`text-[11px] ${isCurrentShort ? "text-rose-300/80" : "text-emerald-300/80"}`}
               >
-                {tHeader("canonical_plan")}:
+                {isRecalibrated ? "KÈO TỐI ƯU (ATC):" : `${tHeader("canonical_plan")}:`}
               </span>
               <span className="font-mono text-white tracking-tight">
                 {currentPlan
@@ -361,15 +395,24 @@ export default function LeposTradingBotPage({
         </div>
       </header>
 
-      {recalibrateNotice && (
-        <div className="bg-emerald-500/15 border-b border-emerald-500/30 px-4 py-1.5 text-xs text-emerald-300 font-mono flex items-center justify-between animate-in fade-in slide-in-from-top-1 z-30">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-            <span>{recalibrateNotice}</span>
+      {activeNoticeMessage && !isNoticeDismissed && (
+        <div className="bg-emerald-500/15 border-b border-emerald-500/30 px-3 sm:px-4 py-2 text-xs text-emerald-300 font-mono flex items-center justify-between animate-in fade-in slide-in-from-top-1 z-30 shadow-md">
+          <div className="flex items-center gap-2 overflow-hidden mr-2">
+            <span className="relative flex h-2 w-2 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="truncate sm:whitespace-normal leading-relaxed font-semibold">
+              {activeNoticeMessage}
+            </span>
           </div>
           <button
-            onClick={() => setRecalibrateNotice(null)}
-            className="text-slate-400 hover:text-white text-xs cursor-pointer p-0.5"
+            onClick={() => {
+              setIsNoticeDismissed(true);
+              setRecalibrateNotice(null);
+            }}
+            title="Đóng thông báo"
+            className="text-slate-400 hover:text-white text-xs cursor-pointer p-1 rounded hover:bg-emerald-500/20 shrink-0 transition-colors"
           >
             ✕
           </button>

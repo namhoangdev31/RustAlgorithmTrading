@@ -129,6 +129,13 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
   const planDate = new Date(`${plan.date}T00:00:00.000Z`);
   const targetEngine = plan.engine || "simcarrry6";
 
+  const isRecalibrated =
+    (plan as any).profile === "RECALIBRATED_AFTER_SL" ||
+    (plan as any).resolvedSource?.includes("REVERSAL") ||
+    (plan as any).resolvedSource?.includes("SESSION_OPTIMAL") ||
+    plan.reason?.includes("tái lập sau Stop Loss") ||
+    plan.reason?.includes("Tối ưu toàn phiên");
+
   const exec = plan.execution;
   let status = "PENDING";
   let exitType: string | null = null;
@@ -162,13 +169,29 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
           : "ATC";
       exitPrice = exec.exitPrice ?? null;
       exitMinute = exec.exitTime ?? "14:45";
-      notes = `Tự động chốt vị thế ${exitType} lúc ${exitMinute}, PnL: ${pnlPoints > 0 ? "+" : ""}${pnlPoints}đ`;
+      const execNote = `Tự động chốt vị thế ${exitType} lúc ${exitMinute}, PnL: ${pnlPoints > 0 ? "+" : ""}${pnlPoints}đ`;
+      const baseReason = (plan.reason || "")
+        .replace(/^(\[Tối ưu toàn phiên\]\s*)+/, "")
+        .replace(/\s*\|\s*Tự động (chốt|khớp) vị thế.*$/, "")
+        .trim();
+      notes = isRecalibrated
+        ? `[Tối ưu toàn phiên] ${baseReason ? baseReason + " | " : ""}${execNote}`
+        : execNote;
     } else {
       status = "FILLED";
       exitType = "FILLED";
       exitMinute = exec.exitTime || "11:30";
-      notes = `Tự động khớp vị thế ${plan.side} @ ${exec.avgEntryPrice.toFixed(1)}, PnL Live: ${pnlPoints > 0 ? "+" : ""}${pnlPoints}đ`;
+      const execNote = `Tự động khớp vị thế ${plan.side} @ ${exec.avgEntryPrice.toFixed(1)}, PnL Live: ${pnlPoints > 0 ? "+" : ""}${pnlPoints}đ`;
+      const baseReason = (plan.reason || "")
+        .replace(/^(\[Tối ưu toàn phiên\]\s*)+/, "")
+        .replace(/\s*\|\s*Tự động (chốt|khớp) vị thế.*$/, "")
+        .trim();
+      notes = isRecalibrated
+        ? `[Tối ưu toàn phiên] ${baseReason ? baseReason + " | " : ""}${execNote}`
+        : execNote;
     }
+  } else if (isRecalibrated && !notes.includes("Tối ưu toàn phiên")) {
+    notes = `[Tối ưu toàn phiên] ${notes}`;
   }
 
   return prisma.bfxpsTradingPlan.upsert({
@@ -180,6 +203,7 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
     },
     update: {
       side: plan.side,
+      ...(isRecalibrated ? { profile: "RECALIBRATED_AFTER_SL" } : {}),
       entryPrice: new Prisma.Decimal(plan.entryPrice),
       tpPrice: new Prisma.Decimal(plan.tpPrice),
       slPrice: new Prisma.Decimal(plan.slPrice),
@@ -196,7 +220,7 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
     create: {
       date: planDate,
       engine: targetEngine,
-      profile: "M1_INTRADAY",
+      profile: isRecalibrated ? "RECALIBRATED_AFTER_SL" : "M1_INTRADAY",
       horizon: "INTRADAY",
       side: plan.side,
       entryPrice: new Prisma.Decimal(plan.entryPrice),
@@ -489,6 +513,8 @@ export async function getTodayRecalibratedPlan(dateVn: string, engine = "simcarr
       date: planDate,
       engine,
       OR: [
+        { profile: "RECALIBRATED_AFTER_SL" },
+        { profile: { contains: "RECALIBRAT" } },
         { notes: { contains: "tái lập sau Stop Loss" } },
         { notes: { contains: "Tối ưu toàn phiên" } },
         { notes: { contains: "kết thúc phiên ATC" } },
