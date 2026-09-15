@@ -88,75 +88,70 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
     }
   }, [isOpen]);
 
-  // Đồng bộ hóa lệnh hôm nay (2026-09-14) với trạng thái khớp lệnh thời gian thực
   const activeTrades = useMemo(() => {
     if (!trades.length) return trades;
-    // Tìm kèo chuẩn tắc (Canonical) của phiên hôm nay trong livePlans
     const canonicalPlan =
       livePlans?.find((p) => p.isCanonical) ||
       livePlans?.find((p) => p.engine === "CanonicalDirectionalBreakout") ||
       livePlans?.[0];
 
-    if (!canonicalPlan) return trades;
+    if (!canonicalPlan || !canonicalPlan.date) return trades;
 
-    const updatedTrades = trades.map((item) => {
-      if (item.date === "2026-09-14" || item.date === canonicalPlan.date) {
-        const exec = canonicalPlan.execution;
-        if (exec) {
-          const isFilled = exec.isFilled;
-          const isSettled = exec.settled;
-          const exitType = isSettled
-            ? exec.status === "TP_EXIT"
-              ? "TP"
-              : exec.status === "EXIT_SL"
-                ? "SL"
-                : exec.status === "TRAIL_EXIT"
-                  ? "TRAIL"
-                  : exec.status === "BE_EXIT"
-                    ? "BE"
-                    : "ATC"
-            : isFilled
-              ? "FILLED"
-              : "PENDING";
-          const pnl = isFilled ? exec.livePnlPoints : 0;
-          const isWin = pnl > 0;
+    const exec = canonicalPlan.execution;
+    const isFilled = exec?.isFilled ?? false;
+    const isSettled = exec?.settled ?? false;
+    const exitType = isSettled
+      ? exec?.status === "TP_EXIT"
+        ? "TP"
+        : exec?.status === "EXIT_SL"
+          ? "SL"
+          : exec?.status === "TRAIL_EXIT"
+            ? "TRAIL"
+            : exec?.status === "BE_EXIT"
+              ? "BE"
+              : "ATC"
+      : isFilled
+        ? "FILLED"
+        : "PENDING";
+    const pnl = isFilled ? (exec?.livePnlPoints ?? 0) : 0;
+    const isWin = pnl > 0;
 
-          return {
-            ...item,
-            side: canonicalPlan.side,
-            entryPrice: isFilled
-              ? exec.avgEntryPrice
-              : canonicalPlan.entryPrice,
-            tpPrice: canonicalPlan.tpPrice,
-            slPrice: canonicalPlan.slPrice,
-            exitPrice: isSettled
-              ? (exec.exitPrice ?? 0)
-              : isFilled
-                ? (liveSnapshot?.current ?? exec.avgEntryPrice)
-                : 0,
-            exitType,
-            exitMinute: exec.exitTime || (isFilled ? "11:30" : "—"),
-            pnl,
-            isWin,
-            status: isSettled
-              ? "ĐÃ ĐÓNG"
-              : isFilled
-                ? "ĐANG GIỮ VỊ THẾ"
-                : "CHỜ KHỚP",
-            notes: isFilled
-              ? `Khớp lệnh ${canonicalPlan.side} @ ${exec.avgEntryPrice.toFixed(1)} (PnL Live: ${pnl > 0 ? "+" : ""}${pnl.toFixed(1)}đ)`
-              : `Lệnh Chờ Kích Hoạt ${canonicalPlan.side} @ ${canonicalPlan.entryPrice.toFixed(1)}`,
-          };
-        }
-      }
-      return item;
-    });
+    const liveItem: TradeItem = {
+      date: canonicalPlan.date,
+      mode: "LIVE",
+      isLive: true,
+      side: canonicalPlan.side,
+      entryPrice: isFilled ? exec!.avgEntryPrice : canonicalPlan.entryPrice,
+      tpPrice: canonicalPlan.tpPrice,
+      slPrice: canonicalPlan.slPrice,
+      exitPrice: isSettled
+        ? (exec?.exitPrice ?? 0)
+        : isFilled
+          ? (liveSnapshot?.current ?? exec!.avgEntryPrice)
+          : 0,
+      exitType,
+      exitMinute: exec?.exitTime || (isFilled ? "11:30" : "—"),
+      pnl,
+      isWin,
+      status: isSettled ? "ĐÃ ĐÓNG" : isFilled ? "ĐANG GIỮ VỊ THẾ" : "CHỜ KHỚP",
+      notes: isFilled
+        ? `Khớp lệnh ${canonicalPlan.side} @ ${exec!.avgEntryPrice.toFixed(1)} (PnL Live: ${pnl > 0 ? "+" : ""}${pnl.toFixed(1)}đ)`
+        : `Lệnh Chờ Kích Hoạt ${canonicalPlan.side} @ ${canonicalPlan.entryPrice.toFixed(1)}`,
+      cumulativePnl: 0,
+    };
+
+    const hasToday = trades.some((item) => item.date === canonicalPlan.date);
+    const baseTrades = hasToday
+      ? trades.map((item) =>
+          item.date === canonicalPlan.date ? { ...item, ...liveItem } : item,
+        )
+      : [...trades, liveItem];
 
     // Tính toán lại Lợi nhuận Lũy kế (Cumulative PnL) chuẩn xác từ đầu đến cuối
     let runningCumulative = 0;
-    return updatedTrades.map((t) => {
-      const isFilled = t.status !== "PENDING" && t.exitType !== "NO_FILL";
-      if (isFilled) {
+    return baseTrades.map((t) => {
+      const isTradeFilled = t.status !== "PENDING" && t.exitType !== "NO_FILL";
+      if (isTradeFilled) {
         runningCumulative += t.pnl;
       }
       return {
