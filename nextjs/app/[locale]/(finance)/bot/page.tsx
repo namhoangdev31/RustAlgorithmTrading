@@ -230,24 +230,8 @@ export default function LeposTradingBotPage({
             </div>
           </div>
 
-          {/* Action Suite & Controls */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs">
-            {/* Desktop Toolbar: Mode Split & Physical SL Recalibrate Button */}
             <div className="hidden lg:flex items-center gap-1 rounded-md bg-[#101624] p-0.5 font-mono text-[11px] shadow-sm">
-              <button
-                onClick={() => setLayoutMode("split")}
-                className={`flex items-center gap-1 rounded px-2 py-1 font-bold transition-all cursor-pointer ${
-                  layoutMode === "split"
-                    ? "bg-sky-600 text-white shadow-sm"
-                    : "text-slate-400 hover:text-white"
-                }`}
-                title="Bố cục chuẩn Laptop: Chart rộng 65% + Sidebar thông minh 35%"
-              >
-                <LayoutGrid className="h-3 w-3" />
-                <span>{tHeader("mode_split")}</span>
-              </button>
-
-              {/* Nút Vật Lý: Tối Ưu Kèo Toàn Phiên (Desktop) */}
               <button
                 onClick={handleRecalibrateAfterSl}
                 disabled={isRecalibrating}
@@ -297,7 +281,6 @@ export default function LeposTradingBotPage({
               </button>
             </div>
 
-            {/* Mobile Recalibrate Button (Hiển thị tiện lợi trên mobile/tablet <lg) */}
             <button
               onClick={handleRecalibrateAfterSl}
               disabled={isRecalibrating}
@@ -378,7 +361,6 @@ export default function LeposTradingBotPage({
         </div>
       </header>
 
-      {/* Recalibration Status Notification Banner */}
       {recalibrateNotice && (
         <div className="bg-emerald-500/15 border-b border-emerald-500/30 px-4 py-1.5 text-xs text-emerald-300 font-mono flex items-center justify-between animate-in fade-in slide-in-from-top-1 z-30">
           <div className="flex items-center gap-2">
@@ -394,7 +376,6 @@ export default function LeposTradingBotPage({
         </div>
       )}
 
-      {/* MOBILE WORKSPACE (< 768px): Dedicated Full-Screen Tab View */}
       <div className="flex md:hidden flex-1 overflow-hidden p-2 pb-[calc(4.5rem+env(safe-area-inset-bottom))]">
         <div className="h-full w-full">
           {mobileTab === "chart" && (
@@ -433,7 +414,6 @@ export default function LeposTradingBotPage({
           )}
         </div>
 
-        {/* Fixed Bottom Navigation Dock for Mobile (Có padding safe area cho Safari) */}
         <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-white/[0.08] bg-[#070a0f]/95 backdrop-blur-xl px-2 pt-1.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
           <button
             onClick={() => setMobileTab("chart")}
@@ -485,15 +465,12 @@ export default function LeposTradingBotPage({
         </nav>
       </div>
 
-      {/* LAPTOP & DESKTOP WORKSPACE (>= 768px) */}
       <main className="hidden md:flex flex-1 overflow-hidden p-2.5 sm:p-3">
         {layoutMode === "split" ? (
-          // LAPTOP PRO PRIMARY FOCUS (Chart 65% + Smart Pro Sidebar 35%)
           <ResizablePanelGroup
             direction="horizontal"
             className="h-full w-full gap-2.5"
           >
-            {/* Primary Center Workspace: Candlestick Chart (Thoáng đãng, rộng rãi) */}
             <ResizablePanel
               id="lap-chart"
               defaultSize="64%"
@@ -509,7 +486,6 @@ export default function LeposTradingBotPage({
               className="w-1.5 bg-white/[0.06] hover:bg-sky-500/60 transition-colors rounded"
             />
 
-            {/* Secondary Workspace: Smart Tabbed Sidebar (Kèo Quant / AI Copilot / QA) */}
             <ResizablePanel
               id="lap-sidebar"
               defaultSize="36%"
@@ -518,7 +494,6 @@ export default function LeposTradingBotPage({
               className="h-full"
             >
               <div className="flex h-full flex-col overflow-hidden rounded-lg border border-white/[0.08] bg-[#0b0f17]/90 shadow-2xl backdrop-blur-xl">
-                {/* Pro Sidebar Tab Switcher */}
                 <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#090d16]/80 px-3 py-2 shrink-0">
                   <div className="flex items-center gap-1 rounded-md bg-[#101624] p-0.5 shadow-sm">
                     <button
