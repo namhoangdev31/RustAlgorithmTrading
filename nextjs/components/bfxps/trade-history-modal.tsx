@@ -104,23 +104,11 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
 
     const exec = canonicalPlan.execution;
     const isFilled = exec?.isFilled ?? false;
-    const isSettled = exec?.settled ?? false;
-    const exitType = isSettled
-      ? exec?.status === "TP_EXIT"
-        ? "TP"
-        : exec?.status === "EXIT_SL"
-          ? "SL"
-          : exec?.status === "TRAIL_EXIT"
-            ? "TRAIL"
-            : exec?.status === "BE_EXIT"
-              ? "BE"
-              : "ATC"
-      : isFilled
-        ? "FILLED"
-        : "PENDING";
     const pnl = isFilled ? (exec?.livePnlPoints ?? 0) : 0;
-    const isWin = pnl > 0;
+    const isWin = false;
 
+    // QUY TẮC CỐT LÕI: Kèo hôm nay đang trong phiên (Intraday) CHƯA CHỐT LỜI/LỖ.
+    // Chỉ chốt chính thức sau phiên ATC (14:45).
     const liveItem: TradeItem = {
       date: canonicalPlan.date,
       mode: "LIVE",
@@ -129,18 +117,21 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
       entryPrice: isFilled ? exec!.avgEntryPrice : canonicalPlan.entryPrice,
       tpPrice: canonicalPlan.tpPrice,
       slPrice: canonicalPlan.slPrice,
-      exitPrice: isSettled
-        ? (exec?.exitPrice ?? 0)
-        : isFilled
-          ? (liveSnapshot?.current ?? exec!.avgEntryPrice)
-          : 0,
-      exitType,
-      exitMinute: exec?.exitTime || (isFilled ? "11:30" : "—"),
+      exitPrice: 0,
+      exitType: "INTRADAY",
+      exitMinute: "Chờ ATC (14:45)",
       pnl,
       isWin,
-      status: isSettled ? "ĐÃ ĐÓNG" : isFilled ? "ĐANG GIỮ VỊ THẾ" : "CHỜ KHỚP",
+      status:
+        exec?.status === "EXIT_SL"
+          ? "ĐÃ CHẠM SL SÁNG (CHỜ TỔNG KẾT)"
+          : isFilled
+            ? "ĐANG THEO DÕI"
+            : "CHỜ KHỚP",
       notes: isFilled
-        ? `Khớp lệnh ${canonicalPlan.side} @ ${exec!.avgEntryPrice.toFixed(1)} (PnL Live: ${pnl > 0 ? "+" : ""}${pnl.toFixed(1)}đ)`
+        ? exec?.status === "EXIT_SL"
+          ? `Phiên sáng: Đã chạm SL lúc ${exec.exitTime || "09:xx"} (${exec.livePnlPoints}đ). Kèo tối ưu đang theo dõi tới khi đóng phiên ATC.`
+          : `Đang giữ vị thế ${canonicalPlan.side} @ ${exec!.avgEntryPrice.toFixed(1)} (PnL Live: ${pnl > 0 ? "+" : ""}${pnl.toFixed(1)}đ). Chỉ chốt chính thức sau phiên ATC.`
         : `Lệnh Chờ Kích Hoạt ${canonicalPlan.side} @ ${canonicalPlan.entryPrice.toFixed(1)}`,
       cumulativePnl: 0,
     };
@@ -152,11 +143,16 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
         )
       : [...trades, liveItem];
 
-    // Tính toán lại Lợi nhuận Lũy kế (Cumulative PnL) chuẩn xác từ đầu đến cuối
+    // Tính toán lại Lợi nhuận Lũy kế (Cumulative PnL) chuẩn xác từ các phiên ĐÃ CHỐT EOD
     let runningCumulative = 0;
     return baseTrades.map((t) => {
-      const isTradeFilled = t.status !== "PENDING" && t.exitType !== "NO_FILL";
-      if (isTradeFilled) {
+      const isToday = t.date === canonicalPlan.date;
+      const isSettledEod =
+        !isToday &&
+        t.status !== "PENDING" &&
+        t.exitType !== "NO_FILL" &&
+        t.exitType !== "INTRADAY";
+      if (isSettledEod) {
         runningCumulative += t.pnl;
       }
       return {
@@ -178,8 +174,21 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
     let maxDrawdown = 0;
     let runningCum = 0;
 
+    const canonicalDate =
+      livePlans?.find((p) => p.engine === "simcarrry6")?.date ||
+      livePlans?.find((p) => p.isCanonical)?.date ||
+      livePlans?.[0]?.date;
+
     activeTrades.forEach((t) => {
-      const isFilled = t.status !== "PENDING" && t.exitType !== "NO_FILL";
+      // QUY TẮC BẮT BUỘC: CHỈ TỔNG KẾT CÁC PHIÊN ĐÃ HOÀN TẤT ĐÓNG CỬA (EOD SETTLED).
+      // Phiên hôm nay khi đang giao dịch TUYỆT ĐỐI không cộng vào thống kê lịch sử!
+      const isToday = canonicalDate ? t.date === canonicalDate : false;
+      if (isToday || t.exitType === "INTRADAY") return;
+
+      const isFilled =
+        t.status !== "PENDING" &&
+        t.exitType !== "NO_FILL" &&
+        t.exitType !== "INTRADAY";
       if (isFilled) {
         tradedCount++;
         totalPnl += t.pnl;
@@ -207,10 +216,17 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
           ? 99.0
           : 0;
 
+    const settledTrades = activeTrades.filter(
+      (tr) => tr.date !== canonicalDate && tr.exitType !== "INTRADAY",
+    );
+
     return {
-      totalSessions: activeTrades.length,
-      liveCount: activeTrades.filter((tr) => tr.date >= "2026-09-14").length,
-      backtestCount: activeTrades.filter((tr) => tr.date < "2026-09-14").length,
+      totalSessions: settledTrades.length,
+      liveCount: settledTrades.filter((tr) => tr.date >= "2026-09-14").length,
+      backtestCount: settledTrades.filter((tr) => tr.date < "2026-09-14").length,
+      startDate: settledTrades[0]?.date || summary?.startDate,
+      endDate:
+        settledTrades[settledTrades.length - 1]?.date || summary?.endDate,
       tradedCount,
       wins,
       losses,
@@ -219,7 +235,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
       totalPnl: Number(totalPnl.toFixed(1)),
       maxDrawdown: Number(maxDrawdown.toFixed(1)),
     };
-  }, [activeTrades, summary]);
+  }, [activeTrades, summary, livePlans]);
 
   // Tự động tính lại PnL các tháng với PnL Live cập nhật
   const activeMonthlyPnl = useMemo(() => {
@@ -636,11 +652,15 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
                             {t("mode_backtest")}
                           </span>
                         )}
-                        {trade.exitType === "FILLED" && (
+                        {trade.exitType === "INTRADAY" ? (
+                          <span className="rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 text-[9px] font-sans font-bold">
+                            TRONG PHIÊN
+                          </span>
+                        ) : trade.exitType === "FILLED" ? (
                           <span className="rounded-md bg-emerald-500/20 px-1.5 py-0.5 text-[9px] text-emerald-300 font-sans font-bold">
                             PHIÊN NÀY
                           </span>
-                        )}
+                        ) : null}
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
@@ -655,18 +675,22 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
                         </span>
                         <span
                           className={`font-mono text-sm font-black ${
-                            isNoFill
-                              ? "text-slate-500"
-                              : isWin
-                                ? "text-emerald-400"
-                                : isLoss
-                                  ? "text-rose-400"
-                                  : "text-slate-400"
+                            trade.exitType === "INTRADAY"
+                              ? "text-amber-400"
+                              : isNoFill
+                                ? "text-slate-500"
+                                : isWin
+                                  ? "text-emerald-400"
+                                  : isLoss
+                                    ? "text-rose-400"
+                                    : "text-slate-400"
                           }`}
                         >
-                          {isNoFill
-                            ? `0.0${t("pts_unit")}`
-                            : `${trade.pnl > 0 ? `+${trade.pnl.toFixed(1)}` : trade.pnl.toFixed(1)}${t("pts_unit")}`}
+                          {trade.exitType === "INTRADAY"
+                            ? `${trade.pnl > 0 ? `+${trade.pnl.toFixed(1)}` : trade.pnl.toFixed(1)}${t("pts_unit")} (Tạm tính)`
+                            : isNoFill
+                              ? `0.0${t("pts_unit")}`
+                              : `${trade.pnl > 0 ? `+${trade.pnl.toFixed(1)}` : trade.pnl.toFixed(1)}${t("pts_unit")}`}
                         </span>
                       </div>
                     </div>
@@ -714,30 +738,34 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
                       <div className="flex items-center gap-1.5 min-w-0 shrink truncate">
                         <span
                           className={`rounded-md px-1.5 py-0.5 text-[9px] font-bold shrink-0 whitespace-nowrap ${
-                            trade.exitType === "TP" || trade.exitType === "TRAIL"
-                              ? "bg-emerald-500/20 text-emerald-400"
-                              : trade.exitType === "BE"
-                                ? "bg-cyan-500/20 text-cyan-400"
-                                : trade.exitType === "SL"
-                                  ? "bg-rose-500/20 text-rose-400"
-                                  : trade.exitType === "ATC"
-                                    ? "bg-amber-500/20 text-amber-300"
-                                    : trade.exitType === "FILLED"
-                                      ? "bg-emerald-500/20 text-emerald-400"
-                                      : "bg-white/10 text-slate-400"
+                            trade.exitType === "INTRADAY"
+                              ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                              : trade.exitType === "TP" || trade.exitType === "TRAIL"
+                                ? "bg-emerald-500/20 text-emerald-400"
+                                : trade.exitType === "BE"
+                                  ? "bg-cyan-500/20 text-cyan-400"
+                                  : trade.exitType === "SL"
+                                    ? "bg-rose-500/20 text-rose-400"
+                                    : trade.exitType === "ATC"
+                                      ? "bg-amber-500/20 text-amber-300"
+                                      : trade.exitType === "FILLED"
+                                        ? "bg-emerald-500/20 text-emerald-400"
+                                        : "bg-white/10 text-slate-400"
                           }`}
                         >
-                          {trade.exitType === "NO_FILL"
-                            ? t("exit_no_fill")
-                            : trade.exitType === "PENDING"
-                              ? t("exit_pending")
-                              : trade.exitType === "FILLED"
-                                ? "ĐANG KHỚP"
-                                : trade.exitType === "BE"
-                                  ? "BE"
-                                  : trade.exitType === "TRAIL"
-                                    ? "TRAIL"
-                                    : trade.exitType}
+                          {trade.exitType === "INTRADAY"
+                            ? "TRONG PHIÊN"
+                            : trade.exitType === "NO_FILL"
+                              ? t("exit_no_fill")
+                              : trade.exitType === "PENDING"
+                                ? t("exit_pending")
+                                : trade.exitType === "FILLED"
+                                  ? "ĐANG KHỚP"
+                                  : trade.exitType === "BE"
+                                    ? "BE"
+                                    : trade.exitType === "TRAIL"
+                                      ? "TRAIL"
+                                      : trade.exitType}
                         </span>
                         {trade.exitMinute && (
                           <span className="text-slate-500 shrink-0 whitespace-nowrap">
@@ -887,33 +915,37 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
                         <td className="py-2.5 px-3 font-sans whitespace-nowrap">
                           <span
                             className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold whitespace-nowrap ${
-                              trade.exitType === "TP" ||
-                              trade.exitType === "TRAIL"
-                                ? "bg-emerald-500/20 text-emerald-400"
-                                : trade.exitType === "BE"
-                                  ? "bg-cyan-500/20 text-cyan-400"
-                                  : trade.exitType === "SL"
-                                    ? "bg-rose-500/20 text-rose-400"
-                                    : trade.exitType === "ATC"
-                                      ? "bg-amber-500/20 text-amber-300"
-                                      : trade.exitType === "FILLED"
-                                        ? "bg-emerald-500/20 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
-                                        : trade.exitType === "PENDING"
-                                          ? "bg-sky-500/20 text-sky-400"
-                                          : "bg-white/10 text-slate-400"
+                              trade.exitType === "INTRADAY"
+                                ? "bg-amber-500/20 text-amber-400 border border-amber-500/30 shadow-[0_0_8px_rgba(245,158,11,0.2)]"
+                                : trade.exitType === "TP" ||
+                                  trade.exitType === "TRAIL"
+                                  ? "bg-emerald-500/20 text-emerald-400"
+                                  : trade.exitType === "BE"
+                                    ? "bg-cyan-500/20 text-cyan-400"
+                                    : trade.exitType === "SL"
+                                      ? "bg-rose-500/20 text-rose-400"
+                                      : trade.exitType === "ATC"
+                                        ? "bg-amber-500/20 text-amber-300"
+                                        : trade.exitType === "FILLED"
+                                          ? "bg-emerald-500/20 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
+                                          : trade.exitType === "PENDING"
+                                            ? "bg-sky-500/20 text-sky-400"
+                                            : "bg-white/10 text-slate-400"
                             }`}
                           >
-                            {trade.exitType === "NO_FILL"
-                              ? t("exit_no_fill")
-                              : trade.exitType === "PENDING"
-                                ? t("exit_pending")
-                                : trade.exitType === "FILLED"
-                                  ? "ĐANG KHỚP"
-                                  : trade.exitType === "BE"
-                                    ? "BE (Hòa vốn)"
-                                    : trade.exitType === "TRAIL"
-                                      ? "TRAIL (Khóa lãi)"
-                                      : trade.exitType}
+                            {trade.exitType === "INTRADAY"
+                              ? "TRONG PHIÊN (Chờ ATC)"
+                              : trade.exitType === "NO_FILL"
+                                ? t("exit_no_fill")
+                                : trade.exitType === "PENDING"
+                                  ? t("exit_pending")
+                                  : trade.exitType === "FILLED"
+                                    ? "ĐANG KHỚP"
+                                    : trade.exitType === "BE"
+                                      ? "BE (Hòa vốn)"
+                                      : trade.exitType === "TRAIL"
+                                        ? "TRAIL (Khóa lãi)"
+                                        : trade.exitType}
                           </span>
                         </td>
                         <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">
@@ -921,18 +953,27 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
                         </td>
                         <td
                           className={`py-2.5 px-3 text-right font-bold whitespace-nowrap ${
-                            isNoFill
-                              ? "text-slate-500"
-                              : isWin
-                                ? "text-emerald-400"
-                                : isLoss
-                                  ? "text-rose-400"
-                                  : "text-slate-400"
+                            trade.exitType === "INTRADAY"
+                              ? "text-amber-400"
+                              : isNoFill
+                                ? "text-slate-500"
+                                : isWin
+                                  ? "text-emerald-400"
+                                  : isLoss
+                                    ? "text-rose-400"
+                                    : "text-slate-400"
                           }`}
                         >
-                          {isNoFill
-                            ? `0.0${t("pts_unit")}`
-                            : `${trade.pnl > 0 ? `+${trade.pnl.toFixed(1)}` : trade.pnl.toFixed(1)}${t("pts_unit")}`}
+                          {trade.exitType === "INTRADAY" ? (
+                            <span>
+                              {trade.pnl > 0 ? `+${trade.pnl.toFixed(1)}` : trade.pnl.toFixed(1)}{t("pts_unit")}{" "}
+                              <span className="text-[10px] text-amber-500/80 font-normal">(Tạm tính)</span>
+                            </span>
+                          ) : isNoFill ? (
+                            `0.0${t("pts_unit")}`
+                          ) : (
+                            `${trade.pnl > 0 ? `+${trade.pnl.toFixed(1)}` : trade.pnl.toFixed(1)}${t("pts_unit")}`
+                          )}
                         </td>
                         <td className="py-2.5 px-3 text-right font-semibold text-white whitespace-nowrap">
                           {trade.cumulativePnl > 0

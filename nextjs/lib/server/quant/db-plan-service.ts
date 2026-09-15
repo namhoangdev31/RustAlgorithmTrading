@@ -3,7 +3,7 @@ import { prisma } from "@/lib/server/prisma";
 import { Prisma } from "@/prisma/generated/client";
 
 import { ExecutionState, MarketSnapshot } from "./types";
-import { getVnDateString, isWeekend, LIVE_CUTOFF_DATE } from "./strategy-engine";
+import { getVnDateString, getVietnamTradingDate, isWeekend, LIVE_CUTOFF_DATE } from "./strategy-engine";
 
 export interface CanonicalPlanInput {
   planId?: string;
@@ -137,39 +137,13 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
     plan.reason?.includes("Tối ưu toàn phiên");
 
   const exec = plan.execution;
-  let status = "PENDING";
-  let exitType: string | null = null;
-  let exitPrice: number | null = null;
-  let exitMinute: string | null = null;
-  let pnlPoints: number | null = null;
-  let isWin: boolean | null = null;
+  let status = "ACTIVE_TODAY";
   let notes = plan.reason || "Kèo định lượng thực chiến tự động";
 
   if (exec && exec.isFilled) {
-    pnlPoints = exec.livePnlPoints ?? 0;
-    isWin = pnlPoints > 0;
-    if (exec.settled) {
-      status =
-        exec.status === "TP_EXIT"
-          ? "FILLED_TP"
-          : exec.status === "EXIT_SL"
-          ? "FILLED_SL"
-          : exec.status === "ATC_EXIT"
-          ? "FILLED_ATC"
-          : "FILLED_TRAIL";
-      exitType =
-        exec.status === "TP_EXIT"
-          ? "TP"
-          : exec.status === "EXIT_SL"
-          ? "SL"
-          : exec.status === "BE_EXIT"
-          ? "BE"
-          : exec.status === "TRAIL_EXIT"
-          ? "TRAIL"
-          : "ATC";
-      exitPrice = exec.exitPrice ?? null;
-      exitMinute = exec.exitTime ?? "14:45";
-      const execNote = `Tự động chốt vị thế ${exitType} lúc ${exitMinute}, PnL: ${pnlPoints > 0 ? "+" : ""}${pnlPoints}đ`;
+    if (exec.status === "EXIT_SL") {
+      status = "EXIT_SL";
+      const execNote = `Phiên sáng: Đã chạm SL lúc ${exec.exitTime || "09:xx"} (${exec.livePnlPoints}đ). Chờ tổng kết cuối phiên lúc 14:45.`;
       const baseReason = (plan.reason || "")
         .replace(/^(\[Tối ưu toàn phiên\]\s*)+/, "")
         .replace(/\s*\|\s*Tự động (chốt|khớp) vị thế.*$/, "")
@@ -179,9 +153,7 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
         : execNote;
     } else {
       status = "FILLED";
-      exitType = "FILLED";
-      exitMinute = exec.exitTime || "11:30";
-      const execNote = `Tự động khớp vị thế ${plan.side} @ ${exec.avgEntryPrice.toFixed(1)}, PnL Live: ${pnlPoints > 0 ? "+" : ""}${pnlPoints}đ`;
+      const execNote = `Đang giữ vị thế ${plan.side} @ ${exec.avgEntryPrice.toFixed(1)} (PnL Live: ${exec.livePnlPoints > 0 ? "+" : ""}${exec.livePnlPoints}đ). Chờ đóng phiên ATC.`;
       const baseReason = (plan.reason || "")
         .replace(/^(\[Tối ưu toàn phiên\]\s*)+/, "")
         .replace(/\s*\|\s*Tự động (chốt|khớp) vị thế.*$/, "")
@@ -194,6 +166,8 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
     notes = `[Tối ưu toàn phiên] ${notes}`;
   }
 
+  // TRONG PHIÊN: TUYỆT ĐỐI KHÔNG CHỐT exitType, pnlPoints, settledAt!
+  // Chỉ cập nhật thông số lệnh và trạng thái live.
   return prisma.bfxpsTradingPlan.upsert({
     where: {
       date_engine: {
@@ -210,11 +184,11 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
       status,
       r5State: exec?.isFilled ? "FILLED" : "PRE_OPEN",
       isCanonical: true,
-      exitType: exitType ?? null,
-      exitPrice: exitPrice != null ? new Prisma.Decimal(exitPrice) : null,
-      exitMinute: exitMinute ?? null,
-      pnlPoints: pnlPoints != null ? new Prisma.Decimal(pnlPoints) : null,
-      isWin: isWin != null ? isWin : null,
+      exitType: null,
+      exitPrice: null,
+      exitMinute: null,
+      pnlPoints: null,
+      isWin: null,
       notes,
     },
     create: {
@@ -230,11 +204,11 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
       r5State: exec?.isFilled ? "FILLED" : "PRE_OPEN",
       status,
       isCanonical: true,
-      exitType,
-      exitPrice: exitPrice != null ? new Prisma.Decimal(exitPrice) : null,
-      exitMinute,
-      pnlPoints: pnlPoints != null ? new Prisma.Decimal(pnlPoints) : null,
-      isWin,
+      exitType: null,
+      exitPrice: null,
+      exitMinute: null,
+      pnlPoints: null,
+      isWin: null,
       notes,
     },
   });
@@ -379,6 +353,8 @@ async function computeTradingHistory() {
     return null;
   }
 
+  const todayStr = getVietnamTradingDate(new Date());
+
   // Tự động dọn dẹp các bản ghi rơi vào cuối tuần theo múi giờ Việt Nam
   const weekendPlans = rawPlans.filter((p) => {
     const dStr = getVnDateString(p.date);
@@ -393,6 +369,30 @@ async function computeTradingHistory() {
         },
       })
       .catch((e) => console.warn("[db] Dọn dẹp kèo cuối tuần thất bại:", (e as Error)?.message));
+  }
+
+  // Tự động reset các trạng thái chốt non trong phiên hôm nay (chỉ chốt khi đã qua ATC sau 14:45)
+  try {
+    await prisma.bfxpsTradingPlan.updateMany({
+      where: {
+        date: new Date(`${todayStr}T00:00:00.000Z`),
+        settledAt: null,
+        OR: [
+          { exitType: { not: null } },
+          { status: { in: ["FILLED_TP", "FILLED_SL", "FILLED_ATC", "FILLED_TRAIL"] } },
+        ],
+      },
+      data: {
+        exitType: null,
+        exitPrice: null,
+        exitMinute: null,
+        pnlPoints: null,
+        isWin: null,
+        status: "ACTIVE_TODAY",
+      },
+    });
+  } catch (err: any) {
+    console.warn("[db] Reset kèo hôm nay chưa settle:", err?.message);
   }
 
   // Nếu cùng một ngày có cả simcarrry6 và CanonicalDirectionalBreakout -> ưu tiên Kèo Chính simcarrry6
@@ -428,9 +428,13 @@ async function computeTradingHistory() {
   const trades = validPlans.map((p) => {
     const dateStr = getVnDateString(p.date);
     const pnl = p.pnlPoints ? Number(p.pnlPoints.toString()) : 0;
-    const isFilled = p.status !== "PENDING" && p.exitType !== "NO_FILL";
+    const isToday = dateStr === todayStr;
+    const isSettled = p.settledAt != null || (!isToday && dateStr < todayStr);
+    const isFilled = p.status !== "PENDING" && p.exitType !== "NO_FILL" && p.exitType !== "INTRADAY";
 
-    if (isFilled) {
+    // QUY TẮC BẮT BUỘC: CHỈ CỘNG VÀO LỊCH SỬ THỰC CHIẾN KHI PHIÊN ĐÃ ĐÓNG CỬA HOÀN TOÀN (EOD SETTLED).
+    // Phiên hôm nay khi đang giao dịch TUYỆT ĐỐI KHÔNG CỘNG DỒN VÀO TỔNG KẾT QUẢ LỊCH SỬ!
+    if (isSettled && isFilled) {
       tradedCount++;
       totalPnl += pnl;
       const m = dateStr.slice(0, 7);
@@ -454,6 +458,27 @@ async function computeTradingHistory() {
     const isLive = dateStr >= LIVE_CUTOFF_DATE;
     const mode = isLive ? "LIVE" : "BACKTEST";
 
+    if (!isSettled) {
+      // Phiên hôm nay chưa đóng phiên (Intraday) -> Hiển thị trạng thái trong phiên, KHÔNG chốt kết quả
+      return {
+        date: dateStr,
+        mode,
+        isLive: true,
+        side: p.side as "LONG" | "SHORT",
+        entryPrice: Number(p.entryPrice.toString()),
+        slPrice: Number(p.slPrice.toString()),
+        tpPrice: Number(p.tpPrice.toString()),
+        exitPrice: 0,
+        exitType: "INTRADAY",
+        exitMinute: "Chờ ATC (14:45)",
+        pnl: 0,
+        isWin: false,
+        cumulativePnl: Number(cumulativePnl.toFixed(1)), // Giữ nguyên mức đã chốt của hôm trước
+        status: "INTRADAY",
+        notes: `[Đang trong phiên] Kèo hôm nay đang giao dịch — chỉ chốt Lời/Lỗ chính thức sau phiên ATC (14:45). ${p.notes || ""}`.trim(),
+      };
+    }
+
     return {
       date: dateStr,
       mode,
@@ -473,18 +498,23 @@ async function computeTradingHistory() {
     };
   });
 
+  const settledPlans = validPlans.filter(
+    (p) => p.settledAt != null || getVnDateString(p.date) < todayStr
+  );
   const winRate = tradedCount > 0 ? Number(((wins / tradedCount) * 100).toFixed(1)) : 0;
   const profitFactor = totalLossPoints > 0 ? Number((totalWinPoints / totalLossPoints).toFixed(2)) : (totalWinPoints > 0 ? 99.0 : 0);
 
-  const startDate = validPlans[0]?.date ? getVnDateString(validPlans[0].date) : undefined;
-  const endDate = validPlans[validPlans.length - 1]?.date ? getVnDateString(validPlans[validPlans.length - 1].date) : undefined;
+  const startDate = settledPlans[0]?.date ? getVnDateString(settledPlans[0].date) : undefined;
+  const endDate = settledPlans[settledPlans.length - 1]?.date
+    ? getVnDateString(settledPlans[settledPlans.length - 1].date)
+    : undefined;
 
-  const liveCount = validPlans.filter((p) => getVnDateString(p.date) >= LIVE_CUTOFF_DATE).length;
-  const backtestCount = validPlans.filter((p) => getVnDateString(p.date) < LIVE_CUTOFF_DATE).length;
+  const liveCount = settledPlans.filter((p) => getVnDateString(p.date) >= LIVE_CUTOFF_DATE).length;
+  const backtestCount = settledPlans.filter((p) => getVnDateString(p.date) < LIVE_CUTOFF_DATE).length;
 
   return {
     summary: {
-      totalSessions: validPlans.length,
+      totalSessions: settledPlans.length,
       liveCount,
       backtestCount,
       totalBars: undefined, // Tính từ nguồn dữ liệu thực tế, không ước lượng

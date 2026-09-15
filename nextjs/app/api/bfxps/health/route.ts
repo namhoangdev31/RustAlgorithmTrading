@@ -131,21 +131,45 @@ export async function GET() {
         const entryPrice = Number(recalibratedDb.entryPrice.toString());
         const tpPrice = Number(recalibratedDb.tpPrice.toString());
         const slPrice = Number(recalibratedDb.slPrice.toString());
-        const exec = replayExecutionCached(
-          {
-            ...plansWithExecution[simIdx],
-            side,
-            entryPrice,
-            tpPrice,
-            slPrice,
-          },
-          ticks
-        );
+        // QUY TẮC: Kèo tái lập sinh ra trong phiên -> CHỈ replay các nến từ thời điểm tạo trở đi!
+        // Tuyệt đối không replay từ 09:00:00 gây khớp lệnh hồi tố và chốt lời giả tạo trong quá khứ!
+        const createdDate = recalibratedDb.createdAt ? new Date(recalibratedDb.createdAt) : null;
+        const createdTimeStr = createdDate
+          ? createdDate.toLocaleTimeString("en-GB", { timeZone: "Asia/Ho_Chi_Minh" })
+          : "13:00:00";
+        const relevantTicks = ticks.filter((t) => t.time >= createdTimeStr);
+        const exec = relevantTicks.length > 0
+          ? replayExecutionCached(
+              {
+                ...plansWithExecution[simIdx],
+                side,
+                entryPrice,
+                tpPrice,
+                slPrice,
+              },
+              relevantTicks
+            )
+          : {
+              planId: plansWithExecution[simIdx].id,
+              isFilled: false,
+              fillStages: 0,
+              filledSize: 0,
+              avgEntryPrice: 0,
+              livePnlPoints: 0,
+              status: "WAIT_ENTRY" as const,
+              settled: false,
+            };
+
         const notesStr = recalibratedDb.notes || "";
         const isSweep = notesStr.includes("Quét thanh khoản") || notesStr.includes("Rút chân");
         const resolvedSource = isSweep
           ? (side === "LONG" ? "SESSION_OPTIMAL_SWEEP_RE_LONG" : "SESSION_OPTIMAL_SWEEP_RE_SHORT")
           : (side === "LONG" ? "LATEST_SHORT_CUTLOSS_REVERSAL" : "LATEST_LONG_CUTLOSS_REVERSAL");
+
+        const cleanNotes = (recalibratedDb.notes || "")
+          .replace(/(\s*\|\s*Đang giữ vị thế.*$)+/g, "")
+          .replace(/(\s*\|\s*Tự động.*$)+/g, "")
+          .trim();
 
         plansWithExecution[simIdx] = {
           ...plansWithExecution[simIdx],
@@ -155,7 +179,7 @@ export async function GET() {
           tpPrice,
           slPrice,
           resolvedSource,
-          reason: recalibratedDb.notes ?? plansWithExecution[simIdx].reason,
+          reason: cleanNotes || `[Tối ưu toàn phiên] Kèo tối ưu toàn phiên: ${side} @ ${entryPrice.toFixed(1)}, TP ${tpPrice.toFixed(1)}, SL ${slPrice.toFixed(1)}`,
           execution: exec,
         };
 
