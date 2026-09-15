@@ -34,7 +34,6 @@ export async function sendAlertNotification(payload: AlertPayload): Promise<bool
 
   const promises: Promise<any>[] = [];
 
-  // 1. Slack Webhook Notification
   if (slackUrl) {
     const fields = [
       { title: "Metric", value: String(metric), short: true },
@@ -71,7 +70,6 @@ export async function sendAlertNotification(payload: AlertPayload): Promise<bool
     );
   }
 
-  // 2. Discord Webhook Notification
   if (discordUrl) {
     const fields = [
       { name: "Metric", value: String(metric), inline: true },
@@ -112,9 +110,8 @@ export async function sendAlertNotification(payload: AlertPayload): Promise<bool
     );
   }
 
-  // 3. Telegram Bot API Notification
   if (telegramBotToken && telegramChatId) {
-    const telegramUrl = `https:
+    const telegramUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
     const telegramPayload = {
       chat_id: telegramChatId,
       text: messageText.replace(/\*/g, "**").replace(/_/g, "\\_"),
@@ -162,29 +159,24 @@ export async function analyzeMetricsForAnomalies(
       return;
     }
 
-    // Sort chronologically (oldest to newest) and apply fallback values for null properties
     const latencies = history.map((h) => h.avgLatencyMs ?? 0).reverse();
     const errors = history.map((h) => Number(h.errorCount ?? 0)).reverse();
 
-    // 2. Perform Single Exponential Smoothing forecasting
-    const alpha = 0.35; // Smoothing constant
+    const alpha = 0.35; 
     let level = latencies[0];
     for (let i = 1; i < latencies.length; i++) {
       level = alpha * latencies[i] + (1 - alpha) * level;
     }
     const predictedLatency = Math.round(level);
 
-    // 3. Calculate Mean and Standard Deviation of historical latency
     const meanLatency = latencies.reduce((sum, val) => sum + val, 0) / latencies.length;
     const varianceLatency = latencies.reduce((sum, val) => sum + Math.pow(val - meanLatency, 2), 0) / latencies.length;
-    const stdDevLatency = Math.sqrt(varianceLatency) || 5; // Fallback deviation if variance is 0
+    const stdDevLatency = Math.sqrt(varianceLatency) || 5; 
 
-    // 4. Calculate Z-Score of the current test run
     const zScore = (currentLatency - meanLatency) / stdDevLatency;
 
     console.log(`[AI Anomaly Engine] Endpoint: ${method} ${endpoint} | Mean: ${meanLatency.toFixed(1)}ms | StdDev: ${stdDevLatency.toFixed(1)}ms | Z-Score: ${zScore.toFixed(2)}`);
 
-    // 5. Check anomaly thresholds (outliers + early congestion warning)
     const isLatencyAnomaly = zScore > 2.25;
     const avgErrors = errors.reduce((sum, val) => sum + val, 0) / errors.length;
     const isErrorAnomaly = currentErrors > 0 && currentErrors > avgErrors * 3;
@@ -203,7 +195,6 @@ export async function analyzeMetricsForAnomalies(
         ? Math.round(avgErrors * 3)
         : Math.round(meanLatency + 2.25 * stdDevLatency);
 
-      // Execute WAF / Rollback / Scale-out auto-remediations
       const remediation = await executeAutoRemediation(
         bundleId,
         anomalyType,
@@ -226,9 +217,6 @@ export async function analyzeMetricsForAnomalies(
   }
 }
 
-/**
- * AI-powered remediation advice generator based on failure metrics.
- */
 export function generateAiRemediationSuggestions(
   title: string,
   description: string,
@@ -251,10 +239,6 @@ export function generateAiRemediationSuggestions(
   return "Review system integration dashboards and inspect recent logs for anomalies.";
 }
 
-/**
- * High-performance smart alert router. Checks thresholds and directly routes alerts
- * to project owner & admin members.
- */
 export async function checkSmartRoutingAndTriggerAlert(
   projectId: string,
   errorRate5xx: number,

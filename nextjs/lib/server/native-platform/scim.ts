@@ -75,7 +75,6 @@ export async function upsertScimUser(input: {
     ? input.userName
     : `${input.userName || input.externalId}@sso.lepos.dev`;
 
-  // 1. Resolve or provision local User
   let user = await prisma.user.findUnique({
     where: { email },
   });
@@ -94,7 +93,6 @@ export async function upsertScimUser(input: {
 
   const normalizedRole = normalizeScimRole(input.role || "viewer");
 
-  // 2. Upsert SCIM mapping
   const mapping = await prisma.nativeScimMapping.upsert({
     where: {
       organizationId_provider_resourceType_externalId: {
@@ -126,11 +124,10 @@ export async function upsertScimUser(input: {
     },
   });
 
-  // 3. Propigate role to workspace projects/bundles collaborators
   if (input.active !== false) {
     await syncUserWorkspaceRole(input.organizationId, user.id, normalizedRole);
   } else {
-    // If user is deactivated/disabled, we can remove them from project collaborators
+    
     const projects = await prisma.project.findMany({
       where: { organizationId: input.organizationId },
       include: { bundle: true },
@@ -183,8 +180,7 @@ export async function upsertScimGroup(input: {
   members?: Array<{ value: string; display?: string }>;
 }) {
   const groupName = input.displayName || input.externalId;
-  
-  // Auto-map AD/Okta group name to local role
+
   const mapGroupNameToRole = (name: string): string => {
     const n = name.toLowerCase();
     if (n.includes("admin") || n.includes("owner") || n.includes("manager")) {
@@ -225,7 +221,6 @@ export async function upsertScimGroup(input: {
     },
   });
 
-  // If group has members, sync their roles to the workspace projects/bundles
   if (Array.isArray(input.members)) {
     for (const member of input.members) {
       const userMapping = await prisma.nativeScimMapping.findFirst({
@@ -418,7 +413,6 @@ export async function verifyScimBearerToken(authHeader: string | null): Promise<
       }
     }
 
-    // One-release compatibility path for the legacy environment credential.
     if (scimSecret && presentedSecret === scimSecret) {
       return { valid: true, organizationId: orgId };
     }

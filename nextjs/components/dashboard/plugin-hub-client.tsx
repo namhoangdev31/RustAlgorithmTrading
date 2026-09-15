@@ -96,7 +96,7 @@ export function PluginHubClient({
 
   return (
     <div className="space-y-4">
-      
+      {/* Sub tabs and Submit Trigger */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hairline pb-2.5">
         <div className="flex items-center gap-1.5 bg-canvas-soft border border-hairline rounded-md p-1 select-none w-fit">
           <button
@@ -140,6 +140,7 @@ export function PluginHubClient({
         </Button>
       </div>
 
+      {/* Tab: Marketplace (App Store Hub) */}
       {activeSubTab === "marketplace" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {allPlugins.length === 0 ? (
@@ -180,7 +181,7 @@ export function PluginHubClient({
                     )}
                   </CardHeader>
                   <CardContent className="p-4 pt-2 space-y-3.5 flex-1 flex flex-col justify-between">
-                    
+                    {/* Permissions & Bundle Link */}
                     <div className="space-y-2">
                       <div className="flex flex-wrap gap-1">
                         {plugin.permissions.map((perm) => (
@@ -205,6 +206,7 @@ export function PluginHubClient({
                       </div>
                     </div>
 
+                    {/* Action buttons */}
                     <div className="flex items-center justify-between pt-2 border-t border-hairline-cool gap-3">
                       {installed ? (
                         <>
@@ -261,6 +263,7 @@ export function PluginHubClient({
         </div>
       )}
 
+      {/* Tab: Installed Plugins */}
       {activeSubTab === "installed" && (
         <Card className="border border-hairline bg-canvas py-0">
           <CardContent className="p-0 overflow-x-auto">
@@ -383,6 +386,7 @@ export function PluginHubClient({
         </Card>
       )}
 
+      {/* Tab: Reviews Dashboard */}
       {activeSubTab === "review" && (
         <Card className="border border-hairline bg-canvas py-0">
           <CardContent className="p-0 overflow-x-auto">
@@ -490,6 +494,7 @@ export function PluginHubClient({
         </Card>
       )}
 
+      {/* MODAL 1: Submit Plugin (Dynamic extensions hub) */}
       {isSubmitModalOpen && (
         <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
           <div
@@ -634,6 +639,7 @@ export function PluginHubClient({
         </div>
       )}
 
+      {/* MODAL 2: Plugin Configuration (Install/Update Config) */}
       {isConfigModalOpen && selectedPlugin && (
         <div className="fixed inset-0 z-[120] overflow-y-auto bg-canvas-night/70 backdrop-blur-md transition-all duration-300 animate-in fade-in flex justify-center items-start p-4 md:py-12">
           <div

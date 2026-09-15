@@ -39,11 +39,7 @@ export async function decompressWithZstd(inputPath: string, outputPath: string):
 
 const REMOTE_CACHE_DIR = path.join(process.cwd(), "public", "cache", "remote-artifacts");
 const MAX_ARTIFACT_AGE_DAYS = 30;
-const MAX_CACHE_SIZE_BYTES = 5 * 1024 * 1024 * 1024; // 5GB
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
+const MAX_CACHE_SIZE_BYTES = 5 * 1024 * 1024 * 1024; 
 
 export interface RemoteCacheArtifact {
   hash: string;
@@ -62,10 +58,6 @@ export interface RemoteCacheEventPayload {
   hash: string;
   duration?: number;
 }
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
 function artifactDir(teamId: string): string {
   return path.join(REMOTE_CACHE_DIR, teamId);
@@ -91,21 +83,12 @@ async function ensureDir(dir: string): Promise<void> {
   await fs.mkdir(dir, { recursive: true });
 }
 
-// ---------------------------------------------------------------------------
-// Public API — Turborepo-compatible Remote Cache
-// ---------------------------------------------------------------------------
-
-/**
- * Download a build artifact by content hash.
- * Returns a ReadableStream + size for streaming to the client, or null on miss.
- */
 export async function getArtifact(
   hash: string,
   teamId: string
 ): Promise<{ stream: ReadableStream; size: number } | null> {
   const redis = getNativeRedis();
 
-  // Verify metadata exists and belongs to the requesting team
   if (redis) {
     try {
       const raw = await redis.get(redisArtifactKey(hash));
@@ -113,7 +96,6 @@ export async function getArtifact(
       const meta = JSON.parse(raw) as RemoteCacheArtifact;
       if (meta.teamId !== teamId) return null;
 
-      // Update last accessed timestamp
       meta.lastAccessedAt = Date.now();
       await redis.set(redisArtifactKey(hash), JSON.stringify(meta));
     } catch {
@@ -146,9 +128,6 @@ export async function getArtifact(
   }
 }
 
-/**
- * Upload a build artifact. Stores the data on disk and records metadata in Redis.
- */
 export async function putArtifact(
   hash: string,
   teamId: string,
@@ -189,9 +168,6 @@ export async function putArtifact(
   return { size: data.length };
 }
 
-/**
- * HEAD-style existence check for an artifact (no data transfer).
- */
 export async function checkArtifactExists(hash: string, teamId: string): Promise<boolean> {
   const redis = getNativeRedis();
   if (redis) {
@@ -204,7 +180,6 @@ export async function checkArtifactExists(hash: string, teamId: string): Promise
     } catch {}
   }
 
-  // Fallback to disk
   try {
     await fs.access(artifactPath(teamId, hash));
     return true;
@@ -213,9 +188,6 @@ export async function checkArtifactExists(hash: string, teamId: string): Promise
   }
 }
 
-/**
- * Record cache analytics events (HIT / MISS) emitted by Turborepo clients.
- */
 export async function recordCacheEvent(
   teamId: string,
   events: RemoteCacheEventPayload[]
@@ -226,16 +198,12 @@ export async function recordCacheEvent(
   try {
     const serialized = events.map((e) => JSON.stringify({ ...e, receivedAt: Date.now() }));
     await redis.lpush(redisEventsKey(teamId), ...serialized);
-    await redis.ltrim(redisEventsKey(teamId), 0, 999); // keep last 1000
+    await redis.ltrim(redisEventsKey(teamId), 0, 999); 
   } catch {
     // Event recording is best-effort
   }
 }
 
-/**
- * Evict artifacts older than MAX_ARTIFACT_AGE_DAYS.
- * Returns the number of evicted artifacts.
- */
 export async function evictOldArtifacts(teamId: string): Promise<number> {
   const redis = getNativeRedis();
   const cutoff = Date.now() - MAX_ARTIFACT_AGE_DAYS * 24 * 60 * 60 * 1000;
@@ -243,23 +211,22 @@ export async function evictOldArtifacts(teamId: string): Promise<number> {
 
   if (redis) {
     try {
-      // Find old hashes from sorted set
+      
       const oldHashes = await redis.zrangebyscore(redisTeamSetKey(teamId), 0, cutoff);
 
       for (const hash of oldHashes) {
-        // Remove file
+        
         try {
           await fs.unlink(artifactPath(teamId, hash));
         } catch {}
 
-        // Remove Redis entries
         await redis.del(redisArtifactKey(hash));
         await redis.zrem(redisTeamSetKey(teamId), hash);
         evicted++;
       }
     } catch {}
   } else {
-    // Fallback: scan disk directory
+    
     try {
       const dir = artifactDir(teamId);
       const files = await fs.readdir(dir);
@@ -277,9 +244,6 @@ export async function evictOldArtifacts(teamId: string): Promise<number> {
   return evicted;
 }
 
-/**
- * Calculate total cache usage for a team.
- */
 export async function getTeamCacheUsage(
   teamId: string
 ): Promise<{ totalSize: number; artifactCount: number }> {

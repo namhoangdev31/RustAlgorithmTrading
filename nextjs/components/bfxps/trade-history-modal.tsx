@@ -107,8 +107,6 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
     const pnl = isFilled ? (exec?.livePnlPoints ?? 0) : 0;
     const isWin = false;
 
-    // QUY TẮC CỐT LÕI: Kèo hôm nay đang trong phiên (Intraday) CHƯA CHỐT LỜI/LỖ.
-    // Chỉ chốt chính thức sau phiên ATC (14:45).
     const liveItem: TradeItem = {
       date: canonicalPlan.date,
       mode: "LIVE",
@@ -143,7 +141,6 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
         )
       : [...trades, liveItem];
 
-    // Tính toán lại Lợi nhuận Lũy kế (Cumulative PnL) chuẩn xác từ các phiên ĐÃ CHỐT EOD
     let runningCumulative = 0;
     return baseTrades.map((t) => {
       const isToday = t.date === canonicalPlan.date;
@@ -180,8 +177,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
       livePlans?.[0]?.date;
 
     activeTrades.forEach((t) => {
-      // QUY TẮC BẮT BUỘC: CHỈ TỔNG KẾT CÁC PHIÊN ĐÃ HOÀN TẤT ĐÓNG CỬA (EOD SETTLED).
-      // Phiên hôm nay khi đang giao dịch TUYỆT ĐỐI không cộng vào thống kê lịch sử!
+
       const isToday = canonicalDate ? t.date === canonicalDate : false;
       if (isToday || t.exitType === "INTRADAY") return;
 
@@ -237,7 +233,6 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
     };
   }, [activeTrades, summary, livePlans]);
 
-  // Tự động tính lại PnL các tháng với PnL Live cập nhật
   const activeMonthlyPnl = useMemo(() => {
     if (!activeTrades.length) return monthlyPnl;
     const res: Record<string, number> = {};
@@ -251,7 +246,6 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
     return res;
   }, [activeTrades, monthlyPnl]);
 
-  // Danh sách các tháng có trong dữ liệu
   const availableMonths = useMemo(() => {
     const months = new Set<string>();
     activeTrades.forEach((t) => {
@@ -260,22 +254,21 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
     return Array.from(months).sort().reverse();
   }, [activeTrades]);
 
-  // Bộ lọc dữ liệu
   const filteredTrades = useMemo(() => {
     return activeTrades.filter((t) => {
-      // Lọc theo search
+      
       if (searchTerm && !t.date.includes(searchTerm)) {
         return false;
       }
-      // Lọc theo tháng
+      
       if (selectedMonth !== "ALL" && !t.date.startsWith(selectedMonth)) {
         return false;
       }
-      // Lọc theo chế độ Live
+      
       if (filterType === "LIVE" && t.date < "2026-09-14") {
         return false;
       }
-      // Lọc theo trạng thái
+      
       if (
         filterType === "FILLED" &&
         (t.exitType === "NO_FILL" || t.exitType === "PENDING")
@@ -295,7 +288,6 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
     });
   }, [activeTrades, searchTerm, selectedMonth, filterType]);
 
-  // Đảo ngược danh sách để hiển thị phiên mới nhất lên đầu
   const reversedFiltered = useMemo(() => {
     return [...filteredTrades].reverse();
   }, [filteredTrades]);
@@ -617,7 +609,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
               {t("no_records")}
             </div>
           ) : viewMode === "cards" ? (
-            /* DẠNG THẺ TỐI ƯU MOBILE (Card View) */
+            
             <div className="p-2 sm:p-4 space-y-2">
               {paginatedTrades.map((trade) => {
                 const isLong = trade.side === "LONG";
@@ -799,7 +791,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
               })}
             </div>
           ) : (
-            /* DẠNG BẢNG TOÀN BỘ CỘT (Table View với Sticky Date Column) */
+            
             <div className="min-w-[960px] sm:min-w-full">
               <table className="w-full border-collapse text-left text-xs">
                 <thead className="sticky top-0 z-20 border-b border-white/10 bg-[#090d16] text-slate-400">

@@ -137,7 +137,7 @@ export function AccountForm({ user }: AccountFormProps) {
 
   return (
     <div className="flex flex-col gap-8">
-      {}
+      {/* Visual Identity Section */}
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8 rounded-xl border border-border bg-card p-6 shadow-sm">
         <div className="relative h-20 w-20 flex-shrink-0">
           {avatarUrl ? (
@@ -170,7 +170,7 @@ export function AccountForm({ user }: AccountFormProps) {
         </div>
       </div>
 
-      {}
+      {/* Profile Edit Form */}
       <form
         onSubmit={(e) => {
           e.preventDefault()

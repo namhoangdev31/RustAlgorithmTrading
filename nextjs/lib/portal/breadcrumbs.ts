@@ -22,7 +22,6 @@ export function resolveBreadcrumbs(
     const segment = activeSegments[i];
     currentPath += `/${segment}`;
 
-    // Handle project detail segments
     if (segment === "projects" && i + 1 < activeSegments.length) {
       const nextSegment = activeSegments[i + 1];
       items.push({ label: "Projects", path: "/projects" });
@@ -30,13 +29,12 @@ export function resolveBreadcrumbs(
         label: nextSegment,
         path: `/projects/${nextSegment}/overview`,
       });
-      // Skip the dynamic project ID segment
+      
       i++;
       currentPath += `/${nextSegment}`;
       continue;
     }
 
-    // Handle LepoShip segments
     if (segment === "lepoship" && i + 1 < activeSegments.length) {
       const nextSegment = activeSegments[i + 1];
       items.push({ label: "LepoShip", path: "/lepoship" });
@@ -44,13 +42,12 @@ export function resolveBreadcrumbs(
         label: nextSegment,
         path: `/lepoship/${nextSegment}/overview`,
       });
-      // Skip the dynamic project ID segment
+      
       i++;
       currentPath += `/${nextSegment}`;
       continue;
     }
 
-    // General segment mapping
     const label = segment.charAt(0).toUpperCase() + segment.slice(1);
     items.push({ label, path: currentPath });
   }

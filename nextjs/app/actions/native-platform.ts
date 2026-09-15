@@ -762,7 +762,7 @@ export async function reviewNativePluginAction(formData: FormData) {
   const user = await requireCurrentUser();
   const projectId = readFormValue(formData, "projectId");
   const pluginId = readFormValue(formData, "pluginId");
-  const status = readFormValue(formData, "status"); // 'approved', 'rejected', 'pending'
+  const status = readFormValue(formData, "status"); 
   const notes = readFormValue(formData, "notes");
   const returnTo = readFormValue(formData, "returnTo") || `/projects/${projectId}?tab=native`;
 

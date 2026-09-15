@@ -146,15 +146,12 @@ User query: "${query}"
     };
   }
 
-  // 3. Execute actions on the server
   try {
     const user = await requireCurrentUser();
-    
-    // Resolve organization ids
+
     const workspace = await getWorkspaceContext(user.id);
     const organizationIds = workspace.organizations.map((org) => org.id);
-    
-    // Fetch user owned projects
+
     const userProjects = await prisma.project.findMany({
       where: {
         organizationId: { in: organizationIds },
@@ -171,8 +168,7 @@ User query: "${query}"
         message: "Không tìm thấy dự án nào trong workspace của bạn để thực thi hành động."
       };
     }
-    
-    // Pick target project
+
     let project = userProjects[0];
     if (projectId) {
       const match = userProjects.find((p) => p.id === projectId);
@@ -183,7 +179,7 @@ User query: "${query}"
       );
       if (match) project = match;
     } else {
-      // Look for a project name inside the query text
+      
       const match = userProjects.find((p) =>
         cleanQuery.includes(p.name.toLowerCase())
       );
@@ -226,8 +222,7 @@ User query: "${query}"
       }
       
       const { vercel } = await getAuthorizedVercelClient(user.id, project.vercelProjectId, "editor");
-      
-      // Get envs to locate EDGE_CONFIG
+
       const envVarsRes = await vercel.projects.filterProjectEnvs({ idOrName: project.vercelProjectId });
       const envs = (envVarsRes as any).envs || [];
       const edgeConfigEnv = envs.find((v: any) => v.key === "EDGE_CONFIG");
@@ -266,8 +261,7 @@ User query: "${query}"
         edgeConfigId,
         requestBody: { items }
       });
-      
-      // Replicate changes to all linked multi-providers (Vercel & Cloudflare KV) in parallel
+
       const projectProvidersRes = await getProjectProvidersAction(project.id);
       let syncedProvidersCount = 0;
       if (projectProvidersRes.success && projectProvidersRes.providers && projectProvidersRes.providers.length > 0) {

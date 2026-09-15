@@ -337,7 +337,7 @@ export function FeaturedSlotsManager({ initialSlots, bundles }: ManagerProps) {
         </DialogContent>
       </Dialog>
 
-      {}
+      {/* Grid of active placements */}
       {slots.length === 0 ? (
         <div className="py-12 text-center text-xs text-muted-foreground border border-dashed rounded-lg">
           No featured placements configured. Click &ldquo;Add Featured Slot&rdquo; above to get started.

@@ -1,8 +1,7 @@
 import fs from "fs";
 import path from "path";
-import ts from "typescript";
+import * as ts from "typescript";
 
-// Danh sách các thư mục mục tiêu theo yêu cầu của người dùng
 const TARGET_DIRS = [
   "app",
   "components",
@@ -15,17 +14,16 @@ const TARGET_DIRS = [
 
 const VALID_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
 
-// CLI Flags
 const args = process.argv.slice(2);
 const isWrite = args.includes("--write") || args.includes("-w");
 const removeDirectives = args.includes("--all") || args.includes("--remove-directives");
 
 console.log("==================================================================");
-console.log("       SCRIPT XOÁ COMMENT CODE TRONG TOÀN BỘ DỰ ÁN NEXTJS        ");
+console.log("    SAFE AST-BASED COMMENT REMOVAL SCRIPT FOR NEXT.JS PROJECT     ");
 console.log("==================================================================");
-console.log(`- Chế độ: ${isWrite ? "THỰC THI GHI ĐÈ FILE (--write)" : "CHẠY THỬ XEM TRƯỚC (DRY-RUN)"}`);
-console.log(`- Giữ lại chỉ thị TypeScript/ESLint (@ts-*, eslint-*): ${removeDirectives ? "KHÔNG (Xoá hết)" : "CÓ (Bảo vệ để tránh lỗi build)"}`);
-console.log(`- Thư mục quét: ${TARGET_DIRS.join(", ")}`);
+console.log(`- Mode: ${isWrite ? "WRITE TO FILES (--write)" : "DRY RUN PREVIEW"}`);
+console.log(`- Preserve TS/ESLint directives (@ts-*, eslint-*): ${removeDirectives ? "NO (Delete all)" : "YES (Protected)"}`);
+console.log(`- Target Dirs: ${TARGET_DIRS.join(", ")}`);
 console.log("------------------------------------------------------------------");
 
 interface StripStats {
@@ -40,55 +38,95 @@ const stats: StripStats = {
   commentsRemoved: 0,
 };
 
-/**
- * Xoá comment một cách an toàn bằng TypeScript Lexer Scanner
- * Tuyệt đối không làm hỏng URL (https://), Regex literal, Template String
- */
+interface RemovalRange {
+  start: number;
+  end: number;
+  text: string;
+}
+
+function getRemovalRanges(sourceFile: ts.SourceFile): RemovalRange[] {
+  const ranges: RemovalRange[] = [];
+  const visitedRanges = new Set<string>();
+
+  function addRange(start: number, end: number, text: string) {
+    const key = `${start}-${end}`;
+    if (!visitedRanges.has(key)) {
+      visitedRanges.add(key);
+      ranges.push({ start, end, text });
+    }
+  }
+
+  function checkComment(range: ts.CommentRange, parentNode?: ts.Node) {
+    const commentText = sourceFile.text.slice(range.pos, range.end);
+    
+    // Check if comment is inside a JSX expression block like `{/* comment */}`
+    if (parentNode && ts.isJsxExpression(parentNode)) {
+      // If the JsxExpression contains no other real expression (or only comments)
+      if (!parentNode.expression) {
+        const jsxStart = parentNode.getStart(sourceFile);
+        const jsxEnd = parentNode.getEnd();
+        addRange(jsxStart, jsxEnd, commentText);
+        return;
+      }
+    }
+
+    addRange(range.pos, range.end, commentText);
+  }
+
+  function walk(node: ts.Node) {
+    const nodePos = node.pos;
+    const nodeStart = node.getStart(sourceFile);
+
+    if (nodeStart > nodePos) {
+      const leadingComments = ts.getLeadingCommentRanges(sourceFile.text, nodePos);
+      if (leadingComments) {
+        for (const c of leadingComments) checkComment(c, node);
+      }
+    }
+
+    const trailingComments = ts.getTrailingCommentRanges(sourceFile.text, node.end);
+    if (trailingComments) {
+      for (const c of trailingComments) checkComment(c, node);
+    }
+
+    ts.forEachChild(node, walk);
+  }
+
+  walk(sourceFile);
+  return ranges.sort((a, b) => a.start - b.start);
+}
+
 function stripCommentsFromCode(sourceText: string, isJsx: boolean): { result: string; count: number } {
-  const languageVariant = isJsx ? ts.LanguageVariant.JSX : ts.LanguageVariant.Standard;
-  const scanner = ts.createScanner(ts.ScriptTarget.Latest, false, languageVariant, sourceText);
+  const scriptKind = isJsx ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+  const sourceFile = ts.createSourceFile("file.tsx", sourceText, ts.ScriptTarget.Latest, true, scriptKind);
+  const ranges = getRemovalRanges(sourceFile);
+
+  if (ranges.length === 0) {
+    return { result: sourceText, count: 0 };
+  }
 
   let result = "";
   let lastPos = 0;
   let count = 0;
 
-  while (true) {
-    const token = scanner.scan();
-    if (token === ts.SyntaxKind.EndOfFileToken) {
-      result += sourceText.slice(lastPos);
-      break;
-    }
-
-    const tokenPos = scanner.getTokenPos();
-    const tokenEnd = scanner.getTextPos();
-
-    if (
-      token === ts.SyntaxKind.SingleLineCommentTrivia ||
-      token === ts.SyntaxKind.MultiLineCommentTrivia
-    ) {
-      const commentText = sourceText.slice(tokenPos, tokenEnd);
-
-      // Nếu không yêu cầu xoá hết, bảo lưu các chỉ thị quan trọng của TS và ESLint
-      if (!removeDirectives) {
-        if (/^\/\/\s*@(ts-|eslint-)|^(\/\*)\s*@(ts-|eslint-)/.test(commentText)) {
-          continue;
-        }
+  for (const range of ranges) {
+    if (!removeDirectives) {
+      if (/^\/\/\s*@(ts-|eslint-)|^(\/\*)\s*@(ts-|eslint-)/.test(range.text)) {
+        continue;
       }
-
-      count++;
-      result += sourceText.slice(lastPos, tokenPos);
-
-      // Nếu comment nằm nguyên 1 dòng, kiểm tra để xoá luôn khoảng trắng thừa nếu cần
-      lastPos = tokenEnd;
     }
-  }
 
-  // Dọn dẹp các khối comment JSX rỗng dạng: {/* */} hoặc { } thừa sau khi xoá comment
-  if (isJsx) {
-    result = result.replace(/\{\s*\/\*[\s\S]*?\*\/\s*\}/g, "");
-  }
+    if (range.start < lastPos) {
+      continue; // Skip overlapping ranges
+    }
 
-  // Dọn dẹp các dòng trống liên tiếp sinh ra sau khi xoá comment
+    count++;
+    result += sourceText.slice(lastPos, range.start);
+    lastPos = range.end;
+  }
+  result += sourceText.slice(lastPos);
+
+  // Clean up excess blank lines (>2 consecutive newlines -> 2)
   result = result.replace(/\n\s*\n\s*\n/g, "\n\n");
 
   return { result, count };
@@ -105,7 +143,6 @@ function processDirectory(dirPath: string) {
     const fullPath = path.join(dirPath, entry.name);
 
     if (entry.isDirectory()) {
-      // Bỏ qua các thư mục đặc biệt
       if (entry.name === "node_modules" || entry.name === ".next" || entry.name.startsWith(".")) {
         continue;
       }
@@ -128,20 +165,19 @@ function processDirectory(dirPath: string) {
           stats.commentsRemoved += count;
 
           const relPath = path.relative(process.cwd(), fullPath);
-          console.log(`[CLEAN] ${relPath}: đã tìm thấy ${count} comment`);
+          console.log(`[CLEAN] ${relPath}: found ${count} comments`);
 
           if (isWrite) {
             fs.writeFileSync(fullPath, strippedContent, "utf-8");
           }
         }
       } catch (err: any) {
-        console.error(`[ERROR] Không thể xử lý file ${fullPath}:`, err?.message);
+        console.error(`[ERROR] Failed to process ${fullPath}:`, err?.message);
       }
     }
   }
 }
 
-// Bắt đầu quét các thư mục mục tiêu
 const rootDir = process.cwd();
 for (const dir of TARGET_DIRS) {
   const targetPath = path.join(rootDir, dir);
@@ -149,15 +185,15 @@ for (const dir of TARGET_DIRS) {
 }
 
 console.log("------------------------------------------------------------------");
-console.log("KẾT QUẢ TỔNG KẾT:");
-console.log(`- Tổng số file đã quét: ${stats.filesScanned}`);
-console.log(`- Số file có comment: ${stats.filesModified}`);
-console.log(`- Tổng số comment được phát hiện / loại bỏ: ${stats.commentsRemoved}`);
+console.log("SUMMARY:");
+console.log(`- Files scanned: ${stats.filesScanned}`);
+console.log(`- Files with comments: ${stats.filesModified}`);
+console.log(`- Total comments removed: ${stats.commentsRemoved}`);
 
 if (!isWrite) {
-  console.log("\n⚠️  LƯU Ý: Đây là chế độ DRY-RUN (chưa ghi đè file).");
-  console.log("👉 Để thực thi ghi đè và xoá toàn bộ comment trên file thật, hãy chạy lệnh:");
+  console.log("\n⚠️  NOTE: Dry run completed (no files modified).");
+  console.log("👉 To write changes to disk, run:");
   console.log("   yarn tsx scripts/strip-comments.ts --write\n");
 } else {
-  console.log("\n✅ ĐÃ HOÀN TẤT GHI ĐÈ VÀ XOÁ TOÀN BỘ COMMENT TRÊN CÁC FILE MỤC TIÊU!\n");
+  console.log("\n✅ COMPLETED REMOVING COMMENTS FROM TARGET FILES!\n");
 }

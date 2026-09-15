@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
           dynamicSummary = dbHistory.summary;
         }
       } catch (dbErr) {
-        
+        // Fallback tự động trong advisor-service
       }
     }
 

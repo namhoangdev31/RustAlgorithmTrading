@@ -97,10 +97,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/**
- * GET /api/revalidate?projectId=...&path=...
- * Simple path-based revalidation (backward compatible with existing clients).
- */
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;

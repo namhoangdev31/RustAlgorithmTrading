@@ -84,7 +84,6 @@ export default async function BillingPage() {
   }
   const installMetrics = data.installMetrics || { installs: 0, uninstalls: 0, errors: 0 };
 
-  // Calculate stats
   const totalGross = data.transactions.reduce((acc, t) => acc + (t.status === "completed" ? t.amount : 0), 0);
   const totalNet = data.transactions.reduce((acc, t) => acc + (t.status === "completed" ? t.partnerPayout : 0), 0);
   const platformFee = data.transactions.reduce((acc, t) => acc + (t.status === "completed" ? t.platformFee : 0), 0);
@@ -101,7 +100,7 @@ export default async function BillingPage() {
       />
 
       {!data.connected ? (
-        /* Setup Stripe Connect Express */
+        
         <Card className="border-emerald-500/20 bg-emerald-500/5">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 text-base font-bold">
@@ -121,7 +120,7 @@ export default async function BillingPage() {
           </CardContent>
         </Card>
       ) : (
-        /* Dashboard Connected view */
+        
         <>
           <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4 text-xs">
             <div className="flex items-center gap-3">
@@ -138,6 +137,7 @@ export default async function BillingPage() {
             </Badge>
           </div>
 
+          {/* Revenue Overview Stats Cards */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <Card className="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border-emerald-500/20">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
@@ -202,7 +202,7 @@ export default async function BillingPage() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
-            
+            {/* Transaction Log */}
             <Card className="bg-card border border-hairline">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base font-bold">
@@ -242,6 +242,7 @@ export default async function BillingPage() {
               </CardContent>
             </Card>
 
+            {/* Payout Log */}
             <Card className="bg-card border border-hairline">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base font-bold">

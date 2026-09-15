@@ -70,7 +70,7 @@ export default function DocsPage() {
   return (
     <>
       <section className="container py-24 sm:py-32 overflow-hidden">
-        {}
+        {/* Header */}
         <div ref={headerRef} className="text-center mb-16 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary mb-6">
             <BookOpen className="size-4" />
@@ -80,7 +80,7 @@ export default function DocsPage() {
           <p className="text-xl text-muted-foreground">{t("subtitle")}</p>
         </div>
 
-        {}
+        {/* Quick start */}
         <div className="max-w-4xl mx-auto mb-16 rounded-lg border border-primary/20 bg-card/80 backdrop-blur-sm p-8">
           <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
             <Terminal className="size-5 text-primary" />
@@ -101,7 +101,7 @@ export default function DocsPage() {
           </div>
         </div>
 
-        {}
+        {/* Doc cards grid */}
         <div ref={gridRef} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
           {docCards.map(({ icon: CardIcon, titleKey, descKey, href, accent, iconColor }) => (
             <Link
@@ -123,6 +123,7 @@ export default function DocsPage() {
           ))}
         </div>
 
+        {/* Architecture diagram placeholder */}
         <div id="architecture" className="max-w-5xl mx-auto mt-20">
           <h2 className="text-3xl font-bold text-center mb-4">{t("arch_section_title")}</h2>
           <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">{t("arch_section_desc")}</p>

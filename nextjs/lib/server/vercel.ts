@@ -84,7 +84,7 @@ export async function getAuthorizedVercelClient(
     include: {
       organization: {
         select: {
-          userId: true, 
+          userId: true, // Organization owner user ID
         },
       },
       bundle: {
@@ -177,7 +177,7 @@ export async function getProviderClient(
           console.log(`[Cloudflare Client] GET KV key: ${key}`);
           try {
             const res = await fetch(
-              `https:
+              `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${key}`,
               {
                 method: "GET",
                 headers: {
@@ -195,7 +195,7 @@ export async function getProviderClient(
           console.log(`[Cloudflare Client] PUT KV key: ${key} = ${value}`);
           try {
             const res = await fetch(
-              `https:
+              `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${key}`,
               {
                 method: "PUT",
                 headers: {
@@ -215,7 +215,7 @@ export async function getProviderClient(
           console.log(`[Cloudflare Client] DELETE KV key: ${key}`);
           try {
             const res = await fetch(
-              `https:
+              `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${key}`,
               {
                 method: "DELETE",
                 headers: {
@@ -238,9 +238,6 @@ export async function getProviderClient(
   }
 }
 
-/**
- * Centrally manages and synchronizes Edge Config across all linked providers.
- */
 export async function syncCentralEdgeConfig(
   userId: string,
   projectProviders: MultiProviderConfig[],
@@ -261,7 +258,7 @@ export async function syncCentralEdgeConfig(
           console.log(`[Vercel SDK] Missing edgeConfigId for project ${p.projectId}, skipped.`);
         }
       } else if (p.provider === "cloudflare" && p.projectId) {
-        // For Cloudflare, projectId is the KV namespace ID
+        
         const namespaceId = p.projectId;
         console.log(`[Cloudflare KV] Syncing to namespace ${namespaceId}`);
         for (const item of items) {

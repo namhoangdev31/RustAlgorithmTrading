@@ -252,7 +252,7 @@ async function publishViaAdapter({
       throw new Error("IPFS adapter response did not include cid.");
     }
     return {
-      locator: `ipfs:
+      locator: `ipfs://${cid}`,
       cid,
       metadata: payload,
     };

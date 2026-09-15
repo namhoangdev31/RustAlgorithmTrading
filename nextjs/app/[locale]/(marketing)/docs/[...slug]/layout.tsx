@@ -84,7 +84,7 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
 
   const sidebarContent = (
     <div className="flex flex-col h-full bg-background/20 backdrop-blur-sm p-6 overflow-y-auto select-none">
-      {}
+      {/* Search Input Trigger */}
       <button
         type="button"
         onClick={() => setSearchOpen(true)}
@@ -99,7 +99,7 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
         </kbd>
       </button>
 
-      {}
+      {/* Navigation Groups */}
       <nav className="space-y-6 flex-1">
         {docsNavigation.map((group) => {
           const Icon = iconMap[group.title] || BookOpen;
@@ -165,24 +165,27 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen text-foreground relative bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:32px_32px]">
 
+      {/* Background gradients */}
       <div className="absolute top-0 left-1/4 right-1/4 h-[350px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
+      {/* Desktop Sidebar (sticky) */}
       <aside className="hidden md:block w-72 shrink-0 h-[calc(100vh-5rem)] sticky top-20 border-r border-border/40 bg-background/20 backdrop-blur-sm z-30">
         {sidebarContent}
       </aside>
 
+      {/* Mobile Drawer (visible on mobile menu click) */}
       <div
         className={cn(
           "md:hidden fixed inset-0 z-50 transition-all duration-300",
           mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
       >
-        
+        {/* Backdrop */}
         <div
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           onClick={() => setMobileOpen(false)}
         />
-        
+        {/* Drawer Content */}
         <div
           className={cn(
             "absolute top-0 bottom-0 left-0 w-80 max-w-[85vw] transition-transform duration-300 transform shadow-2xl z-50 border-r border-border/60 bg-background",
@@ -193,6 +196,7 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
+      {/* Mobile Sticky Sub-Header with Hamburger */}
       <div className="md:hidden fixed top-20 left-0 right-0 z-40 bg-background/80 backdrop-blur-md border-b border-border/60 px-4 py-3 flex items-center justify-between">
         <button
           onClick={() => setMobileOpen(true)}
@@ -206,12 +210,15 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
         </span>
       </div>
 
+      {/* Content Container */}
       <div className="flex-1 min-w-0 flex gap-10 max-w-6xl mx-auto px-4 py-8 md:px-8 md:py-10">
 
+        {/* Main Document Content */}
         <main className="flex-1 min-w-0 mt-12 md:mt-0 select-text">
           {children}
         </main>
 
+        {/* Right Sidebar - Table of Contents (hidden on desktop under 1024px) */}
         <aside className="hidden lg:block w-60 shrink-0 h-[calc(100vh-8rem)] sticky top-28 overflow-y-auto pr-2">
           <TableOfContents />
         </aside>

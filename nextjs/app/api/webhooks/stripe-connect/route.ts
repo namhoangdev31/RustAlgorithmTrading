@@ -11,7 +11,6 @@ export async function GET(req: NextRequest) {
 
   console.log(`[Stripe Webhook Refresh] Refreshing onboarding for account ${accountId}, org ${orgId}`);
 
-  // Redirect back to billing dashboard page (we can append error/refresh status)
   const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const redirectUrl = new URL("/marketplace/billing", baseUrl);
   redirectUrl.searchParams.set("stripe_onboarding", "refreshed");
@@ -20,7 +19,6 @@ export async function GET(req: NextRequest) {
   return NextResponse.redirect(redirectUrl.toString());
 }
 
-// POST handler processes Stripe events
 export async function POST(req: NextRequest) {
   let stripeEventRecordId: string | null = null;
   try {
@@ -52,7 +50,7 @@ export async function POST(req: NextRequest) {
       case "account.updated": {
         const account = event.data.object;
         const stripeAccountId = account.id;
-        // In Stripe, details_submitted indicates onboarding complete
+        
         const active = account.details_submitted || account.charges_enabled;
 
         const partnerAccount = await prisma.marketplacePartnerAccount.findFirst({
@@ -89,7 +87,6 @@ export async function POST(req: NextRequest) {
             },
           });
 
-          // Record a marketplace install event
           await prisma.marketplaceInstallEvent.create({
             data: {
               bundleId: transaction.bundleId,

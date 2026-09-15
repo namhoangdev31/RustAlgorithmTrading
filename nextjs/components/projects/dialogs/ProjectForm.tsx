@@ -174,6 +174,7 @@ export function ProjectForm({
           <Input defaultValue={project?.bundle?.shortDescription ?? ""} name="shortDescription" placeholder="Short summary of the compiled bundle" className={fieldControlClass} />
         </div>
 
+        {/* GitHub Integration for project creation */}
         {!project && github.connected && (
           <div className="grid gap-2 md:col-span-2 border-t border-hairline pt-4 mt-2">
             <Label className={fieldLabelClass}>Link GitHub Repository (Optional)</Label>
@@ -196,6 +197,7 @@ export function ProjectForm({
           </div>
         )}
 
+        {/* Vercel Integration Section */}
         {category === "web" && (
           <div className="md:col-span-2 mt-2 pt-2 border-t border-hairline-cool animate-in fade-in duration-200">
             <Label className="text-[11px] font-bold text-primary uppercase tracking-wider block mb-3">Vercel Deployment</Label>
@@ -283,7 +285,7 @@ export function ProjectForm({
                     </div>
                     <Button asChild size="sm" variant="outline" className="h-8 text-xs font-semibold border-hairline-strong hover:bg-canvas bg-canvas shrink-0">
                       <a
-                        href={`https:
+                        href={`https://vercel.com/new`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -315,7 +317,7 @@ export function ProjectForm({
         </div>
       </form>
 
-      {}
+      {/* GitHub Repository integration section for edit project */}
       {project && (
         <div className="border-t border-hairline pt-6 mt-6">
           <Label className="text-xs font-bold text-ink uppercase tracking-wider block mb-4 flex items-center gap-2">
@@ -352,7 +354,7 @@ export function ProjectForm({
                 </form>
               </div>
 
-              {}
+              {/* Webhook details */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="p-4 bg-canvas-soft/40 border border-hairline rounded-lg space-y-2">
                   <div className="text-[11px] font-bold text-ink-mute uppercase tracking-wider">{t("form.webhook_url") || "Webhook URL"}</div>
@@ -387,7 +389,7 @@ export function ProjectForm({
                 </div>
               </div>
 
-              {}
+              {/* Webhook Delivery Logs */}
               <div className="space-y-2">
                 <div className="text-[11px] font-bold text-ink-mute uppercase tracking-wider flex items-center gap-1.5">
                   <Calendar className="size-3.5" />

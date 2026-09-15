@@ -76,7 +76,6 @@ function getSignatureV4Headers(
   return headers;
 }
 
-// Delete object from R2/S3
 async function deleteFromR2OrS3(key: string): Promise<boolean> {
   const accessKeyId = process.env.LEPOS_CACHE_ACCESS_KEY_ID;
   const secretAccessKey = process.env.LEPOS_CACHE_SECRET_ACCESS_KEY;
@@ -85,7 +84,7 @@ async function deleteFromR2OrS3(key: string): Promise<boolean> {
   const region = process.env.LEPOS_CACHE_REGION || "us-east-1";
 
   if (!accessKeyId || !secretAccessKey || !bucket || !endpoint) {
-    console.log(`[Auto-Pruning R2/S3 Mock] Cloud credentials not configured. Simulating delete of s3:
+    console.log(`[Auto-Pruning R2/S3 Mock] Cloud credentials not configured. Simulating delete of s3://${bucket}/${key}`);
     return true;
   }
 
@@ -178,7 +177,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing repository information" }, { status: 400 });
   }
 
-  // Find the active integration matching this repository
   const integration = await prisma.bundleExternalIntegrations.findFirst({
     where: {
       integrationType: "github",
@@ -199,7 +197,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No bundle associated with this integration" }, { status: 400 });
   }
 
-  // Verify HMAC-SHA256 signature
   const signature = request.headers.get("x-hub-signature-256");
   if (!signature) {
     await appendIntegrationLog(integration.id, integration.config, {
@@ -240,7 +237,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
-  // Handle Ping Event
   if (event === "ping") {
     await appendIntegrationLog(integration.id, integration.config, {
       event,
@@ -251,7 +247,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, message: "pong" });
   }
 
-  // Handle Pull Request Event for Previews & Auto-pruning
   if (event === "pull_request") {
     const action = payload.action;
     const prNumber = payload.number;
@@ -264,8 +259,7 @@ export async function POST(request: NextRequest) {
     if (action === "closed") {
       try {
         console.log(`[PR Webhook] PR #${prNumber} closed. Initiating auto-pruning of preview deployment...`);
-        
-        // 1. Delete preview deployment records in the database
+
         const deletedDeployments = await prisma.nativeDeployment.deleteMany({
           where: {
             projectId: projectId,
@@ -274,7 +268,6 @@ export async function POST(request: NextRequest) {
         });
         console.log(`[PR Webhook] Deleted ${deletedDeployments.count} native deployment records for PR #${prNumber}`);
 
-        // 2. Delete preview release track records in the database
         const deletedTracks = await prisma.bundleReleaseTracks.deleteMany({
           where: {
             bundle: { projectId: projectId },
@@ -283,7 +276,6 @@ export async function POST(request: NextRequest) {
         });
         console.log(`[PR Webhook] Deleted ${deletedTracks.count} release track records for PR #${prNumber}`);
 
-        // 3. Auto-prune directory resources on Disk
         const prDir = path.join(process.cwd(), "public", "bundles", projectId, `pr-${prNumber}`);
         const prDirExists = await fs.access(prDir).then(() => true).catch(() => false);
         if (prDirExists) {
@@ -291,7 +283,6 @@ export async function POST(request: NextRequest) {
           console.log(`[PR Webhook] Pruned physical storage directory: ${prDir}`);
         }
 
-        // 4. Auto-prune static assets in Cloud Storage (R2/S3)
         const prKeys = [
           `lepoship/previews/${projectId}/pr-${prNumber}/index.html`,
           `lepoship/previews/${projectId}/pr-${prNumber}/patch-manifest.json`,
@@ -333,7 +324,7 @@ export async function POST(request: NextRequest) {
       }
       const decryptedToken = decryptSecret(githubAccessTokenEncrypted);
       
-      const previewUrl = `https:
+      const previewUrl = `https://pr-${prNumber}-${bundle.slug}.preview.lepos.dev`;
 
       const latestDeployment = await prisma.nativeDeployment.findFirst({
         where: { projectId, target: "preview" },
@@ -341,11 +332,9 @@ export async function POST(request: NextRequest) {
       });
       const deploymentId = latestDeployment?.id || `preview-${prNumber}`;
 
-      // Run Automated QA suite against the Ephemeral Preview environment
       const qaReport = await runAutomatedQaTests(previewUrl, projectId, deploymentId);
 
-      // 1. Post a comment on the PR containing preview link & QA Test Report
-      const commentUrl = `https:
+      const commentUrl = `https://api.github.com/repos/${repoFullName}/issues/${prNumber}/comments`;
       await fetch(commentUrl, {
         method: "POST",
         headers: {
@@ -359,9 +348,8 @@ export async function POST(request: NextRequest) {
         })
       });
 
-      // 2. Post status checks to GitHub
       if (sha) {
-        const statusUrl = `https:
+        const statusUrl = `https://api.github.com/repos/${repoFullName}/statuses/${sha}`;
 
         await fetch(statusUrl, {
           method: "POST",
@@ -379,7 +367,6 @@ export async function POST(request: NextRequest) {
           })
         });
 
-        // Post automated QA status
         await fetch(statusUrl, {
           method: "POST",
           headers: {
@@ -422,16 +409,14 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Handle Push Event (filter branch vs tag)
   if (event === "push") {
     const ref = payload.ref || "";
     if (!ref.startsWith("refs/tags/")) {
-      // Silence branch updates without cluttering with errors
+      
       return NextResponse.json({ success: true, message: "Ignored: push to branch instead of tag" });
     }
   }
 
-  // Handle Release Event (filter published)
   if (event === "release") {
     const action = payload.action;
     if (action !== "published") {
@@ -439,7 +424,6 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Extract the tag name
   let tag = "";
   if (event === "push") {
     const ref = payload.ref || "";
@@ -470,7 +454,6 @@ export async function POST(request: NextRequest) {
       throw new Error("Bundle has no associated project_id");
     }
 
-    // Clean tag name for versioning (strip leading v)
     const cleanTag = tag.startsWith("v") || tag.startsWith("V") ? tag.substring(1) : tag;
     const newVersion = cleanTag;
     const newBuildNumber = bundle.buildNumber + 1;
@@ -500,7 +483,7 @@ export async function POST(request: NextRequest) {
     });
     await enqueueBuild({
       projectId, bundleId: bundle.id, buildNumber: release.buildNumber, version: newVersion,
-      config: { platform: configObj.platform || "expo", gitRepoUrl: `https:
+      config: { platform: configObj.platform || "expo", gitRepoUrl: `https://github.com/${repoFullName}.git`, gitBranch: tag },
       trackId: release.id, releaseId: release.id, buildJobId: buildJob.id,
     });
 

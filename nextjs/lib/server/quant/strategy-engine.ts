@@ -38,9 +38,9 @@ export const DEFAULT_SIMCARRY_CONFIG: Required<SimCarryConfig> = {
   orderType: "STOP",
   trailing: {
     enabled: true,
-    beTriggerPoints: 8.0,     
-    trailTriggerPoints: 14.0, 
-    trailDistance: 6.0,       
+    beTriggerPoints: 8.0,     // Swing: khóa BE muộn hơn Canonical (8đ thay vì 6đ)
+    trailTriggerPoints: 14.0, // Swing: kích trail muộn hơn (14đ thay vì 12đ)
+    trailDistance: 6.0,       // Swing: khoảng trail rộng hơn (6đ thay vì 5đ)
   },
 };
 
@@ -178,9 +178,6 @@ export function generateSimCarry6Plan(
   };
 }
 
-/**
- * Tính toán Kèo Phụ Intraday Scalp: AllDaysLadder_CAP0.3
- */
 export function generateAllDaysLadderPlan(
   dateStr: string,
   snapshot: MarketSnapshot,
@@ -190,8 +187,7 @@ export function generateAllDaysLadderPlan(
   expectedLow?: number,
   config?: LadderStrategyConfig
 ): TradingPlan {
-  // Xác định hướng theo Open (đã đóng băng sau ATO) — KHÔNG dùng `current` để tránh lật kèo intraday.
-  // Ưu tiên config.side nếu caller chỉ định; ngược lại so Open vs Ref.
+
   const refOpen = snapshot.open > 0 ? snapshot.open : snapshot.current;
   const side: Direction = config?.side ?? (refOpen >= refPrice ? "LONG" : "SHORT");
   const entryPrice = Number(refPrice.toFixed(1));
@@ -201,8 +197,6 @@ export function generateAllDaysLadderPlan(
     : Number((entryPrice - tpDelta).toFixed(1));
   const maxCap = config?.maxCap ?? DEFAULT_LADDER_CONFIG.maxCap;
 
-  // Tính SL an toàn cho AllDaysLadder:
-  // SL KHÔNG ĐƯỢC trùng entryPrice. Phải nằm ngoài toàn bộ các nấc rải + buffer an toàn (>= 6.0đ từ WAP)
   let ladderSlPrice: number;
   if (side === "SHORT") {
     const highestStep = entryPrice + 4.0;
@@ -254,16 +248,6 @@ export function generateAllDaysLadderPlan(
   };
 }
 
-/**
- * HỆ THỐNG PHÁT 1 KÈO DUY NHẤT TRONG NGÀY (CANONICAL SINGLE-PLAN ADVISOR)
- * Hoàn toàn KHÔNG dùng dữ liệu tương lai (Zero Lookahead Barrier):
- * - Kết hợp đa nhân tố đã ĐÓNG BĂNG sau ATO: Price Action (Open vs Ref), Basis, ATR(5), EMA5/EMA10.
- *   KHÔNG dùng `current` (biến động mỗi tick) -> kèo không bị lật LONG<->SHORT intraday.
- * - Phát đúng 1 lệnh điều kiện Stop Order sau khi xác nhận Open (09:15):
- *   + Cấu trúc Bán ưu thế (Gap < -2đ, hoặc Open < Ref kèm Basis âm) -> SHORT: Stop Sell tại Ref - (mult*ATR5)
- *   + Cấu trúc Mua ưu thế (Gap > +2đ, hoặc Open >= Ref kèm Basis không âm) -> LONG: Stop Buy tại Ref + (mult*ATR5)
- * - Tỷ lệ R:R = 1:3.0 (TP 24.0đ, SL 8.0đ), tích hợp Trailing Stop & BE Lock tự động.
- */
 export function generateCanonicalQuantPlan(
   dateStr: string,
   refPrice: number,
@@ -280,8 +264,6 @@ export function generateCanonicalQuantPlan(
   const slPoints = config?.slPoints ?? DEFAULT_CANONICAL_CONFIG.slPoints;
   const maxCap = config?.maxCap ?? DEFAULT_CANONICAL_CONFIG.maxCap;
 
-  // Xác định xu hướng theo Price Action đã ĐÓNG BĂNG sau ATO (Open vs Ref) + Basis + ATR.
-  // KHÔNG dùng `current` (biến động mỗi tick) để tránh lật kèo intraday.
   let side: Direction;
   if (snapshot) {
     const gap = snapshot.open - refPrice;
@@ -293,7 +275,7 @@ export function generateCanonicalQuantPlan(
     } else if (gap > 2.0 || (!isOpenUnderRef && !isNegativeBasis)) {
       side = "LONG";
     } else {
-      // Vùng giằng co quanh Ref: dùng EMA5 vs EMA10 làm bộ lọc thứ cấp
+      
       side = ema5 >= ema10 ? "LONG" : "SHORT";
     }
   } else {
@@ -347,13 +329,6 @@ export function generateCanonicalQuantPlan(
   };
 }
 
-/**
- * TỔ HỢP ĐA CHIẾN LƯỢC BFXPS (MULTI-ENGINE ENSEMBLE PORTFOLIO)
- * Tổ hợp đầy đủ 3 Engine tiêu chuẩn tương tự web gốc ai.beefx.com:
- * 1. simcarrry6 t+1: Kèo Chính Swing (trọng số 2.0)
- * 2. AllDaysLadder_CAP0.3: Kèo Intraday Scalp rải nấc (trọng số 1.0)
- * 3. CanonicalDirectionalBreakout: Kèo Breakout Intraday chuẩn tắc (trọng số 1.5)
- */
 export function generateMultiEnginePortfolio(
   dateStr: string,
   snapshot: MarketSnapshot,
@@ -369,7 +344,6 @@ export function generateMultiEnginePortfolio(
 ): TradingPlan[] {
   const { refPrice, atr5d, swingLow5d, swingHigh5d, ema5, ema10 } = metrics;
 
-  // 1. Kèo Chính Swing t+1: simcarrry6 (truyền ema5/ema10 cho dead-zone resolver)
   const simCarryPlan = generateSimCarry6Plan(
     dateStr,
     snapshot,
@@ -386,7 +360,6 @@ export function generateMultiEnginePortfolio(
   );
   simCarryPlan.consensusWeight = 2.0;
 
-  // 2. Kèo Phụ Intraday Scalp: AllDaysLadder_CAP0.3
   const ladderPlan = generateAllDaysLadderPlan(
     dateStr,
     snapshot,
@@ -397,7 +370,6 @@ export function generateMultiEnginePortfolio(
   );
   ladderPlan.consensusWeight = 1.0;
 
-  // 3. Kèo Breakout Chuẩn Tắc: CanonicalDirectionalBreakout (truyền expectedHigh/Low cho V44)
   const canonicalPlan = generateCanonicalQuantPlan(
     dateStr,
     refPrice,
@@ -411,7 +383,6 @@ export function generateMultiEnginePortfolio(
   );
   canonicalPlan.consensusWeight = 1.5;
 
-  // Inject pha giao dịch + cờ official (kèo đã khóa sau ATO 09:15 hay chỉ là observation)
   const phase = options?.phase ?? getTradingSessionPhase();
   const inOfficialWindow = phase !== "PRE_ATO" && phase !== "ATO_OBSERVATION";
   const isOfficial = options?.isOfficial ?? inOfficialWindow;
@@ -427,15 +398,6 @@ export function generateMultiEnginePortfolio(
   return plans;
 }
 
-/**
- * Xác định pha giao dịch hiện tại theo lịch phái sinh VN30F1M (UTC+7)
- * - PRE_ATO:          < 08:45
- * - ATO_OBSERVATION:  08:45 – 09:15 (quan sát, chưa chốt kèo)
- * - CONTINUOUS:       09:15 – 11:30 & 13:00 – 14:30 (kèo chính thức)
- * - LUNCH_BREAK:      11:30 – 13:00
- * - ATC:              14:30 – 14:45
- * - CLOSED:           ≥ 14:45
- */
 export function getTradingSessionPhase(date: Date = new Date()): TradingSessionPhase {
   const vnTimeStr = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Asia/Ho_Chi_Minh",
@@ -444,7 +406,7 @@ export function getTradingSessionPhase(date: Date = new Date()): TradingSessionP
     second: "2-digit",
     hour12: false,
   }).format(date);
-  // vnTimeStr = "HH:MM:SS" or "HH:MM:SS"
+  
   const [h, m] = vnTimeStr.split(":").map(Number);
   const minuteOfDay = h * 60 + m;
 
@@ -457,10 +419,6 @@ export function getTradingSessionPhase(date: Date = new Date()): TradingSessionP
   return "CLOSED";
 }
 
-/**
- * Lấy ngày giao dịch hiện tại hoặc kế tiếp theo múi giờ Việt Nam (Asia/Ho_Chi_Minh - UTC+7)
- * Tự động bỏ qua Thứ 7 & Chủ Nhật (thị trường phái sinh VN30F nghỉ) -> chuyển sang Thứ 2 tiếp theo.
- */
 export function getVietnamTradingDate(date: Date = new Date()): string {
   const vnFormatter = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Ho_Chi_Minh",
@@ -468,15 +426,15 @@ export function getVietnamTradingDate(date: Date = new Date()): string {
     month: "2-digit",
     day: "2-digit",
   });
-  const dateStr = vnFormatter.format(date); // YYYY-MM-DD
+  const dateStr = vnFormatter.format(date); 
   const parts = dateStr.split("-").map(Number);
   const vnDate = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-  const dayOfWeek = vnDate.getUTCDay(); // 0 = Chủ Nhật, 6 = Thứ 7
+  const dayOfWeek = vnDate.getUTCDay(); 
 
   if (dayOfWeek === 6) {
-    vnDate.setUTCDate(vnDate.getUTCDate() + 2); // Thứ 7 -> Thứ 2
+    vnDate.setUTCDate(vnDate.getUTCDate() + 2); 
   } else if (dayOfWeek === 0) {
-    vnDate.setUTCDate(vnDate.getUTCDate() + 1); // Chủ Nhật -> Thứ 2
+    vnDate.setUTCDate(vnDate.getUTCDate() + 1); 
   }
 
   const y = vnDate.getUTCFullYear();
@@ -485,9 +443,6 @@ export function getVietnamTradingDate(date: Date = new Date()): string {
   return `${y}-${m}-${d}`;
 }
 
-/**
- * Chuyển đổi Date sang định dạng YYYY-MM-DD theo đúng múi giờ Việt Nam (UTC+7 / Asia/Ho_Chi_Minh)
- */
 export function getVnDateString(date: Date = new Date()): string {
   const vnFormatter = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Ho_Chi_Minh",
@@ -498,9 +453,6 @@ export function getVnDateString(date: Date = new Date()): string {
   return vnFormatter.format(date);
 }
 
-/**
- * Kiểm tra xem ngày có rơi vào ngày cuối tuần (Thứ 7 / Chủ Nhật) không theo múi giờ Việt Nam
- */
 export function isWeekend(dateStr: string): boolean {
   const parts = dateStr.split("-").map(Number);
   const d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
@@ -508,18 +460,6 @@ export function isWeekend(dateStr: string): boolean {
   return day === 0 || day === 6;
 }
 
-/**
-/**
- * THUẬT TOÁN TỐI ƯU KÈO TOÀN BỘ PHIÊN (KHI ĐƯỢC KÍCH HOẠT NHẤN NÚT)
- * 
- * Khi người dùng nhấn nút tái tính toán:
- * 1. Quét toàn bộ nến trong phiên (session bars từ 09:00 tới hiện tại):
- *    - Session High, Session Low, Range, Session VWAP.
- *    - Xác định hành vi giá sau điểm quét SL:
- *      + Kịch bản 1: Quét thanh khoản giả / Rút chân (Bull Trap / Bear Trap). Giá chỉ nhú qua SL rồi quay trở lại bên trong biên độ phiên hoặc dưới/trên VWAP -> Đưa ra kèo Counter-Trend (Re-entry hướng ban đầu với SL cực chặt tại đỉnh/đáy phiên vừa tạo, R:R tối ưu).
- *      + Kịch bản 2: Bứt phá / Gãy nền tiếp diễn thật sự (True Breakout / Breakdown). Giá duy trì sức ép và đóng nến xa điểm SL theo hướng phá vỡ -> Đảo chiều vị thế bám theo đà sóng bứt phá.
- * 2. Đưa ra Kèo Hợp Lý Nhất duy trì hiệu lực tới khi kết thúc phiên (14:30 - 14:45 ATC).
- */
 export function recalibratePlanAfterStopLoss(
   originalPlan: TradingPlan,
   snapshot: MarketSnapshot,
@@ -532,29 +472,25 @@ export function recalibratePlanAfterStopLoss(
   const safeAtr = atr5d > 0 ? atr5d : 10.0;
   const livePrice = snapshot.current > 0 ? snapshot.current : actualCutloss;
 
-  // Nếu có dữ liệu nến toàn bộ phiên:
   if (bars && bars.length > 0) {
     const sessionHigh = Math.max(...bars.map((b) => b.high));
     const sessionLow = Math.min(...bars.map((b) => b.low));
-    
-    // Tính VWAP phiên
+
     let sumTypicalPrice = 0;
     for (const b of bars) {
       sumTypicalPrice += (b.high + b.low + b.close) / 3;
     }
     const sessionVwap = Number((sumTypicalPrice / bars.length).toFixed(1));
 
-    // Lấy 15 nến gần nhất để đánh giá momentum
     const recentBars = bars.slice(-15);
     const recentClose = recentBars[recentBars.length - 1]?.close ?? livePrice;
 
     if (originalPlan.side === "SHORT") {
-      // SL của SHORT bị dính (giá tăng lên quét SL tại actualCutloss)
-      // Kiểm tra: Giá có bị tụt ngược lại dưới actualCutloss hoặc dưới VWAP không?
+
       const isBullTrap = recentClose < actualCutloss || (sessionHigh > actualCutloss && livePrice < actualCutloss - 0.3);
 
       if (isBullTrap) {
-        // Quét râu thanh khoản đỉnh (Bull Trap) rồi thoái lui -> Kèo hợp lý nhất: SHORT lại với SL ngay trên đỉnh phiên vừa quét
+        
         const newSide: Direction = "SHORT";
         const entryPrice = Number(livePrice.toFixed(1));
         const tpTarget = Math.max(sessionLow, sessionVwap - 0.5 * safeAtr);
@@ -575,7 +511,7 @@ export function recalibratePlanAfterStopLoss(
           execution: undefined,
         };
       } else {
-        // Bứt phá đỉnh thật sự -> Đảo sang LONG bám theo sóng tăng tới hết phiên
+        
         const newSide: Direction = "LONG";
         const entryPrice = Number(livePrice.toFixed(1));
         const tpDistance = Number(Math.max(12.0, 1.0 * safeAtr).toFixed(1));
@@ -598,12 +534,11 @@ export function recalibratePlanAfterStopLoss(
         };
       }
     } else {
-      // SL của LONG bị dính (giá giảm xuống quét SL tại actualCutloss)
-      // Kiểm tra: Giá có rút chân hồi phục ngược lại lên trên actualCutloss hoặc trên VWAP không?
+
       const isBearTrap = recentClose > actualCutloss || (sessionLow < actualCutloss && livePrice > actualCutloss + 0.3);
 
       if (isBearTrap) {
-        // Quét râu đáy rút chân (Bear Trap) -> Kèo hợp lý nhất: LONG lại với SL ngay dưới đáy phiên vừa quét
+        
         const newSide: Direction = "LONG";
         const entryPrice = Number(livePrice.toFixed(1));
         const tpTarget = Math.min(sessionHigh, sessionVwap + 0.5 * safeAtr);
@@ -624,7 +559,7 @@ export function recalibratePlanAfterStopLoss(
           execution: undefined,
         };
       } else {
-        // Gãy nền thật sự -> Đảo sang SHORT bám theo sóng xả tới hết phiên
+        
         const newSide: Direction = "SHORT";
         const entryPrice = Number(livePrice.toFixed(1));
         const tpDistance = Number(Math.max(12.0, 1.0 * safeAtr).toFixed(1));
@@ -649,7 +584,6 @@ export function recalibratePlanAfterStopLoss(
     }
   }
 
-  // Fallback (khi không có danh sách nến chi tiết, ví dụ unit test hoặc cold-start)
   if (originalPlan.side === "SHORT") {
     const newSide: Direction = "LONG";
     const entryPrice = Number(actualCutloss.toFixed(1));

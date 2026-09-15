@@ -35,7 +35,7 @@ export async function createNativeDeployment(input: CreateNativeDeploymentInput)
   const buildNumber = (project.bundle?.buildNumber || 0) + count + 1;
   const version = input.version || `${project.bundle?.version || "1.0.0"}-native.${buildNumber}`;
   const storagePath =
-    input.storagePath || project.bundle?.storagePath || `internal:
+    input.storagePath || project.bundle?.storagePath || `internal://native/${input.projectId}/${buildNumber}`;
 
   const deployment = await prisma.nativeDeployment.create({
     data: {

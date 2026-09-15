@@ -622,7 +622,7 @@ export async function getUsersData(userId: string, params: SearchParamsInput) {
 }
 
 export async function getSettingsData(userId: string) {
-  // Keep account data aligned with Firebase provider profile when possible.
+  
   const current = await prisma.user.findUnique({
     where: { id: userId },
     select: {

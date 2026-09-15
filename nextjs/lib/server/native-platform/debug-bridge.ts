@@ -77,14 +77,11 @@ export async function relayLogMessage(input: {
     metadata: input.metadata || {},
   };
 
-  // Push to list, keep last 1000 logs
   await redis.lpush(logKey, JSON.stringify(logEntry));
   await redis.ltrim(logKey, 0, 999);
-  
-  // Set TTL on logs list to match session TTL
+
   await redis.expire(logKey, 3600);
 
-  // Publish to real-time pubsub channel
   await redisPublish(`debug:${input.sessionId}`, {
     type: "log",
     data: logEntry,

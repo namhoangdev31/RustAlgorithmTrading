@@ -22,32 +22,27 @@ function ChallengeContent() {
 
     async function runChallenge() {
       if (!active) return;
-      
-      // Step 1: Handshake
+
       setStatus("initializing");
       addLog("Initializing Edge WAF Browser verification handshake...");
       await new Promise((resolve) => setTimeout(resolve, 800));
-      
-      // Step 2: Solve JS DOM Browser Checks
+
       if (!active) return;
       setStatus("solving");
       addLog("Evaluating client JS DOM parameters to verify browser integrity...");
       setProgress(10);
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      // Check 1: Automation Check (navigator.webdriver)
       const isWebdriver = navigator.webdriver;
       addLog(`[DOM] Webdriver validation: ${isWebdriver ? "AUTOMATED CLIENT" : "PASSED"}`);
       setProgress(20);
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      // Check 2: Display Check (screen dimensions)
       const isHeadless = window.screen.width === 0 || window.screen.height === 0;
       addLog(`[DOM] Display validation: ${isHeadless ? "HEADLESS" : "PASSED (" + window.screen.width + "x" + window.screen.height + ")"}`);
       setProgress(30);
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      // Check 3: Canvas Rendering Verification
       let canvasOk = false;
       try {
         const canvas = document.createElement("canvas");
@@ -70,7 +65,6 @@ function ChallengeContent() {
       setProgress(40);
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      // Step 3: Run Crypto PoW challenge
       addLog("Starting cryptographic Proof-of-Work SHA-256 challenge...");
       const challengeSeed = Math.random().toString(36).substring(2, 15);
       addLog(`Generating seed: ${challengeSeed}`);
@@ -78,12 +72,12 @@ function ChallengeContent() {
       let solved = false;
       let currentNonce = 0;
       let hashStr = "";
-      const difficulty = 4; // requires 4 leading zeros
+      const difficulty = 4; 
       const targetPrefix = "0".repeat(difficulty);
       const startTime = performance.now();
 
       while (!solved && active && currentNonce < 15000) {
-        // Run in batches to not lock event loop
+        
         for (let i = 0; i < 400; i++) {
           currentNonce++;
           const candidate = challengeSeed + currentNonce;
@@ -117,8 +111,7 @@ function ChallengeContent() {
       const isBot = isWebdriver || isHeadless || !canvasOk || !solved;
 
       if (!active) return;
-      
-      // Step 4: Verifying
+
       setStatus("verifying");
       setProgress(98);
       addLog(isBot ? "Client validation failed. WAF Blocked." : "Client signatures valid. Granting access...");
@@ -132,18 +125,15 @@ function ChallengeContent() {
         return;
       }
 
-      // Step 5: Success
       setStatus("success");
       setProgress(100);
       addLog("JS DOM & Cryptographical challenge passed! Redirecting...");
-      
-      // Set bypass cookie for 2 hours (7200 seconds)
+
       document.cookie = "lepos-challenge-passed=true; path=/; max-age=7200; SameSite=Lax";
       
       await new Promise((resolve) => setTimeout(resolve, 1000));
       if (!active) return;
-      
-      // Redirect back to original route
+
       window.location.href = callbackUrl;
     }
 

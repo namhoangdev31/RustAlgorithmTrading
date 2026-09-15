@@ -52,7 +52,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Google ReCaptcha Verification Check (simulated)
     if (recaptchaToken && recaptchaToken === "invalid-token") {
       return NextResponse.json(
         { error: "reCAPTCHA validation failed." },
@@ -60,7 +59,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Save submission to database
     const submission = await prisma.formSubmission.create({
       data: {
         formId,
@@ -70,7 +68,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // 4. Trigger Salesforce and Google Sheets synchronization based on database settings
     const syncPromises = [];
     if (form.googleSheetsSync) {
       syncPromises.push(syncSubmissionToExternal(data, "google-sheets"));
@@ -91,7 +88,6 @@ export async function POST(request: NextRequest) {
       .filter((outcome) => !outcome.success)
       .map((outcome) => ({ provider: outcome.provider, code: outcome.code, message: outcome.message }));
 
-    // 5. Trigger Webhook in background (non-blocking)
     if (form.webhookUrl) {
       triggerFormWebhook(formId, submission.id, data).catch((err) => {
         console.error(`[Webhook Trigger Error] Failed for submission ${submission.id}:`, err);

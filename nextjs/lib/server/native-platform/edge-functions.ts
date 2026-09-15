@@ -137,7 +137,7 @@ class IsolatePoolManager {
     return new Worker(WORKER_CODE, {
       eval: true,
       resourceLimits: {
-        maxOldGenerationSizeMb: isWasm ? 16 : 128, 
+        maxOldGenerationSizeMb: isWasm ? 16 : 128, // Strict RAM limits: 16MB for Wasm, 128MB for JS
       },
     });
   }
@@ -219,7 +219,6 @@ class IsolatePoolManager {
   }
 }
 
-// Global warm worker pool instance
 let globalIsolatePool: IsolatePoolManager | null = null;
 
 function getIsolatePool() {
@@ -229,15 +228,11 @@ function getIsolatePool() {
   return globalIsolatePool;
 }
 
-/**
- * Runs an edge function inside the Thread/Isolate Isolation Pool.
- */
 export async function runNativeEdgeFunction(input: EdgeExecutionInput) {
   const overallStart = performance.now();
   const logs: string[] = [];
   const timeout = input.timeoutMs || 50;
 
-  // 1. Limit code size (10MB limit)
   if (input.code && input.code.length > 10 * 1024 * 1024) {
     throw new Error("Payload limit exceeded: Code size cannot exceed 10MB.");
   }
@@ -255,7 +250,6 @@ export async function runNativeEdgeFunction(input: EdgeExecutionInput) {
 
   const startupStart = performance.now();
 
-  // 2. Fetch from Cloud Storage with optimized cold-start caching
   if (isUrl) {
     logs.push(`[Cloud Storage] Fetching WebAssembly bytecode from: ${codePayload}`);
     const cacheKey = codePayload;
@@ -281,7 +275,6 @@ export async function runNativeEdgeFunction(input: EdgeExecutionInput) {
       if (wasmBuffer.length > 10 * 1024 * 1024) throw new Error("Downloaded Wasm module exceeds the 10MB limit.");
       logs.push(`[Cloud Storage] HTTP download complete (${wasmBuffer.length} bytes).`);
 
-      // Compile and warm up cache
       await WebAssembly.compile(new Uint8Array(wasmBuffer));
       WASM_MODULE_CACHE.set(cacheKey, wasmBuffer);
       
@@ -300,7 +293,6 @@ export async function runNativeEdgeFunction(input: EdgeExecutionInput) {
     }
   }
 
-  // Compile the supported integer-only JS subset when a Wasm execution was requested.
   if (isWasmRun && !wasmBytes && !isUrl) {
     try {
       logs.push(`[JS-to-Wasm] Compiling JS code to WebAssembly bytecode...`);
@@ -313,7 +305,6 @@ export async function runNativeEdgeFunction(input: EdgeExecutionInput) {
     }
   }
 
-  // Set Wasm default timeout to 10ms, JS timeout to 50ms (or input.timeoutMs)
   const executionTimeout = input.timeoutMs || (isWasmRun ? 10 : 50);
 
   const startupMs = Math.round((performance.now() - startupStart) * 100) / 100;
@@ -364,9 +355,6 @@ export async function runNativeEdgeFunction(input: EdgeExecutionInput) {
   };
 }
 
-/**
- * Compiles a simple JavaScript function returning a constant or arithmetic expression to WebAssembly binary bytecode.
- */
 export async function compileJsToWasm(jsCode: string): Promise<Buffer> {
   const funcMatch = jsCode.match(/function\s+(handler|main)\s*\(\s*\)\s*\{([^]*?)\}/);
   if (!funcMatch) {
@@ -407,7 +395,7 @@ export async function compileJsToWasm(jsCode: string): Promise<Buffer> {
     const val = parseInteger(expr);
     instructions.push(0x41, ...encodeLEB128(val));
   }
-  instructions.push(0x0b); // end
+  instructions.push(0x0b); 
 
   const exportNameBytes = Buffer.from(funcName, "utf8");
   const exportPayload = [
@@ -415,7 +403,7 @@ export async function compileJsToWasm(jsCode: string): Promise<Buffer> {
     exportNameBytes.length,
     ...exportNameBytes,
     0, // export kind: function
-    0  // function index: 0
+    0  
   ];
   
   const funcBodyPayload = [0, ...instructions];
@@ -428,17 +416,13 @@ export async function compileJsToWasm(jsCode: string): Promise<Buffer> {
   const bytes: number[] = [
     0x00, 0x61, 0x73, 0x6d, // Magic
     0x01, 0x00, 0x00, 0x00, // Version
-    
-    // Section 1: Type
+
     0x01, 0x05, 0x01, 0x60, 0x00, 0x01, 0x7f,
-    
-    // Section 3: Function
+
     0x03, 0x02, 0x01, 0x00,
-    
-    // Section 7: Export
+
     0x07, exportPayload.length, ...exportPayload,
-    
-    // Section 10: Code
+
     0x0a, codePayload.length, ...codePayload
   ];
   

@@ -35,9 +35,9 @@ function asSourceMapDocument(mapJson: unknown): SourceMapDocument | null {
 
 function normalizeSourceName(value: string) {
   return value
-    .replace(/^webpack:\/\
-    .replace(/^file:\/\
-    .replace(/^\.?\
+    .replace(/^webpack:\/\//, "")
+    .replace(/^file:\/\//, "")
+    .replace(/^\.?\//, "")
     .replace(/\?.*$/, "")
     .replace(/\\/g, "/");
 }

@@ -19,7 +19,6 @@ export function evaluateR5(
       };
     }
 
-    // 2. Điều kiện FLIP_HINT: Gãy hỗ trợ với Volume đột biến
     if (gap < -4.0 && m15Volume && avgM15Volume && m15Volume > 1.5 * avgM15Volume) {
       return {
         action: "FLIP_HINT",
@@ -27,13 +26,12 @@ export function evaluateR5(
       };
     }
 
-    // 3. Điều kiện KEEP: Giá mở cửa an toàn
     return {
       action: "KEEP",
       reason: `Mở cửa bình thường quanh vùng kỳ vọng -> Giữ nguyên kế hoạch LONG.`,
     };
   } else {
-    // SHORT
+    
     if (gap > 6.0 || openPrice >= slPrice - 2.0) {
       return {
         action: "CANCEL",
@@ -55,11 +53,6 @@ export function evaluateR5(
   }
 }
 
-/**
- * Quy tắc V44 (Anti-Lookahead & Divergence Gate):
- * LONG mà Expected-High < Ref -> CHẶN
- * SHORT mà Expected-Low > Ref -> CHẶN
- */
 export function evaluateV44(
   side: Direction,
   refPrice: number,
@@ -87,9 +80,6 @@ export function evaluateV44(
   return { isV44Active: false };
 }
 
-/**
- * Cơ chế LATEST_SHORT_CUTLOSS_REVERSAL / Cutloss Resolver
- */
 export function resolveCutloss(
   side: Direction,
   swingLow5d: number,
@@ -102,7 +92,7 @@ export function resolveCutloss(
     }
     return swingLow5d;
   } else {
-    // SHORT: SL phải nằm CAO HƠN entry → dùng swingHigh5d (đỉnh 5 ngày)
+    
     const baseHigh = swingHigh5d ?? swingLow5d;
     if (previousFailureCutloss && previousFailureCutloss > 0) {
       return Math.max(baseHigh, previousFailureCutloss);

@@ -50,7 +50,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Re-verification password is required" }, { status: 400 });
     }
 
-    // Verify admin password via Firebase
     if (user.email) {
       try {
         await signInFirebaseWithPassword(user.email, password);
@@ -61,15 +60,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User email not found for verification." }, { status: 400 });
     }
 
-    // Send the updated limits to Go Control Plane
     const goUrl = process.env.GO_CONTROL_PLANE_URL;
     const apiKey = process.env.TELEMETRY_API_KEY || process.env.LEPOS_INTERNAL_API_KEY || "";
     if (!goUrl || !apiKey) {
       return NextResponse.json({ error: "Go control plane is not configured." }, { status: 503 });
     }
 
-    // GORM/Go REST API expects fields in snake_case format as verified in previously built Go structures.
-    // Let's map camelCase to snake_case for Go compatibility.
     const payload = {
       max_shares: Number(riskLimits.maxShares),
       max_notional_per_position: Number(riskLimits.maxNotionalPerPosition),
@@ -101,7 +97,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: `Go Control Plane rejected changes: ${errText}` }, { status: response.status });
     }
 
-    // Record the change in prisma audit log!
     await prisma.riskEvent.create({
       data: {
         eventType: "CONFIG_CHANGE",

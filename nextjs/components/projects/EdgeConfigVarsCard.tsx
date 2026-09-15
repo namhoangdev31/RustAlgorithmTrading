@@ -167,7 +167,6 @@ export function EdgeConfigVarsCard({
     }
   }, [vercelProjectEnvVars]);
 
-  // Load available stores if not connected
   useEffect(() => {
     if (!edgeConfigId && vercelProjectId) {
       const loadStores = async () => {
@@ -183,7 +182,6 @@ export function EdgeConfigVarsCard({
     }
   }, [edgeConfigId, vercelProjectId]);
 
-  // Load items if connected
   const fetchItems = async (idToUse: string) => {
     setLoadingItems(true);
     setErrorMsg("");
@@ -247,7 +245,7 @@ export function EdgeConfigVarsCard({
     formData.append("returnTo", returnTo);
 
     startTransition(async () => {
-      // We can directly call the server action and fetch items again on completion
+      
       await patchEdgeConfigItemAction(formData);
       setSuccessMsg(`Flag "${k}" deleted successfully.`);
       fetchItems(edgeConfigId);
@@ -330,6 +328,7 @@ export function EdgeConfigVarsCard({
           </div>
         )}
 
+        {/* 1. Connection Step (If not linked yet) */}
         {!edgeConfigId ? (
           <div className="space-y-6 max-w-lg">
             <div className="p-4 bg-canvas-soft/40 border border-hairline border-dashed rounded-md text-center">
@@ -341,7 +340,7 @@ export function EdgeConfigVarsCard({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
+              {/* Option A: Link Existing Store */}
               <div className="border border-hairline p-4 rounded-md space-y-4">
                 <p className="text-xs font-bold uppercase text-ink-mute tracking-wider">Option A: Link Existing Store</p>
                 <form
@@ -384,6 +383,7 @@ export function EdgeConfigVarsCard({
                 </form>
               </div>
 
+              {/* Option B: Create and Link Store */}
               <div className="border border-hairline p-4 rounded-md space-y-4">
                 <p className="text-xs font-bold uppercase text-ink-mute tracking-wider">Option B: Create New Store</p>
                 <form
@@ -423,7 +423,7 @@ export function EdgeConfigVarsCard({
           </div>
         ) : (
           <div className="space-y-6">
-            
+            {/* Edge Config Sub-Tabs */}
             <div className="flex border-b border-hairline mb-4 select-none">
               <button
                 type="button"
@@ -462,7 +462,7 @@ export function EdgeConfigVarsCard({
 
             {activeTab === "flags" && (
               <div className="space-y-4">
-            
+            {/* Form */}
             {isFormOpen && (
               <form onSubmit={handleSubmitFlag} className="bg-canvas-soft/40 p-4 border border-hairline rounded-md space-y-4 animate-in slide-in-from-top-2 duration-200">
                 <div className="flex items-center justify-between">
@@ -570,6 +570,7 @@ export function EdgeConfigVarsCard({
               </form>
             )}
 
+            {/* Flags Table */}
             {loadingItems ? (
               <div className="flex flex-col items-center justify-center py-10 space-y-2">
                 <RefreshCw className="size-6 text-primary animate-spin" />
@@ -643,6 +644,7 @@ export function EdgeConfigVarsCard({
 
             <Separator className="bg-hairline my-6" />
 
+            {/* Centralized Edge Config Sync & Providers Dashboard */}
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -673,6 +675,7 @@ export function EdgeConfigVarsCard({
                 )}
               </div>
 
+              {/* Form to link provider */}
               {isLinkingFormOpen && (
                 <form
                   onSubmit={async (e) => {
@@ -680,7 +683,7 @@ export function EdgeConfigVarsCard({
                     if (!linkAccountId || !linkTargetProjectId) return;
 
                     startTransition(async () => {
-                      // 1. If API Key is provided, save it first
+                      
                       if (linkApiKey) {
                         const credentialsFormData = new FormData();
                         credentialsFormData.append("provider", linkProvider);
@@ -690,7 +693,6 @@ export function EdgeConfigVarsCard({
                         await saveProviderApiKeyAction(credentialsFormData);
                       }
 
-                      // 2. Link provider to project
                       const linkFormData = new FormData();
                       linkFormData.append("projectId", projectId);
                       linkFormData.append("provider", linkProvider);
@@ -826,6 +828,7 @@ export function EdgeConfigVarsCard({
                 </form>
               )}
 
+              {/* Linked Providers Table */}
               {loadingProviders ? (
                 <div className="text-center py-4 text-xs text-ink-mute">
                   Loading sync targets...
@@ -893,6 +896,7 @@ export function EdgeConfigVarsCard({
           </div>
         )}
 
+            {/* JSON Schema Validation Tab */}
             {activeTab === "schema" && (
               <div className="space-y-4 animate-in fade-in">
                 {schemaError && (
@@ -948,6 +952,7 @@ export function EdgeConfigVarsCard({
               </div>
             )}
 
+            {/* Backup History Tab */}
             {activeTab === "backups" && (
               <div className="space-y-4 animate-in fade-in">
                 {backupsError && (

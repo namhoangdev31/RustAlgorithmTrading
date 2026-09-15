@@ -21,7 +21,6 @@ export default async function LepoShipSdkTokensPage({ params }: PageProps) {
 
   const bundle = data.project.bundle;
 
-  // Retrieve active (non-revoked) SDK Ingestion tokens
   const activeTokens = await prisma.bundleSdkTokens.findMany({
     where: {
       bundleId: bundle.id,

@@ -71,7 +71,7 @@ export async function updateWebhookAction(projectId: string, webhookId: string, 
       url: webhookUrl,
       events: JSON.stringify(data.events),
       isActive: data.isActive,
-      // If reactivating, reset failure counts
+      
       ...(data.isActive ? { failureCount: 0, consecutiveFailures: 0 } : {}),
       updatedAt: now,
     },

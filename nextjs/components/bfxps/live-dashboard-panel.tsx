@@ -50,7 +50,6 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
       ? `1:${(tpDiff / slDiff).toFixed(1)}`
       : "1:2";
 
-  // Pha giao dịch hiện tại (từ backend inject vào plan)
   const sessionPhase = plan?.sessionPhase ?? "CONTINUOUS";
   const isAtoObservation = sessionPhase === "ATO_OBSERVATION" || sessionPhase === "PRE_ATO";
 

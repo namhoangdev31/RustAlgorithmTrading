@@ -223,7 +223,6 @@ export function generateMermaidDiagram(
     lines.push(`  ${id}["${name}"]`);
   }
 
-  // Draw edges (dependency → package)
   for (const [name, deps] of Object.entries(graph)) {
     const targetId = sanitize(name);
     for (const dep of deps) {
@@ -235,14 +234,6 @@ export function generateMermaidDiagram(
   return lines.join("\n");
 }
 
-// ---------------------------------------------------------------------------
-// High-level analyser
-// ---------------------------------------------------------------------------
-
-/**
- * Full monorepo dependency analysis: topological sort, parallel build groups,
- * affected-package detection, cycle detection, and Mermaid visualisation.
- */
 export async function analyzeMonorepo(
   rootDir: string,
   workspacePatterns: string[],

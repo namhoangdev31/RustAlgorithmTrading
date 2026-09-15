@@ -241,7 +241,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
 
   return (
     <div className="flex flex-col gap-6 p-1">
-      
+      {/* Top Controller */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900/40 p-4 rounded-2xl border border-hairline/10 backdrop-blur-md">
         <div className="flex flex-col gap-1">
           <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
@@ -272,15 +272,17 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
         </div>
       </div>
 
+      {/* Main Workspace Layout */}
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-
+        
+        {/* Left Side: Forms list */}
         <Card className="xl:col-span-1 border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg flex flex-col max-h-[600px]">
           <CardHeader>
             <CardTitle className="text-sm font-bold text-slate-200">Your Static Forms</CardTitle>
             <CardDescription className="text-xs text-slate-400">Create & manage project form endpoints</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4 overflow-hidden">
-            
+            {/* Create Form Form */}
             <form onSubmit={handleCreateForm} className="flex gap-2">
               <Input
                 placeholder="Contact Form..."
@@ -293,6 +295,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
               </Button>
             </form>
 
+            {/* List of Forms */}
             <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2">
               {forms.length === 0 ? (
                 <div className="text-center py-12 text-xs text-slate-500">
@@ -337,6 +340,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
           </CardContent>
         </Card>
 
+        {/* Center: Visual Builder & Live Preview */}
         <Card className="xl:col-span-2 border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg flex flex-col min-h-[600px]">
           <CardHeader className="flex flex-row items-center justify-between border-b border-hairline/10 pb-4">
             <div>
@@ -350,7 +354,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
             </div>
           </CardHeader>
           <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-5 gap-6 flex-1 overflow-hidden">
-            
+            {/* Fields Palette */}
             <div className="md:col-span-2 border-r border-slate-900 pr-4 flex flex-col gap-4">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">Add Form Fields</h4>
               <div className="grid grid-cols-1 gap-2">
@@ -384,6 +388,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
                 </Button>
               </div>
 
+              {/* Fields List Config */}
               <div className="flex-1 overflow-y-auto mt-4 pr-1 flex flex-col gap-3">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Edit Form Layout</span>
                 {formFields.map((field) => (
@@ -425,6 +430,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
               </div>
             </div>
 
+            {/* Live Form Preview Panel */}
             <div className="md:col-span-3 flex flex-col gap-4 overflow-hidden">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">Live Preview Output</h4>
               <div className="flex-1 p-6 rounded-xl bg-slate-950/20 border border-slate-900/60 flex flex-col gap-4 overflow-y-auto">
@@ -473,6 +479,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
           </CardContent>
         </Card>
 
+        {/* Right Side: Integrations settings & HTML code */}
         <Card className="xl:col-span-1 border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg flex flex-col max-h-[600px]">
           <CardHeader>
             <CardTitle className="text-sm font-bold text-slate-200 flex items-center gap-1.5">
@@ -482,7 +489,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
             <CardDescription className="text-xs text-slate-400">Sync details and HTML output code</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5 overflow-y-auto">
-            
+            {/* Sync Settings */}
             <div className="flex flex-col gap-3 p-3.5 rounded-xl bg-slate-900/30 border border-slate-900">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">External Web Syncs</span>
               
@@ -507,6 +514,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
               </label>
             </div>
 
+            {/* Webhook Settings */}
             <div className="flex flex-col gap-3 p-3.5 rounded-xl bg-slate-900/30 border border-slate-900">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
                 <Database className="size-3 text-indigo-400" /> Custom Webhook Trigger
@@ -536,6 +544,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
               </div>
             </div>
 
+            {/* Save Button */}
             <Button
               onClick={handleSaveSettings}
               disabled={isSavingSettings || !selectedForm}
@@ -545,6 +554,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
               {isSavingSettings ? "Saving Settings..." : "Save Settings & Syncs"}
             </Button>
 
+            {/* Spam Counter */}
             <div className="p-3.5 rounded-xl bg-red-500/5 border border-red-500/10 flex items-center justify-between text-xs">
               <div className="flex flex-col gap-0.5">
                 <span className="font-bold text-red-400">Akismet Shield</span>
@@ -555,6 +565,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
               </Badge>
             </div>
 
+            {/* Embed HTML code output */}
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">HTML Code Snippet</span>
@@ -585,6 +596,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
         </Card>
       </div>
 
+      {/* Bottom Layout: Form Submissions & Webhook Deliveries Tabs */}
       {selectedForm && (
         <Card className="border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg">
           <Tabs defaultValue="submissions" className="w-full">
@@ -604,6 +616,7 @@ export function FormBuilderClient({ projects, selectedProjectId, initialForms }:
                 </TabsList>
               </div>
 
+              {/* Retry Webhooks Trigger Button */}
               <Button
                 onClick={handleRunRetryJob}
                 disabled={isRetryingWebhooks}

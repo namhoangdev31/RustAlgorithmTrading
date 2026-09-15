@@ -163,9 +163,9 @@ export const Navbar = ({ user }: NavbarProps) => {
         />
         {t("logo")}
       </Link>
-      {}
+      {/* <!-- Mobile --> */}
       <div className="flex items-center lg:hidden gap-2">
-        {}
+        {/* <ToggleTheme showLabel={false} className="w-9 h-9 p-0 justify-center" /> */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Menu
@@ -215,7 +215,7 @@ export const Navbar = ({ user }: NavbarProps) => {
         </Sheet>
       </div>
 
-      {}
+      {/* <!-- Desktop --> */}
       <NavigationMenu className="hidden lg:block mx-auto">
         <NavigationMenuList>
           <NavigationMenuItem>

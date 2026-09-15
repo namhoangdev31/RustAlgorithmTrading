@@ -73,12 +73,9 @@ async function writeToDlq(bundleId: string, destination: string, errorMsg: strin
   }
 }
 
-/**
- * Streams a project bundle audit log entry to configured SIEM destinations in real-time.
- */
 export async function streamAuditLog(bundleId: string, logEntry: any) {
   try {
-    // 1. Fetch active integrations linked to the bundle
+    
     const integrations = await prisma.bundleExternalIntegrations.findMany({
       where: {
         bundleId,
@@ -96,11 +93,9 @@ export async function streamAuditLog(bundleId: string, logEntry: any) {
         continue;
       }
 
-      // Extract configs from enterprise_controls policy text or direct config properties
       const policyText = (config as any).policy || "";
       const isEnterprise = integration.integrationType === "enterprise_controls";
 
-      // Splunk HEC Configuration
       const splunkEndpoint = config.splunkEndpoint || extractPolicyValue(policyText, "splunk_endpoint") || (config as any).endpoint;
       const splunkToken = config.splunkToken || extractPolicyValue(policyText, "splunk_token");
 
@@ -108,7 +103,6 @@ export async function streamAuditLog(bundleId: string, logEntry: any) {
         await sendToSplunk(splunkEndpoint, splunkToken, logEntry, config.logSchemaMapping, bundleId);
       }
 
-      // Datadog Logs API Configuration
       const datadogApiKey = config.datadogApiKey || extractPolicyValue(policyText, "datadog_api_key");
       const datadogSite = config.datadogSite || extractPolicyValue(policyText, "datadog_site") || "datadoghq.com";
 
@@ -116,7 +110,6 @@ export async function streamAuditLog(bundleId: string, logEntry: any) {
         await sendToDatadog(datadogApiKey, datadogSite, logEntry, config.logSchemaMapping, bundleId);
       }
 
-      // AWS S3 Configuration
       const s3Bucket = config.s3Bucket || extractPolicyValue(policyText, "s3_bucket") || "lepos-audit-logs";
       const s3Region = config.s3Region || extractPolicyValue(policyText, "s3_region") || "us-east-1";
 
@@ -129,12 +122,9 @@ export async function streamAuditLog(bundleId: string, logEntry: any) {
   }
 }
 
-/**
- * Streams a workspace/organization level audit event to all active bundle SIEM configurations.
- */
 export async function streamWorkspaceAudit(organizationId: string, auditEntry: any) {
   try {
-    // Find all projects and their corresponding bundle IDs in this workspace
+    
     const projects = await prisma.project.findMany({
       where: {
         organizationId,
@@ -161,20 +151,14 @@ export async function streamWorkspaceAudit(organizationId: string, auditEntry: a
   }
 }
 
-/**
- * Helper to extract configuration values from standard key-value patterns inside text policy fields.
- */
 function extractPolicyValue(policyText: string, key: string): string | null {
   if (!policyText) return null;
-  // Look for patterns like "key: value" or "key = value"
+  
   const regex = new RegExp(`${key}\\s*[:=]\\s*([^\\s,;\\n]+)`, "i");
   const match = policyText.match(regex);
   return match ? match[1].trim() : null;
 }
 
-/**
- * Sends audit log event to Splunk HTTP Event Collector (HEC) with retry and DLQ fallback.
- */
 async function sendToSplunk(
   endpoint: string,
   token: string,
@@ -220,9 +204,6 @@ async function sendToSplunk(
   );
 }
 
-/**
- * Sends audit log event to Datadog logs intake API with retry and DLQ fallback.
- */
 async function sendToDatadog(
   apiKey: string,
   site: string,
@@ -233,7 +214,7 @@ async function sendToDatadog(
   const mappedEvent = mapLogSchema(event, schemaMapping);
 
   const performSend = async (): Promise<boolean> => {
-    const endpoint = `https:
+    const endpoint = `https://http-intake.logs.${site}/api/v2/logs`;
     console.log(`[SIEM Datadog] Streaming event to Datadog (${site})...`);
     
     const payload = {
@@ -308,9 +289,6 @@ const AUDIT_LOG_KEY = process.env.AUDIT_LOG_KEY
   ? crypto.scryptSync(process.env.AUDIT_LOG_KEY, "salt", 32)
   : crypto.randomBytes(32);
 
-/**
- * Encrypts a log entry using AES-256-GCM and chains it using a SHA-256 WORM hash-chain lock.
- */
 export async function encryptAndChainLog(logEntry: any): Promise<{
   encrypted: { iv: string; content: string; tag: string };
   signature: string;

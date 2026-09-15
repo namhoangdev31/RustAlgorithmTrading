@@ -46,11 +46,11 @@ export const TradingCanvas = () => {
     const colors = new Float32Array(particleCount * 3);
 
     const palette = [
-      new THREE.Color("#3ecf8e"), 
-      new THREE.Color("#24b47e"), 
-      new THREE.Color("#06b6d4"), 
-      new THREE.Color("#10b981"), 
-      new THREE.Color("#6366f1"), 
+      new THREE.Color("#3ecf8e"), // Emerald Green
+      new THREE.Color("#24b47e"), // Darker Emerald
+      new THREE.Color("#06b6d4"), // Bright Cyan
+      new THREE.Color("#10b981"), // Mint
+      new THREE.Color("#6366f1"), // Indigo accents
     ];
 
     for (let i = 0; i < particleCount; i++) {

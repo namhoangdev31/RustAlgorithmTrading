@@ -13,7 +13,7 @@ export interface WebhookEventPayload {
 export async function queueWebhookEvent(
   bundleId: string,
   eventType: string,
-  eventKey: string, 
+  eventKey: string, // Unique eventKey for idempotency and deduplication
   data: any
 ) {
   const now = new Date();
@@ -55,7 +55,7 @@ export async function queueWebhookEvent(
           eventType,
           payload: payloadStr,
           status: "pending",
-          nextRetryAt: now, 
+          nextRetryAt: now, // Dispatch immediately
           createdAt: now,
           updatedAt: now,
         },
@@ -65,6 +65,8 @@ export async function queueWebhookEvent(
       continue;
     }
 
+    // Delivery is performed by the authenticated retry cron. Never start
+    // unawaited network work inside a request/serverless invocation.
   }
 }
 
@@ -240,7 +242,6 @@ export async function pollBuilderWebhookEvents() {
     }
   }
 
-  // 2. Poll BundleReleaseTracks states for active status
   const recentReleaseTracks = await prisma.bundleReleaseTracks.findMany({
     where: {
       status: "active",

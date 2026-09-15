@@ -57,16 +57,16 @@ export default async function DocPage({ params }: PageProps) {
     Content = mdxModule.default;
   } catch (err) {
     try {
-      // Attempt to load .mdx file
+      
       const mdxModule = await import(`../content/${slugPath}.mdx`);
       Content = mdxModule.default;
     } catch (err2) {
       try {
-        // Attempt to load index file if directory
+        
         const mdxModule = await import(`../content/${slugPath}/index.md`);
         Content = mdxModule.default;
       } catch (err3) {
-        // Dynamic directory index check
+        
         childDocs = docsNavigation
           .flatMap((group) => group.items)
           .filter((item) => item.slug.startsWith(`${slugPath}/`));
@@ -80,7 +80,6 @@ export default async function DocPage({ params }: PageProps) {
     }
   }
 
-  // Find document category and title for breadcrumbs
   let currentGroupTitle = "";
   let currentDocTitle = "";
 
@@ -93,7 +92,6 @@ export default async function DocPage({ params }: PageProps) {
     }
   }
 
-  // If it's a directory index and we couldn't find doc title/group title
   if (isDirectoryIndex && !currentDocTitle) {
     const firstChild = childDocs[0];
     const group = docsNavigation.find((g) =>
@@ -105,19 +103,17 @@ export default async function DocPage({ params }: PageProps) {
     currentDocTitle = slug[slug.length - 1].replace(/-/g, " ");
   }
 
-  // Calculate Next and Previous Docs
   const allDocs = docsNavigation.flatMap((group) => group.items);
   const currentIndex = allDocs.findIndex((item) => item.slug === slugPath);
   const prevDoc = currentIndex > 0 ? allDocs[currentIndex - 1] : null;
   const nextDoc = currentIndex < allDocs.length - 1 ? allDocs[currentIndex + 1] : null;
 
-  // Paths formatted with locale support
   const prevPath = prevDoc ? `/docs/${prevDoc.slug}` : "";
   const nextPath = nextDoc ? `/docs/${nextDoc.slug}` : "";
 
   return (
     <div className="space-y-8">
-      
+      {/* Breadcrumbs */}
       <nav className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium border-b border-border/40 pb-4 mb-4">
         <Link href="/docs" className="hover:text-primary transition-colors">
           Docs
@@ -136,6 +132,7 @@ export default async function DocPage({ params }: PageProps) {
         )}
       </nav>
 
+      {/* Main Content */}
       {isDirectoryIndex ? (
         <div className="space-y-6">
           <div className="space-y-2 border-b border-border/40 pb-6">
@@ -176,6 +173,7 @@ export default async function DocPage({ params }: PageProps) {
         </article>
       )}
 
+      {/* Footer Page Navigation */}
       {!isDirectoryIndex && (prevDoc || nextDoc) && (
         <div className="border-t border-border/60 pt-8 mt-12 grid grid-cols-2 gap-4">
           {prevDoc ? (
@@ -214,10 +212,11 @@ export default async function DocPage({ params }: PageProps) {
         </div>
       )}
 
+      {/* Edit on GitHub link */}
       {!isDirectoryIndex && (
         <div className="flex items-center justify-end text-xs text-muted-foreground/80 mt-6 pt-4 border-t border-border/20">
           <a
-            href={`https:
+            href={`https://github.com/namhoangdev31/RustAlgorithmTrading/blob/main/nextjs/app/%5Blocale%5D/%28marketing%29/docs/content/${slugPath}.md`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1 hover:text-foreground transition-colors"

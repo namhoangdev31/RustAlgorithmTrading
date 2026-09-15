@@ -120,7 +120,7 @@ async function executeWebhookSend(
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 5000); 
 
     const response = await fetch(url, {
       method: "POST",
@@ -152,7 +152,7 @@ async function executeWebhookSend(
     });
     return true;
   } else {
-    // Calculate backoff delay: 1m, 5m, 30m, 2h, 12h
+    
     const backoffDelays = [1, 5, 30, 120, 720];
     const delayMinutes = backoffDelays[attemptNumber - 1] || 1440;
     const nextRetryAt = attemptNumber < 5 ? new Date(Date.now() + delayMinutes * 60 * 1000) : null;
@@ -181,9 +181,6 @@ export interface GitWebhookPayload {
   prNumber?: number;
 }
 
-/**
- * Verifies the signature of Git webhooks based on the provider specifications.
- */
 export function verifyGitWebhookSignature(
   signature: string | null,
   rawBody: string,
@@ -222,9 +219,6 @@ export function verifyGitWebhookSignature(
   return false;
 }
 
-/**
- * Standardizes the webhook payload schemas across different Git providers.
- */
 export function parseGitWebhookPayload(
   payload: any,
   provider: "github" | "gitlab" | "bitbucket"
@@ -296,9 +290,6 @@ export function parseGitWebhookPayload(
   return null;
 }
 
-/**
- * Enqueues a standardized Git webhook payload into a Redis List acting as Ingestion Queue.
- */
 export async function enqueueGitWebhook(payload: GitWebhookPayload): Promise<boolean> {
   const { getNativeRedis } = await import("./native-platform/redis");
   const redis = getNativeRedis();

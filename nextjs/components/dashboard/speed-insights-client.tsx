@@ -199,7 +199,7 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
 
   return (
     <div className="flex flex-col gap-6 p-1">
-      
+      {/* Top Controller */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900/40 p-4 rounded-2xl border border-hairline/10 backdrop-blur-md">
         <div className="flex flex-col gap-1">
           <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
@@ -230,8 +230,10 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
         </div>
       </div>
 
+      {/* Overview Dashboard */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
+        
+        {/* Speed Score Gauge */}
         <Card className="lg:col-span-1 border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg flex flex-col justify-between">
           <CardHeader>
             <CardTitle className="text-sm font-bold text-slate-200">Overall Performance Health</CardTitle>
@@ -239,7 +241,7 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center py-6 gap-4">
             <div className="relative size-32">
-              
+              {/* Circular progress bar SVG */}
               <svg className="size-full" viewBox="0 0 36 36">
                 <path
                   className="stroke-slate-800"
@@ -279,6 +281,7 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
           </CardContent>
         </Card>
 
+        {/* AI Recommendations */}
         <Card className="lg:col-span-2 border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
@@ -333,6 +336,7 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
         </Card>
       </div>
 
+      {/* Performance Issue Clusters Card */}
       <div className="grid grid-cols-1 gap-6">
         <Card className="border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
@@ -364,8 +368,7 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
             ) : (
               speedData.clusters.map((cluster) => {
                 const isSelected = selectedClusterId === cluster.id;
-                
-                // Color schemes based on cluster type
+
                 let typeBadgeColor = "";
                 let typeLabel = "";
                 let impactLabel = "";
@@ -396,7 +399,7 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
                     key={cluster.id}
                     onClick={() => {
                       setSelectedClusterId(isSelected ? null : cluster.id);
-                      // Auto-select the first replay session affected by this cluster if possible
+                      
                       if (!isSelected && cluster.affectedSessionIds.length > 0) {
                         const affectedSession = speedData.replays.find(
                           r => r.sessionId === cluster.affectedSessionIds[0]
@@ -446,8 +449,10 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
         </Card>
       </div>
 
+      {/* Visual Session Replays List */}
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
-
+        
+        {/* Sessions Selection List */}
         <Card className="xl:col-span-2 border border-hairline bg-canvas-night/40 backdrop-blur-md shadow-lg flex flex-col max-h-[580px]">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <div>
@@ -467,7 +472,8 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
               {filterLaggyOnly ? "Showing Issues Only" : "Showing All Sessions"}
             </Button>
           </CardHeader>
-
+          
+          {/* Cohort Filters */}
           <div className="grid grid-cols-2 gap-2 px-6 pb-4 border-b border-slate-800/40 sm:grid-cols-4">
             <div>
               <label htmlFor="filter-device" className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block mb-1">Device</label>
@@ -607,6 +613,7 @@ export function SpeedInsightsClient({ projects, selectedProjectId, speedData }: 
           </CardContent>
         </Card>
 
+        {/* Selected Session Interactive Replay Player */}
         <div className="xl:col-span-3">
           {selectedSession ? (
             <SessionReplayTimeline 

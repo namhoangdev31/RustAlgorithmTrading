@@ -118,7 +118,7 @@ export const ContactSection = () => {
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     gsap.to(e.currentTarget, {
       y: -4,
-      borderColor: "rgba(62, 207, 142, 0.3)", 
+      borderColor: "rgba(62, 207, 142, 0.3)", // Emerald green border
       boxShadow: "0 15px 30px -15px rgba(62, 207, 142, 0.15)",
       duration: 0.3,
       ease: "power2.out",

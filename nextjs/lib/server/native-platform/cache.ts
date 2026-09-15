@@ -22,7 +22,6 @@ export async function purgeNativeCache(projectId: string, path: string) {
 
   await redisDelete(cacheKey);
 
-  // Clean up disk cache file if it exists
   const diskPath = getDiskCachePath(projectId, normalizedPath);
   try {
     if (fs.existsSync(diskPath)) {
@@ -64,10 +63,8 @@ export async function setNativeCache(
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   const cacheKey = nativeRedisKeys.cache(projectId, normalizedPath);
 
-  // 1. Save to Redis cache
   await redisSetJson(cacheKey, { html: htmlContent, contentType });
 
-  // 2. Save to local Disk (under public/cache/html/[projectId]/)
   const diskPath = getDiskCachePath(projectId, normalizedPath);
   try {
     const dir = pathLib.dirname(diskPath);
@@ -79,7 +76,6 @@ export async function setNativeCache(
     console.error("[Disk Cache] Failed to write file:", err);
   }
 
-  // 3. Upsert database record
   const entry = await prisma.nativeCacheEntry.upsert({
     where: { cacheKey },
     create: {
@@ -88,7 +84,7 @@ export async function setNativeCache(
       cacheKey,
       status: "fresh",
       contentType,
-      bodyRef: `file:
+      bodyRef: `file://${diskPath}`,
       hitCount: 1,
     },
     update: {
@@ -99,14 +95,13 @@ export async function setNativeCache(
     },
   });
 
-  // 4. Apply LRU Eviction policy if total cache entries exceed 100
   try {
     const count = await prisma.nativeCacheEntry.count({
       where: { projectId },
     });
 
     if (count > MAX_CACHE_LIMIT) {
-      // Find oldest entries based on updatedAt ascending
+      
       const entriesToEvict = await prisma.nativeCacheEntry.findMany({
         where: { projectId },
         orderBy: { updatedAt: "asc" },
@@ -114,10 +109,9 @@ export async function setNativeCache(
       });
 
       for (const oldEntry of entriesToEvict) {
-        // Evict from Redis
+        
         await redisDelete(oldEntry.cacheKey);
 
-        // Evict from Disk
         if (oldEntry.bodyRef?.startsWith("file://")) {
           const oldDiskPath = oldEntry.bodyRef.replace("file://", "");
           if (fs.existsSync(oldDiskPath)) {
@@ -125,12 +119,10 @@ export async function setNativeCache(
           }
         }
 
-        // Evict from Database
         await prisma.nativeCacheEntry.delete({
           where: { id: oldEntry.id },
         });
 
-        // Publish eviction signal to Edge Proxy
         await redisPublish("lepos:purge", {
           projectId,
           path: oldEntry.path,

@@ -72,7 +72,7 @@ export async function detectPackageManager(
       await fs.access(path.join(projectDir, lockFile));
       return pm;
     } catch {
-      
+      // not found — continue
     }
   }
 
@@ -139,10 +139,6 @@ async function runNpmAudit(projectDir: string): Promise<ScanResult> {
   }
 }
 
-// ---------------------------------------------------------------------------
-// yarn audit
-// ---------------------------------------------------------------------------
-
 async function runYarnAudit(projectDir: string): Promise<ScanResult> {
   const start = Date.now();
 
@@ -156,7 +152,6 @@ async function runYarnAudit(projectDir: string): Promise<ScanResult> {
     const duration = Date.now() - start;
     if (!stdout.trim()) return emptyScanResult("yarn", duration);
 
-    // Yarn audit outputs NDJSON (one JSON object per line)
     const vulnerabilities: Vulnerability[] = [];
     const lines = stdout.trim().split("\n");
 
@@ -202,10 +197,6 @@ async function runYarnAudit(projectDir: string): Promise<ScanResult> {
   }
 }
 
-// ---------------------------------------------------------------------------
-// pnpm audit
-// ---------------------------------------------------------------------------
-
 async function runPnpmAudit(projectDir: string): Promise<ScanResult> {
   const start = Date.now();
 
@@ -219,7 +210,6 @@ async function runPnpmAudit(projectDir: string): Promise<ScanResult> {
     const duration = Date.now() - start;
     if (!stdout.trim()) return emptyScanResult("pnpm", duration);
 
-    // pnpm audit JSON is similar to npm v2 format
     const data = JSON.parse(stdout);
     const vulnerabilities: Vulnerability[] = [];
 
@@ -238,7 +228,7 @@ async function runPnpmAudit(projectDir: string): Promise<ScanResult> {
         });
       }
     } else if (data.vulnerabilities && typeof data.vulnerabilities === "object") {
-      // Newer pnpm versions use npm-like format
+      
       for (const [pkgName, info] of Object.entries<any>(data.vulnerabilities)) {
         vulnerabilities.push({
           id: `pnpm-${pkgName}`,
@@ -273,11 +263,6 @@ async function runPnpmAudit(projectDir: string): Promise<ScanResult> {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
-
-/** Run a security audit scan using the project's detected package manager. */
 export async function scanWorkspace(projectDir: string): Promise<ScanResult> {
   const pm = await detectPackageManager(projectDir);
 
@@ -291,10 +276,6 @@ export async function scanWorkspace(projectDir: string): Promise<ScanResult> {
   }
 }
 
-/**
- * Evaluate whether a build should be blocked based on scan results and policy.
- * Default policy: block on critical vulnerabilities.
- */
 export function shouldBlockBuild(
   result: ScanResult,
   policy: ScanPolicy = DEFAULT_POLICY
@@ -320,7 +301,6 @@ export function shouldBlockBuild(
   };
 }
 
-/** Generate a Markdown report summarising scan results. */
 export function generateReport(result: ScanResult): string {
   const lines: string[] = [
     `## Security Scan Report`,
@@ -357,7 +337,6 @@ export function generateReport(result: ScanResult): string {
   return lines.join("\n");
 }
 
-/** Scan all workspace directories in a monorepo. */
 export async function scanAllWorkspaces(
   rootDir: string,
   workspaces: string[]

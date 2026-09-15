@@ -24,8 +24,6 @@ import { enqueueBuild } from "@/lib/server/build-queue";
 import { createReleaseCandidate } from "@/lib/server/lepoship/release-service";
 import { checkBundlePermission } from "./lepoship-permissions";
 
-
-
 function readFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
   return typeof value === "string" ? value.trim() : "";
@@ -295,7 +293,7 @@ export async function createProjectWithBundleAction(formData: FormData) {
 
     let inputVercelName = readFormValue(formData, "vercelProjectName");
     if (!inputVercelName) {
-      // Auto-slugify projectName
+      
       inputVercelName = projectName
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
@@ -1052,7 +1050,6 @@ export async function deleteOrganizationAction(formData: FormData) {
     redirect(returnTo);
   }
 
-  // Count active organizations for this user
   const activeOrgsCount = await prisma.organization.count({
     where: {
       userId: user.id,
@@ -1064,7 +1061,6 @@ export async function deleteOrganizationAction(formData: FormData) {
     redirect(`${returnTo}?error=cannot_delete_last_workspace`);
   }
 
-  // Soft delete the organization and all its projects
   await prisma.$transaction([
     prisma.organization.update({
       where: { id: organizationId },
@@ -1082,7 +1078,6 @@ export async function deleteOrganizationAction(formData: FormData) {
     }),
   ]);
 
-  // If the deleted organization is the one stored in the cookie, switch active organization
   const cookieStore = await cookies();
   const activeOrgId = cookieStore.get("active_organization_id")?.value;
   if (activeOrgId === organizationId) {
@@ -1239,7 +1234,7 @@ export async function deployTemplateAction(formData: FormData) {
   const organizationId = workspace.activeOrganization?.id;
   const returnTo = await readReturnTo(formData, "/projects");
 
-  const templateName = readFormValue(formData, "templateName"); // nextjs, remix, vite
+  const templateName = readFormValue(formData, "templateName"); 
   const repoName = readFormValue(formData, "repoName");
   const vercelProjectName = readFormValue(formData, "vercelProjectName") || repoName;
 
@@ -1247,7 +1242,6 @@ export async function deployTemplateAction(formData: FormData) {
     redirect(returnTo);
   }
 
-  // 1. Get tokens
   const cookieStore = await cookies();
   const githubToken = cookieStore.get("github_access_token")?.value;
   if (!githubToken) {
@@ -1263,20 +1257,18 @@ export async function deployTemplateAction(formData: FormData) {
   }
 
   try {
-    // 2. Initialize Octokit
+    
     const octokit = new Octokit({ auth: githubToken });
     const { data: ghUser } = await octokit.rest.users.getAuthenticated();
     const username = ghUser.login;
     const repoFullName = `${username}/${repoName}`;
 
-    // 3. Create Github Repository
     await octokit.rest.repos.createForAuthenticatedUser({
       name: repoName,
       private: false,
       auto_init: false,
     });
 
-    // 4. Generate Starter Template Files
     const files: Record<string, string> = {};
     if (templateName === "nextjs") {
       files["package.json"] = JSON.stringify({
@@ -1406,7 +1398,7 @@ export default defineConfig({
   plugins: [remix()],
 });`;
     } else {
-      // vite React SPA
+      
       files["package.json"] = JSON.stringify({
         name: repoName,
         private: true,
@@ -1491,7 +1483,6 @@ export default defineConfig({
       }, null, 2);
     }
 
-    // 5. Commit Files to GitHub
     for (const [filePath, content] of Object.entries(files)) {
       await octokit.rest.repos.createOrUpdateFileContents({
         owner: username,
@@ -1503,7 +1494,6 @@ export default defineConfig({
       });
     }
 
-    // 6. Create Vercel Project and link Github Repo
     const vercelResult = await vercel.projects.createProject({
       requestBody: {
         name: vercelProjectName,
@@ -1515,7 +1505,6 @@ export default defineConfig({
       },
     });
 
-    // 7. Save to local DB Project & Bundle & Integration
     const now = new Date();
     const bundleDefaults = buildBundleDefaults(repoName, repoName);
     const projectId = crypto.randomUUID();
@@ -1597,15 +1586,13 @@ export async function saveLepoShipConfigAction(formData: FormData) {
     redirect(returnTo);
   }
 
-  const platform = readFormValue(formData, "platform"); // expo, flutter
+  const platform = readFormValue(formData, "platform"); 
   const gitRepoUrl = readFormValue(formData, "gitRepoUrl");
   const gitBranch = readFormValue(formData, "gitBranch") || "main";
-  
-  // Expo specific
+
   const expoSdkVersion = readFormValue(formData, "expoSdkVersion") || "";
   const expoBuildProfile = readFormValue(formData, "expoBuildProfile") || "";
-  
-  // Flutter specific
+
   const flutterTargetPlatform = readFormValue(formData, "flutterTargetPlatform") || "web";
   const flutterFlavor = readFormValue(formData, "flutterFlavor") || "";
   const flutterBuildMode = readFormValue(formData, "flutterBuildMode") || "release";
@@ -1660,7 +1647,7 @@ export async function triggerMobileBuildAction(formData: FormData) {
 
   let project = await requireOwnedProject(user.id, projectId);
   if (!project) {
-    // Check if user is a collaborator with build:trigger permission
+    
     const bundle = await prisma.bundles.findFirst({
       where: { projectId },
       select: { id: true },
@@ -1694,8 +1681,7 @@ export async function triggerMobileBuildAction(formData: FormData) {
 
   const currentBundle = project.bundle;
   const newBuildNumber = currentBundle.buildNumber + 1;
-  
-  // Auto bump patch version
+
   let newVersion = "1.0.0";
   const parts = currentBundle.version.split(".");
   if (parts.length === 3) {
@@ -1708,7 +1694,6 @@ export async function triggerMobileBuildAction(formData: FormData) {
     newVersion = currentBundle.version;
   }
 
-  // Load configuration
   const integration = await prisma.bundleExternalIntegrations.findFirst({
     where: {
       bundleId: currentBundle.id,
@@ -1742,7 +1727,6 @@ export async function triggerMobileBuildAction(formData: FormData) {
     },
   });
 
-  // Trigger background build compilation process
   await enqueueBuild({
     projectId,
     bundleId: currentBundle.id,

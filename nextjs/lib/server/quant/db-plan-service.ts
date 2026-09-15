@@ -34,14 +34,10 @@ export interface TradeSettlementResult {
 
 export function deriveLockId(dateVn: string): string {
   const h = createHash("sha256").update(`bfxps-ato-lock:${dateVn}`).digest("hex");
-  // 32 hex đầu -> 8-4-4-4-12
+  
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20, 32)}`;
 }
 
-/**
- * Đọc ngữ cảnh market đã khóa lúc 09:15 (nguồn sự thật cho kèo chính thức).
- * Trả null nếu chưa khóa / không có.
- */
 export async function getLockedContext(dateVn: string): Promise<MarketSnapshot | null> {
   const row = await prisma.bfxpsMarketSnapshot.findUnique({
     where: { id: deriveLockId(dateVn) },
@@ -63,11 +59,6 @@ export async function getLockedContext(dateVn: string): Promise<MarketSnapshot |
   };
 }
 
-/**
- * Khóa ngữ cảnh market lần đầu trong ngày (ATOMIC, chống race):
- * createMany(skipDuplicates) -> ON CONFLICT (id) DO NOTHING. Hai request đồng thời 09:15
- * chỉ ghi được 1 row; cả hai đọc lại cùng row THẮNG -> kèo tất định, không phân kỳ.
- */
 export async function saveLockedContext(
   dateVn: string,
   snapshot: MarketSnapshot
@@ -77,7 +68,7 @@ export async function saveLockedContext(
     data: [
       {
         id: lockId,
-        // Mốc 09:15 VN — giờ kèo chính thức được chốt (UTC+7)
+        
         timestamp: new Date(`${dateVn}T09:15:00+07:00`),
         open: new Prisma.Decimal(snapshot.open),
         high: new Prisma.Decimal(snapshot.high),
@@ -93,14 +84,10 @@ export async function saveLockedContext(
     ],
     skipDuplicates: true,
   });
-  // Đọc lại row thắng (do request này HOẶC request đồng thời khác ghi)
+  
   return getLockedContext(dateVn);
 }
 
-/**
- * Settlement đã persist chưa? NGUỒN SỰ THẬT DUY NHẤT = cột settledAt
- * (do chính settleDailyPlanAtEod set). KHÔNG suy ra từ status/FILLED_*.
- */
 export async function isCanonicalSettlementDone(dateVn: string, engine = "simcarrry6"): Promise<boolean> {
   const row = await prisma.bfxpsTradingPlan.findFirst({
     where: {
@@ -113,11 +100,8 @@ export async function isCanonicalSettlementDone(dateVn: string, engine = "simcar
   return row?.settledAt != null;
 }
 
-/**
- * 1. Tự động Lưu hoặc Cập nhật Kèo & Trạng thái Khớp Lệnh Realtime vào DB (Hoàn toàn tự động hóa)
- */
 export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
-  // Bỏ qua không tạo/lưu kèo cho ngày Thứ Bảy hoặc Chủ Nhật theo múi giờ Việt Nam
+  
   if (isWeekend(plan.date)) {
     return null;
   }
@@ -161,8 +145,6 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
     notes = `[Tối ưu toàn phiên] ${notes}`;
   }
 
-  // TRONG PHIÊN: TUYỆT ĐỐI KHÔNG CHỐT exitType, pnlPoints, settledAt!
-  // Chỉ cập nhật thông số lệnh và trạng thái live.
   return prisma.bfxpsTradingPlan.upsert({
     where: {
       date_engine: {
@@ -209,9 +191,6 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
   });
 }
 
-/**
- * 2. Báo cáo & Chốt kết quả kèo cuối ngày (EOD Settlement)
- */
 export async function settleDailyPlanAtEod(result: TradeSettlementResult) {
   const planDate = new Date(`${result.date}T00:00:00.000Z`);
   const status =
@@ -238,7 +217,6 @@ export async function settleDailyPlanAtEod(result: TradeSettlementResult) {
 
   const targetEngine = result.engine || "simcarrry6";
 
-  // Cập nhật kết quả vào Trading Plan
   const updatedPlan = await prisma.bfxpsTradingPlan.upsert({
     where: {
       date_engine: {
@@ -276,7 +254,6 @@ export async function settleDailyPlanAtEod(result: TradeSettlementResult) {
     },
   });
 
-  // Ghi nhận vào Sổ cái Live Ledger
   const ledger = await prisma.bfxpsLiveLedger.upsert({
     where: {
       date_engine: {
@@ -309,16 +286,11 @@ export async function settleDailyPlanAtEod(result: TradeSettlementResult) {
     },
   });
 
-  // Buộc tính lại lịch sử để summary trên UI/dashboard không stale sau khi chốt phiên
   invalidateTradingHistoryCache();
 
   return { plan: updatedPlan, ledger };
 }
 
-/**
- * 3. Lấy toàn bộ lịch sử giao dịch từ Database.
- * Cache ngắn hạn (~60s): lịch sử không đổi intraday, giảm tải DB khi UI poll /health mỗi 4s.
- */
 type TradingHistory = Awaited<ReturnType<typeof computeTradingHistory>>;
 let cachedHistory: { value: TradingHistory | null; at: number } | null = null;
 const HISTORY_CACHE_TTL_MS = 60_000;
@@ -333,7 +305,6 @@ export async function getTradingHistoryFromDb(): Promise<TradingHistory | null> 
   return value;
 }
 
-/** Buộc tính lại lịch sử ở lần gọi kế (dùng sau khi settle để summary không stale) */
 export function invalidateTradingHistoryCache() {
   cachedHistory = null;
 }
@@ -350,7 +321,6 @@ async function computeTradingHistory() {
 
   const todayStr = getVietnamTradingDate(new Date());
 
-  // Tự động dọn dẹp các bản ghi rơi vào cuối tuần theo múi giờ Việt Nam
   const weekendPlans = rawPlans.filter((p) => {
     const dStr = getVnDateString(p.date);
     return isWeekend(dStr);
@@ -366,7 +336,6 @@ async function computeTradingHistory() {
       .catch((e) => console.warn("[db] Dọn dẹp kèo cuối tuần thất bại:", (e as Error)?.message));
   }
 
-  // Tự động reset các trạng thái chốt non trong phiên hôm nay (chỉ chốt khi đã qua ATC sau 14:45)
   try {
     await prisma.bfxpsTradingPlan.updateMany({
       where: {
@@ -390,7 +359,6 @@ async function computeTradingHistory() {
     console.warn("[db] Reset kèo hôm nay chưa settle:", err?.message);
   }
 
-  // Nếu cùng một ngày có cả simcarrry6 và CanonicalDirectionalBreakout -> ưu tiên Kèo Chính simcarrry6
   const planByDate = new Map<string, (typeof rawPlans)[0]>();
   for (const p of rawPlans) {
     const dStr = getVnDateString(p.date);
@@ -427,8 +395,6 @@ async function computeTradingHistory() {
     const isSettled = p.settledAt != null || (!isToday && dateStr < todayStr);
     const isFilled = p.status !== "PENDING" && p.exitType !== "NO_FILL" && p.exitType !== "INTRADAY";
 
-    // QUY TẮC BẮT BUỘC: CHỈ CỘNG VÀO LỊCH SỬ THỰC CHIẾN KHI PHIÊN ĐÃ ĐÓNG CỬA HOÀN TOÀN (EOD SETTLED).
-    // Phiên hôm nay khi đang giao dịch TUYỆT ĐỐI KHÔNG CỘNG DỒN VÀO TỔNG KẾT QUẢ LỊCH SỬ!
     if (isSettled && isFilled) {
       tradedCount++;
       totalPnl += pnl;
@@ -442,7 +408,6 @@ async function computeTradingHistory() {
         losses++;
         totalLossPoints += Math.abs(pnl);
       }
-      // pnl === 0 → Break-Even (BE_EXIT), đếm vào tradedCount nhưng không đếm thắng/thua
 
       cumulativePnl += pnl;
       if (cumulativePnl > peak) peak = cumulativePnl;
@@ -454,7 +419,7 @@ async function computeTradingHistory() {
     const mode = isLive ? "LIVE" : "BACKTEST";
 
     if (!isSettled) {
-      // Phiên hôm nay chưa đóng phiên (Intraday) -> Hiển thị trạng thái trong phiên, KHÔNG chốt kết quả
+      
       return {
         date: dateStr,
         mode,
@@ -528,9 +493,6 @@ async function computeTradingHistory() {
   };
 }
 
-/**
- * Lấy kế hoạch tái lập sau Stop Loss của ngày hôm nay (nếu đã kích hoạt).
- */
 export async function getTodayRecalibratedPlan(dateVn: string, engine = "simcarrry6") {
   const planDate = new Date(`${dateVn}T00:00:00.000Z`);
   return prisma.bfxpsTradingPlan.findFirst({

@@ -119,7 +119,6 @@ export function ChatConversationPanel({
     }
   };
 
-  // Helper để format và tô màu 4 khối BFXPS
   const renderMessageContent = (content: string) => {
     const blocks = content.split(/(?=🟦 (?:HỆ THỐNG\/CSDL|SYSTEM\/DB)|🟧 (?:LỊCH SỬ\/SUY LUẬN|HISTORY\/REASONING)|🟪 (?:SUY LUẬN\/BRAIN|INFERENCE\/BRAIN)|⬜ (?:KẾT LUẬN\/HÀNH ĐỘNG|CONCLUSION\/ACTION))/g);
 
@@ -179,7 +178,7 @@ export function ChatConversationPanel({
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-[#0b0f17] text-slate-100">
-      
+      {/* Vùng tin nhắn chat & biểu đồ */}
       <div className="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar">
         {showChart && (
           <div className="mb-3">
@@ -216,8 +215,9 @@ export function ChatConversationPanel({
         <div ref={chatEndRef} />
       </div>
 
+      {/* Khung điều khiển OHLC & Input */}
       <div className="border-t border-white/[0.08] bg-[#090d16]/95 backdrop-blur-md p-2.5 space-y-2">
-        
+        {/* Quick prompt suggestions */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
           <Sparkles className="h-3 w-3 text-amber-400 shrink-0" />
           {quickPrompts.map((qp, idx) => (
@@ -233,6 +233,7 @@ export function ChatConversationPanel({
           ))}
         </div>
 
+        {/* Controls Bar */}
         <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs">
           <div className="flex items-center gap-1.5">
             <button
@@ -273,6 +274,7 @@ export function ChatConversationPanel({
           </button>
         </div>
 
+        {/* Collapsible OHLC input drawer */}
         {(showCustomOhlc || !isAutoLive) && (
           <div className="grid grid-cols-4 gap-1.5 rounded-lg bg-[#0c101a] p-2 shadow-sm">
             <div>
@@ -326,6 +328,7 @@ export function ChatConversationPanel({
           </div>
         )}
 
+        {/* Input box */}
         <div className="flex items-end gap-1.5">
           <textarea
             rows={2}

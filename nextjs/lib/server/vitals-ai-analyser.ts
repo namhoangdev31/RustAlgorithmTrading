@@ -116,13 +116,12 @@ export function clusterPerformanceIssues(replays: any[]): PerformanceCluster[] {
       } else if (event.type === "paint" && event.name === "LCP" && event.element) {
         type = "lcp-slow-paint";
         signature = event.element;
-        // Search if session has LCP vital to get its total value, or use timestamp
+        
         const lcpVital = Array.isArray(session.vitals) 
           ? session.vitals.find((v: any) => v.name === "LCP") 
           : null;
         const lcpValue = lcpVital ? lcpVital.value : event.timestamp;
-        
-        // Only classify as slow if LCP > 2500ms
+
         if (lcpValue > 2500) {
           type = "lcp-slow-paint";
           impactValue = lcpValue;
@@ -154,26 +153,21 @@ export function clusterPerformanceIssues(replays: any[]): PerformanceCluster[] {
           cluster.affectedSessionIds.push(session.sessionId);
           cluster.affectedSessionsCount += 1;
         }
-        
-        // Sum values first
+
         cluster.averageImpactValue += impactValue;
       }
     });
   });
 
-  // Calculate averages and final impactScore
   const resultList = Object.values(clusters).map((cluster) => {
     cluster.averageImpactValue = cluster.averageImpactValue / cluster.occurrences;
-    
-    // Compute impactScore
-    // Layout shifts average score is small (e.g. 0.15), multiply by 1000 to normalize with ms.
+
     const severityFactor = cluster.type === "layout-shift" ? 1000 : 1;
     cluster.impactScore = cluster.occurrences * cluster.averageImpactValue * severityFactor;
 
     return cluster;
   });
 
-  // Sort descending by impactScore
   return resultList.sort((a, b) => b.impactScore - a.impactScore);
 }
 import { randomUUID } from "node:crypto";

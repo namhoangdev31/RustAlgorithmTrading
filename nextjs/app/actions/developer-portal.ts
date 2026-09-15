@@ -15,9 +15,6 @@ function withQueryParam(href: string, key: string, value: string) {
   return `${href}${href.includes("?") ? "&" : "?"}${key}=${encodeURIComponent(value)}`;
 }
 
-/**
- * Register a partner profile for the current user.
- */
 export async function registerDeveloperProfileAction(formData: FormData) {
   const user = await requireCurrentUser();
   const companyName = readFormValue(formData, "companyName");
@@ -30,7 +27,6 @@ export async function registerDeveloperProfileAction(formData: FormData) {
       throw new Error("Company Name is required.");
     }
 
-    // Keep the current partner profile fields until the dedicated profile model is introduced.
     await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -48,9 +44,6 @@ export async function registerDeveloperProfileAction(formData: FormData) {
   }
 }
 
-/**
- * Register a new partner integration (Marketplace Listing candidate).
- */
 export async function registerIntegrationAction(formData: FormData) {
   const user = await requireCurrentUser();
   const integrationKey = readFormValue(formData, "integrationKey").toLowerCase().replace(/[^a-z0-9_-]/g, "-");
@@ -109,9 +102,6 @@ export async function registerIntegrationAction(formData: FormData) {
   }
 }
 
-/**
- * Executes a persisted compatibility check against the registered endpoint.
- */
 export async function runCompatibilityTestAction(formData: FormData) {
   const user = await requireCurrentUser();
   const integrationId = readFormValue(formData, "integrationId");
@@ -242,9 +232,6 @@ export async function runCompatibilityTestAction(formData: FormData) {
   }
 }
 
-/**
- * Publish the partner integration listing directly to the Marketplace catalog.
- */
 export async function publishMarketplaceIntegrationAction(formData: FormData) {
   const user = await requireCurrentUser();
   const integrationId = readFormValue(formData, "integrationId");
@@ -277,7 +264,6 @@ export async function publishMarketplaceIntegrationAction(formData: FormData) {
       throw new Error("Your integration must achieve 100% compliance in sandbox testing before publishing.");
     }
 
-    // Mark active in database
     await prisma.bundleExternalIntegrations.update({
       where: { id: integrationId },
       data: {

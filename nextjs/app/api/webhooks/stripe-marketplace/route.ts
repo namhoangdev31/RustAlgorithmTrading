@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         const now = new Date();
 
         if (mode === "payment") {
-          // --- ONE-TIME PURCHASE FULFILLMENT ---
+          
           let fulfilled = false;
           const totalAmount = fromStripeAmount(session.amount_total || 0, session.currency || "VND");
           const currency = (session.currency || "VND").toUpperCase();
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
           const partnerPayout = totalAmount - platformFee;
 
           await prisma.$transaction(async (tx) => {
-            // Check if transaction/order already exists
+            
             const existingTx = await tx.marketplaceTransaction.findFirst({
               where: { stripeCheckoutSessionId: sessionId },
             });
@@ -80,7 +80,6 @@ export async function POST(req: NextRequest) {
               return;
             }
 
-            // Create Marketplace Transaction
             await tx.marketplaceTransaction.create({
               data: {
                 stripePaymentIntentId: session.payment_intent as string || sessionId,
@@ -97,7 +96,6 @@ export async function POST(req: NextRequest) {
               },
             });
 
-            // Create Order
             const orderId = crypto.randomUUID();
             await tx.bundleOrders.create({
               data: {
@@ -130,7 +128,6 @@ export async function POST(req: NextRequest) {
               ],
             });
 
-            // Create Order Item
             await tx.bundleOrderItems.create({
               data: {
                 id: crypto.randomUUID(),
@@ -144,7 +141,6 @@ export async function POST(req: NextRequest) {
               },
             });
 
-            // Upsert User Entitlement
             await tx.bundleUserEntitlements.upsert({
               where: {
                 userId_bundleId_entitlementType: {
@@ -172,7 +168,6 @@ export async function POST(req: NextRequest) {
             fulfilled = true;
           });
 
-          // Record install event
           if (fulfilled) {
             await prisma.marketplaceInstallEvent.create({
               data: {
@@ -184,7 +179,6 @@ export async function POST(req: NextRequest) {
               },
             });
 
-            // Dispatch order completed webhook
             await queueWebhookEvent(
               bundleId,
               "order:completed",
@@ -200,7 +194,7 @@ export async function POST(req: NextRequest) {
 
           console.log(`[Stripe Marketplace Webhook] Fulfilled one-time order for bundle ${bundleId}`);
         } else if (mode === "subscription") {
-          // --- SUBSCRIPTION PURCHASE FULFILLMENT ---
+          
           let fulfilled = false;
           const subscriptionId = session.subscription as string;
           const planId = metadata.planId;
@@ -211,7 +205,7 @@ export async function POST(req: NextRequest) {
           }
 
           await prisma.$transaction(async (tx) => {
-            // Check if subscription already created in history
+            
             const existingSub = await tx.bundleSubscriptionHistory.findUnique({
               where: { stripeSubscriptionId: subscriptionId },
             });
@@ -221,7 +215,6 @@ export async function POST(req: NextRequest) {
               return;
             }
 
-            // Create Subscription History
             await tx.bundleSubscriptionHistory.create({
               data: {
                 id: crypto.randomUUID(),
@@ -237,7 +230,6 @@ export async function POST(req: NextRequest) {
               },
             });
 
-            // Create Entitlement
             await tx.bundleUserEntitlements.upsert({
               where: {
                 userId_bundleId_entitlementType: {
@@ -263,7 +255,6 @@ export async function POST(req: NextRequest) {
             fulfilled = true;
           });
 
-          // Record install event
           if (fulfilled) {
             await prisma.marketplaceInstallEvent.create({
               data: {
@@ -282,7 +273,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "invoice.paid": {
-        // --- SUBSCRIPTION RENEWAL/INVOICE PAID ---
+        
         const invoice = event.data.object;
         const subscriptionId = invoice.subscription as string;
         const invoiceId = invoice.id;
@@ -303,7 +294,7 @@ export async function POST(req: NextRequest) {
 
         const periodEnd = invoice.lines?.data?.[0]?.period?.end
           ? new Date(invoice.lines.data[0].period.end * 1000)
-          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // fallback +30 days
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); 
 
         const totalAmount = fromStripeAmount(invoice.amount_paid || 0, invoice.currency || "VND");
         const currency = (invoice.currency || "VND").toUpperCase();
@@ -313,7 +304,7 @@ export async function POST(req: NextRequest) {
         const now = new Date();
 
         await prisma.$transaction(async (tx) => {
-          // Check if invoice already processed
+          
           const existingTx = await tx.marketplaceTransaction.findFirst({
             where: { stripeInvoiceId: invoiceId },
           });
@@ -323,7 +314,6 @@ export async function POST(req: NextRequest) {
             return;
           }
 
-          // Create transaction for payout tracking
           await tx.marketplaceTransaction.create({
             data: {
               stripePaymentIntentId: invoice.payment_intent as string || invoiceId,
@@ -340,7 +330,6 @@ export async function POST(req: NextRequest) {
             },
           });
 
-          // Extend subscription history currentPeriodEnd
           await tx.bundleSubscriptionHistory.update({
             where: { id: subHistory.id },
             data: {
@@ -351,7 +340,6 @@ export async function POST(req: NextRequest) {
             },
           });
 
-          // Re-activate entitlement just in case
           await tx.bundleUserEntitlements.upsert({
             where: {
               userId_bundleId_entitlementType: {
@@ -381,7 +369,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "invoice.payment_failed": {
-        // --- SUBSCRIPTION PAYMENT FAILED ---
+        
         const invoice = event.data.object;
         const subscriptionId = invoice.subscription as string;
 
@@ -399,10 +387,10 @@ export async function POST(req: NextRequest) {
       }
 
       case "customer.subscription.updated": {
-        // --- GENERAL SUBSCRIPTION UPDATE ---
+        
         const subscription = event.data.object;
         const subscriptionId = subscription.id;
-        const status = subscription.status; // active, trialing, past_due, canceled, unpaid
+        const status = subscription.status; 
         const periodEnd = new Date(subscription.current_period_end * 1000);
 
         const entitlementActive = status === "active" || status === "trialing";
@@ -435,7 +423,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "customer.subscription.deleted": {
-        // --- SUBSCRIPTION CANCELED ---
+        
         const subscription = event.data.object;
         const subscriptionId = subscription.id;
 
@@ -447,7 +435,7 @@ export async function POST(req: NextRequest) {
         if (subHistory) {
           const now = new Date();
           await prisma.$transaction(async (tx) => {
-            // Update subscription history status
+            
             await tx.bundleSubscriptionHistory.update({
               where: { id: subHistory.id },
               data: {
@@ -457,7 +445,6 @@ export async function POST(req: NextRequest) {
               },
             });
 
-            // Deactivate subscription entitlement
             await tx.bundleUserEntitlements.updateMany({
               where: {
                 userId: subHistory.userId,
@@ -471,7 +458,6 @@ export async function POST(req: NextRequest) {
             });
           });
 
-          // Record uninstall / revoke event
           await prisma.marketplaceInstallEvent.create({
             data: {
               bundleId: subHistory.bundleId,

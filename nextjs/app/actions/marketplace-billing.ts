@@ -24,9 +24,6 @@ function withQueryParam(href: string, key: string, value: string) {
   return `${href}${href.includes("?") ? "&" : "?"}${key}=${encodeURIComponent(value)}`;
 }
 
-/**
- * Onboards the partner organization with Stripe Connect.
- */
 export async function onboardPartnerAction(formData: FormData) {
   const user = await requireCurrentUser();
   const organizationId = readFormValue(formData, "organizationId");
@@ -39,7 +36,7 @@ export async function onboardPartnerAction(formData: FormData) {
   await requireWorkspaceRole(user.id, organizationId, "admin");
 
   try {
-    // Check if partner account already exists
+    
     let partnerAccount = await prisma.marketplacePartnerAccount.findFirst({
       where: { workspaceId: organizationId },
     });
@@ -47,12 +44,11 @@ export async function onboardPartnerAction(formData: FormData) {
     let stripeAccountId = partnerAccount?.stripeAccountId;
 
     if (!stripeAccountId) {
-      // Create new Connect Express account
+      
       const email = user.email || "partner@lepos.dev";
       const accountRes = await createConnectAccount(organizationId, email);
       stripeAccountId = accountRes.stripeAccountId;
 
-      // Create model entry
       partnerAccount = await prisma.marketplacePartnerAccount.create({
         data: {
           workspaceId: organizationId,
@@ -63,7 +59,6 @@ export async function onboardPartnerAction(formData: FormData) {
       });
     }
 
-    // Generate onboarding link
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
     const refreshUrl = `${baseUrl}/api/webhooks/stripe-connect/refresh?accountId=${stripeAccountId}&orgId=${organizationId}`;
     const returnUrl = `${baseUrl}${await localizedHref(returnTo)}`;
@@ -80,14 +75,10 @@ export async function onboardPartnerAction(formData: FormData) {
   }
 }
 
-/**
- * Get dashboard payout, balance, and transaction data for a workspace.
- */
 export async function getPartnerBillingDashboardData(organizationId: string) {
   const user = await requireCurrentUser();
   await requireWorkspaceRole(user.id, organizationId, "viewer");
 
-  // Find partner account
   const partnerAccount = await prisma.marketplacePartnerAccount.findFirst({
     where: { workspaceId: organizationId },
   });
@@ -103,7 +94,6 @@ export async function getPartnerBillingDashboardData(organizationId: string) {
     };
   }
 
-  // Get balance & payouts from Stripe Connect engine
   let balance = { available: [] as Array<{ amount: number; currency: string }>, pending: [] as Array<{ amount: number; currency: string }> };
   let payouts: Awaited<ReturnType<typeof getPartnerPayouts>> = [];
   let providerUnavailable = false;
@@ -116,7 +106,6 @@ export async function getPartnerBillingDashboardData(organizationId: string) {
     providerUnavailable = true;
   }
 
-  // Find related projects/bundles
   const projects = await prisma.project.findMany({
     where: { organizationId, deletedAt: null },
     select: { bundle: { select: { id: true } } },
@@ -124,7 +113,6 @@ export async function getPartnerBillingDashboardData(organizationId: string) {
 
   const bundleIds = projects.flatMap((p) => p.bundle?.id || []);
 
-  // Fetch transactions from DB
   const transactions = await prisma.marketplaceTransaction.findMany({
     where: { bundleId: { in: bundleIds } },
     orderBy: { createdAt: "desc" },
@@ -152,9 +140,6 @@ export async function getPartnerBillingDashboardData(organizationId: string) {
   };
 }
 
-/**
- * Checkout Server Action for one-time product purchase.
- */
 export async function createOneTimeCheckoutAction(formData: FormData) {
   const user = await requireCurrentUser();
   const bundleId = readFormValue(formData, "bundleId");
@@ -165,7 +150,6 @@ export async function createOneTimeCheckoutAction(formData: FormData) {
     redirect(withQueryParam(target, "checkout", "missing_bundle"));
   }
 
-  // 1. Fetch published bundle
   const bundle = await prisma.bundles.findUnique({
     where: { id: bundleId },
     select: {
@@ -183,8 +167,6 @@ export async function createOneTimeCheckoutAction(formData: FormData) {
     redirect(withQueryParam(target, "checkout", "bundle_unavailable"));
   }
 
-  // 2. Fetch active MarketplacePartnerAccount of the seller
-  // The seller is the project owner of the bundle's project.
   const project = await prisma.project.findUnique({
     where: { id: bundle.projectId || "" },
     select: { organizationId: true },
@@ -204,7 +186,6 @@ export async function createOneTimeCheckoutAction(formData: FormData) {
     redirect(withQueryParam(target, "checkout", "seller_not_onboarded"));
   }
 
-  // 3. Initiate stripe session
   const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const successUrl = `${baseUrl}/marketplace/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
   const cancelUrl = `${baseUrl}/marketplace/checkout/cancel`;
@@ -240,9 +221,6 @@ export async function createOneTimeCheckoutAction(formData: FormData) {
   }
 }
 
-/**
- * Checkout Server Action for subscription plan subscription.
- */
 export async function createSubscriptionCheckoutAction(formData: FormData) {
   const user = await requireCurrentUser();
   const planId = readFormValue(formData, "planId");
@@ -253,7 +231,6 @@ export async function createSubscriptionCheckoutAction(formData: FormData) {
     redirect(withQueryParam(target, "checkout", "missing_plan"));
   }
 
-  // 1. Fetch active subscription plan
   const plan = await prisma.bundleSubscriptionPlans.findUnique({
     where: { id: planId },
     select: {
@@ -279,7 +256,6 @@ export async function createSubscriptionCheckoutAction(formData: FormData) {
     redirect(withQueryParam(target, "checkout", "plan_unavailable"));
   }
 
-  // 2. Fetch active seller partner account
   const project = await prisma.project.findUnique({
     where: { id: plan.bundle.projectId || "" },
     select: { organizationId: true },
@@ -299,7 +275,6 @@ export async function createSubscriptionCheckoutAction(formData: FormData) {
     redirect(withQueryParam(target, "checkout", "seller_not_onboarded"));
   }
 
-  // 3. Initiate stripe session
   const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const successUrl = `${baseUrl}/marketplace/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
   const cancelUrl = `${baseUrl}/marketplace/checkout/cancel`;

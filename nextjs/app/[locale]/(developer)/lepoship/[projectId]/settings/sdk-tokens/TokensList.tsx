@@ -39,7 +39,7 @@ export function TokensList({ projectId, initialTokens }: TokensListProps) {
       setTokens((prev) => [
         {
           id: res.id,
-          tokenPrefix: res.plaintextToken.slice(7, 15), 
+          tokenPrefix: res.plaintextToken.slice(7, 15), // extracted prefix prefix
           label: res.label,
           lastUsedAt: null,
           createdAt: res.createdAt,
@@ -72,7 +72,7 @@ export function TokensList({ projectId, initialTokens }: TokensListProps) {
 
   return (
     <div className="space-y-6 text-xs">
-      {}
+      {/* Show newly generated token once */}
       {newPlaintextToken && (
         <div className="p-4 bg-emerald-500/10 border border-emerald-500/25 rounded-lg space-y-3.5 animate-fade-in">
           <div className="flex items-center gap-2 text-emerald-500 font-bold text-xs">
@@ -101,7 +101,7 @@ export function TokensList({ projectId, initialTokens }: TokensListProps) {
         </div>
       )}
 
-      {}
+      {/* Generate Form */}
       <form onSubmit={handleGenerate} className="max-w-md space-y-3">
         <div className="space-y-2">
           <Label htmlFor="tokenLabel" className="text-xs font-semibold text-muted-foreground">Key Label / Name</Label>
@@ -125,7 +125,7 @@ export function TokensList({ projectId, initialTokens }: TokensListProps) {
         </div>
       </form>
 
-      {}
+      {/* List of active keys */}
       <div className="space-y-3">
         <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Active Keys</h4>
 

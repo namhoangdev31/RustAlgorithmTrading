@@ -34,10 +34,8 @@ export async function GET(
     }
   };
 
-  // Send initial evaluation immediately
   await sendFlags();
 
-  // Listen to the central flagEvents change notifier
   const onChange = async (eventData: { projectId: string }) => {
     if (eventData.projectId === projectId) {
       await sendFlags();

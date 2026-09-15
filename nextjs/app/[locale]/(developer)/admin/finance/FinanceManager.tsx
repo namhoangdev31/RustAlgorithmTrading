@@ -86,7 +86,7 @@ export function FinanceManager({ initialPayouts, initialRefunds }: ManagerProps)
 
   return (
     <div className="space-y-8 text-xs">
-      {}
+      {/* 1. Refunds Review Queue */}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
           <RefreshCw className="size-4 text-amber-500 animate-spin-slow" />
@@ -135,7 +135,7 @@ export function FinanceManager({ initialPayouts, initialRefunds }: ManagerProps)
         )}
       </div>
 
-      {}
+      {/* 2. Payouts Reconciliation */}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
           <DollarSign className="size-4 text-emerald-500" />
@@ -196,7 +196,7 @@ export function FinanceManager({ initialPayouts, initialRefunds }: ManagerProps)
         )}
       </div>
 
-      {}
+      {/* Review Refund Dialog */}
       <Dialog open={selectedRefundId !== null} onOpenChange={(open) => !open && setSelectedRefundId(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

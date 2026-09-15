@@ -104,7 +104,7 @@ export function VercelEnvVarsCard({
       <Separator className="bg-hairline my-4" />
 
       <CardContent className="px-0 pb-0 space-y-6">
-        {}
+        {/* Form Container (Add/Edit) */}
         {isFormOpen && (
           <form
             onSubmit={(e) => {
@@ -145,7 +145,7 @@ export function VercelEnvVarsCard({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {}
+              {/* Key */}
               <div className="space-y-1.5">
                 <Label htmlFor="env_key" className="text-xs font-semibold text-ink-secondary">Name (Key)</Label>
                 <Input
@@ -160,7 +160,7 @@ export function VercelEnvVarsCard({
                 />
               </div>
 
-              {}
+              {/* Comment */}
               <div className="space-y-1.5">
                 <Label htmlFor="env_comment" className="text-xs font-semibold text-ink-secondary">Comment (Optional)</Label>
                 <Input
@@ -174,7 +174,7 @@ export function VercelEnvVarsCard({
                 />
               </div>
 
-              {}
+              {/* Value */}
               <div className="md:col-span-2 space-y-1.5">
                 <Label htmlFor="env_value" className="text-xs font-semibold text-ink-secondary">
                   Value {editingVar && <span className="text-[10px] text-ink-mute font-normal">(Leave blank to keep current value)</span>}
@@ -192,7 +192,7 @@ export function VercelEnvVarsCard({
                 />
               </div>
 
-              {}
+              {/* Targets */}
               <div className="md:col-span-2 space-y-2">
                 <Label className="text-xs font-semibold text-ink-secondary">Environments</Label>
                 <div className="flex flex-wrap gap-6 pt-1 select-none">
@@ -251,7 +251,7 @@ export function VercelEnvVarsCard({
           </form>
         )}
 
-        {}
+        {/* List of Variables */}
         <div className="rounded-md border border-hairline overflow-hidden">
           {vercelProjectEnvVars.length === 0 ? (
             <div className="p-8 text-center text-xs text-ink-mute bg-canvas-soft/10">
@@ -272,7 +272,7 @@ export function VercelEnvVarsCard({
               <TableBody>
                 {vercelProjectEnvVars.map((env) => (
                   <TableRow key={env.id} className="border-b border-hairline hover:bg-canvas-soft/10 transition-colors">
-                    {}
+                    {/* Key */}
                     <TableCell className="px-5 py-3.5">
                       <div className="flex items-center gap-1.5 font-mono text-xs font-semibold text-ink">
                         <Lock className="size-3 text-ink-mute shrink-0" />
@@ -280,7 +280,7 @@ export function VercelEnvVarsCard({
                       </div>
                     </TableCell>
                     
-                    {}
+                    {/* Value */}
                     <TableCell className="px-5 py-3.5">
                       <div className="flex items-center gap-2 font-mono text-xs text-ink-mute select-none">
                         <span>{showValues[env.id] ? (env.value || "•••••••• (encrypted)") : "••••••••"}</span>
@@ -296,7 +296,7 @@ export function VercelEnvVarsCard({
                       </div>
                     </TableCell>
 
-                    {}
+                    {/* Targets */}
                     <TableCell className="px-5 py-3.5">
                       <div className="flex flex-wrap gap-1">
                         {env.target?.map((t: string) => (
@@ -316,10 +316,12 @@ export function VercelEnvVarsCard({
                       </div>
                     </TableCell>
 
+                    {/* Comment */}
                     <TableCell className="px-5 py-3.5 text-xs text-ink-secondary">
                       {env.comment || "—"}
                     </TableCell>
 
+                    {/* Actions */}
                     <TableCell className="px-5 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <Button

@@ -24,7 +24,6 @@ async function requireEditableBundle(userId: string, projectId: string) {
   return bundle;
 }
 
-/** Validates HTTPS or root-relative URLs */
 function isValidPreviewUrl(url: string): boolean {
   if (url.startsWith("/")) return true;
   try {
@@ -34,10 +33,6 @@ function isValidPreviewUrl(url: string): boolean {
     return false;
   }
 }
-
-// ---------------------------------------------------------------------------
-// Upsert Store Listing + Localization
-// ---------------------------------------------------------------------------
 
 const listingSchema = z.object({
   locale: z.string().min(2).max(10),
@@ -83,7 +78,7 @@ export async function upsertStoreListingAction(formData: FormData) {
 
   try {
     await prisma.$transaction([
-      // Upsert BundleStoreListings (region = BCP-47 locale)
+      
       prisma.bundleStoreListings.upsert({
         where: {
           bundleId_region: { bundleId: bundle.id, region: locale },
@@ -106,7 +101,7 @@ export async function upsertStoreListingAction(formData: FormData) {
           updatedAt: now,
         },
       }),
-      // Upsert BundleLocalizations (languageCode = BCP-47 locale)
+      
       prisma.bundleLocalizations.upsert({
         where: {
           bundleId_languageCode: { bundleId: bundle.id, languageCode: locale },
@@ -142,10 +137,6 @@ export async function upsertStoreListingAction(formData: FormData) {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Replace Screenshots (ordered)
-// ---------------------------------------------------------------------------
-
 export async function replaceScreenshotsAction(formData: FormData) {
   const user = await requireCurrentUser();
   const projectId = readFormValue(formData, "projectId");
@@ -164,7 +155,6 @@ export async function replaceScreenshotsAction(formData: FormData) {
     redirect(withQueryParam(target, "listing", "access_denied"));
   }
 
-  // Parse screenshots JSON: [{ url, caption?, deviceType? }]
   const screenshotsRaw = readFormValue(formData, "screenshots");
   let screenshots: { url: string; caption?: string; deviceType?: string }[] = [];
   try {
@@ -174,7 +164,6 @@ export async function replaceScreenshotsAction(formData: FormData) {
     redirect(withQueryParam(target, "listing", "invalid_screenshots"));
   }
 
-  // Validate URLs
   for (const s of screenshots) {
     if (!isValidPreviewUrl(s.url)) {
       const target = await localizedHref(returnTo);
@@ -206,10 +195,6 @@ export async function replaceScreenshotsAction(formData: FormData) {
   redirect(withQueryParam(target, "listing", "screenshots_saved"));
 }
 
-// ---------------------------------------------------------------------------
-// Replace Keywords (per locale)
-// ---------------------------------------------------------------------------
-
 export async function replaceKeywordsAction(formData: FormData) {
   const user = await requireCurrentUser();
   const projectId = readFormValue(formData, "projectId");
@@ -230,7 +215,7 @@ export async function replaceKeywordsAction(formData: FormData) {
   }
 
   const keywordsRaw = readFormValue(formData, "keywords");
-  // Normalize: split by comma/newline, lowercase, trim, deduplicate
+  
   const keywords = [
     ...new Set(
       keywordsRaw
@@ -259,10 +244,6 @@ export async function replaceKeywordsAction(formData: FormData) {
   const target = await localizedHref(returnTo);
   redirect(withQueryParam(target, "listing", "keywords_saved"));
 }
-
-// ---------------------------------------------------------------------------
-// Replace Tags (global)
-// ---------------------------------------------------------------------------
 
 export async function replaceTagsAction(formData: FormData) {
   const user = await requireCurrentUser();
@@ -309,10 +290,6 @@ export async function replaceTagsAction(formData: FormData) {
   const target = await localizedHref(returnTo);
   redirect(withQueryParam(target, "listing", "tags_saved"));
 }
-
-// ---------------------------------------------------------------------------
-// Upsert Privacy Declaration
-// ---------------------------------------------------------------------------
 
 export async function upsertPrivacyDeclarationAction(formData: FormData) {
   const user = await requireCurrentUser();

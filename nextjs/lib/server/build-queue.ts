@@ -46,7 +46,7 @@ async function checkBuildRateLimit(
 }
 
 export async function enqueueBuild(job: BuildJob) {
-  let priority = 5; // Default: Free tier priority (Lowest)
+  let priority = 5; 
   let plan: "free" | "pro" | "enterprise" = "free";
   let orgName = "";
   let ownerUserId = "";
@@ -67,13 +67,13 @@ export async function enqueueBuild(job: BuildJob) {
       
       if (orgType === "corporate" || nameLower.includes("enterprise")) {
         plan = "enterprise";
-        priority = 1; // High priority
+        priority = 1; 
       } else if (nameLower.includes("pro") || nameLower.includes("business")) {
         plan = "pro";
-        priority = 2; // Medium priority
+        priority = 2; 
       } else {
         plan = "free";
-        priority = 5; // Low priority
+        priority = 5; 
       }
     }
   } catch (err) {
@@ -109,16 +109,14 @@ export async function enqueueBuild(job: BuildJob) {
     console.warn("Failed to compute FinOps scheduling recommendation:", err);
   }
 
-  // Enforce rate limiting for Free tier (max 5 builds per hour)
   if (plan === "free") {
-    const limitWindowSeconds = 3600; // 1 hour
+    const limitWindowSeconds = 3600; 
     const limitMaxBuilds = 5;
     
     const rateLimitCheck = await checkBuildRateLimit(job.projectId, limitMaxBuilds, limitWindowSeconds);
     if (!rateLimitCheck.allowed) {
       const errMsg = `Build rejected: Free tier rate limit exceeded (${limitMaxBuilds} builds per hour). Upgrade to Pro or Enterprise for unlimited builds.`;
-      
-      // Update release track status to failed in database
+
       await prisma.bundleReleaseTracks.update({
         where: { id: job.trackId },
         data: {

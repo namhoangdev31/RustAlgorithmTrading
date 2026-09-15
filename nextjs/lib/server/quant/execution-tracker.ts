@@ -315,7 +315,6 @@ export function replayExecutionCached(
   return state;
 }
 
-/** Xóa cache replay (dùng cho test cold-start / khi đổi ngày) */
 export function clearReplayCache() {
   replayCache.clear();
 }

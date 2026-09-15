@@ -158,7 +158,7 @@ export function BundlesSubTab({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      {}
+      {/* Form & Upload column */}
       <div className="lg:col-span-5 space-y-4">
         <Card className="border border-hairline bg-canvas shadow-dark overflow-hidden">
           <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 p-5">
@@ -176,7 +176,7 @@ export function BundlesSubTab({
               </div>
             ) : (
               <>
-                {}
+                {/* Project selector */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-ink-secondary">
                     {t("form.target_project")}
@@ -195,7 +195,7 @@ export function BundlesSubTab({
                   </NativeSelect>
                 </div>
 
-                {}
+                {/* Drag & Drop uploader */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-ink-secondary">
                     {t("form.bundle_file")}
@@ -233,6 +233,7 @@ export function BundlesSubTab({
                   </div>
                 </div>
 
+                {/* Version Overwrite */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-ink-secondary">
@@ -269,6 +270,7 @@ export function BundlesSubTab({
                   </div>
                 </div>
 
+                {/* Release Notes */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-ink-secondary">
                     {t("form.release_notes")}
@@ -282,6 +284,7 @@ export function BundlesSubTab({
                   />
                 </div>
 
+                {/* Upload progress & submit button */}
                 {uploading && (
                   <div className="space-y-1.5 pt-1">
                     <div className="flex justify-between text-[10px] font-bold text-primary">
@@ -315,6 +318,7 @@ export function BundlesSubTab({
         </Card>
       </div>
 
+      {/* Registry Release History column */}
       <div className="lg:col-span-7">
         <Card className="border border-hairline bg-canvas shadow-dark py-0 overflow-hidden">
           <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 p-5 flex flex-row items-center justify-between">

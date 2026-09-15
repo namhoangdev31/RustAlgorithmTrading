@@ -31,7 +31,6 @@ export async function POST(req: NextRequest) {
     const todayStr = getVietnamTradingDate(now);
     const planDate = new Date(`${todayStr}T00:00:00.000Z`);
 
-    // 1. Tìm kế hoạch hiện tại trong ngày từ CSDL
     const existingPlanDb = await prisma.bfxpsTradingPlan.findFirst({
       where: {
         date: planDate,
@@ -74,7 +73,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Chạy replay kiểm tra xem đã dính SL hay chưa
     const ticks = bars.map(b => ({ time: b.time, open: b.open, high: b.high, low: b.low, close: b.close }));
     const execState = replayExecutionCached(currentPlan, ticks);
     const isSlHit = execState.status === "EXIT_SL" || existingPlanDb?.exitType === "SL";
@@ -92,7 +90,6 @@ export async function POST(req: NextRequest) {
 
     const actualCutloss = cutlossPrice ?? (execState.exitPrice ?? currentPlan.slPrice);
 
-    // 3. Chạy thuật toán tái lập kèo tối ưu dựa trên toàn bộ dữ liệu phiên
     const recalibratedPlan = recalibratePlanAfterStopLoss(
       currentPlan,
       liveSnapshot,
@@ -101,7 +98,6 @@ export async function POST(req: NextRequest) {
       bars
     );
 
-    // 4. Lưu trực tiếp vào CSDL làm Kèo Chính mới của ngày hôm nay tới khi kết thúc ATC
     await prisma.bfxpsTradingPlan.upsert({
       where: {
         date_engine: {
@@ -141,7 +137,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 5. Tính toán execution mới cho kèo vừa tái lập
     const newExec = replayExecutionCached(recalibratedPlan, ticks);
     recalibratedPlan.execution = newExec;
 

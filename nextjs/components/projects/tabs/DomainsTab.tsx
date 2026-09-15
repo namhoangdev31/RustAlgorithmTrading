@@ -320,7 +320,7 @@ export function DomainsTab({
   return (
     <div className="space-y-6">
       {nativeDomainsPanel}
-      
+      {/* Project Domains Card */}
       {vercelProjectDomains && vercelProjectId && (
         <Card className="overflow-hidden border border-hairline bg-canvas py-0">
         <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5">
@@ -371,7 +371,7 @@ export function DomainsTab({
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-medium text-ink">{dom.name}</span>
                             <a 
-                              href={`https:
+                              href={`https://${dom.name}`} 
                               target="_blank" 
                               rel="noopener noreferrer"
                               className="text-ink-mute hover:text-primary transition-colors"
@@ -476,6 +476,7 @@ export function DomainsTab({
                         </TableCell>
                       </TableRow>
 
+                      {/* DNS configuration challenges details row */}
                       {isExpanded && !isVerified && challenges.length > 0 && (
                         <TableRow className="bg-canvas-soft/10">
                           <TableCell colSpan={5} className="px-8 py-4 border-b border-hairline">
@@ -542,6 +543,7 @@ export function DomainsTab({
         </Card>
       )}
 
+      {/* Vercel Aliases Card */}
       <Card className="overflow-hidden border border-hairline bg-canvas py-0">
         <CardHeader className="border-b border-hairline-cool bg-canvas-soft/60 flex flex-row items-center justify-between gap-3 p-5">
           <div>
@@ -586,7 +588,7 @@ export function DomainsTab({
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium text-ink">{alias.alias}</span>
                           <a 
-                            href={`https:
+                            href={`https://${alias.alias}`} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="text-ink-mute hover:text-primary transition-colors"
@@ -628,7 +630,7 @@ export function DomainsTab({
         </CardContent>
       </Card>
 
-      {}
+      {/* Modal Dialog for Add Project Domain */}
       {isAddDomainOpen && (
         <PortalDialog open onOpenChange={setIsAddDomainOpen} className="max-w-md">
           <div className="flex min-h-0 flex-1 flex-col bg-canvas">
@@ -697,7 +699,7 @@ export function DomainsTab({
         </PortalDialog>
       )}
 
-      {}
+      {/* Modal Dialog for Assign Alias */}
       {isAssignOpen && (
         <PortalDialog open onOpenChange={setIsAssignOpen} className="max-w-md">
           <div className="flex min-h-0 flex-1 flex-col bg-canvas">

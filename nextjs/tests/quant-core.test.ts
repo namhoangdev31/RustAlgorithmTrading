@@ -105,7 +105,7 @@ describe("BFXPS Quant Core Test Suite", () => {
       longPlan = generateCanonicalQuantPlan("2026-09-10", 1960.0, 10.0, 1965.0, 1960.0); 
 
       shortPlan = generateCanonicalQuantPlan("2026-09-10", 1960.0, 10.0, 1955.0, 1960.0);
-      
+      // Entry = 1960 - 1 = 1959.0. TP = 1935.0. SL = 1967.0.
     });
 
     it("Slippage: Khớp lệnh trượt giá Gap (LONG)", () => {
@@ -175,7 +175,7 @@ describe("BFXPS Quant Core Test Suite", () => {
       const ladderPlan = generateAllDaysLadderPlan("2026-09-10", snapshot, 1960.0, 1950.0, undefined, undefined, {
         side: "LONG",
         tpPoints: 5.0,
-        maxCap: 0.6, 
+        maxCap: 0.6, // Mở cap để khớp đủ 3 nấc (0.1, 0.2, 0.3)
       });
       tracker = new IntradayExecutionTracker(ladderPlan);
 
@@ -349,9 +349,9 @@ describe("BFXPS Quant Core Test Suite", () => {
 
     it("replayExecution: ATC_EXIT khi nến >=14:45 chưa chạm TP/SL", () => {
       const bars: M1Tick[] = [
-        { time: "09:15:00", open: 1960, high: 1962, low: 1960, close: 1961 }, 
+        { time: "09:15:00", open: 1960, high: 1962, low: 1960, close: 1961 }, // khớp Long 1961
         { time: "10:00:00", open: 1961, high: 1963, low: 1960, close: 1962 },
-        { time: "14:45:00", open: 1962, high: 1963, low: 1961, close: 1962.5 }, 
+        { time: "14:45:00", open: 1962, high: 1963, low: 1961, close: 1962.5 }, // ATC
       ];
       const st = replayExecution(longPlan(), bars);
       expect(st.settled).toBe(true);
@@ -361,10 +361,10 @@ describe("BFXPS Quant Core Test Suite", () => {
 
     it("replayExecution: trailing tích lũy qua NHIỀU nến (điều 1-nến-tổng-hợp không làm được)", () => {
       const bars: M1Tick[] = [
-        { time: "09:15:00", open: 1960, high: 1962, low: 1960, close: 1961 }, 
-        { time: "09:30:00", open: 1961, high: 1970, low: 1961, close: 1969 }, 
-        { time: "10:00:00", open: 1969, high: 1975, low: 1968, close: 1974 }, 
-        { time: "10:15:00", open: 1974, high: 1975, low: 1968, close: 1969 }, 
+        { time: "09:15:00", open: 1960, high: 1962, low: 1960, close: 1961 }, // khớp 1961
+        { time: "09:30:00", open: 1961, high: 1970, low: 1961, close: 1969 }, // +8đ -> BE lock
+        { time: "10:00:00", open: 1969, high: 1975, low: 1968, close: 1974 }, // peak 1975 (+14đ -> trail)
+        { time: "10:15:00", open: 1974, high: 1975, low: 1968, close: 1969 }, // chạm trail SL ~1970
       ];
       const st = replayExecution(longPlan(), bars);
       expect(st.settled).toBe(true);
@@ -374,7 +374,7 @@ describe("BFXPS Quant Core Test Suite", () => {
 
     it("replayExecution: SL/TP cùng 1 nến -> ưu tiên SL (pessimistic)", () => {
       const bars: M1Tick[] = [
-        { time: "09:15:00", open: 1960, high: 1962, low: 1960, close: 1961 }, 
+        { time: "09:15:00", open: 1960, high: 1962, low: 1960, close: 1961 }, // khớp 1961
         
         { time: "09:16:00", open: 1961, high: 1990, low: 1950, close: 1970 },
       ];
@@ -502,8 +502,8 @@ describe("BFXPS Quant Core Test Suite", () => {
       
       const bars = [
         { time: "09:15", open: 1930, high: 1935, low: 1928, close: 1932 },
-        { time: "10:00", open: 1932, high: 1942.5, low: 1931, close: 1941 }, 
-        { time: "10:30", open: 1941, high: 1941.5, low: 1936, close: 1937 }, 
+        { time: "10:00", open: 1932, high: 1942.5, low: 1931, close: 1941 }, // Quét SL 1940
+        { time: "10:30", open: 1941, high: 1941.5, low: 1936, close: 1937 }, // Rút chân tụt về 1937
       ];
       const newPlan = recalibratePlanAfterStopLoss(shortPlan, { ...snapshot, current: 1937.0 }, metrics, 1940.0, bars);
       expect(newPlan.side).toBe("SHORT");
@@ -541,8 +541,8 @@ describe("BFXPS Quant Core Test Suite", () => {
       
       const bars = [
         { time: "09:15", open: 1945, high: 1948, low: 1942, close: 1944 },
-        { time: "10:00", open: 1944, high: 1944, low: 1931.2, close: 1933 }, 
-        { time: "10:30", open: 1933, high: 1939, low: 1932, close: 1938.5 }, 
+        { time: "10:00", open: 1944, high: 1944, low: 1931.2, close: 1933 }, // Quét SL 1935
+        { time: "10:30", open: 1933, high: 1939, low: 1932, close: 1938.5 }, // Rút chân tăng lên 1938.5
       ];
       const newPlan = recalibratePlanAfterStopLoss(longPlan, { ...snapshot, current: 1938.5 }, metrics, 1935.0, bars);
       expect(newPlan.side).toBe("LONG");

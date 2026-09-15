@@ -60,7 +60,7 @@ export async function createTestProject(organizationId: string) {
 }
 
 export async function cleanupTestData() {
-  // Delete in order of constraint relationships
+  
   await prisma.marketplaceCompatibilityRun.deleteMany({
     where: { integrationId: { startsWith: testNamespace } },
   });

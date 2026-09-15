@@ -24,10 +24,6 @@ async function requireAdmin() {
   return user;
 }
 
-// ---------------------------------------------------------------------------
-// Approve
-// ---------------------------------------------------------------------------
-
 export async function approveReviewQueueAction(formData: FormData) {
   const user = await requireAdmin();
   const queueItemId = readFormValue(formData, "queueItemId");
@@ -67,7 +63,7 @@ export async function approveReviewQueueAction(formData: FormData) {
       await reconcileReleasePromotion({ releaseId: release.id, actorId: user.id, reason: "Moderation and privacy approval completed." });
     } else {
     await prisma.$transaction(async (tx) => {
-      // 1. Read the queue item and verify it is still pending.
+      
       const item = await tx.bundleReviewQueue.findUnique({
         where: { id: queueItemId },
         select: {
@@ -95,7 +91,6 @@ export async function approveReviewQueueAction(formData: FormData) {
       if (!emergencyOverride && (!privacy || !["submitted", "approved"].includes(privacy.declarationStatus))) throw new Error("A submitted privacy declaration is required before publication.");
       if (!emergencyOverride && !scan) throw new Error("A passing security scan is required before publication.");
 
-      // Conditional updates make a repeated/concurrent decision a no-op.
       const claimed = await tx.bundleReviewQueue.updateMany({
         where: { id: item.id, status: "pending" },
         data: {
@@ -125,7 +120,6 @@ export async function approveReviewQueueAction(formData: FormData) {
 
       if (version) await tx.bundleVersionHistory.update({ where: { id: item.submittedVersionId! }, data: { status: "published", publishedAt: now } });
 
-      // 4. Append review history
       await tx.bundleReviewHistory.create({
         data: {
           id: crypto.randomUUID(),
@@ -208,10 +202,6 @@ export async function approveEmergencyReleaseOverrideAction(formData: FormData) 
   revalidatePath("/admin/review-queue");
 }
 
-// ---------------------------------------------------------------------------
-// Reject
-// ---------------------------------------------------------------------------
-
 const rejectSchema = z.object({
   queueItemId: z.string().min(1, "Queue item ID is required."),
   rejectionReason: z.string().min(1, "A rejection reason is required."),
@@ -277,7 +267,6 @@ export async function rejectReviewQueueAction(formData: FormData) {
         throw new Error("Queue item has already been reviewed.");
       }
 
-      // 3. Append review history
       await tx.bundleReviewHistory.create({
         data: {
           id: crypto.randomUUID(),

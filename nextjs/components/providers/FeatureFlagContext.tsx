@@ -67,7 +67,6 @@ export function FeatureFlagProvider({
     if (projectId) {
       refreshFlags();
 
-      // Set up a Server-Sent Events (SSE) connection to sync real-time database changes.
       const eventSource = new EventSource(`/api/v1/projects/${projectId}/feature-flags/stream`);
       
       eventSource.onmessage = (event) => {

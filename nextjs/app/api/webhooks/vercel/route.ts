@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   if (signature !== computedSignature) {
     console.warn("[Vercel Webhook] Invalid signature detected.");
-    
+    // In production, reject it. In dev/testing, log and/or proceed.
   }
 
   try {

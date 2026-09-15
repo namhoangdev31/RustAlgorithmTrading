@@ -95,10 +95,6 @@ export async function PUT(
   );
 }
 
-// ---------------------------------------------------------------------------
-// HEAD /api/remote-cache/v8/artifacts/:hash — Check artifact exists
-// ---------------------------------------------------------------------------
-
 export async function HEAD(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
@@ -117,10 +113,6 @@ export async function HEAD(
   const exists = await checkArtifactExists(hash, auth.teamId);
   return new NextResponse(null, { status: exists ? 200 : 404 });
 }
-
-// ---------------------------------------------------------------------------
-// POST /api/remote-cache/v8/artifacts/events — Cache analytics events
-// ---------------------------------------------------------------------------
 
 export async function POST(
   request: NextRequest,

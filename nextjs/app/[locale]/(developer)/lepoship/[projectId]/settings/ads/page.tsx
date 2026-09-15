@@ -21,7 +21,6 @@ export default async function LepoShipAdsSettingsPage({ params }: PageProps) {
 
   const bundle = data.project.bundle;
 
-  // Retrieve current ad configurations
   const adConfig = await prisma.bundleAdConfigurations.findUnique({
     where: { bundleId: bundle.id },
   });

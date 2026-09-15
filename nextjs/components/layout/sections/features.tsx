@@ -124,7 +124,7 @@ export const FeaturesSection = () => {
 
     gsap.to(card, {
       y: -6,
-      borderColor: "rgba(62, 207, 142, 0.4)", 
+      borderColor: "rgba(62, 207, 142, 0.4)", // Emerald green border highlight
       boxShadow: "0 15px 30px -15px rgba(62, 207, 142, 0.2)",
       backgroundColor: "rgba(62, 207, 142, 0.02)",
       duration: 0.3,
@@ -135,7 +135,7 @@ export const FeaturesSection = () => {
       gsap.to(icon, {
         scale: 1.2,
         rotation: 360,
-        color: "#3ecf8e", 
+        color: "#3ecf8e", // Emerald green
         duration: 0.6,
         ease: "power2.out",
       });

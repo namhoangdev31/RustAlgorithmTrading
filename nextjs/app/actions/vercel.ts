@@ -630,8 +630,7 @@ export async function linkProjectEdgeConfigAction(formData: FormData) {
 
   try {
     const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "editor");
-    
-    // 1. Create a token for this store
+
     const tokenRes = await vercel.edgeConfig.createEdgeConfigToken({
       edgeConfigId,
       requestBody: { label: `lepos-project-${projectId}` }
@@ -642,7 +641,7 @@ export async function linkProjectEdgeConfigAction(formData: FormData) {
       throw new Error("Failed to create Edge Config token");
     }
 
-    const connectionString = `https:
+    const connectionString = `https://edge-config.vercel.com/${edgeConfigId}?token=${token}`;
 
     await vercel.projects.createProjectEnv({
       idOrName: projectId,
@@ -678,7 +677,6 @@ export async function createAndLinkEdgeConfigAction(formData: FormData) {
   try {
     const { vercel } = await getAuthorizedVercelClient(user.id, projectId, "editor");
 
-    // 1. Create store
     const store = await vercel.edgeConfig.createEdgeConfig({
       requestBody: { slug }
     });
@@ -688,7 +686,6 @@ export async function createAndLinkEdgeConfigAction(formData: FormData) {
       throw new Error("Failed to create Edge Config store");
     }
 
-    // 2. Create token for store
     const tokenRes = await vercel.edgeConfig.createEdgeConfigToken({
       edgeConfigId,
       requestBody: { label: `lepos-project-${projectId}` }
@@ -699,7 +696,7 @@ export async function createAndLinkEdgeConfigAction(formData: FormData) {
       throw new Error("Failed to create Edge Config token");
     }
 
-    const connectionString = `https:
+    const connectionString = `https://edge-config.vercel.com/${edgeConfigId}?token=${token}`;
 
     await vercel.projects.createProjectEnv({
       idOrName: projectId,
@@ -727,8 +724,8 @@ export async function patchEdgeConfigItemAction(formData: FormData) {
   const projectId = readFormValue(formData, "projectId");
   const edgeConfigId = readFormValue(formData, "edgeConfigId");
   const key = readFormValue(formData, "key");
-  const value = readFormValue(formData, "value"); // String representation of JSON or plain string
-  const operation = readFormValue(formData, "operation"); // "create" | "update" | "delete"
+  const value = readFormValue(formData, "value"); 
+  const operation = readFormValue(formData, "operation"); 
   const returnTo = readFormValue(formData, "returnTo") || "/projects";
 
   if (!projectId || !edgeConfigId || !key || !operation) {
@@ -743,7 +740,7 @@ export async function patchEdgeConfigItemAction(formData: FormData) {
       try {
         parsedValue = JSON.parse(value);
       } catch {
-        parsedValue = value; // Fallback to plain string
+        parsedValue = value; 
       }
     }
 
@@ -760,7 +757,6 @@ export async function patchEdgeConfigItemAction(formData: FormData) {
       requestBody: { items }
     });
 
-    // Replicate changes to all linked multi-providers (Vercel & Cloudflare KV) in parallel
     const projectProvidersRes = await getProjectProvidersAction(projectId);
     if (projectProvidersRes.success && projectProvidersRes.providers && projectProvidersRes.providers.length > 0) {
       await syncCentralEdgeConfig(user.id, projectProvidersRes.providers, items);
@@ -775,20 +771,17 @@ export async function patchEdgeConfigItemAction(formData: FormData) {
 }
 
 const ADVANCED_VERCEL_METHODS = {
-  // accessGroups
+  
   "accessGroups.createAccessGroup": { path: ["accessGroups", "createAccessGroup"], role: "admin" },
   "accessGroups.deleteAccessGroup": { path: ["accessGroups", "deleteAccessGroup"], role: "admin" },
   "accessGroups.listAccessGroups": { path: ["accessGroups", "listAccessGroups"], role: "viewer" },
 
-  // aliases
   "aliases.assignAlias": { path: ["aliases", "assignAlias"], role: "editor" },
   "aliases.listAliases": { path: ["aliases", "listAliases"], role: "viewer" },
   "aliases.deleteAlias": { path: ["aliases", "deleteAlias"], role: "editor" },
 
-  // apiObservability
   "apiObservability.updateObservabilityConfigurationProject": { path: ["apiObservability", "updateObservabilityConfigurationProject"], role: "admin" },
 
-  // artifacts
   "artifacts.artifactExists": { path: ["artifacts", "artifactExists"], role: "viewer" },
   "artifacts.artifactQuery": { path: ["artifacts", "artifactQuery"], role: "viewer" },
   "artifacts.downloadArtifact": { path: ["artifacts", "downloadArtifact"], role: "viewer" },
@@ -796,31 +789,25 @@ const ADVANCED_VERCEL_METHODS = {
   "artifacts.status": { path: ["artifacts", "status"], role: "viewer" },
   "artifacts.uploadArtifact": { path: ["artifacts", "uploadArtifact"], role: "editor" },
 
-  // authentication (auth tokens)
   "authentication.createAuthToken": { path: ["authentication", "createAuthToken"], role: "admin" },
   "authentication.deleteAuthToken": { path: ["authentication", "deleteAuthToken"], role: "admin" },
   "authentication.listAuthTokens": { path: ["authentication", "listAuthTokens"], role: "viewer" },
 
-  // billing
   "billing.buyCredits": { path: ["billing", "buyCredits"], role: "admin" },
 
-  // bulkRedirects
   "bulkRedirects.stageRedirects": { path: ["bulkRedirects", "stageRedirects"], role: "editor" },
 
-  // certs
   "certs.issueCert": { path: ["certs", "issueCert"], role: "editor" },
   "certs.uploadCert": { path: ["certs", "uploadCert"], role: "editor" },
   "certs.removeCert": { path: ["certs", "removeCert"], role: "editor" },
   "certs.getCertById": { path: ["certs", "getCertById"], role: "viewer" },
 
-  // checks
   "checks.createCheck": { path: ["checks", "createCheck"], role: "editor" },
   "checks.getAllChecks": { path: ["checks", "getAllChecks"], role: "viewer" },
   "checks.getCheck": { path: ["checks", "getCheck"], role: "viewer" },
   "checks.rerequestCheck": { path: ["checks", "rerequestCheck"], role: "editor" },
   "checks.updateCheck": { path: ["checks", "updateCheck"], role: "editor" },
 
-  // checksV2
   "checksV2.createDeploymentCheckRun": { path: ["checksV2", "createDeploymentCheckRun"], role: "editor" },
   "checksV2.createProjectCheck": { path: ["checksV2", "createProjectCheck"], role: "admin" },
   "checksV2.deleteProjectCheck": { path: ["checksV2", "deleteProjectCheck"], role: "admin" },
@@ -832,23 +819,19 @@ const ADVANCED_VERCEL_METHODS = {
   "checksV2.updateDeploymentCheckRun": { path: ["checksV2", "updateDeploymentCheckRun"], role: "editor" },
   "checksV2.updateProjectCheck": { path: ["checksV2", "updateProjectCheck"], role: "admin" },
 
-  // deployments
   "deployments.getDeployments": { path: ["deployments", "getDeployments"], role: "viewer" },
   "deployments.cancelDeployment": { path: ["deployments", "cancelDeployment"], role: "editor" },
   "deployments.getDeployment": { path: ["deployments", "getDeployment"], role: "viewer" },
 
-  // dns
   "dns.createRecord": { path: ["dns", "createRecord"], role: "editor" },
   "dns.getRecords": { path: ["dns", "getRecords"], role: "viewer" },
   "dns.removeRecord": { path: ["dns", "removeRecord"], role: "editor" },
   "dns.updateRecord": { path: ["dns", "updateRecord"], role: "editor" },
 
-  // domains
   "domains.createOrReplaceDomain": { path: ["domains", "createOrReplaceDomain"], role: "editor" },
   "domains.getDomain": { path: ["domains", "getDomain"], role: "viewer" },
   "domains.checkDomainStatus": { path: ["domains", "checkDomainStatus"], role: "viewer" },
 
-  // domainsRegistrar
   "domainsRegistrar.buyDomains": { path: ["domainsRegistrar", "buyDomains"], role: "admin" },
   "domainsRegistrar.buySingleDomain": { path: ["domainsRegistrar", "buySingleDomain"], role: "admin" },
   "domainsRegistrar.getBulkAvailability": { path: ["domainsRegistrar", "getBulkAvailability"], role: "viewer" },
@@ -859,7 +842,6 @@ const ADVANCED_VERCEL_METHODS = {
   "domainsRegistrar.renewDomain": { path: ["domainsRegistrar", "renewDomain"], role: "admin" },
   "domainsRegistrar.transferInDomain": { path: ["domainsRegistrar", "transferInDomain"], role: "admin" },
 
-  // drains
   "drains.createDrain": { path: ["drains", "createDrain"], role: "admin" },
   "drains.deleteDrain": { path: ["drains", "deleteDrain"], role: "admin" },
   "drains.getDrain": { path: ["drains", "getDrain"], role: "viewer" },
@@ -867,19 +849,16 @@ const ADVANCED_VERCEL_METHODS = {
   "drains.testDrain": { path: ["drains", "testDrain"], role: "editor" },
   "drains.updateDrain": { path: ["drains", "updateDrain"], role: "admin" },
 
-  // edgeCache
   "edgeCache.dangerouslyDeleteBySrcImages": { path: ["edgeCache", "dangerouslyDeleteBySrcImages"], role: "admin" },
   "edgeCache.dangerouslyDeleteByTags": { path: ["edgeCache", "dangerouslyDeleteByTags"], role: "admin" },
   "edgeCache.invalidateBySrcImages": { path: ["edgeCache", "invalidateBySrcImages"], role: "editor" },
   "edgeCache.invalidateByTags": { path: ["edgeCache", "invalidateByTags"], role: "editor" },
 
-  // edgeConfig
   "edgeConfig.createEdgeConfig": { path: ["edgeConfig", "createEdgeConfig"], role: "editor" },
   "edgeConfig.getEdgeConfigs": { path: ["edgeConfig", "getEdgeConfigs"], role: "viewer" },
   "edgeConfig.getEdgeConfig": { path: ["edgeConfig", "getEdgeConfig"], role: "viewer" },
   "edgeConfig.updateEdgeConfig": { path: ["edgeConfig", "updateEdgeConfig"], role: "editor" },
 
-  // environment
   "environment.createCustomEnvironment": { path: ["environment", "createCustomEnvironment"], role: "admin" },
   "environment.createSharedEnvVariable": { path: ["environment", "createSharedEnvVariable"], role: "editor" },
   "environment.deleteSharedEnvVariable": { path: ["environment", "deleteSharedEnvVariable"], role: "editor" },
@@ -890,13 +869,11 @@ const ADVANCED_VERCEL_METHODS = {
   "environment.updateCustomEnvironment": { path: ["environment", "updateCustomEnvironment"], role: "admin" },
   "environment.updateSharedEnvVariable": { path: ["environment", "updateSharedEnvVariable"], role: "editor" },
 
-  // env
   "env.filterProjectEnvs": { path: ["env", "filterProjectEnvs"], role: "viewer" },
   "env.createProjectEnv": { path: ["env", "createProjectEnv"], role: "editor" },
   "env.patchProjectEnv": { path: ["env", "patchProjectEnv"], role: "editor" },
   "env.removeProjectEnv": { path: ["env", "removeProjectEnv"], role: "editor" },
 
-  // featureFlags
   "featureFlags.createFlag": { path: ["featureFlags", "createFlag"], role: "editor" },
   "featureFlags.createFlagSegment": { path: ["featureFlags", "createFlagSegment"], role: "editor" },
   "featureFlags.createSDKKey": { path: ["featureFlags", "createSDKKey"], role: "admin" },
@@ -907,12 +884,10 @@ const ADVANCED_VERCEL_METHODS = {
   "featureFlags.listFlags": { path: ["featureFlags", "listFlags"], role: "viewer" },
   "featureFlags.updateFlag": { path: ["featureFlags", "updateFlag"], role: "editor" },
 
-  // integrations
   "integrations.getConfigurations": { path: ["integrations", "getConfigurations"], role: "viewer" },
   "integrations.createLogDrain": { path: ["integrations", "createLogDrain"], role: "admin" },
   "integrations.deleteLogDrain": { path: ["integrations", "deleteLogDrain"], role: "admin" },
 
-  // logDrains
   "logDrains.createConfigurableLogDrain": { path: ["logDrains", "createConfigurableLogDrain"], role: "admin" },
   "logDrains.createLogDrain": { path: ["logDrains", "createLogDrain"], role: "admin" },
   "logDrains.deleteConfigurableLogDrain": { path: ["logDrains", "deleteConfigurableLogDrain"], role: "admin" },
@@ -921,10 +896,8 @@ const ADVANCED_VERCEL_METHODS = {
   "logDrains.getConfigurableLogDrain": { path: ["logDrains", "getConfigurableLogDrain"], role: "viewer" },
   "logDrains.getIntegrationLogDrains": { path: ["logDrains", "getIntegrationLogDrains"], role: "viewer" },
 
-  // logs
   "logs.getRuntimeLogs": { path: ["logs", "getRuntimeLogs"], role: "viewer" },
 
-  // marketplace
   "marketplace.createEvent": { path: ["marketplace", "createEvent"], role: "editor" },
   "marketplace.getAccountInfo": { path: ["marketplace", "getAccountInfo"], role: "viewer" },
   "marketplace.getIntegrationResource": { path: ["marketplace", "getIntegrationResource"], role: "viewer" },
@@ -933,12 +906,10 @@ const ADVANCED_VERCEL_METHODS = {
   "marketplace.submitInvoice": { path: ["marketplace", "submitInvoice"], role: "editor" },
   "marketplace.updateResource": { path: ["marketplace", "updateResource"], role: "editor" },
 
-  // microfrontends
   "microfrontends.createMicrofrontendsGroupWithApplications": { path: ["microfrontends", "createMicrofrontendsGroupWithApplications"], role: "admin" },
   "microfrontends.getMicrofrontendsConfig": { path: ["microfrontends", "getMicrofrontendsConfig"], role: "viewer" },
   "microfrontends.getMicrofrontendsGroups": { path: ["microfrontends", "getMicrofrontendsGroups"], role: "viewer" },
 
-  // networking
   "networking.createNetwork": { path: ["networking", "createNetwork"], role: "admin" },
   "networking.deleteNetwork": { path: ["networking", "deleteNetwork"], role: "admin" },
   "networking.listNetworks": { path: ["networking", "listNetworks"], role: "viewer" },
@@ -946,12 +917,10 @@ const ADVANCED_VERCEL_METHODS = {
   "networking.updateNetwork": { path: ["networking", "updateNetwork"], role: "admin" },
   "networking.updateStaticIps": { path: ["networking", "updateStaticIps"], role: "admin" },
 
-  // projectMembers
   "projectMembers.addProjectMember": { path: ["projectMembers", "addProjectMember"], role: "admin" },
   "projectMembers.getProjectMembers": { path: ["projectMembers", "getProjectMembers"], role: "viewer" },
   "projectMembers.removeProjectMember": { path: ["projectMembers", "removeProjectMember"], role: "admin" },
 
-  // projectRoutes
   "projectRoutes.addRoute": { path: ["projectRoutes", "addRoute"], role: "editor" },
   "projectRoutes.deleteRoutes": { path: ["projectRoutes", "deleteRoutes"], role: "editor" },
   "projectRoutes.editRoute": { path: ["projectRoutes", "editRoute"], role: "editor" },
@@ -959,13 +928,11 @@ const ADVANCED_VERCEL_METHODS = {
   "projectRoutes.getRoutes": { path: ["projectRoutes", "getRoutes"], role: "viewer" },
   "projectRoutes.stageRoutes": { path: ["projectRoutes", "stageRoutes"], role: "editor" },
 
-  // projects
   "projects.createProject": { path: ["projects", "createProject"], role: "admin" },
   "projects.getProject": { path: ["projects", "getProject"], role: "viewer" },
   "projects.updateProject": { path: ["projects", "updateProject"], role: "admin" },
   "projects.deleteProject": { path: ["projects", "deleteProject"], role: "admin" },
 
-  // rollingRelease
   "rollingRelease.approveRollingReleaseStage": { path: ["rollingRelease", "approveRollingReleaseStage"], role: "admin" },
   "rollingRelease.completeRollingRelease": { path: ["rollingRelease", "completeRollingRelease"], role: "admin" },
   "rollingRelease.deleteRollingReleaseConfig": { path: ["rollingRelease", "deleteRollingReleaseConfig"], role: "admin" },
@@ -973,7 +940,6 @@ const ADVANCED_VERCEL_METHODS = {
   "rollingRelease.getRollingReleaseConfig": { path: ["rollingRelease", "getRollingReleaseConfig"], role: "viewer" },
   "rollingRelease.updateRollingReleaseConfig": { path: ["rollingRelease", "updateRollingReleaseConfig"], role: "admin" },
 
-  // sandboxes
   "sandboxes.createSessionDirectory": { path: ["sandboxes", "createSessionDirectory"], role: "editor" },
   "sandboxes.createSessionSnapshot": { path: ["sandboxes", "createSessionSnapshot"], role: "editor" },
   "sandboxes.deleteSandbox": { path: ["sandboxes", "deleteSandbox"], role: "editor" },
@@ -985,12 +951,10 @@ const ADVANCED_VERCEL_METHODS = {
   "sandboxes.listSessions": { path: ["sandboxes", "listSessions"], role: "viewer" },
   "sandboxes.stopSession": { path: ["sandboxes", "stopSession"], role: "editor" },
 
-  // secrets
   "secrets.createSecret": { path: ["secrets", "createSecret"], role: "editor" },
   "secrets.deleteSecret": { path: ["secrets", "deleteSecret"], role: "editor" },
   "secrets.listSecrets": { path: ["secrets", "listSecrets"], role: "viewer" },
 
-  // security
   "security.addBypassIp": { path: ["security", "addBypassIp"], role: "admin" },
   "security.getActiveAttackStatus": { path: ["security", "getActiveAttackStatus"], role: "viewer" },
   "security.getBypassIp": { path: ["security", "getBypassIp"], role: "viewer" },
@@ -1001,18 +965,15 @@ const ADVANCED_VERCEL_METHODS = {
   "security.updateAttackChallengeMode": { path: ["security", "updateAttackChallengeMode"], role: "admin" },
   "security.updateFirewallConfig": { path: ["security", "updateFirewallConfig"], role: "admin" },
 
-  // teams
   "teams.createTeam": { path: ["teams", "createTeam"], role: "admin" },
   "teams.getTeam": { path: ["teams", "getTeam"], role: "viewer" },
   "teams.getTeamMembers": { path: ["teams", "getTeamMembers"], role: "viewer" },
 
-  // user
   "user.getAuthUser": { path: ["user", "getAuthUser"], role: "viewer" },
   "user.listEventTypes": { path: ["user", "listEventTypes"], role: "viewer" },
   "user.listUserEvents": { path: ["user", "listUserEvents"], role: "viewer" },
   "user.requestDelete": { path: ["user", "requestDelete"], role: "admin" },
 
-  // webhooks
   "webhooks.createWebhook": { path: ["webhooks", "createWebhook"], role: "editor" },
   "webhooks.getWebhooks": { path: ["webhooks", "getWebhooks"], role: "viewer" },
   "webhooks.deleteWebhook": { path: ["webhooks", "deleteWebhook"], role: "editor" },
@@ -1115,7 +1076,7 @@ export async function getAdvancedVercelSdkResource(
 
 export async function saveProviderApiKeyAction(formData: FormData) {
   const user = await requireCurrentUser();
-  const provider = readFormValue(formData, "provider"); // "vercel" | "cloudflare"
+  const provider = readFormValue(formData, "provider"); 
   const accountId = readFormValue(formData, "accountId");
   const apiKey = readFormValue(formData, "apiKey");
   const returnTo = readFormValue(formData, "returnTo") || "/projects";
@@ -1166,7 +1127,6 @@ export async function linkProjectProviderAction(formData: FormData) {
     redirect(returnTo);
   }
 
-  // Find project bundle
   const project = await prisma.project.findFirst({
     where: { id: projectId, deletedAt: null },
     include: { bundle: true }
@@ -1178,7 +1138,6 @@ export async function linkProjectProviderAction(formData: FormData) {
 
   const bundleId = project.bundle.id;
 
-  // Retrieve current config from BundleExternalIntegrations (if exists)
   const existingIntegration = await prisma.bundleExternalIntegrations.findFirst({
     where: { bundleId, integrationType: "multi_provider" }
   });
@@ -1190,7 +1149,6 @@ export async function linkProjectProviderAction(formData: FormData) {
     } catch {}
   }
 
-  // Add new config
   const newProvider: MultiProviderConfig & { displayName: string } = {
     provider: provider as any,
     accountId,
@@ -1199,13 +1157,11 @@ export async function linkProjectProviderAction(formData: FormData) {
     displayName
   };
 
-  // Filter out existing duplicates based on provider, accountId, and targetProjectId
   providersList = providersList.filter(
     (p) => !(p.provider === provider && p.accountId === accountId && p.projectId === targetProjectId)
   );
   providersList.push(newProvider);
 
-  // Save back to DB
   await prisma.bundleExternalIntegrations.upsert({
     where: {
       bundleId_integrationType: {
@@ -1245,7 +1201,6 @@ export async function unlinkProjectProviderAction(formData: FormData) {
     redirect(returnTo);
   }
 
-  // Find project bundle
   const project = await prisma.project.findFirst({
     where: { id: projectId, deletedAt: null },
     include: { bundle: true }
@@ -1338,7 +1293,6 @@ export async function getVercelProjectsAction() {
   }
 }
 
-// --- Phase 2: Edge Config Schema & Backups Actions ---
 export async function getEdgeConfigSchemaAction(projectId: string, edgeConfigId: string) {
   const user = await requireCurrentUser();
   try {
@@ -1390,7 +1344,6 @@ export async function getEdgeConfigBackupsAction(projectId: string, edgeConfigId
   }
 }
 
-// --- Phase 3: Live Observability (Log Drains Actions) ---
 export async function createConfigurableLogDrainAction(formData: FormData) {
   const user = await requireCurrentUser();
   const projectId = readFormValue(formData, "projectId");
@@ -1456,7 +1409,6 @@ export async function listConfigurableLogDrainsAction(projectId: string) {
   }
 }
 
-// --- Phase 4: Event-Driven Webhooks Actions ---
 export async function createWebhookAction(formData: FormData) {
   const user = await requireCurrentUser();
   const projectId = readFormValue(formData, "projectId");
@@ -1520,7 +1472,6 @@ export async function getWebhooksAction(projectId: string) {
   }
 }
 
-// --- Phase 5: Security / WAF Actions ---
 export async function getFirewallConfigAction(projectId: string) {
   const user = await requireCurrentUser();
   try {
@@ -1587,9 +1538,6 @@ export async function addBypassIpAction(formData: FormData) {
   redirect(returnTo);
 }
 
-// --- Additional Actions for the First 10 SDK Modules ---
-
-// 1. accessgroups (Remaining Actions)
 export async function listAccessGroupsAction(projectId: string) {
   const user = await requireCurrentUser();
   try {
@@ -1708,7 +1656,6 @@ export async function deleteAccessGroupProjectAction(formData: FormData) {
   redirect(returnTo);
 }
 
-// 2. aliases (Remaining Actions)
 export async function listAliasesAction(projectId: string) {
   const user = await requireCurrentUser();
   try {
@@ -1721,7 +1668,6 @@ export async function listAliasesAction(projectId: string) {
   }
 }
 
-// 4. artifacts (All Actions)
 export async function artifactExistsAction(projectId: string, hash: string) {
   const user = await requireCurrentUser();
   try {
@@ -1760,7 +1706,6 @@ export async function getArtifactStatusAction(projectId: string) {
   }
 }
 
-// 5. authentication (Remaining Actions)
 export async function getAuthTokensAction(projectId: string) {
   const user = await requireCurrentUser();
   try {
@@ -1773,7 +1718,6 @@ export async function getAuthTokensAction(projectId: string) {
   }
 }
 
-// 7. bulkredirects (Remaining Actions)
 export async function getRedirectsAction(projectId: string) {
   const user = await requireCurrentUser();
   try {
@@ -1819,7 +1763,6 @@ export async function getVersionsAction(projectId: string) {
   }
 }
 
-// 8. certs (Remaining Actions)
 export async function getCertByIdAction(projectId: string, certId: string) {
   const user = await requireCurrentUser();
   try {
@@ -1832,7 +1775,6 @@ export async function getCertByIdAction(projectId: string, certId: string) {
   }
 }
 
-// 9. checks / checksv2 (All Actions)
 export async function getCheckAction(projectId: string, deploymentId: string, checkId: string) {
   const user = await requireCurrentUser();
   try {
@@ -1845,7 +1787,6 @@ export async function getCheckAction(projectId: string, deploymentId: string, ch
   }
 }
 
-// 10. deployments (Remaining Actions)
 export async function getDeploymentAction(projectId: string, deploymentId: string) {
   const user = await requireCurrentUser();
   try {
@@ -1911,7 +1852,6 @@ export async function listDeploymentCheckRunsAction(projectId: string, deploymen
   }
 }
 
-// --- Phase 6: DNS Records Actions ---
 export async function getDnsRecordsAction(projectId: string, domain: string) {
   const user = await requireCurrentUser();
   try {
@@ -1986,7 +1926,6 @@ export async function deleteDnsRecordAction(formData: FormData) {
   redirect(returnTo);
 }
 
-// --- Phase 7: Domains Registrar Actions ---
 export async function getDomainAvailabilityAction(projectId: string, domain: string) {
   const user = await requireCurrentUser();
   try {
@@ -2052,7 +1991,6 @@ export async function buyDomainAction(formData: FormData) {
   redirect(returnTo);
 }
 
-// --- Phase 8: Edge Cache Invalidation ---
 export async function purgeEdgeCacheAction(formData: FormData) {
   const user = await requireCurrentUser();
   const projectId = readFormValue(formData, "projectId");
@@ -2075,7 +2013,6 @@ export async function purgeEdgeCacheAction(formData: FormData) {
   redirect(returnTo);
 }
 
-// --- Phase 9: Runtime Logs & Integrations ---
 export async function getRuntimeLogsAction(projectId: string, deploymentId: string) {
   const user = await requireCurrentUser();
   try {
@@ -2100,7 +2037,6 @@ export async function getIntegrationsAction(projectId: string) {
   }
 }
 
-// --- Phase 10: Auth User & Project Members Actions ---
 export async function getAuthUserAction(projectId: string) {
   const user = await requireCurrentUser();
   try {

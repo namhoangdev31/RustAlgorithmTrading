@@ -22,7 +22,7 @@ export async function findWorkspaceDirs(rootDir: string, patterns: string[]): Pr
         }
       }
     } catch {
-      
+      // Skip if directory does not exist or cannot be read
     }
   }
   return dirs;
@@ -56,7 +56,7 @@ export async function buildDependencyGraph(rootDir: string, workspacePatterns: s
         tempDepsMap[name] = Object.keys(allDeps);
       }
     } catch {
-      
+      // Skip failed package.json reads
     }
   }
 
@@ -89,7 +89,7 @@ export async function computeWorkspaceHash(rootDir: string, workspacePath: strin
         const content = await fs.readFile(path.join(fullPath, file), "utf8");
         hash.update(content);
       } catch {
-        
+        // Skip missing config files
       }
     }
   } catch {
@@ -166,7 +166,6 @@ export async function saveSharedCache(
       }, null, 2)
     );
 
-    // Save build receipt in target build output folder as well
     await fs.mkdir(buildOutputFolder, { recursive: true });
     await fs.writeFile(
       path.join(buildOutputFolder, "build-receipt.json"),

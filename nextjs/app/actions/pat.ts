@@ -21,7 +21,7 @@ export async function createPatAction(name: string, scopes: string[] = ["project
       tokenHash,
       scopes,
       userId: user.id,
-      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), 
+      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // Expires in 1 year
     },
   });
 

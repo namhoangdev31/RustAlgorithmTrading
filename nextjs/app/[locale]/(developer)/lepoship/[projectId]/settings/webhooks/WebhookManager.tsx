@@ -218,6 +218,7 @@ export function WebhookManager({ projectId, initialWebhooks }: WebhookManagerPro
         </DialogContent>
       </Dialog>
 
+      {/* Webhooks list */}
       {webhooks.length === 0 ? (
         <div className="py-12 text-center text-xs text-muted-foreground border border-dashed rounded-lg">
           No webhooks configured for this project.

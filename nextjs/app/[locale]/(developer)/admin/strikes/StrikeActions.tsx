@@ -118,7 +118,7 @@ export function StrikeActions({ developers, bundles }: StrikeActionsProps) {
 
   return (
     <div className="flex items-center gap-2">
-      {}
+      {/* 1. Issue Strike Trigger */}
       <Dialog open={issueOpen} onOpenChange={setIssueOpen}>
         <DialogTrigger asChild>
           <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white gap-1 cursor-pointer">
@@ -233,7 +233,7 @@ export function StrikeActions({ developers, bundles }: StrikeActionsProps) {
         </DialogContent>
       </Dialog>
 
-      {}
+      {/* 2. Revoke Dialog (Triggered dynamically from page tables) */}
       <Dialog open={revokeOpen} onOpenChange={setRevokeOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -267,7 +267,7 @@ export function StrikeActions({ developers, bundles }: StrikeActionsProps) {
         </DialogContent>
       </Dialog>
 
-      {}
+      {/* 3. Triage Report Dialog */}
       <Dialog open={triageOpen} onOpenChange={setTriageOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

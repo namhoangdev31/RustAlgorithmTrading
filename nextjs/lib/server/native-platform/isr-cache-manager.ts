@@ -101,21 +101,11 @@ function ensureDir(dir: string) {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
-
-/**
- * Retrieve a cached ISR entry from Redis (L1) or Disk (L2).
- * Returns `null` on cache miss. Returns `state: "stale"` when the entry is
- * past its `maxAge` but within the `staleWhileRevalidate` window.
- */
 export async function get(projectId: string, routePath: string): Promise<IsrCacheGetResult | null> {
   const normalizedPath = routePath.startsWith("/") ? routePath : `/${routePath}`;
   const cacheKey = nativeRedisKeys.cache(projectId, normalizedPath);
   const now = Date.now();
 
-  // --- L1: Redis ---
   let entry: IsrCacheEntry | null = null;
 
   try {
@@ -130,7 +120,6 @@ export async function get(projectId: string, routePath: string): Promise<IsrCach
     // Redis unavailable — fall through to disk
   }
 
-  // --- L2: Disk ---
   if (!entry) {
     for (const ct of ["brotli", "gzip", "none"] as CompressionType[]) {
       const diskPath = getDiskPath(projectId, cacheKey, ct);
@@ -152,19 +141,17 @@ export async function get(projectId: string, routePath: string): Promise<IsrCach
 
   if (!entry) return null;
 
-  // --- Freshness check ---
   const ageMs = now - entry.timestamp;
   const maxAgeMs = (entry.maxAge ?? DEFAULT_MAX_AGE) * 1000;
   const swrMs = (entry.staleWhileRevalidate ?? DEFAULT_SWR) * 1000;
 
   if (ageMs > maxAgeMs + swrMs) {
-    // Beyond SWR window — treat as miss
+    
     return null;
   }
 
   const state: "fresh" | "stale" = ageMs <= maxAgeMs ? "fresh" : "stale";
 
-  // Fire-and-forget DB hit tracking
   prisma.nativeCacheEntry.updateMany({
     where: { projectId, path: normalizedPath },
     data: { hitCount: { increment: 1 }, lastAccessedAt: new Date() },
@@ -173,10 +160,6 @@ export async function get(projectId: string, routePath: string): Promise<IsrCach
   return { entry, state, compressionType: entry.compressionType };
 }
 
-/**
- * Store an ISR cache entry with automatic compression, persisting to
- * Redis (L1), Disk (L2), and Prisma DB (metadata).
- */
 export async function set(
   projectId: string,
   routePath: string,
@@ -212,14 +195,12 @@ export async function set(
     compressedSize: compressed.length,
   };
 
-  // --- L1: Redis (with TTL) ---
   try {
     const redis = getNativeRedis();
     if (redis) {
       const ttl = maxAge + swr;
       await redis.set(`isr:${cacheKey}`, JSON.stringify(entry), "EX", ttl);
 
-      // Index tags for fast purge
       for (const tag of tags) {
         await redis.sadd(`isr:tags:${projectId}:${tag}`, cacheKey);
       }
@@ -231,20 +212,17 @@ export async function set(
     // Redis write failure — disk will still work
   }
 
-  // --- L2: Disk ---
   try {
     const diskPath = getDiskPath(projectId, cacheKey, compressionType);
     ensureDir(pathLib.dirname(diskPath));
     fs.writeFileSync(diskPath, compressed);
 
-    // Store metadata alongside the file
     const { body: _b, ...meta } = entry;
     fs.writeFileSync(`${diskPath}.meta.json`, JSON.stringify(meta), "utf8");
   } catch (err) {
     console.error("[ISR Cache] Disk write error:", err);
   }
 
-  // --- DB record ---
   try {
     const dbKey = `isr:${cacheKey}`;
     await prisma.nativeCacheEntry.upsert({
@@ -284,14 +262,10 @@ export async function set(
     console.error("[ISR Cache] DB upsert error:", err);
   }
 
-  // LRU eviction (fire-and-forget)
   evictLRU(projectId).catch(() => {});
   evictGlobalLRU().catch(() => {});
 }
 
-/**
- * Purge cache entries matching a path pattern.
- * Supports exact paths (`/blog/post-1`) and wildcard globs (`/blog
 export async function purgeByPath(projectId: string, pathPattern: string): Promise<number> {
   const normalizedPattern = pathPattern.startsWith("/") ? pathPattern : `/${pathPattern}`;
   const isWildcard = normalizedPattern.includes("*");
@@ -315,7 +289,6 @@ export async function purgeByPath(projectId: string, pathPattern: string): Promi
   return entries.length;
 }
 
-/** Purge all cache entries matching a cache tag */
 export async function purgeByTag(projectId: string, tag: string): Promise<number> {
   const entries = await prisma.nativeCacheEntry.findMany({
     where: { projectId, tags: { has: tag } },
@@ -326,7 +299,6 @@ export async function purgeByTag(projectId: string, tag: string): Promise<number
     await deleteEntry(projectId, e);
   }
 
-  // Clean up Redis tag index
   try {
     const redis = getNativeRedis();
     if (redis) await redis.del(`isr:tags:${projectId}:${tag}`);
@@ -335,7 +307,6 @@ export async function purgeByTag(projectId: string, tag: string): Promise<number
   return entries.length;
 }
 
-/** Purge all cache entries matching a Surrogate-Key / Cache-Tag header */
 export async function purgeBySurrogateKey(projectId: string, key: string): Promise<number> {
   const entries = await prisma.nativeCacheEntry.findMany({
     where: { projectId, surrogateKeys: { has: key } },
@@ -354,7 +325,6 @@ export async function purgeBySurrogateKey(projectId: string, key: string): Promi
   return entries.length;
 }
 
-/** Flush the entire ISR cache for a project */
 export async function purgeAll(projectId: string): Promise<number> {
   const entries = await prisma.nativeCacheEntry.findMany({
     where: { projectId },
@@ -365,7 +335,6 @@ export async function purgeAll(projectId: string): Promise<number> {
     await deleteEntry(projectId, e);
   }
 
-  // Clean up project disk cache directory
   const projectDir = pathLib.join(ISR_DISK_CACHE_DIR, projectId);
   try {
     if (fs.existsSync(projectDir)) {
@@ -376,7 +345,6 @@ export async function purgeAll(projectId: string): Promise<number> {
   return entries.length;
 }
 
-/** LRU eviction: remove oldest entries when total disk usage exceeds MAX_DISK_CACHE_SIZE */
 export async function evictLRU(projectId: string): Promise<void> {
   const projectDir = pathLib.join(ISR_DISK_CACHE_DIR, projectId);
   if (!fs.existsSync(projectDir)) return;
@@ -394,7 +362,6 @@ export async function evictLRU(projectId: string): Promise<void> {
 
   if (totalSize <= MAX_DISK_CACHE_SIZE) return;
 
-  // Evict oldest entries until we're under the limit
   const entries = await prisma.nativeCacheEntry.findMany({
     where: { projectId, cacheKey: { startsWith: "isr:" } },
     orderBy: [{ lastAccessedAt: "asc" }, { updatedAt: "asc" }],
@@ -411,11 +378,10 @@ export async function evictLRU(projectId: string): Promise<void> {
   }
 }
 
-/** Global LRU eviction: limit total disk cache usage across all projects to 1GB */
 export async function evictGlobalLRU(): Promise<void> {
   if (!fs.existsSync(ISR_DISK_CACHE_DIR)) return;
 
-  const GLOBAL_MAX_DISK_CACHE_SIZE = 1024 * 1024 * 1024; // 1GB
+  const GLOBAL_MAX_DISK_CACHE_SIZE = 1024 * 1024 * 1024; 
 
   const getDirSize = (dir: string): number => {
     let total = 0;
@@ -452,20 +418,15 @@ export async function evictGlobalLRU(): Promise<void> {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Internal helpers
-// ---------------------------------------------------------------------------
-
 async function deleteEntry(
   projectId: string,
   entry: { id: string; cacheKey: string; path: string; bodyRef?: string | null; compressionType?: string }
 ) {
-  // Redis
+  
   try {
     await redisDelete(`isr:${entry.cacheKey}`, entry.cacheKey);
   } catch {}
 
-  // Disk — delete all possible compression variants
   for (const ct of ["brotli", "gzip", "none"] as CompressionType[]) {
     const diskPath = getDiskPath(projectId, entry.cacheKey, ct);
     try {
@@ -475,18 +436,15 @@ async function deleteEntry(
     } catch {}
   }
 
-  // Also try bodyRef path
   if (entry.bodyRef) {
     try {
       if (fs.existsSync(entry.bodyRef)) fs.unlinkSync(entry.bodyRef);
     } catch {}
   }
 
-  // DB
   try {
     await prisma.nativeCacheEntry.delete({ where: { id: entry.id } });
   } catch {}
 
-  // Publish purge event
   await redisPublish("lepos:purge", { projectId, path: entry.path, cacheKey: entry.cacheKey }).catch(() => {});
 }

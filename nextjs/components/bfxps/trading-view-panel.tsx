@@ -29,7 +29,6 @@ import {
 } from "lightweight-charts";
 import { TradingPlan, MarketSnapshot } from "@/lib/server/quant/types";
 import { useTranslations } from "next-intl";
-import { useVpsTicks, VpsTickData } from "@/hooks/use-vps-ticks";
 
 interface CandleBar {
   time: number; 
@@ -67,56 +66,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
     const tpLineRef = useRef<any>(null);
     const slLineRef = useRef<any>(null);
 
-    const lastCandleRef = useRef<CandleBar | null>(null);
-
-    const { isConnected: isWssConnected, lastTick } = useVpsTicks({
-      symbol: "VN30F1M",
-      enabled: true,
-      onTick: useCallback(
-        (tick: VpsTickData) => {
-          const candleSeries = candleSeriesRef.current;
-          const curLast = lastCandleRef.current;
-          if (!candleSeries || !curLast) return;
-
-          const intervalSec = timeframe === "1m" ? 60 : 15 * 60;
-          const barTime = Math.floor(tick.time / intervalSec) * intervalSec;
-
-          if (barTime === curLast.time) {
-            
-            const updated: CandleBar = {
-              time: curLast.time,
-              open: curLast.open,
-              high: Math.max(curLast.high, tick.price),
-              low: Math.min(curLast.low, tick.price),
-              close: tick.price,
-              volume: tick.volume ? curLast.volume + tick.volume : curLast.volume,
-            };
-            lastCandleRef.current = updated;
-            try {
-              candleSeries.update(updated as any);
-            } catch {}
-          } else if (barTime > curLast.time) {
-            
-            const newBar: CandleBar = {
-              time: barTime,
-              open: tick.price,
-              high: tick.price,
-              low: tick.price,
-              close: tick.price,
-              volume: tick.volume || 1,
-            };
-            lastCandleRef.current = newBar;
-            try {
-              candleSeries.update(newBar as any);
-            } catch {}
-          }
-        },
-        [timeframe],
-      ),
-    });
-
     const currentPrice =
-      lastTick?.price ||
       snapshot?.current ||
       (candles.length ? candles[candles.length - 1].close : 0);
     const openPrice =
@@ -162,11 +112,10 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       fetchCandles(timeframe, false);
       const candleInterval = setInterval(() => {
         fetchCandles(timeframe, true);
-      }, 15000); // 15s cập nhật nến từ sàn một lần để giảm độ trễ
+      }, 15000); 
       return () => clearInterval(candleInterval);
     }, [timeframe, fetchCandles]);
 
-    // Tính toán dữ liệu nến đồng bộ thời gian thực với snapshot
     const chartData = useMemo(() => {
       if (!candles.length) return [];
       const list = candles.map((c) => ({ ...c }));
@@ -197,7 +146,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       return list;
     }, [candles, snapshot, timeframe]);
 
-    // Khởi tạo TradingView Lightweight Chart Engine
     useEffect(() => {
       const container = chartContainerRef.current;
       if (!container) return;
@@ -260,7 +208,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
         },
       });
 
-      // Volume Series (Nằm ở đáy)
       const volumeSeries = chart.addSeries(HistogramSeries, {
         color: "#26a69a",
         priceFormat: { type: "volume" },
@@ -273,7 +220,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
         },
       });
 
-      // Candlestick Series Chính Hãng TradingView
       const candleSeries = chart.addSeries(CandlestickSeries, {
         upColor: "#26a69a",
         downColor: "#ef5350",
@@ -282,7 +228,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
         wickDownColor: "#ef5350",
       });
 
-      // Đường EMA(5) Màu vàng
       const ema5Series = chart.addSeries(LineSeries, {
         color: "#f1e05a",
         lineWidth: 1,
@@ -291,7 +236,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
         title: "EMA 5",
       });
 
-      // Đường EMA(10) Màu tím
       const ema10Series = chart.addSeries(LineSeries, {
         color: "#a371f7",
         lineWidth: 1,
@@ -300,7 +244,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
         title: "EMA 10",
       });
 
-      // Bắt sự kiện Crosshair Hover để cập nhật OHLC Live Ribbon
       chart.subscribeCrosshairMove((param) => {
         if (!param || !param.time || !param.seriesData) {
           setHoveredBar(null);
@@ -327,7 +270,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       ema5SeriesRef.current = ema5Series;
       ema10SeriesRef.current = ema10Series;
 
-      // Xử lý Resize mượt mà với ResizeObserver
       const resizeObserver = new ResizeObserver((entries) => {
         if (!entries || entries.length === 0) return;
         const entry = entries[0];
@@ -347,7 +289,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       };
     }, []);
 
-    // Cập nhật Dữ liệu & Tính toán EMA vào Lightweight Chart
     useEffect(() => {
       if (
         !candleSeriesRef.current ||
@@ -358,7 +299,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       )
         return;
 
-      // Format dữ liệu nến cho Lightweight Charts (yêu cầu time tăng dần không trùng lặp)
       const sorted = [...chartData].sort((a, b) => a.time - b.time);
       const uniqueBars: CandleBar[] = [];
       const seenTimes = new Set<number>();
@@ -386,7 +326,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
             : "rgba(239, 83, 80, 0.35)",
       }));
 
-      // Tính toán EMA(5) & EMA(10)
       const calcEMA = (period: number) => {
         const k = 2 / (period + 1);
         const res: { time: any; value: number }[] = [];
@@ -413,19 +352,12 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       volumeSeriesRef.current.setData(volumePoints);
       ema5SeriesRef.current.setData(calcEMA(5));
       ema10SeriesRef.current.setData(calcEMA(10));
-
-      // Đồng bộ nến cuối cùng làm mốc bắt đầu cập nhật WebSocket
-      if (uniqueBars.length > 0) {
-        lastCandleRef.current = { ...uniqueBars[uniqueBars.length - 1] };
-      }
     }, [chartData]);
 
-    // Đồng bộ đường kẻ Kèo Quant (Entry, TP, SL) trên TradingView
     useEffect(() => {
       const candleSeries = candleSeriesRef.current;
       if (!candleSeries) return;
 
-      // Xóa các đường kẻ cũ
       if (entryLineRef.current) {
         try {
           candleSeries.removePriceLine(entryLineRef.current);
@@ -445,7 +377,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
         slLineRef.current = null;
       }
 
-      // Vẽ đường Entry
       if (entryPrice != null) {
         entryLineRef.current = candleSeries.createPriceLine({
           price: entryPrice,
@@ -457,7 +388,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
         });
       }
 
-      // Vẽ đường TP
       if (tpPrice != null) {
         tpLineRef.current = candleSeries.createPriceLine({
           price: tpPrice,
@@ -469,7 +399,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
         });
       }
 
-      // Vẽ đường SL
       if (slPrice != null) {
         slLineRef.current = candleSeries.createPriceLine({
           price: slPrice,
@@ -482,7 +411,6 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       }
     }, [entryPrice, tpPrice, slPrice, side]);
 
-    // Các hàm Zoom Controls
     const handleZoomIn = () => {
       const timeScale = chartRef.current?.timeScale();
       if (!timeScale) return;
@@ -539,7 +467,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
           isFullscreen ? "fixed inset-2 z-50 rounded-lg shadow-2xl" : ""
         }`}
       >
-        
+        {/* Top Header Controls Bar */}
         <div className="flex flex-wrap items-center justify-between border-b border-white/[0.08] bg-[#090d16]/90 backdrop-blur-md px-3 py-2 gap-2 text-xs">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5">
@@ -549,18 +477,9 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
               <span className="rounded-md bg-sky-500/10 px-1.5 py-0.5 text-[10px] font-bold text-sky-400">
                 VN30
               </span>
-              {isWssConnected ? (
-                <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[9px] font-bold text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.2)]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  WSS LIVE
-                </span>
-              ) : (
-                <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-slate-800/80 px-1.5 py-0.5 text-[9px] font-medium text-slate-400">
-                  Entrade Feed
-                </span>
-              )}
             </div>
 
+            {/* Timeframe selector (15m vs 1m) */}
             <div className="flex items-center gap-0.5 rounded-md bg-[#101624] p-0.5 font-mono text-[11px] shadow-sm">
               <button
                 onClick={() => setTimeframe("15m")}
@@ -586,6 +505,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
               </button>
             </div>
 
+            {/* Zoom controls cho Chart */}
             <div className="flex items-center gap-0.5 border-l border-white/10 pl-2 text-slate-400">
               <button
                 onClick={handleZoomIn}
@@ -611,6 +531,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
             </div>
           </div>
 
+          {/* Mốc Kèo Quant Overlay Chips */}
           <div className="flex items-center gap-1.5 font-mono text-[11px]">
             {entryPrice != null && (
               <span
@@ -648,6 +569,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
           </div>
         </div>
 
+        {/* Chart Legend & OHLC Live Ribbon (Responsive HTML Overlay) */}
         <div className="flex flex-wrap items-center justify-between border-b border-white/[0.04] bg-[#070a0f]/95 px-3 py-1.5 text-[11px] font-mono gap-2 text-slate-300">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-bold text-white">VN30F1M ({timeframe})</span>
@@ -708,6 +630,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
             )}
           </div>
 
+          {/* EMA Legend */}
           <div className="flex items-center gap-2.5 text-[10px] shrink-0">
             <span className="flex items-center gap-1 text-[#f1e05a]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#f1e05a]"></span>
@@ -720,6 +643,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
           </div>
         </div>
 
+        {/* Main Chart Container - TradingView Lightweight Canvas Engine */}
         <div className="relative flex-1 w-full overflow-hidden bg-[#070a0f]">
           {isLoadingCandles && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#070a0f]/80 backdrop-blur-sm">
@@ -730,18 +654,21 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
             </div>
           )}
 
+          {/* Watermark Logo TradingView Tinh Tế Phía Dưới */}
           <div className="pointer-events-none absolute bottom-8 left-4 z-0 select-none opacity-15">
             <span className="font-mono text-3xl font-black tracking-widest text-slate-500">
               TRADINGVIEW
             </span>
           </div>
 
+          {/* Canvas Mount Point */}
           <div ref={chartContainerRef} className="h-full w-full" />
         </div>
 
+        {/* Bottom Status Bar - Live Quant Stream */}
         <div className="flex flex-wrap items-center justify-between border-t border-white/[0.08] bg-[#090d16]/95 backdrop-blur-md px-3 py-1.5 gap-2 text-[11px] text-slate-400">
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            
+            {/* Live Price VN30F1M */}
             <span className="flex items-center gap-1.5 font-bold text-white">
               <span className="text-emerald-400">VN30F1M:</span>
               <span className="font-mono text-white font-black text-xs">
@@ -760,6 +687,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
 
             <span className="text-white/10">|</span>
 
+            {/* Basis */}
             <span className="flex items-center gap-1">
               <span className="text-slate-400">Basis:</span>
               <span
@@ -777,6 +705,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
 
             <span className="text-white/10">|</span>
 
+            {/* Volume */}
             <span className="flex items-center gap-1">
               <span className="text-slate-400">{t("vol_label")}</span>
               <span className="font-mono font-bold text-white">
@@ -784,6 +713,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
               </span>
             </span>
 
+            {/* OI */}
             {oi !== null && (
               <>
                 <span className="text-white/10">|</span>
@@ -796,6 +726,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
               </>
             )}
 
+            {/* Foreign Net */}
             {foreignNet !== null && (
               <>
                 <span className="text-white/10">|</span>
@@ -817,6 +748,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
 
             <span className="text-white/10">|</span>
 
+            {/* Quant Target Info */}
             {entryPrice != null && tpPrice != null && slPrice != null && (
               <span className="rounded-md bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-mono text-slate-300 shadow-sm">
                 <strong
@@ -842,18 +774,12 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
             )}
           </div>
 
+          {/* Live Feed Heartbeat */}
           <div className="flex items-center gap-2 text-[10px]">
-            {isWssConnected ? (
-              <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]"></span>
-                <span>WSS Realtime (VPS)</span>
-              </span>
-            ) : (
-              <span className="flex items-center gap-1.5 text-slate-400 font-medium">
-                <span className="h-1.5 w-1.5 rounded-full bg-slate-500"></span>
-                <span>{t("live_feed_active")}</span>
-              </span>
-            )}
+            <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]"></span>
+              <span>{t("live_feed_active")}</span>
+            </span>
           </div>
         </div>
       </div>

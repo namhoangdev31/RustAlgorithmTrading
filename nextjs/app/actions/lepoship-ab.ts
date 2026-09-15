@@ -46,10 +46,6 @@ function readOsTargeting(formData: FormData) {
   };
 }
 
-// ---------------------------------------------------------------------------
-// Create A/B Test
-// ---------------------------------------------------------------------------
-
 export async function createAbTestAction(formData: FormData) {
   const user = await requireCurrentUser();
   const projectId = readFormValue(formData, "projectId");
@@ -93,7 +89,6 @@ export async function createAbTestAction(formData: FormData) {
     redirect(withQueryParam(target, "ab", "invalid_traffic_split"));
   }
 
-  // Validate target build number exists in an active release track.
   if (!Number.isInteger(targetBuildNumber) || targetBuildNumber < 1) {
     const target = await localizedHref(returnTo);
     redirect(withQueryParam(target, "ab", "missing_target_build"));
@@ -112,7 +107,6 @@ export async function createAbTestAction(formData: FormData) {
       redirect(withQueryParam(target, "ab", "invalid_target_build"));
   }
 
-  // variantA = current/control, variantB stores the target build number
   const variantAConfig = JSON.stringify({ type: "control", description: "Current latest release" });
   const variantBConfig = JSON.stringify({ type: "experiment", targetBuildNumber });
 
@@ -143,10 +137,6 @@ export async function createAbTestAction(formData: FormData) {
   const target = await localizedHref(returnTo);
   redirect(withQueryParam(target, "ab", "created"));
 }
-
-// ---------------------------------------------------------------------------
-// Update A/B Test (draft only)
-// ---------------------------------------------------------------------------
 
 export async function updateAbTestAction(formData: FormData) {
   const user = await requireCurrentUser();
@@ -200,7 +190,7 @@ export async function updateAbTestAction(formData: FormData) {
   if (metric !== undefined) data.metric = metric;
   if (trafficSplit !== undefined) data.trafficSplit = trafficSplit;
   if (targetBuildNumber !== undefined) {
-    // Validate new target
+    
     const track = await prisma.bundleReleases.findFirst({
       where: { bundleId: bundle.id, buildNumber: targetBuildNumber, status: { in: ["approved", "active"] } },
       select: { id: true },
@@ -224,10 +214,6 @@ export async function updateAbTestAction(formData: FormData) {
   const target = await localizedHref(returnTo);
   redirect(withQueryParam(target, "ab", "updated"));
 }
-
-// ---------------------------------------------------------------------------
-// Start A/B Test
-// ---------------------------------------------------------------------------
 
 export async function startAbTestAction(formData: FormData) {
   const user = await requireCurrentUser();
@@ -306,17 +292,12 @@ export async function startAbTestAction(formData: FormData) {
     redirect(withQueryParam(target, "ab", error.message || "cannot_start"));
   }
 
-  // Sync flags to edge providers
   await syncProjectFeatureFlags(projectId);
 
   revalidatePath(`/lepoship/${projectId}/ab-tests`);
   const target = await localizedHref(returnTo);
   redirect(withQueryParam(target, "ab", "started"));
 }
-
-// ---------------------------------------------------------------------------
-// Pause A/B Test
-// ---------------------------------------------------------------------------
 
 export async function pauseAbTestAction(formData: FormData) {
   const user = await requireCurrentUser();
@@ -348,10 +329,6 @@ export async function pauseAbTestAction(formData: FormData) {
   revalidatePath(`/lepoship/${projectId}/ab-tests/${testId}`);
   redirect(withQueryParam(await localizedHref(returnTo), "ab", "paused"));
 }
-
-// ---------------------------------------------------------------------------
-// End A/B Test
-// ---------------------------------------------------------------------------
 
 export async function endAbTestAction(formData: FormData) {
   const user = await requireCurrentUser();
@@ -396,17 +373,12 @@ export async function endAbTestAction(formData: FormData) {
     reason: endReason || "Experiment ended by administrator.",
   });
 
-  // Re-sync flags (removes ended test from active set)
   await syncProjectFeatureFlags(projectId);
 
   revalidatePath(`/lepoship/${projectId}/ab-tests`);
   const target = await localizedHref(returnTo);
   redirect(withQueryParam(target, "ab", "ended"));
 }
-
-// ---------------------------------------------------------------------------
-// Delete A/B Test (draft only)
-// ---------------------------------------------------------------------------
 
 export async function deleteAbTestAction(formData: FormData) {
   const user = await requireCurrentUser();

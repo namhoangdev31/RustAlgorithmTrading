@@ -41,7 +41,7 @@ export async function updateCollaboratorPermissionsAction(
       bundleId_userId: { bundleId, userId: collaboratorUserId },
     },
     data: {
-      role: groupKey, 
+      role: groupKey, // Map standard group key as role string
       permissionKeys,
     },
   });
@@ -52,23 +52,18 @@ export async function updateCollaboratorPermissionsAction(
   return updated;
 }
 
-/**
- * Verify if the user has a specific permission key.
- * Used to safeguard builds, list edits, or settings updates.
- */
 export async function checkBundlePermission(
   userId: string,
   bundleId: string,
   requiredPermission: string
 ): Promise<boolean> {
-  // 1. Check if user is platform administrator
+  
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { userType: true },
   });
   if (user?.userType === "admin") return true;
 
-  // 2. Resolve project ID linked to this bundle
   const bundle = await prisma.bundles.findUnique({
     where: { id: bundleId },
     select: { projectId: true },
@@ -76,13 +71,11 @@ export async function checkBundlePermission(
 
   if (!bundle?.projectId) return false;
 
-  // 3. Fall back to standard project roles check: owner/admin/editor bypasses required permissions
   try {
     const access = await requireProjectRole(userId, bundle.projectId, "editor");
     if (access) return true;
   } catch {}
 
-  // 4. Check custom permission keys
   const collaborator = await prisma.bundleCollaborators.findUnique({
     where: {
       bundleId_userId: { bundleId, userId },

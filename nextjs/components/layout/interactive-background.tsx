@@ -80,10 +80,9 @@ export const InteractiveBackground = () => {
         const b = parseInt(cleanHex.substring(4, 6), 16);
         return `${r}, ${g}, ${b}`;
       }
-      return "62, 207, 142"; // fallback to emerald
+      return "62, 207, 142"; 
     };
 
-    // Dynamically retrieve Design System colors from CSS variables
     const rootStyle = getComputedStyle(document.documentElement);
     const primaryHex = rootStyle.getPropertyValue("--primary").trim() || "#3ecf8e";
     const accentPurpleHex = rootStyle.getPropertyValue("--accent-purple").trim() || "#6b01c2";
@@ -95,7 +94,6 @@ export const InteractiveBackground = () => {
       `rgba(${hexToRgb(accentIndigoHex)}, ALPHA)`,
     ];
 
-    // Smoke particle array
     const particles: SmokeParticle[] = [];
 
     const spawnParticle = (x: number, y: number) => {
@@ -105,7 +103,7 @@ export const InteractiveBackground = () => {
         x,
         y,
         vx: Math.cos(angle) * speed,
-        // Small upward drift to simulate smoke rising
+        
         vy: Math.sin(angle) * speed - 0.2,
         size: Math.random() * 15 + 20,
         alpha: 0.18,
@@ -122,7 +120,6 @@ export const InteractiveBackground = () => {
       isMouseOnScreen = true;
       targetOpacity = 1.0;
 
-      // Initialize positions on first entry
       if (lastMouseX < -500) {
         lastMouseX = mouseX;
         lastMouseY = mouseY;
@@ -130,7 +127,6 @@ export const InteractiveBackground = () => {
         spotlightY = mouseY;
       }
 
-      // Linear interpolation to spawn smoke particles between last position and current position
       const dx = mouseX - lastMouseX;
       const dy = mouseY - lastMouseY;
       const dist = Math.sqrt(dx * dx + dy * dy);
@@ -171,7 +167,6 @@ export const InteractiveBackground = () => {
     document.addEventListener("mouseleave", handleMouseLeave, { passive: true });
     document.addEventListener("mouseenter", handleMouseEnter, { passive: true });
 
-    // Animation loop
     let animationFrameId: number;
     const update = () => {
       const viewportHeight = window.innerHeight || 800;
@@ -188,25 +183,21 @@ export const InteractiveBackground = () => {
         }
       }
 
-      // 1. Clear Canvas
       ctx.clearRect(0, 0, width, height);
 
-      // 2. Draw 3D Concave Deformed Grid
       ctx.globalCompositeOperation = "source-over";
-      
-      // Determine theme values
+
       const isDark = document.documentElement.classList.contains("dark");
       const foregroundRgb = isDark ? "255, 255, 255" : "23, 23, 23";
       const gridOpacity = isDark ? 0.05 : 0.08;
       
       ctx.strokeStyle = `rgba(${foregroundRgb}, ${gridOpacity})`;
-      ctx.lineWidth = 1.5; // Thicker 1.5px lines as requested
+      ctx.lineWidth = 1.5; 
 
       const gridRadius = 180;
       const maxDistortion = 32;
-      const gridSpacing = 56; // Sparser 56px spacing
+      const gridSpacing = 56; 
 
-      // Draw Vertical Grid Lines
       for (let x = 0; x <= width; x += gridSpacing) {
         ctx.beginPath();
         if (isMouseOnScreen && Math.abs(x - mouseX) < gridRadius) {
@@ -221,7 +212,7 @@ export const InteractiveBackground = () => {
 
             if (d < gridRadius && d > 0) {
               const t = d / gridRadius;
-              // Concave warp pulling points towards the cursor center
+              
               const displacement = maxDistortion * Math.sin(t * Math.PI) * (1.0 - t);
               px += (dx / d) * displacement;
               py += (dy / d) * displacement;
@@ -241,7 +232,6 @@ export const InteractiveBackground = () => {
         ctx.stroke();
       }
 
-      // Draw Horizontal Grid Lines
       for (let y = 0; y <= height; y += gridSpacing) {
         ctx.beginPath();
         if (isMouseOnScreen && Math.abs(y - mouseY) < gridRadius) {
@@ -275,7 +265,6 @@ export const InteractiveBackground = () => {
         ctx.stroke();
       }
 
-      // 3. Draw/Update Smoke Particles on Canvas on top of grid
       if (particles.length > 0) {
         ctx.globalCompositeOperation = "screen";
 
@@ -309,7 +298,6 @@ export const InteractiveBackground = () => {
         }
       }
 
-      // 4. Smoothly track spotlight position
       if (isMouseOnScreen && mouseX > -500) {
         spotlightX += (mouseX - spotlightX) * 0.12;
         spotlightY += (mouseY - spotlightY) * 0.12;
@@ -319,7 +307,6 @@ export const InteractiveBackground = () => {
         }
       }
 
-      // Smoothly transition opacity
       currentOpacity += (targetOpacity - currentOpacity) * 0.08;
 
       if (container) {
@@ -353,18 +340,19 @@ export const InteractiveBackground = () => {
       className="fixed inset-0 -z-10 pointer-events-none overflow-hidden bg-background transition-opacity duration-500"
       style={{ opacity: isHomepage ? 0 : 1 }}
     >
-      
+      {/* High-performance canvas that draws the concave deformed grid and the smoke particles */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 pointer-events-none"
       />
 
+      {/* Wrapper for interactive back-glow, which fades out when mouse leaves */}
       <div
         ref={interactiveWrapperRef}
         className="absolute inset-0 transition-opacity duration-500"
         style={{ opacity: 0 }}
       >
-        
+        {/* Soft backlight behind the grid to emphasize the concave shape */}
         <div
           ref={spotlightRef}
           className="absolute rounded-full blur-[140px] opacity-[0.16] dark:opacity-[0.22] mix-blend-screen"

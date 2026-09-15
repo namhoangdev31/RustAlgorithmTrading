@@ -70,7 +70,7 @@ export function QaLibraryPanel({ onSelectQuestion, onClose }: QaLibraryProps) {
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-[#0b0f17] text-slate-100">
-      {}
+      {/* Header */}
       <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#090d16]/90 px-4 py-2.5">
         <div className="flex items-center gap-2 min-w-0 mr-2 truncate">
           <HelpCircle className="h-4 w-4 text-sky-400 shrink-0" />
@@ -90,7 +90,7 @@ export function QaLibraryPanel({ onSelectQuestion, onClose }: QaLibraryProps) {
         </div>
       </div>
 
-      {}
+      {/* Body List */}
       <div className="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scrollbar">
         {QA_CATEGORIES.map((cat, idx) => {
           const isOpen = !!openSections[idx];

@@ -53,12 +53,10 @@ export async function ingestReportRequest(request: NextRequest) {
       );
     }
 
-    // Validate description length
     if (description && description.length > 2000) {
       return NextResponse.json({ error: "description must be ≤ 2000 characters" }, { status: 400 });
     }
 
-    // Validate evidence URLs
     let parsedEvidenceUrls: string[] = [];
     if (evidenceUrls) {
       if (!Array.isArray(evidenceUrls) || evidenceUrls.length > 5) {
@@ -72,16 +70,13 @@ export async function ingestReportRequest(request: NextRequest) {
       parsedEvidenceUrls = evidenceUrls;
     }
 
-    // Validate clientReportId
     if (!clientReportId || typeof clientReportId !== "string" || clientReportId.length > 255) {
       return NextResponse.json({ error: "clientReportId is required (max 255 chars)" }, { status: 400 });
     }
 
-    // Hash device fingerprint
     const rawDeviceId = clientDeviceId || deviceIdHeader || "";
     const reporterFingerprint = rawDeviceId ? hashDeviceId(rawDeviceId) : null;
 
-    // Rate-limit: ≤10 reports per device per hour
     if (reporterFingerprint) {
       const oneHourAgo = new Date(Date.now() - 3600_000);
       const recentReportsCount = await prisma.bundleUserReports.count({
@@ -98,7 +93,6 @@ export async function ingestReportRequest(request: NextRequest) {
       }
     }
 
-    // Idempotent creation via clientReportId
     const existing = await prisma.bundleUserReports.findUnique({
       where: { clientReportId },
     });

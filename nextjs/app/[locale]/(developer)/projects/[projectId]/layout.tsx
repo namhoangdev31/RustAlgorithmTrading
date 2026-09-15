@@ -58,7 +58,7 @@ export default async function ProjectLayout({
       <div className="border-b border-hairline w-full overflow-x-auto scrollbar-none">
         <nav className="flex items-center gap-1.5 -mb-px">
           {navItems.map((item) => {
-            // We use simple path matching for highlighting
+            
             return (
               <ProjectTabLink
                 key={item.path}
@@ -74,7 +74,6 @@ export default async function ProjectLayout({
     </PortalPage>
   );
 }
-
 
 function ProjectTabLink({ href, label }: { href: string; label: string }) {
   return (

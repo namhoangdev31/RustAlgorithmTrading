@@ -107,7 +107,6 @@ export function getProjectNav(_locale: string, projectId: string): NavItem[] {
   ];
 }
 
-// LepoShip child navigation structure
 export function getLepoShipNav(_locale: string, projectId: string): NavItem[] {
   const base = `/lepoship/${projectId}`;
   return [
@@ -125,7 +124,6 @@ export function getLepoShipNav(_locale: string, projectId: string): NavItem[] {
   ];
 }
 
-// Marketplace navigation structure
 export function getMarketplaceNav(_locale?: string): NavItem[] {
   const base = "/marketplace";
   return [
@@ -136,7 +134,6 @@ export function getMarketplaceNav(_locale?: string): NavItem[] {
   ];
 }
 
-// Settings navigation structure
 export function getSettingsNav(_locale?: string): NavItem[] {
   const base = "/settings";
   return [

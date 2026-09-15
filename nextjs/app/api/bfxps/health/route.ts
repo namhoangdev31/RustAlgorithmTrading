@@ -175,7 +175,6 @@ export async function GET() {
           execution: exec,
         };
 
-        // Đồng bộ consensus mới nhất theo kế hoạch đã tối ưu
         consensus = computeConsensus(plansWithExecution);
       }
     }
@@ -185,7 +184,6 @@ export async function GET() {
       plansWithExecution.find((p) => p.isCanonical) ||
       plansWithExecution[0];
 
-    // ---- Lưu kèo chính thức (chỉ khi đã khóa thành công, đúng ngày giao dịch) ----
     if (isTradingDay && isOfficial && primaryPlan) {
       try {
         await saveDailyPlanToDb(primaryPlan);
@@ -194,7 +192,6 @@ export async function GET() {
       }
     }
 
-    // ---- Tự động chốt phiên EOD (idempotent, guard theo settledAt) ----
     let settlementInfo: { settled: boolean; exitType?: string; error?: string } = {
       settled: false,
     };
@@ -231,7 +228,6 @@ export async function GET() {
       }
     }
 
-    // ---- Freshness thật: KHÔNG bao giờ GREEN khi dùng dữ liệu dự phòng ----
     const snapshotFallback = isSnapshotFallback(liveSnapshot);
     const stale = snapshotAgeMs(liveSnapshot) > SNAPSHOT_STALE_MS;
     let level: "GREEN" | "AMBER" | "RED" = "GREEN";

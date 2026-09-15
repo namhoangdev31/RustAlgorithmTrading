@@ -67,7 +67,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Decrypt secret if configured in integration config
   let webhookSecret: string | null = null;
   try {
     const configObj = JSON.parse(integration.config || "{}");
@@ -79,7 +78,6 @@ export async function POST(request: NextRequest) {
     console.error("[Git Webhook] Failed decrypting integration secret token:", decryptErr);
   }
 
-  // 4. Verify signature
   const isSignatureValid = verifyGitWebhookSignature(
     signature,
     rawBody,
@@ -92,13 +90,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Webhook signature mismatch" }, { status: 401 });
   }
 
-  // 5. Parse to standard schema
   const parsed = parseGitWebhookPayload(payload, provider);
   if (!parsed) {
     return NextResponse.json({ error: "Failed to map payload schemas" }, { status: 422 });
   }
 
-  // 6. Enqueue into Redis Ingestion Queue
   const enqueued = await enqueueGitWebhook(parsed);
 
   return NextResponse.json(

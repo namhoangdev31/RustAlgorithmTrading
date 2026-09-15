@@ -172,18 +172,15 @@ export function ErrorTrackerClient({ crashes = [], projectId, returnTo }: ErrorT
   const [activeTab, setActiveTab] = useState<"dedup" | "raw">("dedup");
   const [isPending, startTransition] = useTransition();
 
-  // 1. Gather filter criteria options
   const uniqueReleases = Array.from(new Set(crashes.map(c => c.releaseVersion)));
   const uniquePlatforms = Array.from(new Set(crashes.map(c => c.platform)));
 
-  // 2. Filter crash reports
   const filteredCrashes = crashes.filter(crash => {
     const matchPlatform = platformFilter === "all" || crash.platform === platformFilter;
     const matchRelease = releaseFilter === "all" || crash.releaseVersion === releaseFilter;
     return matchPlatform && matchRelease;
   });
 
-  // 3. Group crashes for deduplication
   const groupedCrashes = useMemo(() => {
     const groups: Record<string, CrashReport[]> = {};
     filteredCrashes.forEach(c => {
@@ -205,7 +202,6 @@ export function ErrorTrackerClient({ crashes = [], projectId, returnTo }: ErrorT
     }).sort((a, b) => b.count - a.count);
   }, [filteredCrashes]);
 
-  // 4. SVG chart generation for last 7 days
   const chartData = useMemo(() => {
     const last7Days = Array.from({ length: 7 }, (_, i) => {
       const d = new Date();

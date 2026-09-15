@@ -42,11 +42,8 @@ export async function replicateBlobToRegions(
   return replicated;
 }
 
-/**
- * Generates the unified CDN endpoint URL.
- */
 export function getCdnUrl(projectId: string, safeFileName: string): string {
-  return `https:
+  return `https://cdn.lepos.dev/bundles/${projectId}/${safeFileName}`;
 }
 
 export function isSensitiveFile(fileName: string): boolean {
@@ -78,9 +75,6 @@ export async function encryptBufferIfNeeded(fileName: string, buffer: Buffer): P
   return buffer;
 }
 
-/**
- * Decrypts file content buffer if it was encrypted.
- */
 export async function decryptFileIfNeeded(filePath: string): Promise<Buffer> {
   const content = await fs.readFile(filePath);
   const magic = "LEPOS_ENC_V1:";
@@ -110,9 +104,6 @@ export interface RegionVerificationResult {
   error?: string;
 }
 
-/**
- * Verifies SHA-256 integrity of all replicas, auto-healing any missing or corrupted replica files.
- */
 export async function verifyAndAutoHealReplicas(
   projectId: string,
   safeFileName: string,

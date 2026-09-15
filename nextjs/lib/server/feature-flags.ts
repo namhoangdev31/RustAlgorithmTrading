@@ -81,9 +81,6 @@ export async function syncProjectFeatureFlags(projectId: string): Promise<Featur
   return flags;
 }
 
-/**
- * Evaluates feature flags for a specific user request context.
- */
 export async function evaluateFeatureFlags(
   projectId: string,
   userId: string,
@@ -123,7 +120,6 @@ export async function evaluateFeatureFlags(
 
     let matchedVariant: "A" | "B" | null = null;
 
-    // Evaluate rules in order of precedence
     for (const rule of targetingRules) {
       if (rule.type === "geo" && rule.countries) {
         const matchesGeo = rule.countries.map(c => c.toUpperCase()).includes(country);
@@ -146,7 +142,6 @@ export async function evaluateFeatureFlags(
       }
     }
 
-    // Default to trafficSplit assignment if no rules matched
     if (matchedVariant === null) {
       const hash = hashString(userId + t.id);
       matchedVariant = hash < t.trafficSplit ? "B" : "A";

@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
           }
         }
       } catch (fetchErr) {
-        // Fallback sang stale cache nếu có
+        
         if (cached) liveData = cached.data;
       }
     }

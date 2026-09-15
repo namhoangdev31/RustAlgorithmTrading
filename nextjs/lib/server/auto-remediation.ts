@@ -64,11 +64,9 @@ export async function executeAutoRemediation(
       };
     }
 
-    // CASE B: API Error Rate Escalation -> Suspect deployment regression -> Rollback
     if (anomalyType === "error_rate") {
       const currentDeploymentId = project.activeNativeDeploymentId;
 
-      // Find the last stable deployment that is ready/completed and not the current one
       const lastStable = await prisma.nativeDeployment.findFirst({
         where: {
           projectId,
@@ -79,7 +77,7 @@ export async function executeAutoRemediation(
       });
 
       if (lastStable) {
-        // Rollback active deployment in DB
+        
         await prisma.project.update({
           where: { id: projectId },
           data: { activeNativeDeploymentId: lastStable.id },
@@ -103,7 +101,6 @@ export async function executeAutoRemediation(
       }
     }
 
-    // CASE C: API Latency Congestion (High Load) -> Scale out replicas
     if (anomalyType === "latency") {
       console.warn(`[Auto-Remediation] High latency detected for ${project.name}; no provider-backed scale action is configured.`);
 

@@ -90,13 +90,9 @@ async function fetchRaw1mData(force = false): Promise<Raw1mData | null> {
   } catch (err) {
     console.warn("[market] Lỗi lấy nến 1m từ Entrade:", (err as Error)?.message);
   }
-  return cachedRaw1m; // stale cache (có thể null)
+  return cachedRaw1m; 
 }
 
-/**
- * Chuỗi nến 1m CHỈ thuộc phiên hôm nay (giờ VN), dùng để replay execution.
- * Trả [] nếu chưa có nến hôm nay (ngoài giờ / mạng lỗi) — caller tự xử lý.
- */
 export async function getIntradayBars(force = false): Promise<IntradayBar[]> {
   const raw = await fetchRaw1mData(force);
   if (!raw) {
@@ -118,14 +114,10 @@ export async function getIntradayBars(force = false): Promise<IntradayBar[]> {
   return bars;
 }
 
-/** Snapshot có phải dữ liệu dự phòng hardcode (không phải giá thật từ sàn) hay không */
 export function isSnapshotFallback(s: MarketSnapshot | null | undefined): boolean {
   return s?.source === "FALLBACK_LIVE_ESTIMATE";
 }
 
-/**
- * Tính toán các tham số thị trường định lượng từ chuỗi nến ngày thật của sàn
- */
 export async function getDailyMarketMetrics(force = false): Promise<DailyMarketMetrics> {
   const now = Date.now();
   if (!force && cachedDailyMetrics && now - lastDailyFetchTime < DAILY_CACHE_TTL_MS) {
@@ -134,10 +126,10 @@ export async function getDailyMarketMetrics(force = false): Promise<DailyMarketM
 
   try {
     const nowSec = Math.floor(now / 1000);
-    const fromSec = nowSec - 86400 * 45; // 45 ngày để đủ dữ liệu EMA10 & ATR5
+    const fromSec = nowSec - 86400 * 45; 
 
     const res = await fetch(
-      `https:
+      `https://services.entrade.com.vn/chart-api/chart?resolution=1D&symbol=VN30F1M&from=${fromSec}&to=${nowSec}`,
       {
         headers: {
           Accept: "application/json",
@@ -293,7 +285,7 @@ export async function getLatestMarketSnapshot(force = false): Promise<MarketSnap
             }
           ),
           fetch(
-            `https:
+            `https://api-finfo.vndirect.com.vn/v4/derivatives?q=code:VN30F1M`,
             {
               headers: { "User-Agent": "Mozilla/5.0" },
               cache: "no-store",
@@ -317,7 +309,7 @@ export async function getLatestMarketSnapshot(force = false): Promise<MarketSnap
           }
         }
       } catch {
-        
+        // Bỏ qua nếu mạng sàn phụ trễ
       }
 
       const snapshot: MarketSnapshot = {

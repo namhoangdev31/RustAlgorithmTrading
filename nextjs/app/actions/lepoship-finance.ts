@@ -35,7 +35,7 @@ export async function initiatePayoutAction(payoutId: string) {
   }
 
   const transfer = await stripe.transfers.create({
-    amount: Math.round(payout.amount), 
+    amount: Math.round(payout.amount), // VND or other zero-decimal or minor values
     currency: payout.currency.toLowerCase(),
     destination: partnerAccount.stripeAccountId,
     description: `Payout reference ${payout.id} reconciled by admin ${admin.fullName || admin.email}`,
@@ -72,7 +72,6 @@ export async function approveRefundAction(refundRequestId: string, reviewNote: s
   const order = refundRequest.order;
   if (!order) throw new Error("Order not found.");
 
-  // Find the marketplace transaction linked to this session/intent
   const transaction = await prisma.marketplaceTransaction.findFirst({
     where: {
       stripeCheckoutSessionId: order.transactionRef || undefined,
@@ -84,7 +83,6 @@ export async function approveRefundAction(refundRequestId: string, reviewNote: s
     throw new Error("Payment transaction intent reference not found.");
   }
 
-  // Trigger Stripe refund reversing destination charge and platform application fee
   const refund = await stripe.refunds.create({
     payment_intent: paymentIntentId,
     reverse_transfer: true,
@@ -93,9 +91,8 @@ export async function approveRefundAction(refundRequestId: string, reviewNote: s
 
   const now = new Date();
 
-  // Atomically update transaction records and revoke entitlements
   await prisma.$transaction([
-    // Update Refund request
+    
     prisma.bundleRefundRequests.update({
       where: { id: refundRequestId },
       data: {
@@ -107,7 +104,7 @@ export async function approveRefundAction(refundRequestId: string, reviewNote: s
         updatedAt: now,
       },
     }),
-    // Update Order
+    
     prisma.bundleOrders.update({
       where: { id: order.id },
       data: {
@@ -115,7 +112,7 @@ export async function approveRefundAction(refundRequestId: string, reviewNote: s
         updatedAt: now,
       },
     }),
-    // Update Marketplace Transaction
+    
     prisma.marketplaceTransaction.updateMany({
       where: {
         OR: [
@@ -128,7 +125,7 @@ export async function approveRefundAction(refundRequestId: string, reviewNote: s
         updatedAt: now,
       },
     }),
-    // Revoke entitlement matching this purchase
+    
     prisma.bundleUserEntitlements.updateMany({
       where: {
         userId: refundRequest.userId,

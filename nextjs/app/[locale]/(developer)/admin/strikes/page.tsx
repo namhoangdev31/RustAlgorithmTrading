@@ -63,9 +63,9 @@ export default async function AdminStrikesPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {}
+        {/* Left Column: User Reports & Abuse Signals */}
         <div className="lg:col-span-2 space-y-6">
-          {}
+          {/* User Reports */}
           <Card className="border-hairline">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
@@ -106,7 +106,7 @@ export default async function AdminStrikesPage() {
             </CardContent>
           </Card>
 
-          {}
+          {/* Abuse Signals */}
           <Card className="border-hairline">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
@@ -151,6 +151,7 @@ export default async function AdminStrikesPage() {
           </Card>
         </div>
 
+        {/* Right Column: Strike History */}
         <div>
           <Card className="border-hairline h-full">
             <CardHeader className="pb-3">

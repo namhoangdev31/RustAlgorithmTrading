@@ -140,7 +140,7 @@ export const TestimonialSection = () => {
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     gsap.to(e.currentTarget, {
       y: -5,
-      borderColor: "rgba(62, 207, 142, 0.3)", 
+      borderColor: "rgba(62, 207, 142, 0.3)", // Emerald border highlight
       boxShadow: "0 10px 20px -10px rgba(62, 207, 142, 0.15)",
       duration: 0.3,
       ease: "power2.out",

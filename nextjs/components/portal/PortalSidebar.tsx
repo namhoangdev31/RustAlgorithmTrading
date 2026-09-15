@@ -114,7 +114,7 @@ export function PortalSidebar({
       </SidebarHeader>
       
       <SidebarContent>
-        
+        {/* Context Switching Banner if in Project or LepoShip scope */}
         {projectId && (
           <div className="px-3 py-2">
             <Link

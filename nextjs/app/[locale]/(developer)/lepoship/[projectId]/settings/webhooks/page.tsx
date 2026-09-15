@@ -21,7 +21,6 @@ export default async function LepoShipWebhooksSettingsPage({ params }: PageProps
 
   const bundle = data.project.bundle;
 
-  // Retrieve project webhooks
   const webhooks = await prisma.bundleWebhooks.findMany({
     where: { bundleId: bundle.id },
     orderBy: { createdAt: "desc" },

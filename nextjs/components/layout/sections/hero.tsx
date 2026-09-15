@@ -18,12 +18,12 @@ export const HeroSection = () => {
 
   return (
     <section className="relative w-full overflow-hidden min-h-[90vh] flex items-center justify-center">
-      {}
+      {/* 3D WebGL network background */}
       <TradingCanvas />
 
       <div className="relative z-10 grid place-items-center lg:max-w-screen-xl gap-8 mx-auto px-6 md:px-8 py-20 md:py-32 w-full">
         <div className="text-center flex flex-col gap-8 max-w-4xl">
-          {}
+          {/* Animated Badge */}
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -34,7 +34,7 @@ export const HeroSection = () => {
             <span>{t("badge")}</span>
           </motion.div>
 
-          {}
+          {/* Title - Word Stagger Reveal */}
           <div className="max-w-screen-md mx-auto text-center text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight">
             <h1 className="leading-tight overflow-hidden py-1">
               {words.map((word, i) => {
@@ -62,6 +62,7 @@ export const HeroSection = () => {
             </h1>
           </div>
 
+          {/* Subtitle */}
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -71,6 +72,7 @@ export const HeroSection = () => {
             {t("subtitle")}
           </motion.p>
 
+          {/* CTA Buttons */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -103,6 +105,7 @@ export const HeroSection = () => {
           </motion.div>
         </div>
 
+        {/* Live trading cockpit preview with GSAP animations */}
         <TradingPreview />
       </div>
     </section>
@@ -118,7 +121,6 @@ const TradingPreview = () => {
 
   const t = useTranslations("Hero");
 
-  // Live state variables to make dashboard feel alive
   const [latency, setLatency] = useState("18.4ms");
   const [signals, setSignals] = useState(42);
   const [chartData, setChartData] = useState(initialChartBars);
@@ -126,10 +128,8 @@ const TradingPreview = () => {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Register ScrollTrigger
     gsap.registerPlugin(ScrollTrigger);
 
-    // Initial load animation for chart bars
     const bars = chartRef.current?.querySelectorAll(".chart-bar-fill");
     if (bars) {
       gsap.fromTo(
@@ -145,7 +145,6 @@ const TradingPreview = () => {
       );
     }
 
-    // Scroll trigger parallax/tilt effect on the dashboard mockup
     if (containerRef.current) {
       gsap.fromTo(
         containerRef.current,
@@ -170,16 +169,13 @@ const TradingPreview = () => {
       );
     }
 
-    // Live update tickers
     const interval = setInterval(() => {
-      // 1. Latency fluctuation
+      
       const newLat = (15 + Math.random() * 5).toFixed(1) + "ms";
       setLatency(newLat);
 
-      // 2. Signals increment
       setSignals((prev) => prev + (Math.random() > 0.6 ? 1 : 0));
 
-      // 3. Fluctuate chart bars slightly
       setChartData((prev) => 
         prev.map((val) => {
           const change = Math.floor((Math.random() - 0.5) * 8);
@@ -191,7 +187,6 @@ const TradingPreview = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Update chart bars whenever state triggers new layout values
   useEffect(() => {
     const bars = chartRef.current?.querySelectorAll(".chart-bar-fill");
     if (bars) {
@@ -205,17 +200,14 @@ const TradingPreview = () => {
     }
   }, [chartData]);
 
-  // Dynamic 3D mouse hover tilt handler
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const card = cardRef.current;
     const rect = card.getBoundingClientRect();
-    
-    // Relative coordinates from card center (-1 to 1)
+
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
 
-    // Limit rotation to max 8 degrees
     const rotateY = x * 16;
     const rotateX = -y * 16;
 
@@ -245,7 +237,8 @@ const TradingPreview = () => {
       style={{ transformStyle: "preserve-3d" }}
     >
       <div className="absolute top-2 lg:-top-8 left-1/2 h-24 w-[90%] -translate-x-1/2 rounded-full bg-primary/40 blur-3xl lg:h-80 pointer-events-none" />
-
+      
+      {/* 3D Tilting Card */}
       <div 
         ref={cardRef}
         onMouseMove={handleMouseMove}

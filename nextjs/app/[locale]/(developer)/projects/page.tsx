@@ -78,6 +78,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
         </Alert>
       )}
 
+      {/* Organization selector and title */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-2 select-none text-xs font-medium text-muted-foreground">
           <DropdownMenu>
@@ -122,6 +123,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
         </div>
       </div>
 
+      {/* Filter and Search Section */}
       <div className="w-full flex flex-row items-center gap-3">
         <form action={localizedProjectsPath} className="flex flex-1 flex-row items-center gap-3" method="get">
           {search.layout && <input type="hidden" name="layout" value={search.layout} />}
@@ -155,7 +157,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
           {github.connected ? (
             <Button asChild className="h-9 text-xs font-semibold bg-card border border-hairline hover:bg-secondary text-foreground rounded-md px-3 shrink-0">
               <a
-                href={github.profileUrl || `https:
+                href={github.profileUrl || `https://github.com/${github.login}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2"
@@ -179,7 +181,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
         </div>
       </div>
 
-      {}
+      {/* Projects Grid/List View using OverviewTab */}
       <div className="w-full">
         <OverviewTab
           data={data}
@@ -194,7 +196,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
         />
       </div>
 
-      {}
+      {/* Modal Dialog Form for Create */}
       {search.dialog === "create" ? (
         <RouteDialog open returnTo={projectsPath}>
           <ProjectForm
@@ -210,7 +212,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
         </RouteDialog>
       ) : null}
 
-      {}
+      {/* Modal Dialog Form for Edit */}
       {search.dialog === "edit" && selectedProject ? (
         <RouteDialog open returnTo={projectsPath}>
           <ProjectForm
@@ -223,7 +225,7 @@ export default async function ProjectsPage({ params, searchParams }: ProjectsPag
         </RouteDialog>
       ) : null}
 
-      {}
+      {/* Modal Dialog for Delete Confirmation */}
       {search.dialog === "delete" && selectedProject ? (
         <RouteDialog open returnTo={projectsPath} className="max-w-md">
           <DeleteConfirmationDialog

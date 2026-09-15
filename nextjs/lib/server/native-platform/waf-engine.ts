@@ -28,7 +28,7 @@ export function generateJsChallenge() {
 
   const redis = getNativeRedis();
   if (redis) {
-    redis.set(`lepos:waf:challenge:${challengeId}`, salt, "EX", 300); // 5 min TTL
+    redis.set(`lepos:waf:challenge:${challengeId}`, salt, "EX", 300); 
   }
 
   return {
@@ -97,7 +97,7 @@ export async function autoBlockSuspiciousIp(projectId: string, ipAddress: string
   if (!redis) return false;
 
   const blockKey = `lepos:waf:blocked:${ipAddress}`;
-  await redis.set(blockKey, JSON.stringify({ projectId, fingerprint, blockedAt: Date.now() }), "EX", 3600); // block 1 hour
+  await redis.set(blockKey, JSON.stringify({ projectId, fingerprint, blockedAt: Date.now() }), "EX", 3600); 
 
   await prisma.nativeWafEvent.create({
     data: {

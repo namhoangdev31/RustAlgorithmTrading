@@ -120,20 +120,17 @@ export async function generateAdvisorReply(
   const rawRatio = slPoints > 0 ? tpPoints / slPoints : 2.0;
   const rrRatioDisplay = `1:${Number(rawRatio.toFixed(1)) === Math.round(rawRatio) ? Math.round(rawRatio) : rawRatio.toFixed(1)}`;
 
-  // 2. Lấy dữ liệu thống kê kiểm định động (từ DB hoặc cấu hình truyền vào)
   const summary: BacktestSummary = {
     ...DEFAULT_CANONICAL_BACKTEST_SUMMARY,
     ...(config?.summary || {}),
   };
 
-  // 3. Thông tin nền tảng và thời gian giao dịch động
   const brokerList = config?.brokerPlatforms?.length
     ? config.brokerPlatforms.join(", ")
     : "VPS, TCBS, SSI, DNSE";
   const orderTime = config?.orderBeforeTime || "09:15";
   const atcTime = config?.atcTime || "14:45";
 
-  // 4. Chuỗi thống kê kiểm định đa ngôn ngữ động
   const backtestSummaryEn = `Verification across ${summary.totalSessions} sessions (${summary.totalBars?.toLocaleString() ?? "100,746"} 1m bars from ${summary.startDate ?? "Jan 2025"} to ${summary.endDate ?? "Sep 11, 2026"}): ${summary.tradedCount} filled trades (${summary.wins} Wins / ${summary.losses} Losses), Winrate ${summary.winRate}%, Total Profit ${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl} points, Profit Factor ${summary.profitFactor}.`;
   const backtestSummaryVi = `Hiệu suất kiểm định ${summary.totalSessions} phiên (${summary.totalBars?.toLocaleString() ?? "100.746"} nến 1m từ ${summary.startDate ?? "01/2025"} đến ${summary.endDate ?? "11/09/2026"}): ${summary.tradedCount} lệnh khớp (${summary.wins} Thắng / ${summary.losses} Thua), Winrate ${summary.winRate}%, Tổng lãi ${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl} điểm, Profit Factor ${summary.profitFactor}.`;
 
@@ -141,7 +138,6 @@ export async function generateAdvisorReply(
     ? (primaryPlan.engine === "simcarrry6" ? "SimCarry6 Swing T+1" : primaryPlan.engine === "CanonicalDirectionalBreakout" ? "Canonical Directional Breakout" : primaryPlan.engine)
     : (primaryPlan.engine === "simcarrry6" ? "Kèo Chính SimCarry6 Swing T+1" : primaryPlan.engine === "CanonicalDirectionalBreakout" ? "Đột Phá Xu Hướng Chuẩn Tắc" : primaryPlan.engine);
 
-  // Nếu câu hỏi yêu cầu biểu đồ
   if (intent === "CHART_RENDER_PRIORITY") {
     return {
       ok: true,
@@ -202,7 +198,6 @@ Chiến lược sử dụng Stop Breakout với tỷ lệ R:R = ${rrRatioDisplay
   const orderTypeEn = isBreakout ? "Stop Order" : "Limit Order";
   const orderTypeVi = isBreakout ? "Lệnh dừng Stop Order" : "Lệnh giới hạn Limit Order";
 
-  // Khối phản hồi dựa trên Intent & Gemini/Rule Engine
   const geminiApiKey = process.env.GEMINI_API_KEY;
 
   if (geminiApiKey) {
@@ -248,7 +243,6 @@ ${isEn ? "⬜ CONCLUSION/ACTION" : "⬜ KẾT LUẬN/HÀNH ĐỘNG"}
     }
   }
 
-  // Fallback Rule Engine thuần túy chuẩn xác 100% của BFXPS
   let answer = "";
   if (intent === "TODAY_PLANS") {
     answer = isEn

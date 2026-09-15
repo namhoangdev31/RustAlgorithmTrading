@@ -40,7 +40,7 @@ export default async function DirectorySettingsPage() {
   ]);
   const host = requestHeaders.get("x-forwarded-host") || requestHeaders.get("host") || "";
   const protocol = requestHeaders.get("x-forwarded-proto") || "https";
-  const origin = host ? `${protocol}:
+  const origin = host ? `${protocol}://${host}` : "";
 
   const baseUrl = `${origin}/api/scim/v2`;
 

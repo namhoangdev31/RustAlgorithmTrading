@@ -98,7 +98,6 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   );
 }
 
-// Simple CommandShortcut component in case CommandShortcut is styled differently
 function CommandShortcut({
   children,
   className,

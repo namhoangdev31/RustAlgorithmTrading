@@ -43,7 +43,7 @@ export function PreBlock({ children, className, ...props }: PreBlockProps) {
         {children}
       </pre>
       
-      {}
+      {/* Floating Copy Button */}
       <button
         type="button"
         onClick={handleCopy}
