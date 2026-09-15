@@ -117,7 +117,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       fetchCandles(timeframe, false);
       const candleInterval = setInterval(() => {
         fetchCandles(timeframe, true);
-      }, 60000); // 1 phút gọi nến 1 lần tránh 429
+      }, 15000); // 15s cập nhật nến từ sàn một lần để giảm độ trễ
       return () => clearInterval(candleInterval);
     }, [timeframe, fetchCandles]);
 
@@ -132,13 +132,10 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
         ? Math.floor(new Date(snapshot.timestamp).getTime() / 1000)
         : null;
 
-      if (
-        timeframe === "1m" &&
-        snapTimeSec &&
-        last &&
-        snapTimeSec >= last.time + 60
-      ) {
-        const roundedTime = Math.floor(snapTimeSec / 60) * 60;
+      const intervalSec = timeframe === "1m" ? 60 : 15 * 60;
+
+      if (snapTimeSec && last && snapTimeSec >= last.time + intervalSec) {
+        const roundedTime = Math.floor(snapTimeSec / intervalSec) * intervalSec;
         list.push({
           time: roundedTime,
           open: snapshot.open || snapshot.current,

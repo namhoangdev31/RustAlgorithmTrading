@@ -6,6 +6,13 @@ export const dynamic = "force-dynamic";
  * API trả về chuỗi nến VN30F1M trực tiếp từ Sàn giao dịch (Entrade/DNSE)
  * Tuyệt đối không đọc nến tĩnh từ file JSON cục bộ.
  */
+interface CandleCacheEntry {
+  fetchedAt: number;
+  data: any;
+}
+const candleCache = new Map<string, CandleCacheEntry>();
+const CANDLE_CACHE_TTL_MS = 8000;
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -37,29 +44,50 @@ export async function GET(req: NextRequest) {
       lookbackDays = 730;
     }
 
-    const nowSec = Math.floor(Date.now() / 1000);
-    const fromSec = nowSec - 86400 * lookbackDays;
+    const now = Date.now();
+    const cached = candleCache.get(resolution);
+    let liveData = cached && now - cached.fetchedAt < CANDLE_CACHE_TTL_MS ? cached.data : null;
 
-    const res = await fetch(
-      `https://services.entrade.com.vn/chart-api/chart?resolution=${resolution}&symbol=VN30F1M&from=${fromSec}&to=${nowSec}`,
-      {
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "Mozilla/5.0",
-        },
-        cache: "no-store",
-        signal: AbortSignal.timeout(6000),
+    if (!liveData) {
+      const nowSec = Math.floor(now / 1000);
+      const fromSec = nowSec - 86400 * lookbackDays;
+
+      try {
+        const res = await fetch(
+          `https://services.entrade.com.vn/chart-api/chart?resolution=${resolution}&symbol=VN30F1M&from=${fromSec}&to=${nowSec}`,
+          {
+            headers: {
+              Accept: "application/json",
+              "User-Agent": "Mozilla/5.0",
+            },
+            cache: "no-store",
+            signal: AbortSignal.timeout(6000),
+          }
+        );
+
+        if (res.ok) {
+          const fetched = await res.json();
+          if (fetched && Array.isArray(fetched.t) && fetched.t.length > 0) {
+            liveData = fetched;
+            candleCache.set(resolution, { fetchedAt: now, data: fetched });
+          }
+        }
+      } catch (fetchErr) {
+        // Fallback sang stale cache nếu có
+        if (cached) liveData = cached.data;
       }
-    );
+    }
 
-    if (!res.ok) {
+    if (!liveData && cached) {
+      liveData = cached.data;
+    }
+
+    if (!liveData) {
       return NextResponse.json(
-        { ok: false, error: `Lỗi kết nối máy chủ nến sàn (${res.status})` },
+        { ok: false, error: "Lỗi kết nối máy chủ nến sàn (không có dữ liệu)" },
         { status: 502 }
       );
     }
-
-    const liveData = await res.json();
     if (!liveData || !Array.isArray(liveData.t) || liveData.t.length === 0) {
       return NextResponse.json({
         ok: true,
