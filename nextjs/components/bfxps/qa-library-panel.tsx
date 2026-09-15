@@ -72,12 +72,12 @@ export function QaLibraryPanel({ onSelectQuestion, onClose }: QaLibraryProps) {
     <div className="flex h-full flex-col overflow-hidden bg-[#0b0f17] text-slate-100">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#090d16]/90 px-4 py-2.5">
-        <div className="flex items-center gap-2">
-          <HelpCircle className="h-4 w-4 text-sky-400" />
-          <b className="text-xs font-black tracking-wider uppercase text-white">{t("title")}</b>
+        <div className="flex items-center gap-2 min-w-0 mr-2 truncate">
+          <HelpCircle className="h-4 w-4 text-sky-400 shrink-0" />
+          <b className="text-xs font-black tracking-wider uppercase text-white truncate">{t("title")}</b>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-mono text-slate-400">{t("click_to_run")}</span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap">{t("click_to_run")}</span>
           {onClose && (
             <button
               onClick={onClose}
@@ -97,7 +97,7 @@ export function QaLibraryPanel({ onSelectQuestion, onClose }: QaLibraryProps) {
           return (
             <div
               key={idx}
-              className="rounded-xl border border-white/[0.08] bg-white/[0.02] overflow-hidden shadow-sm"
+              className="rounded border border-white/[0.08] bg-white/[0.02] overflow-hidden shadow-sm"
             >
               <button
                 type="button"
@@ -119,7 +119,7 @@ export function QaLibraryPanel({ onSelectQuestion, onClose }: QaLibraryProps) {
                       key={qIdx}
                       type="button"
                       onClick={() => onSelectQuestion(qItem.q)}
-                      className="group flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-2.5 py-1.5 text-left text-[11px] text-slate-300 transition-all hover:border-sky-500/40 hover:bg-sky-500/10 hover:text-sky-300 cursor-pointer"
+                      className="group flex items-center justify-between rounded border border-white/5 bg-white/[0.02] px-2.5 py-1.5 text-left text-[11px] text-slate-300 transition-all hover:border-sky-500/40 hover:bg-sky-500/10 hover:text-sky-300 cursor-pointer"
                     >
                       <span className="font-medium leading-normal">{qItem.label}</span>
                       <Zap className="h-3 w-3 text-slate-500 opacity-0 group-hover:opacity-100 group-hover:text-amber-400 transition-all shrink-0 ml-1" />

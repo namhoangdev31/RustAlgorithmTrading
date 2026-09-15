@@ -1339,7 +1339,7 @@
     "engines": {
       "CanonicalDirectionalBreakout": "Đột Phá Xu Hướng Chuẩn Tắc",
       "simcarrry6": "Chiến Lược Xu Hướng SimCarry 6",
-      "AllDaysLadder_CAP0.3": "Thang Giá Bậc Thang (Cap 0.3)",
+      "AllDaysLadder_CAP0_3": "Thang Giá Bậc Thang (Cap 0.3)",
       "12K_AllDay": "Giao Dịch 12K Toàn Phiên",
       "default": "Thuật Toán Định Lượng Chuẩn Tắc"
     },
@@ -1478,11 +1478,11 @@
       "title": "SỔ LỆNH KÈO CHÍNH SIMCARRY6 & LỊCH SỬ THỰC CHIẾN",
       "subtitle": "Lịch sử kiểm định & thực chiến lưu trữ trong PostgreSQL · Zero Lookahead",
       "close": "Đóng",
-      "search_placeholder": "Tìm ngày (2025-01-02), Kèo (LONG/SHORT), Kết quả (WIN/LOSS)...",
+      "search_placeholder": "Tìm ngày, kèo, kết quả...",
       "filter_all": "Tất cả ({count})",
       "filter_live": "Thực Tế ({count})",
-      "filter_win": "Thắng / WIN ({count})",
-      "filter_loss": "Thua / LOSS ({count})",
+      "filter_win": "Thắng ({count})",
+      "filter_loss": "Thua ({count})",
       "col_date": "Ngày",
       "col_mode": "Nguồn Lệnh",
       "mode_live": "THỰC TẾ",
@@ -1524,7 +1524,10 @@
       "pts_unit": "đ",
       "pagination_showing": "Hiển thị {from} - {to} trong tổng số {total} phiên",
       "btn_prev": "Trước",
-      "btn_next": "Sau"
+      "btn_next": "Sau",
+      "view_table": "Bảng Chi Tiết",
+      "view_cards": "Dạng Thẻ",
+      "all_months_pill": "Tất Cả"
     }
   }
 }

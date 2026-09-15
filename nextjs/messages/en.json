@@ -1339,7 +1339,7 @@
     "engines": {
       "CanonicalDirectionalBreakout": "Canonical Directional Breakout",
       "simcarrry6": "SimCarry 6 Trend Strategy",
-      "AllDaysLadder_CAP0.3": "All Days Ladder (Cap 0.3)",
+      "AllDaysLadder_CAP0_3": "All Days Ladder (Cap 0.3)",
       "12K_AllDay": "12K Multi-Timeframe Strategy",
       "default": "Canonical Quant Strategy"
     },
@@ -1478,7 +1478,7 @@
       "title": "SIMCARRY6 PRIMARY LEDGER & TRADE HISTORY",
       "subtitle": "Historical verification & live trading stored in PostgreSQL · Zero Lookahead",
       "close": "Close",
-      "search_placeholder": "Search date (2025-01-02), Side (LONG/SHORT), Outcome (WIN/LOSS)...",
+      "search_placeholder": "Search date, plan, status...",
       "filter_all": "All ({count})",
       "filter_live": "Live ({count})",
       "filter_win": "Win ({count})",
@@ -1524,7 +1524,10 @@
       "pts_unit": " pts",
       "pagination_showing": "Showing {from} - {to} of {total} sessions",
       "btn_prev": "Previous",
-      "btn_next": "Next"
+      "btn_next": "Next",
+      "view_table": "Table View",
+      "view_cards": "Cards View",
+      "all_months_pill": "All"
     }
   }
 }

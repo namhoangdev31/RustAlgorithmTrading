@@ -94,7 +94,7 @@ export function DynamicPnlChart({ title }: { title?: string }) {
   }, []);
 
   return (
-    <div className="w-full rounded-xl border border-[#30363d] bg-[#171b23] p-4 text-white shadow-xl">
+    <div className="w-full rounded border border-[#30363d] bg-[#171b23] p-4 text-white shadow-xl">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-[#30363d] pb-3">
         <div>
           <h4 className="text-sm font-black tracking-wide text-[#e6edf3]">{chartTitle}</h4>

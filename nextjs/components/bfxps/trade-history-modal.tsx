@@ -5,14 +5,12 @@ import {
   X,
   Database,
   Search,
-  Filter,
   TrendingUp,
-  TrendingDown,
-  ShieldCheck,
   Calendar,
-  Layers,
   ChevronLeft,
   ChevronRight,
+  LayoutList,
+  Table as TableIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -63,6 +61,7 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
   const [summary, setSummary] = useState<any>(null);
   const [monthlyPnl, setMonthlyPnl] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
   const [filterType, setFilterType] = useState<
     "ALL" | "LIVE" | "FILLED" | "WIN" | "LOSS" | "NO_FILL"
   >("ALL");
@@ -70,6 +69,12 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 25;
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth >= 768) {
+      setViewMode("table");
+    }
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -288,47 +293,53 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-200">
-      <div className="flex h-[90vh] w-full max-w-6xl flex-col rounded-2xl border border-white/10 bg-[#0b0f17] text-slate-100 shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-0 md:p-4 animate-in fade-in duration-200">
+      <div className="flex h-[100dvh] md:h-[90vh] w-full max-w-6xl flex-col rounded-none md:rounded-lg border-0 md:border md:border-white/[0.08] bg-[#0b0f17] text-slate-100 shadow-2xl overflow-hidden">
         {/* Header Modal */}
-        <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#090d16]/90 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/20 border border-sky-500/30 text-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.2)]">
-              <Database className="h-5 w-5" />
+        <div className="flex items-center justify-between border-b border-white/[0.08] bg-[#090d16]/95 px-3.5 sm:px-6 py-2.5 sm:py-3.5 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-md bg-sky-500/20 text-sky-400 shadow-sm shrink-0">
+              <Database className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-black text-white tracking-wide">
-                  {t("title")}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <h2 className="text-sm sm:text-base font-black text-white tracking-wide truncate">
+                  <span className="sm:hidden">SỔ LỆNH KÈO CHÍNH</span>
+                  <span className="hidden sm:inline">{t("title")}</span>
                 </h2>
-                <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-bold text-emerald-400 border border-emerald-500/30 font-mono">
-                  {t("db_badge")}
-                </span>
-                <span className="rounded-full bg-sky-500/15 px-2.5 py-0.5 text-[10px] font-bold text-sky-400 border border-sky-500/30 font-mono">
-                  {t("zero_lookahead_badge")}
-                </span>
+                <div className="flex items-center gap-1 shrink-0">
+                  <span className="rounded-md bg-emerald-500/15 px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-emerald-400 font-mono">
+                    {t("db_badge")}
+                  </span>
+                  <span className="hidden sm:inline-flex rounded-md bg-sky-500/15 px-2 py-0.5 text-[10px] font-bold text-sky-400 font-mono">
+                    {t("zero_lookahead_badge")}
+                  </span>
+                </div>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">{t("subtitle")}</p>
+              <p className="text-[11px] sm:text-xs text-slate-400 truncate mt-0.5">
+                <span className="sm:hidden">PostgreSQL · Zero Lookahead</span>
+                <span className="hidden sm:inline">{t("subtitle")}</span>
+              </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+            className="rounded-md p-1.5 sm:p-2 text-slate-400 hover:text-white bg-white/[0.06] hover:bg-white/[0.12] transition-colors cursor-pointer shrink-0 ml-2 shadow-sm"
             title={t("close")}
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
         </div>
 
-        {/* Thống kê Tổng quan (KPI Cards) */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5 p-3.5 bg-white/[0.02] border-b border-white/[0.08]">
-          <div className="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-3 shadow-sm">
-            <div className="text-[10px] text-emerald-400/80 uppercase font-bold">
+        {/* Thống kê Tổng quan (KPI Cards - Không khung viền lồng, dùng nền nổi bật nhẹ nhàng) */}
+        <div className="flex md:grid md:grid-cols-5 gap-2 p-2 sm:p-3.5 bg-white/[0.02] border-b border-white/[0.08] overflow-x-auto no-scrollbar shrink-0 touch-pan-x">
+          <div className="min-w-[130px] md:min-w-0 flex-1 rounded-md bg-emerald-950/30 p-2 sm:p-3 shadow-sm shrink-0 md:shrink">
+            <div className="text-[9px] sm:text-[10px] text-emerald-400/80 uppercase font-bold whitespace-nowrap">
               {t("kpi_total_pnl")}
             </div>
-            <div className="mt-1 text-lg font-black text-emerald-400 flex items-center gap-1 font-mono">
-              <TrendingUp className="h-4 w-4" />
+            <div className="mt-0.5 sm:mt-1 text-base sm:text-lg font-black text-emerald-400 flex items-center gap-1 font-mono whitespace-nowrap">
+              <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
               {activeSummary?.totalPnl != null
                 ? activeSummary.totalPnl > 0
                   ? `+${activeSummary.totalPnl.toFixed(1)}`
@@ -336,91 +347,106 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
                 : "0.0"}
               {t("pts_unit")}
             </div>
-            <div className="text-[10px] text-slate-400 font-mono">
-              {t("kpi_total_pnl_sub", {
-                vnd:
-                  activeSummary?.totalPnl != null
-                    ? activeSummary.totalPnl > 0
-                      ? `+${(activeSummary.totalPnl / 10).toFixed(2)}`
-                      : (activeSummary.totalPnl / 10).toFixed(2)
-                    : "0.00",
-              })}
+            <div className="text-[9px] sm:text-[10px] text-slate-400 font-mono whitespace-nowrap">
+              {activeSummary?.totalPnl != null
+                ? activeSummary.totalPnl > 0
+                  ? `+${(activeSummary.totalPnl / 10).toFixed(2)} tr VNĐ/HĐ`
+                  : `${(activeSummary.totalPnl / 10).toFixed(2)} tr VNĐ/HĐ`
+                : "0.00 tr VNĐ/HĐ"}
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-3 shadow-sm">
-            <div className="text-[10px] text-slate-400 uppercase font-bold">
+          <div className="min-w-[125px] md:min-w-0 flex-1 rounded-md bg-[#101624] p-2 sm:p-3 shadow-sm shrink-0 md:shrink">
+            <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-bold whitespace-nowrap">
               {t("kpi_winrate")}
             </div>
-            <div className="mt-1 text-lg font-black text-white font-mono">
+            <div className="mt-0.5 sm:mt-1 text-base sm:text-lg font-black text-white font-mono whitespace-nowrap">
               {activeSummary?.winRate != null
                 ? `${activeSummary.winRate}%`
                 : "0.0%"}
             </div>
-            <div className="text-[10px] text-slate-400 font-mono">
-              {t("kpi_win_loss", {
-                wins: activeSummary?.wins ?? 0,
-                losses: activeSummary?.losses ?? 0,
-              })}
+            <div className="text-[9px] sm:text-[10px] text-slate-400 font-mono whitespace-nowrap">
+              {activeSummary?.wins ?? 0} thắng · {activeSummary?.losses ?? 0} thua
             </div>
           </div>
 
-          <div className="rounded-xl border border-sky-500/30 bg-sky-950/20 p-3 shadow-sm">
-            <div className="text-[10px] text-sky-400/80 uppercase font-bold">
+          <div className="min-w-[110px] md:min-w-0 flex-1 rounded-md bg-sky-950/25 p-2 sm:p-3 shadow-sm shrink-0 md:shrink">
+            <div className="text-[9px] sm:text-[10px] text-sky-400/80 uppercase font-bold whitespace-nowrap">
               {t("kpi_pf")}
             </div>
-            <div className="mt-1 text-lg font-black text-sky-400 font-mono">
+            <div className="mt-0.5 sm:mt-1 text-base sm:text-lg font-black text-sky-400 font-mono whitespace-nowrap">
               {activeSummary?.profitFactor != null
                 ? Number(activeSummary.profitFactor).toFixed(2)
                 : "0.00"}
             </div>
-            <div className="text-[10px] text-slate-400 font-mono">
+            <div className="text-[9px] sm:text-[10px] text-slate-400 font-mono whitespace-nowrap">
               {t("kpi_pf_sub")}
             </div>
           </div>
 
-          <div className="rounded-xl border border-rose-500/30 bg-rose-950/20 p-3 shadow-sm">
-            <div className="text-[10px] text-rose-400/80 uppercase font-bold">
+          <div className="min-w-[115px] md:min-w-0 flex-1 rounded-md bg-rose-950/25 p-2 sm:p-3 shadow-sm shrink-0 md:shrink">
+            <div className="text-[9px] sm:text-[10px] text-rose-400/80 uppercase font-bold whitespace-nowrap">
               {t("kpi_mdd")}
             </div>
-            <div className="mt-1 text-lg font-black text-rose-400 font-mono">
+            <div className="mt-0.5 sm:mt-1 text-base sm:text-lg font-black text-rose-400 font-mono whitespace-nowrap">
               {activeSummary?.maxDrawdown != null
                 ? `${activeSummary.maxDrawdown.toFixed(1)}${t("pts_unit")}`
                 : `0.0${t("pts_unit")}`}
             </div>
-            <div className="text-[10px] text-slate-400 font-mono">
+            <div className="text-[9px] sm:text-[10px] text-slate-400 font-mono whitespace-nowrap">
               {t("kpi_mdd_sub")}
             </div>
           </div>
 
-          <div className="rounded-xl border border-purple-500/30 bg-purple-950/20 p-3 shadow-sm">
-            <div className="text-[10px] text-purple-300/80 uppercase font-bold">
+          <div className="min-w-[125px] md:min-w-0 flex-1 rounded-md bg-purple-950/25 p-2 sm:p-3 shadow-sm shrink-0 md:shrink">
+            <div className="text-[9px] sm:text-[10px] text-purple-300/80 uppercase font-bold whitespace-nowrap">
               {t("kpi_sessions")}
             </div>
-            <div className="mt-1 text-lg font-black text-purple-300 font-mono">
+            <div className="mt-0.5 sm:mt-1 text-base sm:text-lg font-black text-purple-300 font-mono whitespace-nowrap">
               {activeSummary?.totalSessions ?? activeTrades.length}{" "}
-              {t("kpi_sessions_unit")}
+              <span className="text-xs font-normal text-purple-400/80">P</span>
             </div>
-            <div className="text-[10px] text-slate-400 font-mono">
-              {t("kpi_filled_info", {
-                filled: activeSummary?.tradedCount ?? 0,
-                noFill: Math.max(
-                  0,
-                  (activeSummary?.totalSessions ?? activeTrades.length) -
-                    (activeSummary?.tradedCount ?? 0),
-                ),
-              })}
+            <div className="text-[9px] sm:text-[10px] text-slate-400 font-mono whitespace-nowrap">
+              {activeSummary?.tradedCount ?? 0} khớp ·{" "}
+              {Math.max(
+                0,
+                (activeSummary?.totalSessions ?? activeTrades.length) -
+                  (activeSummary?.tradedCount ?? 0),
+              )}{" "}
+              ko khớp
             </div>
           </div>
         </div>
 
-        {/* Grid PnL Các Tháng */}
-        <div className="px-4 py-2 bg-black/30 border-b border-white/[0.08] overflow-x-auto custom-scrollbar">
-          <div className="text-[10px] font-bold text-slate-400 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider">
+        {/* Grid PnL Các Tháng (Nút nổi không border) */}
+        <div className="px-3 sm:px-4 py-1.5 sm:py-2 bg-black/30 border-b border-white/[0.08] overflow-x-auto no-scrollbar shrink-0 touch-pan-x">
+          <div className="text-[9px] sm:text-[10px] font-bold text-slate-400 mb-1 flex items-center gap-1.5 uppercase tracking-wider">
             <Calendar className="h-3 w-3 text-sky-400" />
             {t("monthly_title")}
           </div>
-          <div className="flex items-center gap-1.5 min-w-max pb-1">
+          <div className="flex items-center gap-1.5 min-w-max pb-0.5">
+            {/* Nút Tất Cả Tháng */}
+            <div
+              onClick={() => {
+                setSelectedMonth("ALL");
+                setCurrentPage(1);
+              }}
+              className={`cursor-pointer rounded-md px-2.5 py-1 text-center transition-all shadow-sm ${
+                selectedMonth === "ALL"
+                  ? "bg-sky-600 text-white shadow-md shadow-sky-600/25 font-bold"
+                  : "bg-[#101624] text-slate-300 hover:bg-[#162033] hover:text-white"
+              }`}
+            >
+              <div className="text-[9px] sm:text-[10px] font-mono opacity-80">
+                {t("all_months_pill")}
+              </div>
+              <div className={`text-[11px] sm:text-xs font-bold font-mono ${selectedMonth === "ALL" ? "text-white" : "text-sky-300"}`}>
+                {activeSummary?.totalPnl != null
+                  ? `${activeSummary.totalPnl > 0 ? "+" : ""}${activeSummary.totalPnl.toFixed(1)}${t("pts_unit")}`
+                  : "--"}
+              </div>
+            </div>
+
             {Object.entries(activeMonthlyPnl).map(([month, pnl]) => {
               const isPos = pnl > 0;
               const isZero = pnl === 0;
@@ -432,22 +458,24 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
                     setSelectedMonth(isSelected ? "ALL" : month);
                     setCurrentPage(1);
                   }}
-                  className={`cursor-pointer rounded-lg border px-2.5 py-1 text-center transition-all ${
+                  className={`cursor-pointer rounded-md px-2.5 py-1 text-center transition-all shadow-sm ${
                     isSelected
-                      ? "border-sky-400 bg-sky-500/20 shadow-[0_0_12px_rgba(56,189,248,0.2)]"
-                      : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.05]"
+                      ? "bg-sky-600 text-white shadow-md shadow-sky-600/25 font-bold"
+                      : "bg-[#101624] text-slate-300 hover:bg-[#162033] hover:text-white"
                   }`}
                 >
-                  <div className="text-[10px] font-mono text-slate-400">
+                  <div className="text-[9px] sm:text-[10px] font-mono opacity-80">
                     {month}
                   </div>
                   <div
-                    className={`text-xs font-bold font-mono ${
-                      isPos
-                        ? "text-emerald-400"
-                        : isZero
-                          ? "text-slate-400"
-                          : "text-rose-400"
+                    className={`text-[11px] sm:text-xs font-bold font-mono ${
+                      isSelected
+                        ? "text-white"
+                        : isPos
+                          ? "text-emerald-400"
+                          : isZero
+                            ? "text-slate-400"
+                            : "text-rose-400"
                     }`}
                   >
                     {isPos ? `+${pnl.toFixed(1)}` : pnl.toFixed(1)}
@@ -459,10 +487,10 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
           </div>
         </div>
 
-        {/* Thanh công cụ tìm kiếm và lọc */}
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-[#090d16] border-b border-white/[0.08]">
+        {/* Thanh công cụ tìm kiếm, bộ lọc và chuyển đổi giao diện */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 p-2.5 sm:p-3.5 bg-[#090d16] border-b border-white/[0.08] shrink-0">
           {/* Bộ lọc loại lệnh */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0 touch-pan-x">
             {[
               {
                 id: "ALL",
@@ -501,10 +529,10 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
                   setFilterType(tab.id as any);
                   setCurrentPage(1);
                 }}
-                className={`rounded-lg px-3 py-1 text-xs font-bold transition-all cursor-pointer ${
+                className={`rounded-md px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 shadow-sm ${
                   filterType === tab.id
-                    ? "bg-sky-500/20 text-sky-300 border border-sky-500/40 shadow-[0_0_12px_rgba(56,189,248,0.15)]"
-                    : "border border-white/10 bg-white/[0.02] text-slate-400 hover:text-white hover:bg-white/[0.05]"
+                    ? "bg-sky-600 text-white shadow-md shadow-sky-600/25"
+                    : "bg-[#101624] text-slate-400 hover:text-white hover:bg-[#162033]"
                 }`}
               >
                 {tab.label}
@@ -512,24 +540,58 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
             ))}
           </div>
 
-          {/* Ô tìm kiếm */}
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-500" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              placeholder={t("search_placeholder")}
-              className="w-48 rounded-lg border border-white/10 bg-white/[0.03] pl-8 pr-3 py-1 text-xs text-white placeholder-slate-500 focus:border-sky-500 focus:bg-white/[0.06] focus:outline-none transition-all font-mono"
-            />
+          <div className="flex items-center gap-2">
+            {/* Chuyển đổi Dạng Thẻ (Cards) / Dạng Bảng (Table) */}
+            <div className="flex items-center rounded-md bg-[#101624] p-0.5 shrink-0 shadow-sm">
+              <button
+                type="button"
+                onClick={() => setViewMode("cards")}
+                className={`flex items-center gap-1 rounded px-2 py-1 text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === "cards"
+                    ? "bg-sky-600 text-white shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+                title={t("view_cards")}
+              >
+                <LayoutList className="h-3.5 w-3.5" />
+                <span className="text-[10px] font-bold sm:hidden">Thẻ</span>
+                <span className="text-[10px] font-bold hidden sm:inline">{t("view_cards")}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("table")}
+                className={`flex items-center gap-1 rounded px-2 py-1 text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === "table"
+                    ? "bg-sky-600 text-white shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+                title={t("view_table")}
+              >
+                <TableIcon className="h-3.5 w-3.5" />
+                <span className="text-[10px] font-bold sm:hidden">Bảng</span>
+                <span className="text-[10px] font-bold hidden sm:inline">{t("view_table")}</span>
+              </button>
+            </div>
+
+            {/* Ô tìm kiếm */}
+            <div className="relative flex-1 sm:w-48">
+              <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-500" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                placeholder={t("search_placeholder")}
+                className="w-full rounded-md bg-[#101624] pl-8 pr-3 py-1 text-xs text-white placeholder-slate-500 focus:ring-1 focus:ring-sky-500 focus:outline-none transition-all font-mono shadow-sm"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Bảng Dữ Liệu Lịch Sử */}
-        <div className="flex-1 overflow-auto custom-scrollbar">
+        {/* Nội dung dữ liệu (Chế độ Dạng Thẻ hoặc Dạng Bảng) */}
+        <div className="flex-1 overflow-auto custom-scrollbar min-h-0">
           {loading ? (
             <div className="flex h-full items-center justify-center text-sm text-slate-400">
               {t("loading_db")}
@@ -538,125 +600,131 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
             <div className="flex h-full items-center justify-center text-sm text-slate-400">
               {t("no_records")}
             </div>
-          ) : (
-            <table className="w-full border-collapse text-left text-xs">
-              <thead className="sticky top-0 z-10 border-b border-white/10 bg-[#090d16] text-slate-400">
-                <tr>
-                  <th className="py-2.5 px-3 font-semibold">{t("col_date")}</th>
-                  <th className="py-2.5 px-3 font-semibold text-center">
-                    {t("col_mode")}
-                  </th>
-                  <th className="py-2.5 px-3 font-semibold">{t("col_plan")}</th>
-                  <th className="py-2.5 px-3 font-semibold">
-                    {t("col_entry")}
-                  </th>
-                  <th className="py-2.5 px-3 font-semibold">{t("col_tp")}</th>
-                  <th className="py-2.5 px-3 font-semibold">{t("col_sl")}</th>
-                  <th className="py-2.5 px-3 font-semibold">{t("col_exit")}</th>
-                  <th className="py-2.5 px-3 font-semibold">
-                    {t("col_exit_type")}
-                  </th>
-                  <th className="py-2.5 px-3 font-semibold">
-                    {t("col_exit_time")}
-                  </th>
-                  <th className="py-2.5 px-3 font-semibold text-right">
-                    {t("col_pnl")}
-                  </th>
-                  <th className="py-2.5 px-3 font-semibold text-right">
-                    {t("col_cum_pnl")}
-                  </th>
-                  <th className="py-2.5 px-3 font-semibold text-center">
-                    {t("col_status")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/[0.04] font-mono">
-                {paginatedTrades.map((trade) => {
-                  const isLong = trade.side === "LONG";
-                  const isNoFill =
-                    trade.exitType === "NO_FILL" ||
-                    trade.exitType === "PENDING";
-                  const isWin = trade.isWin;
-                  const isLoss = trade.pnl < 0;
+          ) : viewMode === "cards" ? (
+            /* DẠNG THẺ TỐI ƯU MOBILE (Card View) */
+            <div className="p-2 sm:p-4 space-y-2">
+              {paginatedTrades.map((trade) => {
+                const isLong = trade.side === "LONG";
+                const isNoFill =
+                  trade.exitType === "NO_FILL" ||
+                  trade.exitType === "PENDING";
+                const isWin = trade.isWin;
+                const isLoss = trade.pnl < 0;
+                const isLive = trade.date >= "2026-09-14";
 
-                  return (
-                    <tr
-                      key={trade.date}
-                      className="hover:bg-white/[0.03] transition-colors"
-                    >
-                      <td className="py-2.5 px-3 font-bold text-white">
-                        {trade.date}
-                        {trade.exitType === "FILLED" ? (
-                          <span className="ml-1.5 rounded-md bg-emerald-500/20 px-1.5 py-0.5 text-[10px] text-emerald-300 font-sans border border-emerald-500/40">
-                            PHIÊN NÀY
-                          </span>
-                        ) : trade.exitType === "PENDING" ? (
-                          <span className="ml-1.5 rounded-md bg-sky-500/20 px-1.5 py-0.5 text-[10px] text-sky-400 font-sans border border-sky-500/30">
-                            {t("next_session")}
-                          </span>
-                        ) : null}
-                      </td>
-                      <td className="py-2.5 px-3 text-center">
-                        {trade.date >= "2026-09-14" ? (
-                          <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-extrabold text-emerald-400 border border-emerald-500/40 shadow-[0_0_10px_rgba(52,211,153,0.2)]">
+                return (
+                  <div
+                    key={trade.date}
+                    className="rounded-lg bg-[#0e1422] p-3 hover:bg-[#111828] transition-all shadow-sm"
+                  >
+                    {/* Hàng 1: Ngày + Mode + Kèo + PnL */}
+                    <div className="flex items-center justify-between gap-2 pb-2 border-b border-white/[0.04]">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-mono font-bold text-xs text-white">
+                          {trade.date}
+                        </span>
+                        {isLive ? (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-extrabold text-emerald-400">
                             <span className="relative flex h-1.5 w-1.5">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                             </span>
                             {t("mode_live")}
                           </span>
                         ) : (
-                          <span className="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold text-purple-300/80 border border-purple-500/20">
+                          <span className="rounded-md bg-purple-500/10 px-1.5 py-0.5 text-[9px] font-medium text-purple-300/80">
                             {t("mode_backtest")}
                           </span>
                         )}
-                      </td>
-                      <td className="py-2.5 px-3">
+                        {trade.exitType === "FILLED" && (
+                          <span className="rounded-md bg-emerald-500/20 px-1.5 py-0.5 text-[9px] text-emerald-300 font-sans font-bold">
+                            PHIÊN NÀY
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
                         <span
-                          className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-bold ${
+                          className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${
                             isLong
-                              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                              : "bg-rose-500/15 text-rose-400 border border-rose-500/30"
+                              ? "bg-emerald-500/15 text-emerald-400"
+                              : "bg-rose-500/15 text-rose-400"
                           }`}
                         >
                           {trade.side}
                         </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-slate-200">
-                        {trade.entryPrice ? trade.entryPrice.toFixed(1) : "—"}
-                      </td>
-                      <td className="py-2.5 px-3 text-sky-400">
-                        {trade.tpPrice ? trade.tpPrice.toFixed(1) : "—"}
-                      </td>
-                      <td className="py-2.5 px-3 text-rose-400">
-                        {trade.slPrice ? trade.slPrice.toFixed(1) : "—"}
-                      </td>
-                      <td className="py-2.5 px-3 text-white font-semibold">
-                        {trade.exitType === "FILLED"
-                          ? trade.exitPrice > 0
-                            ? `${trade.exitPrice.toFixed(1)} (Live)`
-                            : "—"
-                          : trade.exitPrice > 0
-                            ? trade.exitPrice.toFixed(1)
-                            : "—"}
-                      </td>
-                      <td className="py-2.5 px-3 font-sans">
                         <span
-                          className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${
-                            trade.exitType === "TP" ||
-                            trade.exitType === "TRAIL"
-                              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                          className={`font-mono text-sm font-black ${
+                            isNoFill
+                              ? "text-slate-500"
+                              : isWin
+                                ? "text-emerald-400"
+                                : isLoss
+                                  ? "text-rose-400"
+                                  : "text-slate-400"
+                          }`}
+                        >
+                          {isNoFill
+                            ? `0.0${t("pts_unit")}`
+                            : `${trade.pnl > 0 ? `+${trade.pnl.toFixed(1)}` : trade.pnl.toFixed(1)}${t("pts_unit")}`}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Hàng 2: Grid 4 Giá (Vào, TP, SL, Đóng) - Dạng strip liền mạch KHÔNG khung lồng khung */}
+                    <div className="grid grid-cols-4 gap-2 py-2 px-1 text-center font-mono text-[11px] bg-black/25 rounded-md my-2">
+                      <div>
+                        <span className="block text-[9px] uppercase text-slate-400 font-semibold truncate">
+                          <span className="sm:hidden">VÀO</span>
+                          <span className="hidden sm:inline">{t("col_entry")}</span>
+                        </span>
+                        <span className="font-semibold text-slate-200">
+                          {trade.entryPrice ? trade.entryPrice.toFixed(1) : "—"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="block text-[9px] uppercase text-sky-400 font-semibold truncate">
+                          TP
+                        </span>
+                        <span className="font-bold text-sky-400">
+                          {trade.tpPrice ? trade.tpPrice.toFixed(1) : "—"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="block text-[9px] uppercase text-rose-400 font-semibold truncate">
+                          SL
+                        </span>
+                        <span className="font-bold text-rose-400">
+                          {trade.slPrice ? trade.slPrice.toFixed(1) : "—"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="block text-[9px] uppercase text-slate-400 font-semibold truncate">
+                          <span className="sm:hidden">ĐÓNG</span>
+                          <span className="hidden sm:inline">{t("col_exit")}</span>
+                        </span>
+                        <span className="font-bold text-white">
+                          {trade.exitPrice > 0 ? trade.exitPrice.toFixed(1) : "—"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Hàng 3: Loại Thoát + Giờ Thoát + Lũy Kế (Cân đối 1 dòng) */}
+                    <div className="flex items-center justify-between pt-1 text-[10px] text-slate-400 font-mono gap-1">
+                      <div className="flex items-center gap-1.5 min-w-0 shrink truncate">
+                        <span
+                          className={`rounded-md px-1.5 py-0.5 text-[9px] font-bold shrink-0 whitespace-nowrap ${
+                            trade.exitType === "TP" || trade.exitType === "TRAIL"
+                              ? "bg-emerald-500/20 text-emerald-400"
                               : trade.exitType === "BE"
-                                ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                                ? "bg-cyan-500/20 text-cyan-400"
                                 : trade.exitType === "SL"
-                                  ? "bg-rose-500/20 text-rose-400 border border-rose-500/30"
+                                  ? "bg-rose-500/20 text-rose-400"
                                   : trade.exitType === "ATC"
-                                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                                    ? "bg-amber-500/20 text-amber-300"
                                     : trade.exitType === "FILLED"
-                                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
-                                      : trade.exitType === "PENDING"
-                                        ? "bg-sky-500/20 text-sky-400 border border-sky-500/30"
-                                        : "bg-white/10 text-slate-400 border border-white/10"
+                                      ? "bg-emerald-500/20 text-emerald-400"
+                                      : "bg-white/10 text-slate-400"
                           }`}
                         >
                           {trade.exitType === "NO_FILL"
@@ -666,80 +734,263 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
                               : trade.exitType === "FILLED"
                                 ? "ĐANG KHỚP"
                                 : trade.exitType === "BE"
-                                  ? "BE (Hòa vốn)"
+                                  ? "BE"
                                   : trade.exitType === "TRAIL"
-                                    ? "TRAIL (Khóa lãi)"
+                                    ? "TRAIL"
                                     : trade.exitType}
                         </span>
-                      </td>
-                      <td className="py-2.5 px-3 text-slate-400">
-                        {trade.exitMinute || "—"}
-                      </td>
-                      <td
-                        className={`py-2.5 px-3 text-right font-bold ${
-                          isNoFill
-                            ? "text-slate-500"
-                            : isWin
-                              ? "text-emerald-400"
-                              : isLoss
-                                ? "text-rose-400"
-                                : "text-slate-400"
-                        }`}
-                      >
-                        {isNoFill
-                          ? `0.0${t("pts_unit")}`
-                          : `${trade.pnl > 0 ? `+${trade.pnl.toFixed(1)}` : trade.pnl.toFixed(1)}${t("pts_unit")}`}
-                      </td>
-                      <td className="py-2.5 px-3 text-right font-semibold text-white">
-                        {trade.cumulativePnl > 0
-                          ? `+${trade.cumulativePnl.toFixed(1)}`
-                          : trade.cumulativePnl.toFixed(1)}
-                        {t("pts_unit")}
-                      </td>
-                      <td className="py-2.5 px-3 text-center font-sans">
-                        <span className="text-[10px] text-slate-400">
-                          {trade.status ||
-                            (isNoFill
-                              ? t("status_no_fill")
-                              : t("status_settled"))}
+                        {trade.exitMinute && (
+                          <span className="text-slate-500 shrink-0 whitespace-nowrap">
+                            {trade.exitMinute}
+                          </span>
+                        )}
+                        <span className="text-slate-600 shrink-0">·</span>
+                        <span className="text-slate-400 font-sans truncate">
+                          {trade.status || (isNoFill ? t("status_no_fill") : t("status_settled"))}
                         </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      </div>
+
+                      <div className="text-right shrink-0 whitespace-nowrap pl-1">
+                        <span className="text-slate-500 mr-1">Lũy kế:</span>
+                        <span
+                          className={`font-bold font-mono ${
+                            trade.cumulativePnl > 0
+                              ? "text-emerald-400"
+                              : trade.cumulativePnl < 0
+                                ? "text-rose-400"
+                                : "text-white"
+                          }`}
+                        >
+                          {trade.cumulativePnl > 0 ? `+${trade.cumulativePnl.toFixed(1)}` : trade.cumulativePnl.toFixed(1)}
+                          {t("pts_unit")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            /* DẠNG BẢNG TOÀN BỘ CỘT (Table View với Sticky Date Column) */
+            <div className="min-w-[960px] sm:min-w-full">
+              <table className="w-full border-collapse text-left text-xs">
+                <thead className="sticky top-0 z-20 border-b border-white/10 bg-[#090d16] text-slate-400">
+                  <tr>
+                    <th className="sticky left-0 z-30 bg-[#090d16] py-2.5 px-3 font-semibold whitespace-nowrap shadow-[2px_0_5px_rgba(0,0,0,0.4)] border-r border-white/10">
+                      {t("col_date")}
+                    </th>
+                    <th className="py-2.5 px-3 font-semibold text-center whitespace-nowrap">
+                      {t("col_mode")}
+                    </th>
+                    <th className="py-2.5 px-3 font-semibold whitespace-nowrap">
+                      {t("col_plan")}
+                    </th>
+                    <th className="py-2.5 px-3 font-semibold whitespace-nowrap">
+                      {t("col_entry")}
+                    </th>
+                    <th className="py-2.5 px-3 font-semibold whitespace-nowrap">
+                      {t("col_tp")}
+                    </th>
+                    <th className="py-2.5 px-3 font-semibold whitespace-nowrap">
+                      {t("col_sl")}
+                    </th>
+                    <th className="py-2.5 px-3 font-semibold whitespace-nowrap">
+                      {t("col_exit")}
+                    </th>
+                    <th className="py-2.5 px-3 font-semibold whitespace-nowrap">
+                      {t("col_exit_type")}
+                    </th>
+                    <th className="py-2.5 px-3 font-semibold whitespace-nowrap">
+                      {t("col_exit_time")}
+                    </th>
+                    <th className="py-2.5 px-3 font-semibold text-right whitespace-nowrap">
+                      {t("col_pnl")}
+                    </th>
+                    <th className="py-2.5 px-3 font-semibold text-right whitespace-nowrap">
+                      {t("col_cum_pnl")}
+                    </th>
+                    <th className="py-2.5 px-3 font-semibold text-center whitespace-nowrap">
+                      {t("col_status")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/[0.04] font-mono">
+                  {paginatedTrades.map((trade) => {
+                    const isLong = trade.side === "LONG";
+                    const isNoFill =
+                      trade.exitType === "NO_FILL" ||
+                      trade.exitType === "PENDING";
+                    const isWin = trade.isWin;
+                    const isLoss = trade.pnl < 0;
+
+                    return (
+                      <tr
+                        key={trade.date}
+                        className="group hover:bg-white/[0.03] transition-colors"
+                      >
+                        <td className="sticky left-0 z-10 bg-[#0b0f17] group-hover:bg-[#111726] py-2.5 px-3 font-bold text-white whitespace-nowrap shadow-[2px_0_5px_rgba(0,0,0,0.4)] border-r border-white/10 transition-colors">
+                          {trade.date}
+                          {trade.exitType === "FILLED" ? (
+                            <span className="ml-1.5 rounded-md bg-emerald-500/20 px-1.5 py-0.5 text-[10px] text-emerald-300 font-sans font-bold">
+                              PHIÊN NÀY
+                            </span>
+                          ) : trade.exitType === "PENDING" ? (
+                            <span className="ml-1.5 rounded-md bg-sky-500/20 px-1.5 py-0.5 text-[10px] text-sky-400 font-sans font-bold">
+                              {t("next_session")}
+                            </span>
+                          ) : null}
+                        </td>
+                        <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                          {trade.date >= "2026-09-14" ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-extrabold text-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.2)] whitespace-nowrap">
+                              <span className="relative flex h-1.5 w-1.5">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                              </span>
+                              {t("mode_live")}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold text-purple-300/80 whitespace-nowrap">
+                              {t("mode_backtest")}
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-2.5 px-3 whitespace-nowrap">
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-bold whitespace-nowrap ${
+                              isLong
+                                ? "bg-emerald-500/15 text-emerald-400"
+                                : "bg-rose-500/15 text-rose-400"
+                            }`}
+                          >
+                            {trade.side}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-slate-200 whitespace-nowrap">
+                          {trade.entryPrice ? trade.entryPrice.toFixed(1) : "—"}
+                        </td>
+                        <td className="py-2.5 px-3 text-sky-400 whitespace-nowrap">
+                          {trade.tpPrice ? trade.tpPrice.toFixed(1) : "—"}
+                        </td>
+                        <td className="py-2.5 px-3 text-rose-400 whitespace-nowrap">
+                          {trade.slPrice ? trade.slPrice.toFixed(1) : "—"}
+                        </td>
+                        <td className="py-2.5 px-3 text-white font-semibold whitespace-nowrap">
+                          {trade.exitType === "FILLED"
+                            ? trade.exitPrice > 0
+                              ? `${trade.exitPrice.toFixed(1)} (Live)`
+                              : "—"
+                            : trade.exitPrice > 0
+                              ? trade.exitPrice.toFixed(1)
+                              : "—"}
+                        </td>
+                        <td className="py-2.5 px-3 font-sans whitespace-nowrap">
+                          <span
+                            className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold whitespace-nowrap ${
+                              trade.exitType === "TP" ||
+                              trade.exitType === "TRAIL"
+                                ? "bg-emerald-500/20 text-emerald-400"
+                                : trade.exitType === "BE"
+                                  ? "bg-cyan-500/20 text-cyan-400"
+                                  : trade.exitType === "SL"
+                                    ? "bg-rose-500/20 text-rose-400"
+                                    : trade.exitType === "ATC"
+                                      ? "bg-amber-500/20 text-amber-300"
+                                      : trade.exitType === "FILLED"
+                                        ? "bg-emerald-500/20 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
+                                        : trade.exitType === "PENDING"
+                                          ? "bg-sky-500/20 text-sky-400"
+                                          : "bg-white/10 text-slate-400"
+                            }`}
+                          >
+                            {trade.exitType === "NO_FILL"
+                              ? t("exit_no_fill")
+                              : trade.exitType === "PENDING"
+                                ? t("exit_pending")
+                                : trade.exitType === "FILLED"
+                                  ? "ĐANG KHỚP"
+                                  : trade.exitType === "BE"
+                                    ? "BE (Hòa vốn)"
+                                    : trade.exitType === "TRAIL"
+                                      ? "TRAIL (Khóa lãi)"
+                                      : trade.exitType}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">
+                          {trade.exitMinute || "—"}
+                        </td>
+                        <td
+                          className={`py-2.5 px-3 text-right font-bold whitespace-nowrap ${
+                            isNoFill
+                              ? "text-slate-500"
+                              : isWin
+                                ? "text-emerald-400"
+                                : isLoss
+                                  ? "text-rose-400"
+                                  : "text-slate-400"
+                          }`}
+                        >
+                          {isNoFill
+                            ? `0.0${t("pts_unit")}`
+                            : `${trade.pnl > 0 ? `+${trade.pnl.toFixed(1)}` : trade.pnl.toFixed(1)}${t("pts_unit")}`}
+                        </td>
+                        <td className="py-2.5 px-3 text-right font-semibold text-white whitespace-nowrap">
+                          {trade.cumulativePnl > 0
+                            ? `+${trade.cumulativePnl.toFixed(1)}`
+                            : trade.cumulativePnl.toFixed(1)}
+                          {t("pts_unit")}
+                        </td>
+                        <td className="py-2.5 px-3 text-center font-sans whitespace-nowrap">
+                          <span className="text-[10px] text-slate-400 whitespace-nowrap">
+                            {trade.status ||
+                              (isNoFill
+                                ? t("status_no_fill")
+                                : t("status_settled"))}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 
         {/* Footer Phân Trang */}
-        <div className="flex items-center justify-between border-t border-white/[0.08] bg-[#090d16] px-6 py-3 text-xs text-slate-400">
-          <div>
-            {t("pagination_showing", {
-              from:
-                reversedFiltered.length > 0
-                  ? (currentPage - 1) * pageSize + 1
-                  : 0,
-              to: Math.min(currentPage * pageSize, reversedFiltered.length),
-              total: reversedFiltered.length,
-            })}
+        <div className="flex items-center justify-between border-t border-white/[0.08] bg-[#090d16] px-3 sm:px-6 py-2 sm:py-3 text-[11px] sm:text-xs text-slate-400 shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div className="truncate pr-2 pl-12 sm:pl-0">
+            <span className="sm:hidden font-mono">
+              {reversedFiltered.length > 0 ? (currentPage - 1) * pageSize + 1 : 0}-
+              {Math.min(currentPage * pageSize, reversedFiltered.length)} / {reversedFiltered.length}P
+            </span>
+            <span className="hidden sm:inline">
+              {t("pagination_showing", {
+                from:
+                  reversedFiltered.length > 0
+                    ? (currentPage - 1) * pageSize + 1
+                    : 0,
+                to: Math.min(currentPage * pageSize, reversedFiltered.length),
+                total: reversedFiltered.length,
+              })}
+            </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.04] px-2.5 py-1 font-medium text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              className="flex items-center gap-1 rounded-md bg-[#101624] hover:bg-[#162033] px-2 sm:px-2.5 py-1 font-medium text-white shadow-sm disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               <ChevronLeft className="h-3.5 w-3.5" /> {t("btn_prev")}
             </button>
-            <span className="text-white font-mono">
+            <span className="text-white font-mono px-1">
               {currentPage} / {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.04] px-2.5 py-1 font-medium text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              className="flex items-center gap-1 rounded-md bg-[#101624] hover:bg-[#162033] px-2 sm:px-2.5 py-1 font-medium text-white shadow-sm disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               {t("btn_next")} <ChevronRight className="h-3.5 w-3.5" />
             </button>

@@ -488,8 +488,8 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
 
     return (
       <div
-        className={`flex h-full flex-col overflow-hidden rounded-xl border border-white/[0.08] bg-[#070a0f] text-slate-100 shadow-2xl backdrop-blur-xl transition-all ${
-          isFullscreen ? "fixed inset-2 z-50 rounded-xl shadow-2xl" : ""
+        className={`flex h-full flex-col overflow-hidden rounded-lg border border-white/[0.08] bg-[#070a0f] text-slate-100 shadow-2xl backdrop-blur-xl transition-all ${
+          isFullscreen ? "fixed inset-2 z-50 rounded-lg shadow-2xl" : ""
         }`}
       >
         {/* Top Header Controls Bar */}
@@ -499,38 +499,34 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
               <span className="font-extrabold tracking-wider text-white">
                 {symbol}
               </span>
-              <span className="rounded bg-sky-500/10 px-1.5 py-0.5 text-[10px] font-bold text-sky-400 border border-sky-500/20">
+              <span className="rounded-md bg-sky-500/10 px-1.5 py-0.5 text-[10px] font-bold text-sky-400">
                 VN30
-              </span>
-              {/* Official TradingView Brand Tag */}
-              <span className="flex items-center gap-1 rounded bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-bold text-blue-400 border border-blue-500/20 font-sans shadow-sm">
-                TradingView™ Engine
               </span>
             </div>
 
             {/* Timeframe selector (15m vs 1m) */}
-            <div className="flex items-center gap-0.5 rounded-lg border border-white/10 bg-white/[0.03] p-0.5 font-mono text-[11px]">
+            <div className="flex items-center gap-0.5 rounded-md bg-[#101624] p-0.5 font-mono text-[11px] shadow-sm">
               <button
                 onClick={() => setTimeframe("15m")}
-                className={`rounded-md px-2 py-0.5 font-bold transition-all cursor-pointer ${
+                className={`rounded px-2 py-0.5 font-bold transition-all cursor-pointer ${
                   timeframe === "15m"
                     ? "bg-emerald-500 text-slate-950 font-extrabold shadow-sm"
                     : "text-slate-400 hover:bg-white/[0.06] hover:text-white"
                 }`}
                 title={t("tf_15m_tooltip")}
               >
-                15m ({candleCount.toLocaleString()})
+                15m
               </button>
               <button
                 onClick={() => setTimeframe("1m")}
-                className={`rounded-md px-2 py-0.5 font-bold transition-all cursor-pointer ${
+                className={`rounded px-2 py-0.5 font-bold transition-all cursor-pointer ${
                   timeframe === "1m"
                     ? "bg-emerald-500 text-slate-950 font-extrabold shadow-sm"
                     : "text-slate-400 hover:bg-white/[0.06] hover:text-white"
                 }`}
                 title={t("tf_1m_tooltip")}
               >
-                1m ({t("candles_100k")})
+                1m
               </button>
             </div>
 
@@ -566,20 +562,20 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
               <span
                 className={`flex items-center gap-1 rounded-md px-2 py-0.5 font-bold shadow-sm ${
                   side === "LONG"
-                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
-                    : "bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.1)]"
+                    ? "bg-emerald-500/15 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+                    : "bg-rose-500/15 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.1)]"
                 }`}
               >
                 {side} {t("stop_chip_label")}: {entryPrice.toFixed(1)}
               </span>
             )}
             {tpPrice != null && (
-              <span className="rounded-md bg-sky-500/15 px-2 py-0.5 font-bold text-sky-400 border border-sky-500/30 shadow-[0_0_10px_rgba(56,189,248,0.1)]">
+              <span className="rounded-md bg-sky-500/15 px-2 py-0.5 font-bold text-sky-400 shadow-sm">
                 TP: {tpPrice.toFixed(1)}
               </span>
             )}
             {slPrice != null && (
-              <span className="rounded-md bg-rose-500/15 px-2 py-0.5 font-bold text-rose-400 border border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.1)]">
+              <span className="rounded-md bg-rose-500/15 px-2 py-0.5 font-bold text-rose-400 shadow-sm">
                 SL: {slPrice.toFixed(1)}
               </span>
             )}
@@ -779,7 +775,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
 
             {/* Quant Target Info */}
             {entryPrice != null && tpPrice != null && slPrice != null && (
-              <span className="rounded-md bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-mono text-slate-300 border border-white/5">
+              <span className="rounded-md bg-white/[0.04] px-1.5 py-0.5 text-[10px] font-mono text-slate-300 shadow-sm">
                 <strong
                   className={
                     side === "LONG" ? "text-emerald-400" : "text-rose-400"

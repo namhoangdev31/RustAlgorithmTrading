@@ -135,32 +135,32 @@ export function ChatConversationPanel({
           const trimmed = block.trim();
           if (!trimmed) return null;
 
-          let borderClass = "border border-white/10 bg-white/[0.03]";
-          let badgeClass = "bg-white/10 text-slate-300 border-white/15";
+          let blockBgClass = "bg-[#131b2e] text-slate-200";
+          let badgeClass = "bg-white/10 text-slate-300";
           let badgeText = t("badge_analysis");
 
           if (trimmed.startsWith("🟦")) {
-            borderClass = "border border-sky-500/30 bg-sky-950/30 text-sky-100";
-            badgeClass = "bg-sky-500/20 text-sky-300 border-sky-500/30";
+            blockBgClass = "bg-sky-950/40 text-sky-100";
+            badgeClass = "bg-sky-500/20 text-sky-300";
             badgeText = t("badge_system");
           } else if (trimmed.startsWith("🟧")) {
-            borderClass = "border border-amber-500/30 bg-amber-950/30 text-amber-100";
-            badgeClass = "bg-amber-500/20 text-amber-300 border-amber-500/30";
+            blockBgClass = "bg-amber-950/40 text-amber-100";
+            badgeClass = "bg-amber-500/20 text-amber-300";
             badgeText = t("badge_history");
           } else if (trimmed.startsWith("🟪")) {
-            borderClass = "border border-purple-500/30 bg-purple-950/30 text-purple-100";
-            badgeClass = "bg-purple-500/20 text-purple-300 border-purple-500/30";
+            blockBgClass = "bg-purple-950/40 text-purple-100";
+            badgeClass = "bg-purple-500/20 text-purple-300";
             badgeText = t("badge_inference");
           } else if (trimmed.startsWith("⬜")) {
-            borderClass = "border border-emerald-500/30 bg-emerald-950/30 text-emerald-100";
-            badgeClass = "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+            blockBgClass = "bg-emerald-950/40 text-emerald-100";
+            badgeClass = "bg-emerald-500/20 text-emerald-300";
             badgeText = t("badge_conclusion");
           }
 
           return (
-            <div key={i} className={`rounded-xl p-3 text-xs leading-relaxed shadow-sm ${borderClass}`}>
+            <div key={i} className={`rounded-lg p-3 text-xs leading-relaxed shadow-sm ${blockBgClass}`}>
               <div className="flex items-center gap-1.5 mb-1.5">
-                <span className={`rounded-md px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider border ${badgeClass}`}>
+                <span className={`rounded-md px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider ${badgeClass}`}>
                   {badgeText}
                 </span>
               </div>
@@ -195,21 +195,21 @@ export function ChatConversationPanel({
             className={`flex items-start gap-2.5 ${m.role === "user" ? "justify-end" : "justify-start"}`}
           >
             {m.role === "bot" && (
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sky-500/20 border border-sky-500/30 text-sky-400">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-sky-500/20 text-sky-400 shadow-sm">
                 <Bot className="h-4 w-4" />
               </div>
             )}
             <div
-              className={`max-w-[88%] rounded-2xl p-3 text-xs leading-relaxed shadow-sm ${
+              className={`max-w-[88%] rounded-lg p-3 text-xs leading-relaxed shadow-sm ${
                 m.role === "user"
-                  ? "rounded-tr-none bg-gradient-to-r from-sky-600 to-blue-600 text-white font-medium shadow-[0_0_15px_rgba(37,99,235,0.2)]"
-                  : "rounded-tl-none border border-white/[0.08] bg-white/[0.03] text-slate-200 backdrop-blur-md"
+                  ? "rounded-tr-none bg-sky-600 text-white font-medium shadow-md shadow-sky-600/20"
+                  : "rounded-tl-none bg-[#111726] text-slate-200 shadow-sm"
               }`}
             >
               {m.role === "user" ? m.content : renderMessageContent(m.content)}
             </div>
             {m.role === "user" && (
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sky-600 text-white shadow-sm">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-sky-600 text-white shadow-sm">
                 <User className="h-4 w-4" />
               </div>
             )}
@@ -229,7 +229,7 @@ export function ChatConversationPanel({
               type="button"
               onClick={() => handleSend(qp)}
               disabled={isBusy}
-              className="rounded-full border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] text-slate-300 hover:text-sky-300 hover:border-sky-500/40 hover:bg-sky-500/10 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="rounded-md bg-[#121929] hover:bg-sky-600 hover:text-white px-2.5 py-1 text-[10px] text-slate-300 transition-all whitespace-nowrap shrink-0 cursor-pointer shadow-sm"
             >
               {qp}
             </button>
@@ -242,10 +242,10 @@ export function ChatConversationPanel({
             <button
               type="button"
               onClick={() => setIsAutoLive(!isAutoLive)}
-              className={`flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-[10px] font-bold transition-all cursor-pointer shadow-sm ${
                 isAutoLive
-                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                  : "bg-white/[0.04] text-slate-400 border border-white/10"
+                  ? "bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25"
+                  : "bg-[#121929] text-slate-400 hover:bg-[#162238] hover:text-white"
               }`}
             >
               {isAutoLive ? <Play className="h-2.5 w-2.5 text-emerald-400" /> : <Pause className="h-2.5 w-2.5 text-slate-400" />}
@@ -255,10 +255,10 @@ export function ChatConversationPanel({
             <button
               type="button"
               onClick={() => setShowCustomOhlc(!showCustomOhlc)}
-              className={`flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold border transition-all cursor-pointer ${
+              className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-[10px] font-bold transition-all cursor-pointer shadow-sm ${
                 showCustomOhlc || !isAutoLive
-                  ? "border-sky-500/40 bg-sky-500/15 text-sky-400"
-                  : "border-white/10 bg-white/[0.04] text-slate-400 hover:text-white"
+                  ? "bg-sky-600 text-white"
+                  : "bg-[#121929] text-slate-400 hover:bg-[#162238] hover:text-white"
               }`}
               title="Tùy chỉnh OHLC thủ công"
             >
@@ -270,7 +270,7 @@ export function ChatConversationPanel({
           <button
             type="button"
             onClick={() => setShowChart(!showChart)}
-            className="flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.04] px-2 py-1 text-[10px] font-bold text-sky-400 hover:border-sky-500/40 hover:bg-sky-500/10 transition-all cursor-pointer"
+            className="flex items-center gap-1 rounded-md bg-[#121929] hover:bg-[#162238] px-2.5 py-1 text-[10px] font-bold text-sky-400 transition-all cursor-pointer shadow-sm"
           >
             <BarChart2 className="h-2.5 w-2.5" />
             <span>{showChart ? t("btn_hide_chart") : t("btn_show_chart")}</span>
@@ -279,7 +279,7 @@ export function ChatConversationPanel({
 
         {/* Collapsible OHLC input drawer */}
         {(showCustomOhlc || !isAutoLive) && (
-          <div className="grid grid-cols-4 gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.02] p-1.5">
+          <div className="grid grid-cols-4 gap-1.5 rounded-lg bg-[#0c101a] p-2 shadow-sm">
             <div>
               <span className="block text-[9px] text-slate-400 text-center font-mono font-medium">O</span>
               <input
@@ -289,7 +289,7 @@ export function ChatConversationPanel({
                 disabled={isAutoLive}
                 onChange={(e) => setOpenVal(e.target.value)}
                 placeholder={t("field_open")}
-                className="w-full rounded border border-white/10 bg-black/40 px-1 py-0.5 text-center font-mono text-[11px] text-white disabled:opacity-60 focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-md bg-[#141b2b] px-1 py-1 text-center font-mono text-[11px] text-white disabled:opacity-60 focus:ring-1 focus:ring-sky-500 focus:outline-none shadow-sm"
               />
             </div>
             <div>
@@ -301,7 +301,7 @@ export function ChatConversationPanel({
                 disabled={isAutoLive}
                 onChange={(e) => setHighVal(e.target.value)}
                 placeholder={t("field_high")}
-                className="w-full rounded border border-white/10 bg-black/40 px-1 py-0.5 text-center font-mono text-[11px] text-white disabled:opacity-60 focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-md bg-[#141b2b] px-1 py-1 text-center font-mono text-[11px] text-white disabled:opacity-60 focus:ring-1 focus:ring-sky-500 focus:outline-none shadow-sm"
               />
             </div>
             <div>
@@ -313,7 +313,7 @@ export function ChatConversationPanel({
                 disabled={isAutoLive}
                 onChange={(e) => setLowVal(e.target.value)}
                 placeholder={t("field_low")}
-                className="w-full rounded border border-white/10 bg-black/40 px-1 py-0.5 text-center font-mono text-[11px] text-white disabled:opacity-60 focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-md bg-[#141b2b] px-1 py-1 text-center font-mono text-[11px] text-white disabled:opacity-60 focus:ring-1 focus:ring-sky-500 focus:outline-none shadow-sm"
               />
             </div>
             <div>
@@ -325,7 +325,7 @@ export function ChatConversationPanel({
                 disabled={isAutoLive}
                 onChange={(e) => setCloseVal(e.target.value)}
                 placeholder={t("field_close")}
-                className="w-full rounded border border-white/10 bg-black/40 px-1 py-0.5 text-center font-mono text-[11px] text-white disabled:opacity-60 focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-md bg-[#141b2b] px-1 py-1 text-center font-mono text-[11px] text-white disabled:opacity-60 focus:ring-1 focus:ring-sky-500 focus:outline-none shadow-sm"
               />
             </div>
           </div>
@@ -344,13 +344,13 @@ export function ChatConversationPanel({
               }
             }}
             placeholder={t("input_placeholder")}
-            className="flex-1 resize-none rounded-xl border border-white/10 bg-white/[0.03] p-2 text-xs text-white placeholder-slate-500 focus:border-sky-500 focus:bg-white/[0.06] focus:outline-none transition-all"
+            className="flex-1 resize-none rounded-lg bg-[#101624] p-2.5 text-xs text-white placeholder-slate-500 focus:ring-1 focus:ring-sky-500 focus:outline-none transition-all shadow-sm"
           />
           <button
             type="button"
             onClick={() => handleSend()}
             disabled={isBusy || !inputText.trim()}
-            className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 font-bold text-white transition-all hover:opacity-90 disabled:opacity-40 cursor-pointer shadow-[0_0_15px_rgba(56,189,248,0.2)]"
+            className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-lg bg-sky-600 hover:bg-sky-500 font-bold text-white transition-all shadow-md shadow-sky-600/25 disabled:opacity-40 cursor-pointer"
           >
             <Send className="h-4 w-4" />
           </button>
