@@ -3,18 +3,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MarketSnapshot, TradingPlan } from "@/lib/server/quant/types";
 import {
-  ShieldAlert,
+  calculatePositionMetrics,
+  evaluatePositionWarnings,
+  calculateRealizedPnL,
+  MarginTier,
+} from "@/lib/server/quant/user-position-math";
+import {
   TrendingUp,
   TrendingDown,
   AlertTriangle,
   CheckCircle2,
   XCircle,
   Bell,
-  Clock,
-  DollarSign,
-  PieChart,
-  ArrowRight,
   Zap,
+  Smartphone,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -35,7 +37,7 @@ interface TrackedPosition {
   side: "LONG" | "SHORT";
   matchedPrice: number;
   matchedVolume: number;
-  marginRate: 0.03 | 0.05 | 0.18;
+  marginRate: MarginTier;
   status: "ACTIVE" | "CLOSED";
   createdAt: string;
 }
@@ -52,29 +54,47 @@ interface ClosedResult {
 }
 
 const LOCAL_STORAGE_KEY = "lepos_user_tracked_position";
-const CONTRACT_MULTIPLIER = 100000; // 100,000 VND / point for VN30F1M
 
 export const UserPositionTracker: React.FC<UserPositionTrackerProps> = ({
   snapshot,
   plan,
 }) => {
   const [position, setPosition] = useState<TrackedPosition | null>(null);
-  
-  // Input form state
+
+  // Form input state
   const [inputSide, setInputSide] = useState<"LONG" | "SHORT">("LONG");
   const [inputPrice, setInputPrice] = useState<string>("");
   const [inputVolume, setInputVolume] = useState<string>("1");
-  const [inputMargin, setInputMargin] = useState<0.03 | 0.05 | 0.18>(0.18);
+  const [inputMargin, setInputMargin] = useState<MarginTier>(0.18);
 
   // Close position modal & result state
   const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
   const [exitPriceInput, setExitPriceInput] = useState<string>("");
   const [closedResult, setClosedResult] = useState<ClosedResult | null>(null);
 
-  // Notification deduplication ref
-  const lastNotifiedPriceRef = useRef<number | null>(null);
+  // PWA Notification permission state
+  const [hasNotificationPermission, setHasNotificationPermission] = useState<boolean>(false);
+  const lastNotifiedKeyRef = useRef<string | null>(null);
 
-  // Load from localStorage on mount
+  // 1. Register PWA Service Worker on mount
+  useEffect(() => {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((reg) => {
+          // Service Worker registered successfully
+        })
+        .catch(() => {
+          // SW registration ignored in non-supported environments
+        });
+
+      if ("Notification" in window) {
+        setHasNotificationPermission(Notification.permission === "granted");
+      }
+    }
+  }, []);
+
+  // 2. Load position from localStorage on mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -89,24 +109,37 @@ export const UserPositionTracker: React.FC<UserPositionTrackerProps> = ({
     }
   }, []);
 
-  // Update default input price if snapshot is available and form is empty
+  // 3. Set default input price from live market snapshot
   useEffect(() => {
     if (!inputPrice && snapshot?.current) {
       setInputPrice(snapshot.current.toFixed(1));
     }
   }, [snapshot?.current, inputPrice]);
 
-  // Request browser notification permission
+  // Request PWA / Desktop Notification permission
   const requestNotificationPermission = async () => {
     if (typeof window !== "undefined" && "Notification" in window) {
-      if (Notification.permission === "default") {
-        await Notification.requestPermission();
+      try {
+        const permission = await Notification.requestPermission();
+        setHasNotificationPermission(permission === "granted");
+        if (permission === "granted") {
+          toast.success("Đã kích hoạt thông báo PWA & Desktop!", {
+            description: "Hệ thống sẽ gửi cảnh báo ngay cả khi bạn chuyển tab hoặc khóa màn hình điện thoại.",
+          });
+        }
+      } catch (e) {
+        // Fallback for older browsers
       }
     }
   };
 
-  const sendAlertNotification = (title: string, body: string, type: "warning" | "error" | "success") => {
-    // 1. Toast notification
+  // Dispatch Notification (Toast + PWA Service Worker showNotification + Fallback Notification)
+  const dispatchAlertNotification = async (
+    title: string,
+    body: string,
+    type: "warning" | "error" | "success" | "info"
+  ) => {
+    // A. In-app interactive Toast
     if (type === "error") {
       toast.error(title, { description: body, duration: 6000 });
     } else if (type === "warning") {
@@ -115,14 +148,31 @@ export const UserPositionTracker: React.FC<UserPositionTrackerProps> = ({
       toast.success(title, { description: body, duration: 6000 });
     }
 
-    // 2. Browser Desktop Push Notification
+    // B. PWA Service Worker Push / System Notification (Required for iOS PWA & Android lockscreen)
     if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
       try {
+        if ("serviceWorker" in navigator) {
+          const reg = await navigator.serviceWorker.ready;
+          if (reg && reg.showNotification) {
+            await reg.showNotification(title, {
+              body,
+              icon: "/logo_nonbg.png",
+              badge: "/logo_nonbg.png",
+              tag: "lepos-position-alert",
+              renotify: true,
+              data: { url: "/bot" },
+            } as NotificationOptions);
+            return;
+          }
+        }
+        // Fallback to Window Notification API if SW not available
         new Notification(title, {
           body,
-          icon: "/favicon.ico",
+          icon: "/logo_nonbg.png",
         });
-      } catch (e) {}
+      } catch (err) {
+        // Fallback gracefully
+      }
     }
   };
 
@@ -152,6 +202,8 @@ export const UserPositionTracker: React.FC<UserPositionTrackerProps> = ({
 
     setPosition(newPos);
     setClosedResult(null);
+    lastNotifiedKeyRef.current = null;
+
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newPos));
     } catch (e) {}
@@ -166,6 +218,7 @@ export const UserPositionTracker: React.FC<UserPositionTrackerProps> = ({
   const handleClearPosition = () => {
     setPosition(null);
     setClosedResult(null);
+    lastNotifiedKeyRef.current = null;
     try {
       localStorage.removeItem(LOCAL_STORAGE_KEY);
     } catch (e) {}
@@ -191,123 +244,77 @@ export const UserPositionTracker: React.FC<UserPositionTrackerProps> = ({
       return;
     }
 
-    const isLong = position.side === "LONG";
-    const pnlPoints = isLong
-      ? exitPrice - position.matchedPrice
-      : position.matchedPrice - exitPrice;
-    
-    const pnlMoney = pnlPoints * CONTRACT_MULTIPLIER * position.matchedVolume;
-    const requiredMargin = position.matchedPrice * CONTRACT_MULTIPLIER * position.matchedVolume * position.marginRate;
-    const roiPercent = (pnlMoney / requiredMargin) * 100;
+    const calc = calculateRealizedPnL(
+      position.side,
+      position.matchedPrice,
+      exitPrice,
+      position.matchedVolume,
+      position.marginRate
+    );
 
     const result: ClosedResult = {
       side: position.side,
       matchedPrice: position.matchedPrice,
       exitPrice,
       volume: position.matchedVolume,
-      pnlPoints,
-      pnlMoney,
-      roiPercent,
+      pnlPoints: calc.pnlPoints,
+      pnlMoney: calc.pnlMoney,
+      roiPercent: calc.roiPercent,
       closedAt: new Date().toLocaleTimeString("vi-VN"),
     };
 
     setClosedResult(result);
     setPosition(null);
     setIsCloseModalOpen(false);
+    lastNotifiedKeyRef.current = null;
 
     try {
       localStorage.removeItem(LOCAL_STORAGE_KEY);
     } catch (e) {}
 
-    const isProfit = pnlMoney >= 0;
-    const title = isProfit ? "🎉 ĐÃ ĐÓNG VỊ THẾ LỜI!" : "🔴 ĐÃ ĐÓNG VỊ THẾ LỖ!";
-    const body = `${position.side} ${position.matchedVolume} HD: ${isProfit ? "+" : ""}${pnlPoints.toFixed(1)} điểm (${isProfit ? "+" : ""}${pnlMoney.toLocaleString("vi-VN")} VNĐ)`;
+    const title = calc.isProfit ? "🎉 ĐÃ ĐÓNG VỊ THẾ LỜI!" : "🔴 ĐÃ ĐÓNG VỊ THẾ LỖ!";
+    const body = `${position.side} ${position.matchedVolume} HD: ${calc.isProfit ? "+" : ""}${calc.pnlPoints.toFixed(1)} điểm (${calc.isProfit ? "+" : ""}${calc.pnlMoney.toLocaleString("vi-VN")} VNĐ)`;
 
-    sendAlertNotification(title, body, isProfit ? "success" : "error");
+    dispatchAlertNotification(title, body, calc.isProfit ? "success" : "error");
   };
 
   // Real-time calculations
   const livePrice = snapshot?.current;
   const isPositionActive = position && position.status === "ACTIVE";
 
-  let pnlPoints = 0;
-  let pnlMoney = 0;
-  let requiredMargin = 0;
-  let roiPercent = 0;
+  const metrics = isPositionActive && livePrice
+    ? calculatePositionMetrics({
+        side: position.side,
+        matchedPrice: position.matchedPrice,
+        matchedVolume: position.matchedVolume,
+        marginRate: position.marginRate,
+        currentPrice: livePrice,
+      })
+    : { pnlPoints: 0, pnlMoney: 0, requiredMargin: 0, roiPercent: 0, isProfit: true };
 
-  if (isPositionActive && livePrice) {
-    const isLong = position.side === "LONG";
-    pnlPoints = isLong
-      ? livePrice - position.matchedPrice
-      : position.matchedPrice - livePrice;
+  // Smart Warnings vs System Plan
+  const warnings = isPositionActive && livePrice && plan
+    ? evaluatePositionWarnings({
+        positionSide: position.side,
+        matchedPrice: position.matchedPrice,
+        currentPrice: livePrice,
+        planSide: plan.side as "LONG" | "SHORT",
+        planEntry: plan.entryPrice,
+        planTp: plan.tpPrice,
+        planSl: plan.slPrice,
+      })
+    : [];
 
-    pnlMoney = pnlPoints * CONTRACT_MULTIPLIER * position.matchedVolume;
-    requiredMargin = position.matchedPrice * CONTRACT_MULTIPLIER * position.matchedVolume * position.marginRate;
-    roiPercent = requiredMargin > 0 ? (pnlMoney / requiredMargin) * 100 : 0;
-  }
-
-  // System warning comparison logic
-  const warnings: { message: string; type: "error" | "warning" | "info" }[] = [];
-  
-  if (isPositionActive && plan) {
-    // 1. Direction mismatch check
-    if (position.side !== plan.side) {
-      warnings.push({
-        message: `⚠️ CẢNH BÁO LỆCH HƯỚNG: Lệnh của bạn là [${position.side}], trong khi Kèo hệ thống đang khuyến nghị [${plan.side}] tại giá ${plan.entryPrice?.toFixed(1) || "--"}. Rủi ro cao!`,
-        type: "error",
-      });
-    } else {
-      // 2. Slippage check
-      if (plan.entryPrice != null) {
-        const diff = position.side === "LONG"
-          ? position.matchedPrice - plan.entryPrice
-          : plan.entryPrice - position.matchedPrice;
-        
-        if (diff > 0.5) {
-          warnings.push({
-            message: `⚠️ Trượt giá +${diff.toFixed(1)} điểm so với Kèo hệ thống (Entry: ${plan.entryPrice.toFixed(1)}). Điểm vào lệnh kém tối ưu hơn!`,
-            type: "warning",
-          });
-        }
-      }
-    }
-
-    // 3. SL Warning
-    if (plan.slPrice != null && livePrice != null) {
-      const distanceToSL = Math.abs(livePrice - plan.slPrice);
-      if (distanceToSL <= 2.0) {
-        warnings.push({
-          message: `🚨 GIÁ ĐANG CHẠM VÙNG CẮT LỖ: Giá hiện tại (${livePrice.toFixed(1)}) gần sát mức SL hệ thống (${plan.slPrice.toFixed(1)}). Cân nhắc quản trị rủi ro!`,
-          type: "warning",
-        });
-      }
-    }
-
-    // 4. TP Warning
-    if (plan.tpPrice != null && livePrice != null) {
-      const isTpReached = position.side === "LONG" ? livePrice >= plan.tpPrice : livePrice <= plan.tpPrice;
-      if (isTpReached) {
-        warnings.push({
-          message: `🎉 ĐẠT CHỈ TIÊU KÈO HỆ THỐNG: Giá đã chạm/vượt TP1 hệ thống (${plan.tpPrice.toFixed(1)}). Khuyến nghị chốt lời hoặc dời SL về hòa vốn (BE)!`,
-          type: "info",
-        });
-      }
-    }
-  }
-
-  // Trigger automated Toast notifications when price changes significantly
+  // Automated notification dispatch on warning trigger (deduplicated by warning code + price level)
   useEffect(() => {
     if (!isPositionActive || !livePrice || !warnings.length) return;
-    if (lastNotifiedPriceRef.current === livePrice) return;
-    
-    lastNotifiedPriceRef.current = livePrice;
+
     const topWarning = warnings[0];
-    
-    if (topWarning.type === "error") {
-      toast.error("Cảnh báo rủi ro vị thế", { description: topWarning.message, id: "position-risk-alert" });
-    } else if (topWarning.type === "warning") {
-      toast.warning("Cảnh báo biến động vị thế", { description: topWarning.message, id: "position-risk-alert" });
-    }
+    const notifyKey = `${topWarning.code}-${Math.floor(livePrice)}`;
+    if (lastNotifiedKeyRef.current === notifyKey) return;
+
+    lastNotifiedKeyRef.current = notifyKey;
+    dispatchAlertNotification(topWarning.title, topWarning.message, topWarning.type);
   }, [livePrice, isPositionActive, warnings]);
 
   return (
@@ -325,14 +332,30 @@ export const UserPositionTracker: React.FC<UserPositionTrackerProps> = ({
             </h3>
           </div>
         </div>
-        {isPositionActive && (
-          <button
-            onClick={handleClearPosition}
-            className="text-[10px] font-semibold text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
-          >
-            Bỏ theo dõi
-          </button>
-        )}
+
+        <div className="flex items-center gap-2">
+          {/* PWA Notification Permission Toggle */}
+          {!hasNotificationPermission && (
+            <button
+              type="button"
+              onClick={requestNotificationPermission}
+              className="flex items-center gap-1 rounded bg-amber-500/20 hover:bg-amber-500/30 px-2 py-0.5 text-[9px] font-bold text-amber-300 transition-all cursor-pointer"
+              title="Bật thông báo PWA / Desktop"
+            >
+              <Smartphone className="h-3 w-3" />
+              <span>Bật Push PWA</span>
+            </button>
+          )}
+
+          {isPositionActive && (
+            <button
+              onClick={handleClearPosition}
+              className="text-[10px] font-semibold text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
+            >
+              Bỏ theo dõi
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Closed position result banner */}
@@ -383,7 +406,7 @@ export const UserPositionTracker: React.FC<UserPositionTrackerProps> = ({
               <div className="text-right">
                 <span className="text-[10px] text-slate-400 block font-medium">Ký quỹ ({(position.marginRate * 100).toFixed(0)}%)</span>
                 <span className="font-mono text-xs font-bold text-slate-200">
-                  {requiredMargin.toLocaleString("vi-VN")}đ
+                  {metrics.requiredMargin.toLocaleString("vi-VN")}đ
                 </span>
               </div>
             </div>
@@ -392,16 +415,16 @@ export const UserPositionTracker: React.FC<UserPositionTrackerProps> = ({
             <div className="mt-2.5 pt-2.5 border-t border-white/10 grid grid-cols-2 gap-2">
               <div>
                 <span className="text-[10px] text-slate-400 font-medium block">Số điểm PnL (Realtime)</span>
-                <div className={`text-base font-black font-mono flex items-center gap-1 ${pnlPoints >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
-                  {pnlPoints >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                  {pnlPoints >= 0 ? "+" : ""}{pnlPoints.toFixed(1)} điểm
+                <div className={`text-base font-black font-mono flex items-center gap-1 ${metrics.pnlPoints >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                  {metrics.pnlPoints >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+                  {metrics.pnlPoints >= 0 ? "+" : ""}{metrics.pnlPoints.toFixed(1)} điểm
                 </div>
               </div>
               <div className="text-right">
                 <span className="text-[10px] text-slate-400 font-medium block">Tiền PnL (VNĐ)</span>
-                <div className={`text-base font-black font-mono ${pnlMoney >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
-                  {pnlMoney >= 0 ? "+" : ""}{pnlMoney.toLocaleString("vi-VN")}đ
-                  <span className="text-[10px] font-semibold ml-1 opacity-80">({roiPercent >= 0 ? "+" : ""}{roiPercent.toFixed(1)}%)</span>
+                <div className={`text-base font-black font-mono ${metrics.pnlMoney >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                  {metrics.pnlMoney >= 0 ? "+" : ""}{metrics.pnlMoney.toLocaleString("vi-VN")}đ
+                  <span className="text-[10px] font-semibold ml-1 opacity-80">({metrics.roiPercent >= 0 ? "+" : ""}{metrics.roiPercent.toFixed(1)}%)</span>
                 </div>
               </div>
             </div>
@@ -434,7 +457,10 @@ export const UserPositionTracker: React.FC<UserPositionTrackerProps> = ({
                   }`}
                 >
                   <AlertTriangle className={`h-4 w-4 shrink-0 mt-0.5 ${w.type === "error" ? "text-rose-400 animate-pulse" : w.type === "warning" ? "text-amber-400" : "text-sky-400"}`} />
-                  <span>{w.message}</span>
+                  <div>
+                    <span className="font-bold block text-[11px] mb-0.5">{w.title}</span>
+                    <span>{w.message}</span>
+                  </div>
                 </div>
               ))}
             </div>
