@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { ConsensusResult, MarketSnapshot, TradingPlan } from "@/lib/server/quant/types";
+import { UserPositionTracker } from "@/components/bfxps/user-position-tracker";
 import { RefreshCw, TrendingUp, TrendingDown, ArrowUpRight, Layers, Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -143,6 +144,9 @@ export const LiveDashboardPanel: React.FC<LiveDashboardPanelProps> = ({
               : t("awaiting_plan")}
           </p>
         </div>
+
+        {/* User Matched Order Tracker & PnL Alerts */}
+        <UserPositionTracker snapshot={snapshot} plan={plan} />
 
         {/* Banner Pha Giao Dịch (ATO Observation / Continuous Session) - borderless pill */}
         <div className={`flex items-center gap-2 rounded-md px-3 py-2 text-[11px] font-bold tracking-wide ${isAtoObservation ? "bg-amber-500/15 text-amber-300" : "bg-emerald-500/15 text-emerald-300"}`}>
