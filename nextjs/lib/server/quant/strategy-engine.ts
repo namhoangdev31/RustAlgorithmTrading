@@ -274,7 +274,7 @@ export function generateAllDaysLadderPlan(
     v44Active: v44Eval.isV44Active,
     v44Warning: v44Eval.warning,
     status: "ACTIVE_TODAY",
-    isCanonical: true,
+    isCanonical: false,
     expectedHigh,
     expectedLow,
     resolvedSource: "ADAPTIVE_LADDER_SCALP",
@@ -369,7 +369,7 @@ export function generateCanonicalQuantPlan(
     trailingConfig,
     breakevenTrigger: trailingConfig.beTriggerPoints,
     status: "ACTIVE_TODAY",
-    isCanonical: true,
+    isCanonical: false,
     resolvedSource: "CANONICAL_PRE_OPEN_VOLATILITY_EXPANSION",
   };
 }
@@ -443,6 +443,9 @@ export function generateMultiEnginePortfolio(
   const inOfficialWindow = phase !== "PRE_ATO" && phase !== "ATO_OBSERVATION";
   const isOfficial = options?.isOfficial ?? inOfficialWindow;
   const plans = [simCarryPlan, ladderPlan, canonicalPlan];
+  simCarryPlan.isCanonical = true;
+  ladderPlan.isCanonical = false;
+  canonicalPlan.isCanonical = false;
   for (const p of plans) {
     p.sessionPhase = phase;
     p.isOfficial = isOfficial;

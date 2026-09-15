@@ -104,16 +104,19 @@ export async function generateAdvisorReply(
   config?: AdvisorConfig
 ): Promise<AdvisorResponse> {
   const intent = classifyIntent(question);
-  const primaryPlan = plans[0] || {
-    side: "LONG",
-    entryPrice: snapshot.current,
-    tpPrice: snapshot.current + DEFAULT_CANONICAL_CONFIG.tpPoints,
-    slPrice: snapshot.current - DEFAULT_CANONICAL_CONFIG.slPoints,
-    date: new Date().toISOString().slice(0, 10),
-    engine: "CanonicalDirectionalBreakout",
-    r5State: "KEEP",
-    resolvedSource: "CANONICAL",
-  };
+  const primaryPlan =
+    plans.find((p) => p.engine === "simcarrry6") ||
+    plans.find((p) => p.isCanonical) ||
+    plans[0] || {
+      side: "LONG",
+      entryPrice: snapshot.current,
+      tpPrice: snapshot.current + 22.0,
+      slPrice: snapshot.current - 15.0,
+      date: new Date().toISOString().slice(0, 10),
+      engine: "simcarrry6",
+      r5State: "KEEP",
+      resolvedSource: "SIMCARRY6",
+    };
 
   const isVi = /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệđùúủũụưứừửữựòóỏõọôốồổỗộơớờởỡợìíỉĩịỳýỷỹỵ]/i.test(question);
   const isEn = !isVi;
@@ -142,8 +145,8 @@ export async function generateAdvisorReply(
   const backtestSummaryVi = `Hiệu suất kiểm định ${summary.totalSessions} phiên (${summary.totalBars?.toLocaleString() ?? "100.746"} nến 1m từ ${summary.startDate ?? "01/2025"} đến ${summary.endDate ?? "11/09/2026"}): ${summary.tradedCount} lệnh khớp (${summary.wins} Thắng / ${summary.losses} Thua), Winrate ${summary.winRate}%, Tổng lãi ${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl} điểm, Profit Factor ${summary.profitFactor}.`;
 
   const engineDisplay = isEn
-    ? (primaryPlan.engine === "CanonicalDirectionalBreakout" ? "Canonical Directional Breakout" : primaryPlan.engine)
-    : (primaryPlan.engine === "CanonicalDirectionalBreakout" ? "Đột Phá Xu Hướng Chuẩn Tắc" : primaryPlan.engine);
+    ? (primaryPlan.engine === "simcarrry6" ? "SimCarry6 Swing T+1" : primaryPlan.engine === "CanonicalDirectionalBreakout" ? "Canonical Directional Breakout" : primaryPlan.engine)
+    : (primaryPlan.engine === "simcarrry6" ? "Kèo Chính SimCarry6 Swing T+1" : primaryPlan.engine === "CanonicalDirectionalBreakout" ? "Đột Phá Xu Hướng Chuẩn Tắc" : primaryPlan.engine);
 
   // Nếu câu hỏi yêu cầu biểu đồ
   if (intent === "CHART_RENDER_PRIORITY") {
@@ -202,6 +205,10 @@ Chiến lược sử dụng Stop Breakout với tỷ lệ R:R = ${rrRatioDisplay
     };
   }
 
+  const isBreakout = primaryPlan.engine === "CanonicalDirectionalBreakout" || primaryPlan.orderType === "STOP";
+  const orderTypeEn = isBreakout ? "Stop Order" : "Limit Order";
+  const orderTypeVi = isBreakout ? "Lệnh dừng Stop Order" : "Lệnh giới hạn Limit Order";
+
   // Khối phản hồi dựa trên Intent & Gemini/Rule Engine
   const geminiApiKey = process.env.GEMINI_API_KEY;
 
@@ -211,21 +218,21 @@ Chiến lược sử dụng Stop Breakout với tỷ lệ R:R = ${rrRatioDisplay
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       const prompt = `Bạn là Lepos Trading Bot - Hệ thống cố vấn phái sinh VN30 chuyên nghiệp.
-Hệ thống chỉ tập trung ĐÚNG 1 KÈO DUY NHẤT trong ngày (${isEn ? "Canonical Quant Advisor" : "Cố Vấn Định Lượng Chuẩn Tắc"}):
+Hệ thống tập trung vào KÈO CHÍNH trong ngày (${engineDisplay}):
 - Thông tin thị trường: Open ${snapshot.open}, High ${snapshot.high}, Low ${snapshot.low}, Current ${snapshot.current}, Basis ${snapshot.basis ?? "N/A"}.
-- KÈO DUY NHẤT HÔM NAY: Hướng ${primaryPlan.side}, Lệnh Stop Order tại Entry ${primaryPlan.entryPrice.toFixed(1)}, TP ${primaryPlan.tpPrice.toFixed(1)} (+${tpPoints.toFixed(1)}đ), SL ${primaryPlan.slPrice.toFixed(1)} (-${slPoints.toFixed(1)}đ). Tỷ lệ R:R = ${rrRatioDisplay}.
+- KÈO CHÍNH HÔM NAY: Hướng ${primaryPlan.side}, ${orderTypeVi} tại Entry ${primaryPlan.entryPrice.toFixed(1)}, TP ${primaryPlan.tpPrice.toFixed(1)} (+${tpPoints.toFixed(1)}đ), SL ${primaryPlan.slPrice.toFixed(1)} (-${slPoints.toFixed(1)}đ). Tỷ lệ R:R = ${rrRatioDisplay}.
 - Kiểm định lịch sử ${summary.totalSessions} phiên (${summary.totalBars?.toLocaleString() ?? "100.746"} nến 1m thực tế từ ${summary.startDate ?? "01/2025"} đến ${summary.endDate ?? "11/09/2026"}): Winrate ${summary.winRate}%, Lãi ${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl} điểm, Profit Factor ${summary.profitFactor}.
 Câu hỏi của người dùng: "${question}"
 
 YÊU CẦU BẮT BUỘC: Câu trả lời PHẢI chia thành đúng 4 khối với định dạng:
 ${isEn ? "🟦 SYSTEM/DB" : "🟦 HỆ THỐNG/CSDL"}
-(Nêu rõ các mức giá Entry, TP, SL của kèo duy nhất)
+(Nêu rõ các mức giá Entry, TP, SL của kèo chính)
 ${isEn ? "🟧 HISTORY/REASONING" : "🟧 LỊCH SỬ/SUY LUẬN"}
 (Nêu thống kê kiểm định ${summary.totalSessions} phiên thực tế, Winrate ${summary.winRate}%, ${summary.totalPnl > 0 ? "+" : ""}${summary.totalPnl}đ)
 ${isEn ? "🟪 INFERENCE/BRAIN" : "🟪 SUY LUẬN/BRAIN"}
-(Đánh giá so sánh giá hiện tại với điểm kích hoạt Stop Order)
+(Đánh giá so sánh giá hiện tại với điểm vào lệnh)
 ${isEn ? "⬜ CONCLUSION/ACTION" : "⬜ KẾT LUẬN/HÀNH ĐỘNG"}
-(Hướng dẫn người dùng tự đặt lệnh Stop Order trên app (${brokerList}) trước ${orderTime} sáng, đóng ATC lúc ${atcTime})`;
+(Hướng dẫn người dùng tự đặt lệnh trên app (${brokerList}) trước ${orderTime} sáng, đóng ATC lúc ${atcTime})`;
 
       const res = await model.generateContent(prompt);
       const geminiText = res.response.text();
@@ -253,35 +260,35 @@ ${isEn ? "⬜ CONCLUSION/ACTION" : "⬜ KẾT LUẬN/HÀNH ĐỘNG"}
   if (intent === "TODAY_PLANS") {
     answer = isEn
       ? `🟦 SYSTEM/DB
-Single Trading Plan for Session (${primaryPlan.date}) — Canonical Quant Advisor:
-- Condition Order: Stop Order (${primaryPlan.side === "LONG" ? "Stop Buy" : "Stop Sell"}) at price ${primaryPlan.entryPrice.toFixed(1)}.
+Primary Trading Plan for Session (${primaryPlan.date}) — ${engineDisplay}:
+- Condition Order: ${orderTypeEn} (${primaryPlan.side === "LONG" ? "Buy" : "Sell"}) at price ${primaryPlan.entryPrice.toFixed(1)}.
 - Take Profit (TP): ${primaryPlan.tpPrice.toFixed(1)} (+${tpPoints.toFixed(1)} points).
 - Stop Loss (SL): ${primaryPlan.slPrice.toFixed(1)} (-${slPoints.toFixed(1)} points). Risk/Reward = ${rrRatioDisplay}.
-Data Source: ${primaryPlan.resolvedSource || "CANONICAL_PRE_OPEN_VOLATILITY_EXPANSION"} (Zero Lookahead).
+Data Source: ${primaryPlan.resolvedSource || "SIMCARRY6_SWING"} (Zero Lookahead).
 
 🟧 HISTORY/REASONING
 ${backtestSummaryEn}
 
 🟪 INFERENCE/BRAIN
-Current Market Price: ${snapshot.current.toFixed(1)}. Awaiting breakout past trigger level ${primaryPlan.entryPrice.toFixed(1)}.
+Current Market Price: ${snapshot.current.toFixed(1)}. Tracking trigger level ${primaryPlan.entryPrice.toFixed(1)}.
 
 ⬜ CONCLUSION/ACTION
-Place Stop Order on your brokerage app (${brokerList}) before ${orderTime} AM. If neither TP nor SL is reached by ${atcTime}, actively close at ATC.`
+Place ${orderTypeEn} on your brokerage app (${brokerList}) before ${orderTime} AM. If neither TP nor SL is reached by ${atcTime}, actively close at ATC.`
       : `🟦 HỆ THỐNG/CSDL
-Kèo duy nhất cho phiên (${primaryPlan.date}) — Cố Vấn Định Lượng Chuẩn Tắc:
-- Lệnh điều kiện: Lệnh dừng Stop Order (${primaryPlan.side === "LONG" ? "Stop Buy" : "Stop Sell"}) tại giá ${primaryPlan.entryPrice.toFixed(1)}.
+Kèo chính cho phiên (${primaryPlan.date}) — ${engineDisplay}:
+- Lệnh đặt: ${orderTypeVi} (${primaryPlan.side === "LONG" ? "Mua" : "Bán"}) tại giá ${primaryPlan.entryPrice.toFixed(1)}.
 - Chốt lời (TP): ${primaryPlan.tpPrice.toFixed(1)} (+${tpPoints.toFixed(1)} điểm).
 - Cắt lỗ (SL): ${primaryPlan.slPrice.toFixed(1)} (-${slPoints.toFixed(1)} điểm). Tỷ lệ R:R = ${rrRatioDisplay}.
-Nguồn dữ liệu: ${primaryPlan.resolvedSource || "CANONICAL_PRE_OPEN_VOLATILITY_EXPANSION"} (Chuẩn Zero Lookahead).
+Nguồn dữ liệu: ${primaryPlan.resolvedSource || "SIMCARRY6_SWING"} (Chuẩn Zero Lookahead).
 
 🟧 LỊCH SỬ/SUY LUẬN
 ${backtestSummaryVi}
 
 🟪 SUY LUẬN/BRAIN
-Giá thị trường hiện tại: ${snapshot.current.toFixed(1)}. Chờ giá bứt phá vượt mốc kích hoạt ${primaryPlan.entryPrice.toFixed(1)}.
+Giá thị trường hiện tại: ${snapshot.current.toFixed(1)}. Đang bám sát mốc vào lệnh ${primaryPlan.entryPrice.toFixed(1)}.
 
 ⬜ KẾT LUẬN/HÀNH ĐỘNG
-Đặt lệnh Stop Order trên app chứng khoán (${brokerList}) trước ${orderTime} sáng. Nếu đến ${atcTime} chưa chạm TP/SL thì chủ động đóng lệnh ở phiên ATC.`;
+Đặt lệnh ${orderTypeVi} trên app chứng khoán (${brokerList}) trước ${orderTime} sáng. Nếu đến ${atcTime} chưa chạm TP/SL thì chủ động đóng lệnh ở phiên ATC.`;
   } else if (intent === "PERFORMANCE_QUERY") {
     answer = isEn
       ? `🟦 SYSTEM/DB

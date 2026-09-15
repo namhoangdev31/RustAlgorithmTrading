@@ -121,14 +121,15 @@ export async function GET() {
       execution: replayExecutionCached(plan, ticks),
     }));
 
-    const canonicalPlan =
-      plansWithExecution.find((p) => p.engine === "CanonicalDirectionalBreakout") ||
+    const primaryPlan =
+      plansWithExecution.find((p) => p.engine === "simcarrry6") ||
+      plansWithExecution.find((p) => p.isCanonical) ||
       plansWithExecution[0];
 
     // ---- Lưu kèo chính thức (chỉ khi đã khóa thành công, đúng ngày giao dịch) ----
-    if (isTradingDay && isOfficial && canonicalPlan) {
+    if (isTradingDay && isOfficial && primaryPlan) {
       try {
-        await saveDailyPlanToDb(canonicalPlan);
+        await saveDailyPlanToDb(primaryPlan);
       } catch (dbErr: any) {
         console.warn("[health] DB save plan warning:", dbErr?.message);
       }
@@ -138,29 +139,29 @@ export async function GET() {
     let settlementInfo: { settled: boolean; exitType?: string; error?: string } = {
       settled: false,
     };
-    if (isTradingDay && phase === "CLOSED" && isOfficial && canonicalPlan && bars.length > 0) {
+    if (isTradingDay && phase === "CLOSED" && isOfficial && primaryPlan && bars.length > 0) {
       try {
-        const alreadyDone = await isCanonicalSettlementDone(todayStr);
+        const alreadyDone = await isCanonicalSettlementDone(todayStr, primaryPlan.engine);
         if (!alreadyDone) {
-          const exec = canonicalPlan.execution!;
+          const exec = primaryPlan.execution!;
           const exitType = mapExitType(exec.status);
           const result: TradeSettlementResult = {
             date: todayStr,
-            side: canonicalPlan.side,
-            entryPrice: canonicalPlan.entryPrice,
-            exitPrice: exec.exitPrice ?? canonicalPlan.entryPrice,
+            engine: primaryPlan.engine,
+            side: primaryPlan.side,
+            entryPrice: primaryPlan.entryPrice,
+            exitPrice: exec.exitPrice ?? primaryPlan.entryPrice,
             exitType,
             exitMinute: exec.exitTime?.slice(0, 5) || "14:45",
             pnl: Number((exec.isFilled ? exec.livePnlPoints : 0).toFixed(1)),
             isWin: exec.isFilled ? exec.livePnlPoints > 0 : false,
-            tpPrice: canonicalPlan.tpPrice,
-            slPrice: canonicalPlan.slPrice,
+            tpPrice: primaryPlan.tpPrice,
+            slPrice: primaryPlan.slPrice,
             notes:
               exitType === "NO_FILL"
                 ? `Kèo ${todayStr} không khớp lệnh trong phiên -> NO_FILL.`
-                : `Tự động chốt phiên ${todayStr}: thoát ${exitType} lúc ${
-                    exec.exitTime || "14:45"
-                  }, PnL ${exec.livePnlPoints > 0 ? "+" : ""}${exec.livePnlPoints}đ.`,
+                : `Tự động chốt phiên ${todayStr}: thoát ${exitType} lúc ${exec.exitTime || "14:45"
+                }, PnL ${exec.livePnlPoints > 0 ? "+" : ""}${exec.livePnlPoints}đ.`,
           };
           await settleDailyPlanAtEod(result);
           settlementInfo = { settled: true, exitType };

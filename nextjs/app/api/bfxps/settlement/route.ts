@@ -16,14 +16,23 @@ export async function POST(req: NextRequest) {
     }
 
     const planDate = new Date(`${date}T00:00:00.000Z`);
-    const existingPlan = await prisma.bfxpsTradingPlan.findUnique({
-      where: {
-        date_engine: {
-          date: planDate,
-          engine: "CanonicalDirectionalBreakout",
+    const targetEngine = body.engine || "simcarrry6";
+    const existingPlan =
+      (await prisma.bfxpsTradingPlan.findUnique({
+        where: {
+          date_engine: {
+            date: planDate,
+            engine: targetEngine,
+          },
         },
-      },
-    });
+      })) ||
+      (await prisma.bfxpsTradingPlan.findFirst({
+        where: {
+          date: planDate,
+          engine: { in: ["simcarrry6", "CanonicalDirectionalBreakout"] },
+        },
+        orderBy: { createdAt: "desc" },
+      }));
 
     if (!existingPlan) {
       return NextResponse.json(
@@ -42,6 +51,7 @@ export async function POST(req: NextRequest) {
 
     const settlementResult: TradeSettlementResult = {
       date,
+      engine: existingPlan.engine,
       side,
       entryPrice,
       exitPrice: exitPrice || 0,

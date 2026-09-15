@@ -91,8 +91,8 @@ export const TradeHistoryModal: React.FC<TradeHistoryModalProps> = ({
   const activeTrades = useMemo(() => {
     if (!trades.length) return trades;
     const canonicalPlan =
+      livePlans?.find((p) => p.engine === "simcarrry6") ||
       livePlans?.find((p) => p.isCanonical) ||
-      livePlans?.find((p) => p.engine === "CanonicalDirectionalBreakout") ||
       livePlans?.[0];
 
     if (!canonicalPlan || !canonicalPlan.date) return trades;

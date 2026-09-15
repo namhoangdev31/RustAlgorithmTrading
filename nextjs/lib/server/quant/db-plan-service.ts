@@ -8,6 +8,7 @@ import { getVnDateString, isWeekend, LIVE_CUTOFF_DATE } from "./strategy-engine"
 export interface CanonicalPlanInput {
   planId?: string;
   date: string;
+  engine?: string;
   side: "LONG" | "SHORT";
   entryPrice: number;
   slPrice: number;
@@ -18,6 +19,7 @@ export interface CanonicalPlanInput {
 
 export interface TradeSettlementResult {
   date: string;
+  engine?: string;
   side: "LONG" | "SHORT";
   entryPrice: number;
   exitPrice: number;
@@ -104,13 +106,12 @@ export async function saveLockedContext(
  * Settlement đã persist chưa? NGUỒN SỰ THẬT DUY NHẤT = cột settledAt
  * (do chính settleDailyPlanAtEod set). KHÔNG suy ra từ status/FILLED_*.
  */
-export async function isCanonicalSettlementDone(dateVn: string): Promise<boolean> {
-  const row = await prisma.bfxpsTradingPlan.findUnique({
+export async function isCanonicalSettlementDone(dateVn: string, engine = "simcarrry6"): Promise<boolean> {
+  const row = await prisma.bfxpsTradingPlan.findFirst({
     where: {
-      date_engine: {
-        date: new Date(`${dateVn}T00:00:00.000Z`),
-        engine: "CanonicalDirectionalBreakout",
-      },
+      date: new Date(`${dateVn}T00:00:00.000Z`),
+      engine: { in: [engine, "simcarrry6", "CanonicalDirectionalBreakout"] },
+      settledAt: { not: null },
     },
     select: { settledAt: true },
   });
@@ -126,6 +127,7 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
     return null;
   }
   const planDate = new Date(`${plan.date}T00:00:00.000Z`);
+  const targetEngine = plan.engine || "simcarrry6";
 
   const exec = plan.execution;
   let status = "PENDING";
@@ -173,7 +175,7 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
     where: {
       date_engine: {
         date: planDate,
-        engine: "CanonicalDirectionalBreakout",
+        engine: targetEngine,
       },
     },
     update: {
@@ -193,7 +195,7 @@ export async function saveDailyPlanToDb(plan: CanonicalPlanInput) {
     },
     create: {
       date: planDate,
-      engine: "CanonicalDirectionalBreakout",
+      engine: targetEngine,
       profile: "M1_INTRADAY",
       horizon: "INTRADAY",
       side: plan.side,
@@ -241,12 +243,14 @@ export async function settleDailyPlanAtEod(result: TradeSettlementResult) {
       result.pnl > 0 ? "+" + result.pnl : result.pnl
     } điểm`;
 
+  const targetEngine = result.engine || "simcarrry6";
+
   // Cập nhật kết quả vào Trading Plan
   const updatedPlan = await prisma.bfxpsTradingPlan.upsert({
     where: {
       date_engine: {
         date: planDate,
-        engine: "CanonicalDirectionalBreakout",
+        engine: targetEngine,
       },
     },
     update: {
@@ -261,7 +265,7 @@ export async function settleDailyPlanAtEod(result: TradeSettlementResult) {
     },
     create: {
       date: planDate,
-      engine: "CanonicalDirectionalBreakout",
+      engine: targetEngine,
       profile: "M1_INTRADAY",
       horizon: "INTRADAY",
       side: result.side,
@@ -284,7 +288,7 @@ export async function settleDailyPlanAtEod(result: TradeSettlementResult) {
     where: {
       date_engine: {
         date: planDate,
-        engine: "CanonicalDirectionalBreakout",
+        engine: targetEngine,
       },
     },
     update: {
@@ -299,7 +303,7 @@ export async function settleDailyPlanAtEod(result: TradeSettlementResult) {
     },
     create: {
       date: planDate,
-      engine: "CanonicalDirectionalBreakout",
+      engine: targetEngine,
       side: result.side,
       avgEntry: new Prisma.Decimal(result.entryPrice),
       exitPrice: new Prisma.Decimal(result.exitPrice),
@@ -342,17 +346,17 @@ export function invalidateTradingHistoryCache() {
 }
 
 async function computeTradingHistory() {
-  const plans = await prisma.bfxpsTradingPlan.findMany({
-    where: { engine: "CanonicalDirectionalBreakout" },
+  const rawPlans = await prisma.bfxpsTradingPlan.findMany({
+    where: { engine: { in: ["simcarrry6", "CanonicalDirectionalBreakout"] } },
     orderBy: { date: "asc" },
   });
 
-  if (plans.length === 0) {
+  if (rawPlans.length === 0) {
     return null;
   }
 
   // Tự động dọn dẹp các bản ghi rơi vào cuối tuần theo múi giờ Việt Nam
-  const weekendPlans = plans.filter((p) => {
+  const weekendPlans = rawPlans.filter((p) => {
     const dStr = getVnDateString(p.date);
     return isWeekend(dStr);
   });
@@ -367,11 +371,20 @@ async function computeTradingHistory() {
       .catch((e) => console.warn("[db] Dọn dẹp kèo cuối tuần thất bại:", (e as Error)?.message));
   }
 
-  // Chỉ lấy các phiên hợp lệ trong tuần (Thứ 2 đến Thứ 6)
-  const validPlans = plans.filter((p) => {
+  // Nếu cùng một ngày có cả simcarrry6 và CanonicalDirectionalBreakout -> ưu tiên Kèo Chính simcarrry6
+  const planByDate = new Map<string, (typeof rawPlans)[0]>();
+  for (const p of rawPlans) {
     const dStr = getVnDateString(p.date);
-    return !isWeekend(dStr);
-  });
+    if (isWeekend(dStr)) continue;
+    const existing = planByDate.get(dStr);
+    if (!existing || p.engine === "simcarrry6") {
+      planByDate.set(dStr, p);
+    }
+  }
+
+  const validPlans = Array.from(planByDate.values()).sort(
+    (a, b) => a.date.getTime() - b.date.getTime()
+  );
 
   if (validPlans.length === 0) {
     return null;
