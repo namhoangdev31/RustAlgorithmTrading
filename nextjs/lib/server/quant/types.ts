@@ -2,7 +2,7 @@ export type Direction = "LONG" | "SHORT";
 
 export type R5Action = "KEEP" | "CANCEL" | "FLIP_HINT" | "PRE_OPEN" | "NO_SIGNAL";
 
-export type PlanStatus = "PENDING" | "ACTIVE_TODAY" | "STALE" | "UPCOMING" | "FILLED" | "SETTLED";
+export type PlanStatus = "PENDING" | "ACTIVE_TODAY" | "STALE" | "UPCOMING" | "FILLED" | "SETTLED" | "FILLED_SL" | "FILLED_TP" | "FILLED_ATC" | "FILLED_TRAIL" | string;
 
 /**
  * Pha giao dịch trong ngày theo lịch phái sinh VN30F1M (UTC+7):
@@ -63,6 +63,7 @@ export interface TradingPlan {
   expectedHigh?: number;
   expectedLow?: number;
   resolvedSource?: string;
+  reason?: string;
   sessionPhase?: TradingSessionPhase;
   ladderConfig?: LadderConfig;
   trailingConfig?: TrailingConfig;

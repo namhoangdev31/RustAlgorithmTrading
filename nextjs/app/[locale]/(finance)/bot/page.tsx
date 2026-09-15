@@ -23,7 +23,7 @@ import {
   Bot,
   BarChart2,
   Zap,
-  Columns3,
+  RotateCcw,
   LayoutGrid,
 } from "lucide-react";
 
@@ -41,6 +41,8 @@ export default function LeposTradingBotPage({
   const [isLoading, setIsLoading] = useState(false);
   const [activeQuestion, setActiveQuestion] = useState<string>("");
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isRecalibrating, setIsRecalibrating] = useState(false);
+  const [recalibrateNotice, setRecalibrateNotice] = useState<string | null>(null);
 
   // Responsive & Tab states
   const [mobileTab, setMobileTab] = useState<
@@ -118,10 +120,50 @@ export default function LeposTradingBotPage({
     };
   };
 
+  const handleRecalibrateAfterSl = async () => {
+    if (isRecalibrating) return;
+    setIsRecalibrating(true);
+    try {
+      const res = await fetch("/api/bfxps/recalibrate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cutlossPrice: currentPlan?.execution?.exitPrice ?? currentPlan?.slPrice,
+          force: true,
+        }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setRecalibrateNotice(data.message);
+        setTimeout(() => setRecalibrateNotice(null), 7000);
+        await fetchHealth(false);
+      } else {
+        alert(data.error || "Không thể tái lập kèo lúc này");
+      }
+    } catch (err: any) {
+      alert("Lỗi kết nối khi tái lập kèo: " + err?.message);
+    } finally {
+      setIsRecalibrating(false);
+    }
+  };
+
   const tHeader = useTranslations("Bfxps.header");
   const tChat = useTranslations("Bfxps.chat");
-  const currentPlan = plans[0];
+  const currentPlan =
+    plans.find((p) => p.engine === "simcarrry6") ||
+    plans.find((p) => p.isCanonical) ||
+    plans[0];
   const isCurrentShort = currentPlan?.side === "SHORT";
+  const isSlHit =
+    currentPlan?.execution?.status === "EXIT_SL" ||
+    currentPlan?.status === "FILLED_SL" ||
+    false;
+  const isRecalibrated =
+    currentPlan?.resolvedSource?.includes("REVERSAL") ||
+    currentPlan?.resolvedSource?.includes("SESSION_OPTIMAL") ||
+    currentPlan?.reason?.includes("tái lập sau Stop Loss") ||
+    currentPlan?.reason?.includes("Tối ưu toàn phiên") ||
+    false;
 
   return (
     <div className="flex h-screen w-full flex-col bg-[#070a0f] text-slate-100 antialiased selection:bg-sky-500/30 selection:text-white overflow-hidden">
@@ -131,8 +173,12 @@ export default function LeposTradingBotPage({
           {/* Brand Identity */}
           <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
             <div className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3 items-center justify-center">
-              <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${isCurrentShort ? "bg-rose-400" : "bg-emerald-400"} opacity-75`}></span>
-              <span className={`relative inline-flex h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full ${isCurrentShort ? "bg-rose-500 shadow-[0_0_10px_#f43f5e]" : "bg-emerald-500 shadow-[0_0_10px_#10b981]"}`}></span>
+              <span
+                className={`absolute inline-flex h-full w-full animate-ping rounded-full ${isCurrentShort ? "bg-rose-400" : "bg-emerald-400"} opacity-75`}
+              ></span>
+              <span
+                className={`relative inline-flex h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full ${isCurrentShort ? "bg-rose-500 shadow-[0_0_10px_#f43f5e]" : "bg-emerald-500 shadow-[0_0_10px_#10b981]"}`}
+              ></span>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2">
               <span className="font-black tracking-wider text-white text-xs sm:text-sm bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
@@ -146,16 +192,22 @@ export default function LeposTradingBotPage({
 
           {/* Canonical Strategy Ticker Pills - Visible on sm and up */}
           <div className="hidden md:flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
-            <div className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1 font-bold ${
-              isCurrentShort
-                ? "border-rose-500/30 bg-rose-500/10 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.12)]"
-                : "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.12)]"
-            }`}>
-              <span className={`text-[11px] ${isCurrentShort ? "text-rose-300/80" : "text-emerald-300/80"}`}>
+            <div
+              className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1 font-bold ${
+                isCurrentShort
+                  ? "border-rose-500/30 bg-rose-500/10 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.12)]"
+                  : "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.12)]"
+              }`}
+            >
+              <span
+                className={`text-[11px] ${isCurrentShort ? "text-rose-300/80" : "text-emerald-300/80"}`}
+              >
                 {tHeader("canonical_plan")}:
               </span>
               <span className="font-mono text-white tracking-tight">
-                {currentPlan ? `${currentPlan.side} @ ${currentPlan.entryPrice?.toFixed(1) ?? "--"}` : "--"}
+                {currentPlan
+                  ? `${currentPlan.side} @ ${currentPlan.entryPrice?.toFixed(1) ?? "--"}`
+                  : "--"}
               </span>
             </div>
 
@@ -176,8 +228,8 @@ export default function LeposTradingBotPage({
 
           {/* Action Suite & Controls */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 text-xs">
-            {/* Desktop Layout Mode Switcher (Visible on desktop/laptop) */}
-            <div className="hidden lg:flex items-center gap-0.5 rounded-lg border border-white/10 bg-white/[0.03] p-0.5 font-mono text-[11px]">
+            {/* Desktop Toolbar: Mode Split & Physical SL Recalibrate Button */}
+            <div className="hidden lg:flex items-center gap-1 rounded-lg border border-white/10 bg-white/[0.03] p-0.5 font-mono text-[11px]">
               <button
                 onClick={() => setLayoutMode("split")}
                 className={`flex items-center gap-1 rounded-md px-2 py-1 font-bold transition-all cursor-pointer ${
@@ -190,17 +242,54 @@ export default function LeposTradingBotPage({
                 <LayoutGrid className="h-3 w-3" />
                 <span>{tHeader("mode_split")}</span>
               </button>
+
+              {/* Nút Vật Lý: Tái Lập Kèo Sau SL (Active khi chạm Stop Loss để chạy thuật toán đảo kèo) */}
               <button
-                onClick={() => setLayoutMode("three_columns")}
-                className={`flex items-center gap-1 rounded-md px-2 py-1 font-bold transition-all cursor-pointer ${
-                  layoutMode === "three_columns"
-                    ? "bg-sky-500/20 text-sky-300 shadow-sm border border-sky-500/30"
-                    : "text-slate-400 hover:text-white"
+                onClick={handleRecalibrateAfterSl}
+                disabled={isRecalibrating}
+                className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 font-bold transition-all cursor-pointer select-none ${
+                  isRecalibrating
+                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                    : isSlHit
+                      ? "bg-amber-500/25 text-amber-300 border border-amber-500/50 shadow-[0_0_12px_rgba(245,158,11,0.35)] animate-pulse hover:bg-amber-500/35 hover:border-amber-400 hover:text-amber-200"
+                      : isRecalibrated
+                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.2)] text-emerald-300"
+                        : "text-slate-400 hover:text-slate-200 hover:bg-white/5 opacity-70 hover:opacity-100"
                 }`}
-                title="Mở rộng 3 cột song song cho màn hình lớn"
+                title={
+                  isSlHit
+                    ? tHeader("recalibrate_sl_tooltip_active")
+                    : isRecalibrated
+                      ? tHeader("recalibrate_sl_ready")
+                      : tHeader("recalibrate_sl_tooltip_standby")
+                }
               >
-                <Columns3 className="h-3 w-3" />
-                <span>{tHeader("mode_three_cols")}</span>
+                <RotateCcw
+                  className={`h-3 w-3 ${
+                    isRecalibrating
+                      ? "animate-spin text-amber-400"
+                      : isSlHit
+                        ? "text-amber-400"
+                        : isRecalibrated
+                          ? "text-emerald-400"
+                          : "text-slate-400"
+                  }`}
+                />
+                <span>
+                  {isRecalibrating
+                    ? tHeader("recalibrate_sl_loading")
+                    : isSlHit
+                      ? tHeader("recalibrate_sl_active")
+                      : isRecalibrated
+                        ? tHeader("recalibrate_sl_ready")
+                        : tHeader("recalibrate_sl_standby")}
+                </span>
+                {isSlHit && (
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-amber-500"></span>
+                  </span>
+                )}
               </button>
             </div>
 
@@ -219,7 +308,9 @@ export default function LeposTradingBotPage({
                   : tHeader("history_button_loading")}
               </span>
               <span className="sm:hidden">
-                {summary?.totalSessions != null ? `${summary.totalSessions}P` : "--"}
+                {summary?.totalSessions != null
+                  ? `${summary.totalSessions}P`
+                  : "--"}
               </span>
               <span className="rounded-full bg-emerald-500/20 px-1.5 py-0.2 text-[10px] font-mono text-emerald-300 border border-emerald-500/30 font-bold">
                 {summary?.totalPnl != null
@@ -230,6 +321,22 @@ export default function LeposTradingBotPage({
           </div>
         </div>
       </header>
+
+      {/* Recalibration Status Notification Banner */}
+      {recalibrateNotice && (
+        <div className="bg-emerald-500/15 border-b border-emerald-500/30 px-4 py-1.5 text-xs text-emerald-300 font-mono flex items-center justify-between animate-in fade-in slide-in-from-top-1 z-30">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+            <span>{recalibrateNotice}</span>
+          </div>
+          <button
+            onClick={() => setRecalibrateNotice(null)}
+            className="text-slate-400 hover:text-white text-xs cursor-pointer p-0.5"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* MOBILE WORKSPACE (< 768px): Dedicated Full-Screen Tab View */}
       <div className="flex md:hidden flex-1 overflow-hidden p-2 pb-16">

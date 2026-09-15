@@ -9,6 +9,7 @@ import {
   LadderConfig,
 } from "./types";
 import { evaluateR5, evaluateV44, resolveCutloss } from "./risk-governors";
+import { DailyMarketMetrics, IntradayBar } from "../market/market-service";
 
 export const DEFAULT_CANONICAL_CONFIG: Required<QuantStrategyConfig> = {
   atrEntryMultiplier: 0.10,
@@ -533,5 +534,192 @@ export function isWeekend(dateStr: string): boolean {
   const d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
   const day = d.getUTCDay();
   return day === 0 || day === 6;
+}
+
+/**
+/**
+ * THUẬT TOÁN TỐI ƯU KÈO TOÀN BỘ PHIÊN (KHI ĐƯỢC KÍCH HOẠT NHẤN NÚT)
+ * 
+ * Khi người dùng nhấn nút tái tính toán:
+ * 1. Quét toàn bộ nến trong phiên (session bars từ 09:00 tới hiện tại):
+ *    - Session High, Session Low, Range, Session VWAP.
+ *    - Xác định hành vi giá sau điểm quét SL:
+ *      + Kịch bản 1: Quét thanh khoản giả / Rút chân (Bull Trap / Bear Trap). Giá chỉ nhú qua SL rồi quay trở lại bên trong biên độ phiên hoặc dưới/trên VWAP -> Đưa ra kèo Counter-Trend (Re-entry hướng ban đầu với SL cực chặt tại đỉnh/đáy phiên vừa tạo, R:R tối ưu).
+ *      + Kịch bản 2: Bứt phá / Gãy nền tiếp diễn thật sự (True Breakout / Breakdown). Giá duy trì sức ép và đóng nến xa điểm SL theo hướng phá vỡ -> Đảo chiều vị thế bám theo đà sóng bứt phá.
+ * 2. Đưa ra Kèo Hợp Lý Nhất duy trì hiệu lực tới khi kết thúc phiên (14:30 - 14:45 ATC).
+ */
+export function recalibratePlanAfterStopLoss(
+  originalPlan: TradingPlan,
+  snapshot: MarketSnapshot,
+  metrics: DailyMarketMetrics,
+  cutlossPrice?: number,
+  bars?: IntradayBar[]
+): TradingPlan {
+  const actualCutloss = cutlossPrice ?? originalPlan.slPrice;
+  const { refPrice, atr5d } = metrics;
+  const safeAtr = atr5d > 0 ? atr5d : 10.0;
+  const livePrice = snapshot.current > 0 ? snapshot.current : actualCutloss;
+
+  // Nếu có dữ liệu nến toàn bộ phiên:
+  if (bars && bars.length > 0) {
+    const sessionHigh = Math.max(...bars.map((b) => b.high));
+    const sessionLow = Math.min(...bars.map((b) => b.low));
+    
+    // Tính VWAP phiên
+    let sumTypicalPrice = 0;
+    for (const b of bars) {
+      sumTypicalPrice += (b.high + b.low + b.close) / 3;
+    }
+    const sessionVwap = Number((sumTypicalPrice / bars.length).toFixed(1));
+
+    // Lấy 15 nến gần nhất để đánh giá momentum
+    const recentBars = bars.slice(-15);
+    const recentClose = recentBars[recentBars.length - 1]?.close ?? livePrice;
+
+    if (originalPlan.side === "SHORT") {
+      // SL của SHORT bị dính (giá tăng lên quét SL tại actualCutloss)
+      // Kiểm tra: Giá có bị tụt ngược lại dưới actualCutloss hoặc dưới VWAP không?
+      const isBullTrap = recentClose < actualCutloss || (sessionHigh > actualCutloss && livePrice < actualCutloss - 0.3);
+
+      if (isBullTrap) {
+        // Quét râu thanh khoản đỉnh (Bull Trap) rồi thoái lui -> Kèo hợp lý nhất: SHORT lại với SL ngay trên đỉnh phiên vừa quét
+        const newSide: Direction = "SHORT";
+        const entryPrice = Number(livePrice.toFixed(1));
+        const tpTarget = Math.max(sessionLow, sessionVwap - 0.5 * safeAtr);
+        const tpPrice = Number(Math.min(entryPrice - 6.0, tpTarget).toFixed(1));
+        const slPrice = Number(Math.max(entryPrice + 3.5, sessionHigh + 0.8).toFixed(1));
+
+        return {
+          ...originalPlan,
+          side: newSide,
+          entryPrice,
+          tpPrice,
+          slPrice,
+          status: "ACTIVE_TODAY",
+          orderType: "STOP",
+          isCanonical: true,
+          resolvedSource: "SESSION_OPTIMAL_SWEEP_RE_SHORT",
+          reason: `Tối ưu toàn phiên: Phát hiện Quét thanh khoản đỉnh (Bull Trap qua ${actualCutloss.toFixed(1)}). Giá thoái lui dưới VWAP (${sessionVwap.toFixed(1)}). Tiếp tục SHORT @ ${entryPrice.toFixed(1)}, TP ${tpPrice.toFixed(1)}, SL chặt @ ${slPrice.toFixed(1)} tới khi đóng phiên ATC.`,
+          execution: undefined,
+        };
+      } else {
+        // Bứt phá đỉnh thật sự -> Đảo sang LONG bám theo sóng tăng tới hết phiên
+        const newSide: Direction = "LONG";
+        const entryPrice = Number(livePrice.toFixed(1));
+        const tpDistance = Number(Math.max(12.0, 1.0 * safeAtr).toFixed(1));
+        const tpPrice = Number((entryPrice + tpDistance).toFixed(1));
+        const slRef = Math.max(sessionLow, Math.min(sessionVwap, actualCutloss - 3.0));
+        const slPrice = Number(Math.min(entryPrice - 5.0, slRef).toFixed(1));
+
+        return {
+          ...originalPlan,
+          side: newSide,
+          entryPrice,
+          tpPrice,
+          slPrice,
+          status: "ACTIVE_TODAY",
+          orderType: "STOP",
+          isCanonical: true,
+          resolvedSource: "LATEST_SHORT_CUTLOSS_REVERSAL",
+          reason: `Tối ưu toàn phiên: Lực mua bứt phá cản SL ${actualCutloss.toFixed(1)} giữ vững trên VWAP (${sessionVwap.toFixed(1)}). Đảo chiều sang LONG @ ${entryPrice.toFixed(1)}, TP ${tpPrice.toFixed(1)}, SL @ ${slPrice.toFixed(1)} nắm giữ tới kết thúc phiên ATC.`,
+          execution: undefined,
+        };
+      }
+    } else {
+      // SL của LONG bị dính (giá giảm xuống quét SL tại actualCutloss)
+      // Kiểm tra: Giá có rút chân hồi phục ngược lại lên trên actualCutloss hoặc trên VWAP không?
+      const isBearTrap = recentClose > actualCutloss || (sessionLow < actualCutloss && livePrice > actualCutloss + 0.3);
+
+      if (isBearTrap) {
+        // Quét râu đáy rút chân (Bear Trap) -> Kèo hợp lý nhất: LONG lại với SL ngay dưới đáy phiên vừa quét
+        const newSide: Direction = "LONG";
+        const entryPrice = Number(livePrice.toFixed(1));
+        const tpTarget = Math.min(sessionHigh, sessionVwap + 0.5 * safeAtr);
+        const tpPrice = Number(Math.max(entryPrice + 6.0, tpTarget).toFixed(1));
+        const slPrice = Number(Math.min(entryPrice - 3.5, sessionLow - 0.8).toFixed(1));
+
+        return {
+          ...originalPlan,
+          side: newSide,
+          entryPrice,
+          tpPrice,
+          slPrice,
+          status: "ACTIVE_TODAY",
+          orderType: "STOP",
+          isCanonical: true,
+          resolvedSource: "SESSION_OPTIMAL_SWEEP_RE_LONG",
+          reason: `Tối ưu toàn phiên: Phát hiện Rút chân quét thanh khoản đáy (Bear Trap qua ${actualCutloss.toFixed(1)}). Lực mua kéo giá vượt trên VWAP (${sessionVwap.toFixed(1)}). Tiếp tục LONG @ ${entryPrice.toFixed(1)}, TP ${tpPrice.toFixed(1)}, SL chặt @ ${slPrice.toFixed(1)} tới khi đóng phiên ATC.`,
+          execution: undefined,
+        };
+      } else {
+        // Gãy nền thật sự -> Đảo sang SHORT bám theo sóng xả tới hết phiên
+        const newSide: Direction = "SHORT";
+        const entryPrice = Number(livePrice.toFixed(1));
+        const tpDistance = Number(Math.max(12.0, 1.0 * safeAtr).toFixed(1));
+        const tpPrice = Number((entryPrice - tpDistance).toFixed(1));
+        const slRef = Math.min(sessionHigh, Math.max(sessionVwap, actualCutloss + 3.0));
+        const slPrice = Number(Math.max(entryPrice + 5.0, slRef).toFixed(1));
+
+        return {
+          ...originalPlan,
+          side: newSide,
+          entryPrice,
+          tpPrice,
+          slPrice,
+          status: "ACTIVE_TODAY",
+          orderType: "STOP",
+          isCanonical: true,
+          resolvedSource: "LATEST_LONG_CUTLOSS_REVERSAL",
+          reason: `Tối ưu toàn phiên: Áp lực bán thủng hỗ trợ SL ${actualCutloss.toFixed(1)} ép giá dưới VWAP (${sessionVwap.toFixed(1)}). Đảo chiều sang SHORT @ ${entryPrice.toFixed(1)}, TP ${tpPrice.toFixed(1)}, SL @ ${slPrice.toFixed(1)} nắm giữ tới kết thúc phiên ATC.`,
+          execution: undefined,
+        };
+      }
+    }
+  }
+
+  // Fallback (khi không có danh sách nến chi tiết, ví dụ unit test hoặc cold-start)
+  if (originalPlan.side === "SHORT") {
+    const newSide: Direction = "LONG";
+    const entryPrice = Number(actualCutloss.toFixed(1));
+    const tpDistance = Number(Math.max(15.0, 1.2 * safeAtr).toFixed(1));
+    const tpPrice = Number((entryPrice + tpDistance).toFixed(1));
+    const slDistance = Math.min(10.0, Math.max(7.5, Number((0.35 * safeAtr).toFixed(1))));
+    const slPrice = Number(Math.max(refPrice, entryPrice - slDistance).toFixed(1));
+
+    return {
+      ...originalPlan,
+      side: newSide,
+      entryPrice,
+      tpPrice,
+      slPrice,
+      status: "ACTIVE_TODAY",
+      orderType: "STOP",
+      isCanonical: true,
+      resolvedSource: "LATEST_SHORT_CUTLOSS_REVERSAL",
+      reason: `Kèo tái lập sau Stop Loss: Đảo chiều sang LONG @ ${entryPrice.toFixed(1)} đón sóng bứt phá đỉnh (SL cũ: ${actualCutloss.toFixed(1)})`,
+      execution: undefined,
+    };
+  } else {
+    const newSide: Direction = "SHORT";
+    const entryPrice = Number(actualCutloss.toFixed(1));
+    const tpDistance = Number(Math.max(15.0, 1.2 * safeAtr).toFixed(1));
+    const tpPrice = Number((entryPrice - tpDistance).toFixed(1));
+    const slDistance = Math.min(10.0, Math.max(7.5, Number((0.35 * safeAtr).toFixed(1))));
+    const slPrice = Number(Math.min(refPrice, entryPrice + slDistance).toFixed(1));
+
+    return {
+      ...originalPlan,
+      side: newSide,
+      entryPrice,
+      tpPrice,
+      slPrice,
+      status: "ACTIVE_TODAY",
+      orderType: "STOP",
+      isCanonical: true,
+      resolvedSource: "LATEST_LONG_CUTLOSS_REVERSAL",
+      reason: `Kèo tái lập sau Stop Loss: Đảo chiều sang SHORT @ ${entryPrice.toFixed(1)} đón nhịp gãy đáy (SL cũ: ${actualCutloss.toFixed(1)})`,
+      execution: undefined,
+    };
+  }
 }
 

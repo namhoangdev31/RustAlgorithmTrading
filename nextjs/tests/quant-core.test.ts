@@ -6,6 +6,7 @@ import {
   generateMultiEnginePortfolio,
   resolveSimCarryDirection,
   getTradingSessionPhase,
+  recalibratePlanAfterStopLoss,
   LIVE_CUTOFF_DATE,
 } from "../lib/server/quant/strategy-engine";
 import { evaluateR5, evaluateV44 } from "../lib/server/quant/risk-governors";
@@ -416,6 +417,151 @@ describe("BFXPS Quant Core Test Suite", () => {
   describe("9. Hằng số LIVE_CUTOFF_DATE (nguồn duy nhất)", () => {
     it("LIVE_CUTOFF_DATE đúng định dạng ngày", () => {
       expect(LIVE_CUTOFF_DATE).toBe("2026-09-14");
+    });
+  });
+
+  describe("10. Thuật toán tái lập / đảo kèo sau khi dính Stop Loss", () => {
+    it("Kèo SHORT dính SL -> Tái lập đảo sang LONG tại ngưỡng cutloss", () => {
+      const shortPlan: TradingPlan = {
+        id: "short-test",
+        date: "2026-09-15",
+        engine: "simcarrry6",
+        horizon: "t+1",
+        side: "SHORT",
+        entryPrice: 1930.9,
+        tpPrice: 1908.9,
+        slPrice: 1942.8,
+        maxCap: 0.3,
+        r5State: "KEEP",
+        status: "ACTIVE_TODAY",
+        isCanonical: true,
+      };
+      const metrics = {
+        refDate: "2026-09-15",
+        refPrice: 1936.0,
+        atr5d: 14.5,
+        swingLow5d: 1916.0,
+        swingHigh5d: 1950.0,
+        ema5: 1935.0,
+        ema10: 1933.0,
+      };
+      const newPlan = recalibratePlanAfterStopLoss(shortPlan, snapshot, metrics, 1942.8);
+      expect(newPlan.side).toBe("LONG");
+      expect(newPlan.entryPrice).toBe(1942.8);
+      expect(newPlan.tpPrice).toBeGreaterThan(1942.8);
+      expect(newPlan.slPrice).toBeLessThan(1942.8);
+      expect(newPlan.resolvedSource).toBe("LATEST_SHORT_CUTLOSS_REVERSAL");
+      expect(newPlan.isCanonical).toBe(true);
+    });
+
+    it("Kèo LONG dính SL -> Tái lập đảo sang SHORT đón nhịp gãy đáy", () => {
+      const longPlan: TradingPlan = {
+        id: "long-test",
+        date: "2026-09-15",
+        engine: "simcarrry6",
+        horizon: "t+1",
+        side: "LONG",
+        entryPrice: 1945.0,
+        tpPrice: 1967.0,
+        slPrice: 1935.0,
+        maxCap: 0.3,
+        r5State: "KEEP",
+        status: "ACTIVE_TODAY",
+        isCanonical: true,
+      };
+      const metrics = {
+        refDate: "2026-09-15",
+        refPrice: 1940.0,
+        atr5d: 14.5,
+        swingLow5d: 1916.0,
+        swingHigh5d: 1950.0,
+        ema5: 1935.0,
+        ema10: 1933.0,
+      };
+      const newPlan = recalibratePlanAfterStopLoss(longPlan, snapshot, metrics, 1935.0);
+      expect(newPlan.side).toBe("SHORT");
+      expect(newPlan.entryPrice).toBe(1935.0);
+      expect(newPlan.tpPrice).toBeLessThan(1935.0);
+      expect(newPlan.slPrice).toBeGreaterThan(1935.0);
+      expect(newPlan.resolvedSource).toBe("LATEST_LONG_CUTLOSS_REVERSAL");
+    });
+
+    it("Quét toàn bộ phiên phát hiện Bull Trap sau khi Short dính SL -> Kèo tối ưu SHORT lại với SL chặt trên đỉnh", () => {
+      const shortPlan: TradingPlan = {
+        id: "short-test",
+        date: "2026-09-15",
+        engine: "simcarrry6",
+        horizon: "t+1",
+        side: "SHORT",
+        entryPrice: 1930.0,
+        tpPrice: 1910.0,
+        slPrice: 1940.0,
+        maxCap: 0.3,
+        r5State: "KEEP",
+        status: "ACTIVE_TODAY",
+        isCanonical: true,
+      };
+      const metrics = {
+        refDate: "2026-09-15",
+        refPrice: 1935.0,
+        atr5d: 14.5,
+        swingLow5d: 1920.0,
+        swingHigh5d: 1945.0,
+        ema5: 1935.0,
+        ema10: 1933.0,
+      };
+      // Giả lập nến phiên: Quét qua 1940 lên 1942 rồi bị xả tụt về 1937
+      const bars = [
+        { time: "09:15", open: 1930, high: 1935, low: 1928, close: 1932 },
+        { time: "10:00", open: 1932, high: 1942.5, low: 1931, close: 1941 }, // Quét SL 1940
+        { time: "10:30", open: 1941, high: 1941.5, low: 1936, close: 1937 }, // Rút chân tụt về 1937
+      ];
+      const newPlan = recalibratePlanAfterStopLoss(shortPlan, { ...snapshot, current: 1937.0 }, metrics, 1940.0, bars);
+      expect(newPlan.side).toBe("SHORT");
+      expect(newPlan.entryPrice).toBe(1937.0);
+      expect(newPlan.slPrice).toBeGreaterThan(1942.5); // SL bảo vệ trên đỉnh phiên
+      expect(newPlan.tpPrice).toBeLessThan(1937.0);
+      expect(newPlan.resolvedSource).toBe("SESSION_OPTIMAL_SWEEP_RE_SHORT");
+      expect(newPlan.reason).toContain("Bull Trap");
+    });
+
+    it("Quét toàn bộ phiên phát hiện Bear Trap sau khi Long dính SL -> Kèo tối ưu LONG lại với SL chặt dưới đáy", () => {
+      const longPlan: TradingPlan = {
+        id: "long-test",
+        date: "2026-09-15",
+        engine: "simcarrry6",
+        horizon: "t+1",
+        side: "LONG",
+        entryPrice: 1945.0,
+        tpPrice: 1965.0,
+        slPrice: 1935.0,
+        maxCap: 0.3,
+        r5State: "KEEP",
+        status: "ACTIVE_TODAY",
+        isCanonical: true,
+      };
+      const metrics = {
+        refDate: "2026-09-15",
+        refPrice: 1940.0,
+        atr5d: 14.5,
+        swingLow5d: 1920.0,
+        swingHigh5d: 1950.0,
+        ema5: 1938.0,
+        ema10: 1936.0,
+      };
+      // Giả lập nến phiên: Quét thủng 1935 xuống 1931 rồi rút chân mạnh lên 1938
+      const bars = [
+        { time: "09:15", open: 1945, high: 1948, low: 1942, close: 1944 },
+        { time: "10:00", open: 1944, high: 1944, low: 1931.2, close: 1933 }, // Quét SL 1935
+        { time: "10:30", open: 1933, high: 1939, low: 1932, close: 1938.5 }, // Rút chân tăng lên 1938.5
+      ];
+      const newPlan = recalibratePlanAfterStopLoss(longPlan, { ...snapshot, current: 1938.5 }, metrics, 1935.0, bars);
+      expect(newPlan.side).toBe("LONG");
+      expect(newPlan.entryPrice).toBe(1938.5);
+      expect(newPlan.slPrice).toBeLessThan(1931.2); // SL bảo vệ dưới đáy phiên
+      expect(newPlan.tpPrice).toBeGreaterThan(1938.5);
+      expect(newPlan.resolvedSource).toBe("SESSION_OPTIMAL_SWEEP_RE_LONG");
+      expect(newPlan.reason).toContain("Bear Trap");
     });
   });
 });

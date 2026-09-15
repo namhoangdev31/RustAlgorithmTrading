@@ -17,6 +17,7 @@ import { computeConsensus } from "@/lib/server/quant/consensus";
 import {
   saveDailyPlanToDb,
   getTradingHistoryFromDb,
+  getTodayRecalibratedPlan,
   getLockedContext,
   saveLockedContext,
   isCanonicalSettlementDone,
@@ -120,6 +121,44 @@ export async function GET() {
       ...plan,
       execution: replayExecutionCached(plan, ticks),
     }));
+
+    // Kiểm tra xem hôm nay đã có Kèo Tái Lập Sau Stop Loss được kích hoạt trong CSDL chưa
+    const recalibratedDb = await getTodayRecalibratedPlan(todayStr, "simcarrry6");
+    if (recalibratedDb) {
+      const simIdx = plansWithExecution.findIndex((p) => p.engine === "simcarrry6");
+      if (simIdx >= 0) {
+        const side = recalibratedDb.side as "LONG" | "SHORT";
+        const entryPrice = Number(recalibratedDb.entryPrice.toString());
+        const tpPrice = Number(recalibratedDb.tpPrice.toString());
+        const slPrice = Number(recalibratedDb.slPrice.toString());
+        const exec = replayExecutionCached(
+          {
+            ...plansWithExecution[simIdx],
+            side,
+            entryPrice,
+            tpPrice,
+            slPrice,
+          },
+          ticks
+        );
+        const notesStr = recalibratedDb.notes || "";
+        const isSweep = notesStr.includes("Quét thanh khoản") || notesStr.includes("Rút chân");
+        const resolvedSource = isSweep
+          ? (side === "LONG" ? "SESSION_OPTIMAL_SWEEP_RE_LONG" : "SESSION_OPTIMAL_SWEEP_RE_SHORT")
+          : (side === "LONG" ? "LATEST_SHORT_CUTLOSS_REVERSAL" : "LATEST_LONG_CUTLOSS_REVERSAL");
+
+        plansWithExecution[simIdx] = {
+          ...plansWithExecution[simIdx],
+          side,
+          entryPrice,
+          tpPrice,
+          slPrice,
+          resolvedSource,
+          reason: recalibratedDb.notes ?? plansWithExecution[simIdx].reason,
+          execution: exec,
+        };
+      }
+    }
 
     const primaryPlan =
       plansWithExecution.find((p) => p.engine === "simcarrry6") ||

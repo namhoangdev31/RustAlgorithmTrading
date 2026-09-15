@@ -117,7 +117,7 @@ export const TradingViewPanel: React.FC<TradingViewPanelProps> = memo(
       fetchCandles(timeframe, false);
       const candleInterval = setInterval(() => {
         fetchCandles(timeframe, true);
-      }, 120000); // 2 phút gọi nến 1 lần tránh 429
+      }, 60000); // 1 phút gọi nến 1 lần tránh 429
       return () => clearInterval(candleInterval);
     }, [timeframe, fetchCandles]);
 

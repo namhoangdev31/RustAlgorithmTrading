@@ -478,3 +478,21 @@ async function computeTradingHistory() {
     trades,
   };
 }
+
+/**
+ * Lấy kế hoạch tái lập sau Stop Loss của ngày hôm nay (nếu đã kích hoạt).
+ */
+export async function getTodayRecalibratedPlan(dateVn: string, engine = "simcarrry6") {
+  const planDate = new Date(`${dateVn}T00:00:00.000Z`);
+  return prisma.bfxpsTradingPlan.findFirst({
+    where: {
+      date: planDate,
+      engine,
+      OR: [
+        { notes: { contains: "tái lập sau Stop Loss" } },
+        { notes: { contains: "Tối ưu toàn phiên" } },
+        { notes: { contains: "kết thúc phiên ATC" } },
+      ],
+    },
+  });
+}
